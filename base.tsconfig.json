@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
+    "target": "es5",
+    "module": "esnext",
+    "moduleResolution": "node",
     "composite": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "esModuleInterop": true,
     "strict": true,
-    "emitDeclarationOnly": true,
+    "emitDeclarationOnly": false,
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "noEmitHelpers": true,

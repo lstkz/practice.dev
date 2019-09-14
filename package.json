@@ -1,7 +1,9 @@
 {
   "name": "practice-dev",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "build": "tsc"
+  },
   "workspaces": [
     "packages/*",
     "apps/*"
