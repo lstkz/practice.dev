@@ -13,6 +13,8 @@
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "noEmitHelpers": true,
+    "noEmitOnError": false,
+    "noEmit": false,
     "jsx": "react",
     "lib": [
       "dom",

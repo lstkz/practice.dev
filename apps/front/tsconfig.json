@@ -3,5 +3,16 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist"
-  }
+    // "paths": {
+    //   "ui": ""
+    // }
+  },
+  "references": [
+    {
+      "path": "../../packages/ui"
+    }
+  ],
+
+  "include": ["src"],
+  "exclude": ["tests", "dist", "build"]
 }
