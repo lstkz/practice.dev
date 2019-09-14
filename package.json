@@ -1,0 +1,12 @@
+{
+  "name": "practice-dev",
+  "private": true,
+  "scripts": {},
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "dependencies": {
+    "typescript": "^3.6.3"
+  }
+}
