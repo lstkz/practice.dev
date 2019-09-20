@@ -1,36 +1,27 @@
-import { css, cx } from 'emotion';
-import React from 'react';
+import * as React from 'react';
+import styled from 'styled-components';
 
 interface ContainerProps {
-  children: React.ReactNode;
   className?: string;
+  children: React.ReactNode;
 }
 
-export function Container(props: ContainerProps) {
-  const { className, children } = props;
-  return (
-    <div
-      className={cx(
-        css`
-          @media (min-width: 992px) {
-            max-width: 960px;
-          }
-          @media (min-width: 768px) {
-            max-width: 720px;
-          }
-          @media (min-width: 576px) {
-            max-width: 540px;
-          }
-          width: 100%;
-          margin-right: auto;
-          margin-left: auto;
-          padding-right: 15px;
-          padding-left: 15px;
-        `,
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-}
+export const Container = styled.div<ContainerProps>`
+  @media (min-width: 576px) {
+    max-width: 540px;
+  }
+  @media (min-width: 768px) {
+    max-width: 720px;
+  }
+  @media (min-width: 992px) {
+    max-width: 960px;
+  }
+  @media (min-width: 1200px) {
+    max-width: 1140px;
+  }
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+`;

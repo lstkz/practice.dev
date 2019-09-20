@@ -2,10 +2,17 @@
   "extends": "../../base.tsconfig.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist"
-    // "paths": {
-    //   "ui": ""
-    // }
+    "outDir": "dist",
+    "plugins": [
+      {
+        "transform": "typescript-plugin-styled-components",
+        "type": "config",
+
+        // other typescript-plugin-styled-components options can be added here
+        "minify": false,
+        "ssr": false
+      }
+    ]
   },
   "references": [
     {

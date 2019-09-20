@@ -3,9 +3,19 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin;
 
+const createStyledComponentsTransformer = require('typescript-plugin-styled-components')
+  .default;
+
 const __DEV__ = process.env.NODE_ENV === 'development';
 
 const title = 'Practice.dev';
+
+const styledComponentsTransformer = createStyledComponentsTransformer({
+  getDisplayName: (filename, bindingName) => {
+    const name = path.basename(filename).split('.')[0];
+    return `${name}_${bindingName || ''}`;
+  },
+});
 
 module.exports = {
   name: 'client',
@@ -41,6 +51,23 @@ module.exports = {
   ],
   module: {
     rules: [
+      {
+        test: /\.m?js$/,
+        exclude: /(node_modules)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            plugins: [
+              [
+                'babel-plugin-styled-components',
+                {
+                  ssr: false,
+                },
+              ],
+            ],
+          },
+        },
+      },
       {
         test: /\.(png|jpg)$/,
         use: [
