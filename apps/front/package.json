@@ -27,6 +27,7 @@
     "react-dom": "^16.9.0",
     "rxjs": "^6.5.3",
     "styled-components": "^4.3.2",
+    "ts-loader": "^6.2.1",
     "typed.js": "^2.0.10",
     "typeless": "^1.2.0",
     "typeless-form": "^1.2.0",

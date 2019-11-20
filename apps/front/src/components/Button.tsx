@@ -53,6 +53,25 @@ export const Button = styled(_Button)`
   }
 
   ${props => {
+    switch (props.size || 'default') {
+      case 'small':
+        return css`
+          font-size: 0.875rem;
+          line-height: 1.5;
+          padding: 0.5rem 1.25rem;
+          border-radius: 0.375rem;
+        `;
+      case 'large':
+        return css`
+          font-size: 1rem;
+          line-height: 1.5;
+          padding: 1rem 1.875rem;
+          border-radius: 0.5rem;
+        `;
+    }
+    return null;
+  }}
+  ${props => {
     switch (props.type) {
       case 'primary':
         return css`

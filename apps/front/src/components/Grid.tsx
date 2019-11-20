@@ -3,7 +3,7 @@ import { css, cx } from 'emotion';
 import styled from 'styled-components';
 
 interface RowProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
 }
 
@@ -15,7 +15,7 @@ export const Row = styled.div<RowProps>`
 `;
 
 interface ColProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
   lg?: number;
 }
@@ -25,6 +25,6 @@ export const Col = styled.div<ColProps>`
   width: 100%;
   padding-right: 15px;
   padding-left: 15px;
-  max-width: ${props => ((props.lg || 1) / 12) * 100}%;
-  flex: 0 0 ${props => ((props.lg || 1) / 12) * 100}%;
+  max-width: ${(props) => ((props.lg || 1) / 12) * 100}%;
+  flex: 0 0 ${(props) => ((props.lg || 1) / 12) * 100}%;
 `;

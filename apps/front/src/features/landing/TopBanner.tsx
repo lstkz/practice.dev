@@ -19,7 +19,7 @@ const BgWrapper = styled.div`
   height: 100%;
   width: 100%;
   max-width: 75%;
-  border-radius: 0px 5rem 5rem 0px;
+  border-radius: 0px 8px 8px 0px;
   background-color: #0c66ff;
   overflow: hidden;
 `;
@@ -36,7 +36,7 @@ const BgImg = styled.img`
 `;
 
 const Title = styled.h2`
-  padding: 4.5rem 3rem;
+  padding: 72px 48px;
   font-weight: 600;
   color: #3c4858;
   font-size: calc(1.375rem + 1.5vw);
@@ -52,10 +52,11 @@ const Desc = styled.p`
 `;
 
 const CardInner = styled.div`
-  padding: 4.5rem 3rem;
+  padding: 72px 48px;
 `;
 const Animated = styled.span`
   display: inline-block;
+  white-space: nowrap;
   span:first-child {
     color: ${Theme.warning};
   }
@@ -70,7 +71,7 @@ const _TopBanner = (props: TopBannerProps) => {
       strings: ['frontend', 'backend', 'full-stack'],
       typeSpeed: 70,
       backSpeed: 30,
-      loop: true,
+      loop: true
     });
   }, []);
 
@@ -98,7 +99,7 @@ const _TopBanner = (props: TopBannerProps) => {
                   language and technology, and learn by doing.
                 </Desc>
                 <Button type="warning" hoverTranslateY>
-                  Join Now
+                  Join Now (it's free)
                 </Button>
               </CardInner>
             </Card>
@@ -112,5 +113,5 @@ const _TopBanner = (props: TopBannerProps) => {
 export const TopBanner = styled(_TopBanner)`
   position: relative;
   margin-top: 50px;
-  padding: 7rem 5rem;
+  padding: 112px 80px;
 `;

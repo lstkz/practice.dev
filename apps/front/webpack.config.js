@@ -14,7 +14,7 @@ const styledComponentsTransformer = createStyledComponentsTransformer({
   getDisplayName: (filename, bindingName) => {
     const name = path.basename(filename).split('.')[0];
     return `${name}_${bindingName || ''}`;
-  },
+  }
 });
 
 module.exports = {
@@ -22,19 +22,23 @@ module.exports = {
   target: 'web',
   mode: __DEV__ ? 'development' : 'production',
   entry: {
-    app: './dist/main.js',
+    app: './src/main.tsx'
   },
   devServer: {
     // contentBase: path.join(__dirname, 'dist'),
     compress: true,
     port: 9000,
     hot: true,
+    stats: 'errors-only'
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.jsx', '.js', '.json', 'json5']
   },
   output: {
     filename: '[name].[hash].js',
     chunkFilename: '[name].[hash].js',
     path: path.join(__dirname, './build'),
-    publicPath: '/',
+    publicPath: '/'
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -43,42 +47,57 @@ module.exports = {
       filename: 'index.html',
       inject: false,
       minify: {
-        collapseWhitespace: false,
+        collapseWhitespace: false
       },
-      title,
-    }),
+      title
+    })
     // new BundleAnalyzerPlugin(),
   ],
   module: {
     rules: [
       {
-        test: /\.m?js$/,
-        exclude: /(node_modules)/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            plugins: [
-              [
-                'babel-plugin-styled-components',
-                {
-                  ssr: false,
-                },
-              ],
-            ],
-          },
-        },
+        test: /\.(t|j)sx?$/,
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+              getCustomTransformers: () => ({
+                before: [styledComponentsTransformer]
+              })
+            }
+          }
+        ],
+        exclude: /node_modules/
       },
+      // {
+      //   test: /\.m?js$/,
+      //   exclude: /(node_modules)/,
+      //   use: {
+      //     loader: 'babel-loader',
+      //     options: {
+      //       plugins: [
+      //         [
+      //           'babel-plugin-styled-components',
+      //           {
+      //             ssr: false,
+      //           },
+      //         ],
+      //       ],
+      //     },
+      //   },
+      // },
       {
         test: /\.(png|jpg)$/,
         use: [
           {
             loader: 'url-loader',
             options: {
-              limit: 8192,
-            },
-          },
-        ],
-      },
-    ],
-  },
+              limit: 8192
+            }
+          }
+        ]
+      }
+    ]
+  }
 };

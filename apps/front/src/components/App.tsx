@@ -19,6 +19,7 @@ html
 
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: rgba(31, 45, 61, 0);
+    height: 100% !important;
 }
 body
 {
@@ -26,13 +27,19 @@ body
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.7;
-
     margin: 0;
-
     text-align: left;
-
     color: #8492a6;
     background-color: #fff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#root {
+    height: 100%  ;
+    display: flex;
+    flex-direction: column;
 }
 
 [tabindex='-1']:focus
@@ -40,12 +47,38 @@ body
     outline: 0 !important;
 }
 
+a {
+  text-decoration: none;
+    color: #0c66ff;
+    background-color: transparent;
+}
+
+ol, ul, dl {
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: inherit;
+    font-weight: 400;
+    line-height: 1.5;
+    margin-bottom: .66667rem;
+    color: #3c4858;
+}
+
+h4, h5, h6, .h4, .h5, .h6 {
+    font-weight: 600;
+}
+
+h5, .h5 {
+    font-size: 1.25rem;
+}
 `;
 
 export function App() {
   return (
-    <div>
+    <>
       <LandingView />
-    </div>
+    </>
   );
 }
