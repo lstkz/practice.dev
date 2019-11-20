@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Row, Col } from '../../components/Grid';
-import { Card } from '../../components/Card';
-import { Theme } from '../../common/Theme';
-import { Container } from '../../components/Container';
+import { Row, Col } from '../../../components/Grid';
+import { Card } from '../../../components/Card';
+import { Theme } from '../../../common/Theme';
+import { Container } from '../../../components/Container';
 import Typed from 'typed.js';
-import { Button } from '../../components/Button';
+import { Button } from '../../../components/Button';
 
 interface TopBannerProps {
   className?: string;
@@ -71,14 +71,14 @@ const _TopBanner = (props: TopBannerProps) => {
       strings: ['frontend', 'backend', 'full-stack'],
       typeSpeed: 70,
       backSpeed: 30,
-      loop: true
+      loop: true,
     });
   }, []);
 
   return (
     <div className={className}>
       <BgWrapper>
-        <BgImg src={require('../../../assets/bg.jpg')} />
+        <BgImg src={require('../../../../assets/bg.jpg')} />
       </BgWrapper>
 
       <Container>

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Container } from '../../components/Container';
-import { Col, Row } from '../../components/Grid';
+import { Container } from '../../../components/Container';
+import { Col, Row } from '../../../components/Grid';
 import { Box } from './Box';
-import { CodeIcon } from '../../components/Icons/CodeIcon';
-import { TargetIcon } from '../../components/Icons/TargetIcon';
-import { ChatIcon } from '../../components/Icons/ChatIcon';
-import { StrengthIcon } from '../../components/Icons/StrengthIcon';
+import { CodeIcon } from '../../../components/Icons/CodeIcon';
+import { TargetIcon } from '../../../components/Icons/TargetIcon';
+import { ChatIcon } from '../../../components/Icons/ChatIcon';
+import { StrengthIcon } from '../../../components/Icons/StrengthIcon';
 
 interface WhatsPracticeDevProps {
   className?: string;

@@ -3822,6 +3822,11 @@ react-is@^16.6.0, react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.9.0.tgz#21ca9561399aad0ff1a7701c01683e8ca981edcb"
   integrity sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==
 
+react-top-loading-bar@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-top-loading-bar/-/react-top-loading-bar-1.2.0.tgz#fcbca3c2e462bee7b1c0d1850e8b584cd7bd5a26"
+  integrity sha512-5oNdy+DfD5JK06bcc/gsnnXHmml+d8eaBe3C8KQ3eLiH/BD8+FcwsgbAwqgOaRjuSeVQXdYN2JC2G1uVFtCLfA==
+
 react@^16.9.0:
   version "16.9.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.9.0.tgz#40ba2f9af13bc1a38d75dbf2f4359a5185c4f7aa"
@@ -3886,6 +3891,11 @@ relateurl@0.2.x:
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/relateurl/-/relateurl-0.2.7.tgz#54dbf377e51440aca90a4cd274600d3ff2d888a9"
   integrity sha1-VNvzd+UUQKypCkzSdGANP/LYiKk=
+
+remeda@^0.0.14:
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/remeda/-/remeda-0.0.14.tgz#2c8e3672d2ed09d21133cd73ba8ce1301b5fd78f"
+  integrity sha512-94BLgUtP0o/E0Ta7swiAstz1VRB+ngXROZ7NYiq0AgqNt4EaLkZdIxJ8IYaqn9Dd4DRiCUe7eVZaRB7wmqzBxA==
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"

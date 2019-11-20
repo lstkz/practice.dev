@@ -1,6 +1,9 @@
 import React from 'react';
 import { injectGlobal } from 'emotion';
-import { LandingView } from '../features/landing/LandingView';
+import { LandingView } from '../features/landing/components/LandingView';
+import { RouteResolver } from './RouteResolver';
+import { useGlobalModule } from '../features/global/module';
+import { useRouterModule } from '../features/router';
 
 injectGlobal`
 @import url(https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,700);
@@ -73,12 +76,30 @@ h4, h5, h6, .h4, .h5, .h6 {
 h5, .h5 {
     font-size: 1.25rem;
 }
+input, button, select, optgroup, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    margin: 0;
+}
+
+strong {
+  font-weight: 600;
+}
+
+small {
+  font-size: 80%;
+  font-weight: 400;
+}
+
 `;
 
 export function App() {
+  useGlobalModule();
+  useRouterModule();
   return (
     <>
-      <LandingView />
+      <RouteResolver />
     </>
   );
 }

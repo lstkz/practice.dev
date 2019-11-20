@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Container } from '../../components/Container';
-import { Button } from '../../components/Button';
+import { Container } from '../../../components/Container';
+import { Button } from '../../../components/Button';
 
 interface ReadyToCodeProps {
   className?: string;
@@ -35,7 +35,7 @@ export const ReadyToCode = styled(_ReadyToCode)`
   position: relative;
   display: block;
   background: no-repeat center center/cover;
-  background-image: url(${require('../../../assets/ready-to-code-bg.jpg')});
+  background-image: url(${require('../../../../assets/ready-to-code-bg.jpg')});
   padding: 10.5rem 0;
 
   h2 {

@@ -18,6 +18,7 @@ interface ColProps {
   children?: React.ReactNode;
   className?: string;
   lg?: number;
+  center?: boolean;
 }
 
 export const Col = styled.div<ColProps>`
@@ -25,6 +26,7 @@ export const Col = styled.div<ColProps>`
   width: 100%;
   padding-right: 15px;
   padding-left: 15px;
-  max-width: ${(props) => ((props.lg || 1) / 12) * 100}%;
-  flex: 0 0 ${(props) => ((props.lg || 1) / 12) * 100}%;
+  max-width: ${props => ((props.lg || 1) / 12) * 100}%;
+  flex: 0 0 ${props => ((props.lg || 1) / 12) * 100}%;
+  margin: ${props => (props.center ? '0 auto' : null)};
 `;

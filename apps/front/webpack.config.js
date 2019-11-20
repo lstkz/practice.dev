@@ -14,7 +14,7 @@ const styledComponentsTransformer = createStyledComponentsTransformer({
   getDisplayName: (filename, bindingName) => {
     const name = path.basename(filename).split('.')[0];
     return `${name}_${bindingName || ''}`;
-  }
+  },
 });
 
 module.exports = {
@@ -22,23 +22,43 @@ module.exports = {
   target: 'web',
   mode: __DEV__ ? 'development' : 'production',
   entry: {
-    app: './src/main.tsx'
+    app: './src/main.tsx',
   },
   devServer: {
     // contentBase: path.join(__dirname, 'dist'),
     compress: true,
     port: 9000,
     hot: true,
-    stats: 'errors-only'
+    stats: 'errors-only',
+    historyApiFallback: true,
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.jsx', '.js', '.json', 'json5']
+    extensions: ['.tsx', '.ts', '.jsx', '.js', '.json', 'json5'],
   },
+  optimization: __DEV__
+    ? {
+        // minimize: false,
+        splitChunks: {
+          cacheGroups: {
+            commons: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+            },
+          },
+        },
+      }
+    : undefined,
+  // optimization: {
+  //   namedModules: true,
+  //   namedChunks: true,
+  //   splitChunks: { cacheGroups: { default: false } },
+  // },
   output: {
     filename: '[name].[hash].js',
     chunkFilename: '[name].[hash].js',
     path: path.join(__dirname, './build'),
-    publicPath: '/'
+    publicPath: '/',
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -47,10 +67,10 @@ module.exports = {
       filename: 'index.html',
       inject: false,
       minify: {
-        collapseWhitespace: false
+        collapseWhitespace: false,
       },
-      title
-    })
+      title,
+    }),
     // new BundleAnalyzerPlugin(),
   ],
   module: {
@@ -63,12 +83,12 @@ module.exports = {
             options: {
               transpileOnly: true,
               getCustomTransformers: () => ({
-                before: [styledComponentsTransformer]
-              })
-            }
-          }
+                before: [styledComponentsTransformer],
+              }),
+            },
+          },
         ],
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       // {
       //   test: /\.m?js$/,
@@ -93,11 +113,11 @@ module.exports = {
           {
             loader: 'url-loader',
             options: {
-              limit: 8192
-            }
-          }
-        ]
-      }
-    ]
-  }
+              limit: 8192,
+            },
+          },
+        ],
+      },
+    ],
+  },
 };

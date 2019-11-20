@@ -1,5 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import { useActions } from 'typeless';
+import { RouterActions } from 'typeless-router';
 import { Theme } from '../common/Theme';
 
 interface ButtonProps {
@@ -9,6 +11,7 @@ interface ButtonProps {
   size?: 'small' | 'default' | 'large' | 'extra-large';
   soft?: boolean;
   outline?: boolean;
+  block?: boolean;
   type:
     | 'primary'
     | 'secondary'
@@ -17,13 +20,62 @@ interface ButtonProps {
     | 'warning'
     | 'info'
     | 'dark'
-    | 'link';
+    | 'link'
+    | 'neutral';
   hoverTranslateY?: boolean;
+  href?: string;
+  icon?: React.ReactNode;
+  onClick?: (
+    e: React.MouseEvent<HTMLAnchorElement | HTMLDivElement, MouseEvent>
+  ) => void;
 }
 
+const Icon = styled.span`
+  margin-right: 12px;
+  svg {
+    vertical-align: middle;
+    border-style: none;
+  }
+`;
+
 const _Button = (props: ButtonProps) => {
-  const { className, children } = props;
-  return <div className={className}>{children}</div>;
+  const { className, href, onClick, children, icon } = props;
+  const { push } = useActions(RouterActions);
+  const inner = (
+    <>
+      {icon && <Icon>{icon}</Icon>}
+      <span>{children}</span>
+    </>
+  );
+  if (href) {
+    return (
+      <a
+        className={className}
+        href={href}
+        onClick={e => {
+          e.preventDefault();
+          if (href) {
+            const [pathname, search] = href.split('?');
+            push({
+              pathname,
+              search,
+            });
+          }
+          if (onClick) {
+            onClick(e);
+          }
+        }}
+      >
+        {inner}
+      </a>
+    );
+  } else {
+    return (
+      <button onClick={onClick as any} className={className}>
+        {inner}
+      </button>
+    );
+  }
 };
 
 export const Button = styled(_Button)`
@@ -43,6 +95,8 @@ export const Button = styled(_Button)`
   background-color: transparent;
   position: relative;
   transition: all 0.2s ease;
+  width: ${props => (props.block ? '100%' : null)};
+  outline: none;
 
   &:hover {
     transform: ${props => props.hoverTranslateY && 'translateY(-3px)'};
@@ -232,6 +286,25 @@ export const Button = styled(_Button)`
           &:focus {
             text-decoration: none;
             box-shadow: none;
+          }
+          &:disabled {
+            pointer-events: none;
+            color: #c0ccda;
+          }
+        `;
+      case 'neutral':
+        return css`
+          font-weight: 400;
+          text-decoration: none;
+          color: ${Theme.bgDark};
+          border: 1px solid ${Theme.bgSecondary};
+          &:hover {
+            border-color: #e5eaf2;
+            background-color: #f7f7f7;
+          }
+          &:focus {
+            border-color: #dfdfdf;
+            background-color: #e6e6e6;
           }
           &:disabled {
             pointer-events: none;
