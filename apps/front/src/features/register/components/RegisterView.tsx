@@ -1,55 +1,53 @@
 import React from 'react';
-import { useLoginModule } from '../module';
+import { useRegisterModule } from '../module';
 import { Button } from '../../../components/Button';
 import { PasswordIcon } from '../../../components/Icons/PasswordIcon';
 import { EmailIcon } from '../../../components/Icons/EmailIcon';
+import { AccountIcon } from '../../../components/Icons/AccountIcon';
 import { Link } from '../../../components/Link';
 import {
-  useLoginForm,
-  LoginFormProvider,
-  LoginFormActions,
-} from '../login-form';
+  useRegisterForm,
+  RegisterFormProvider,
+  RegisterFormActions,
+} from '../register-form';
 import { FormInput } from '../../../components/FormInput';
-import { FullPageForm } from '../../../components/FullPageForm';
-import { createUrl } from '../../../common/url';
-import { SocialFormButtons } from '../../../components/SocialFormButtons';
-import styled from 'styled-components';
-import { Theme } from '../../../common/Theme';
 import { useActions } from 'typeless';
+import { FullPageForm } from '../../../components/FullPageForm';
+import { SocialFormButtons } from '../../../components/SocialFormButtons';
+import { createUrl } from '../../../common/url';
 
-const DashedLink = styled(Link)`
-  font-size: 80%;
-  font-weight: 400;
-  border-bottom: 1px dashed;
-  color: #8492a6;
-  line-height: 1.7;
-`;
-
-export function LoginView() {
-  useLoginForm();
-  useLoginModule();
-  const { submit } = useActions(LoginFormActions);
+export function RegisterView() {
+  useRegisterForm();
+  useRegisterModule();
+  const { submit } = useActions(RegisterFormActions);
 
   return (
     <FullPageForm
-      title="Login"
-      subTitle="Sign in to your account to continue."
+      title="Create your account"
+      subTitle="Made with love for developers."
       bottom={
         <>
-          Not registered?{' '}
-          <Link href={createUrl({ name: 'register' })}>
-            <strong>Create account</strong>
+          Already have an account?{' '}
+          <Link href={createUrl({ name: 'login' })}>
+            <strong>Sign in</strong>
           </Link>
         </>
       }
     >
-      <LoginFormProvider>
+      <RegisterFormProvider>
         <form
           onSubmit={e => {
             e.preventDefault();
             submit();
           }}
         >
+          <FormInput
+            name="username"
+            label="username"
+            placeholder="coder"
+            icon={<AccountIcon />}
+          />
+
           <FormInput
             name="email"
             label="email address"
@@ -63,14 +61,16 @@ export function LoginView() {
             placeholder="********"
             type="password"
             icon={<PasswordIcon />}
-            rightLabel={
-              <DashedLink href={createUrl({ name: 'forgot-password' })}>
-                Lost password?
-              </DashedLink>
-            }
           />
-          <Button type="primary" block>
-            Sign in
+          <FormInput
+            name="confirmPassword"
+            label="confirm password"
+            placeholder="********"
+            type="password"
+            icon={<PasswordIcon />}
+          />
+          <Button type="primary" block htmlType="submit">
+            Create my account
           </Button>
           <SocialFormButtons
             onGithubClick={() => {
@@ -81,7 +81,7 @@ export function LoginView() {
             }}
           />
         </form>
-      </LoginFormProvider>
+      </RegisterFormProvider>
     </FullPageForm>
   );
 }

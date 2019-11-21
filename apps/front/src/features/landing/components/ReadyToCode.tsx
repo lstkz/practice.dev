@@ -2,6 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Container } from '../../../components/Container';
 import { Button } from '../../../components/Button';
+import { createUrl } from '../../../common/url';
 
 interface ReadyToCodeProps {
   className?: string;
@@ -25,7 +26,9 @@ const _ReadyToCode = (props: ReadyToCodeProps) => {
       <Mask />
       <Container>
         <h2>Ready to code?</h2>
-        <Button type="warning">Start Coding</Button>
+        <Button type="warning" href={createUrl({ name: 'register' })}>
+          Start Coding
+        </Button>
       </Container>
     </div>
   );

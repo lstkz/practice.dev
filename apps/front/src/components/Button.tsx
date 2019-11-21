@@ -25,6 +25,7 @@ interface ButtonProps {
   hoverTranslateY?: boolean;
   href?: string;
   icon?: React.ReactNode;
+  htmlType?: 'button' | 'submit' | 'reset';
   onClick?: (
     e: React.MouseEvent<HTMLAnchorElement | HTMLDivElement, MouseEvent>
   ) => void;
@@ -39,7 +40,7 @@ const Icon = styled.span`
 `;
 
 const _Button = (props: ButtonProps) => {
-  const { className, href, onClick, children, icon } = props;
+  const { className, href, onClick, children, icon, htmlType } = props;
   const { push } = useActions(RouterActions);
   const inner = (
     <>
@@ -71,7 +72,7 @@ const _Button = (props: ButtonProps) => {
     );
   } else {
     return (
-      <button onClick={onClick as any} className={className}>
+      <button onClick={onClick as any} className={className} type={htmlType}>
         {inner}
       </button>
     );

@@ -6,6 +6,7 @@ import { Theme } from '../../../common/Theme';
 import { Container } from '../../../components/Container';
 import Typed from 'typed.js';
 import { Button } from '../../../components/Button';
+import { createUrl } from '../../../common/url';
 
 interface TopBannerProps {
   className?: string;
@@ -98,7 +99,11 @@ const _TopBanner = (props: TopBannerProps) => {
                   Solve real web development challenges using your favorite
                   language and technology, and learn by doing.
                 </Desc>
-                <Button type="warning" hoverTranslateY>
+                <Button
+                  type="warning"
+                  hoverTranslateY
+                  href={createUrl({ name: 'register' })}
+                >
                   Join Now (it's free)
                 </Button>
               </CardInner>

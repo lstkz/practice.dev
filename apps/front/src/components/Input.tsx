@@ -4,13 +4,14 @@ import { Theme } from '../common/Theme';
 
 const INPUT_FOCUS_CLASS = 'input-focus';
 
-interface InputProps {
+export interface InputProps {
   className?: string;
   value?: string;
   label?: string;
   placeholder?: string;
   onChange?: React.ChangeEventHandler<any>;
   icon?: React.ReactNode;
+  rightLabel?: React.ReactNode;
   type?: string;
   state?: 'valid' | 'error';
   feedback?: string;
@@ -21,6 +22,13 @@ const Label = styled.label`
   font-weight: 600;
   text-transform: uppercase;
   color: #3c4858;
+`;
+
+const LabelsWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
 `;
 
 const Prepend = styled.div`
@@ -83,12 +91,14 @@ const _Input = (props: InputProps) => {
     className,
     value,
     label,
+    rightLabel,
     onChange,
     placeholder,
     icon,
     type,
     feedback,
     state,
+    ...rest
   } = props;
 
   const wrapperRef = React.useRef<HTMLInputElement | null>(null);
@@ -105,12 +115,17 @@ const _Input = (props: InputProps) => {
       onBlur={() => {
         wrapperRef.current!.classList.remove(INPUT_FOCUS_CLASS);
       }}
+      {...rest}
     />
   );
 
   return (
     <div className={className} ref={wrapperRef}>
-      {label && <Label>{label}</Label>}
+      {(label || rightLabel) && (
+        <LabelsWrapper>
+          <Label>{label}</Label> <div>{rightLabel}</div>{' '}
+        </LabelsWrapper>
+      )}
       {icon ? (
         <InputGroup>
           <Prepend>
@@ -138,13 +153,14 @@ export const Input = styled(_Input)`
     width: 100%;
     height: calc(1.5em + 1.5rem + 2px);
     padding: 0.75rem 1.25rem;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease;
     color: #8492a6;
     border: 1px solid #e0e6ed;
     border-radius: 0.375rem;
     background-color: #fff;
     background-clip: padding-box;
     box-shadow: inset 0 1px 1px rgba(31, 45, 61, 0.075);
+    outline: none;
 
     &::placeholder {
       opacity: 1;

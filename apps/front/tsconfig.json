@@ -3,17 +3,8 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "baseUrl": ".",
-    "plugins": [
-      {
-        "transform": "typescript-plugin-styled-components",
-        "type": "config",
-
-        // other typescript-plugin-styled-components options can be added here
-        "minify": false,
-        "ssr": false
-      }
-    ]
+    "noEmit": true,
+    "baseUrl": "."
   },
   "references": [
     {
