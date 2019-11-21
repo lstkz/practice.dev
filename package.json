@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "deploy": "cd packages/deploy && cdk deploy"
+    "deploy": "yarn run api:build && yarn run cdk:deploy",
+    "api:build": "cd apps/api && yarn run build",
+    "cdk:deploy": "cd packages/deploy && cdk deploy"
   },
   "workspaces": [
     "packages/*",

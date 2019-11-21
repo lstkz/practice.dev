@@ -1,3 +1,4 @@
 {
-  "app": "yarn workspace deploy run ts-node -T src/MainStack"
+  "app": "yarn workspace deploy run ts-node -T src/MainStack",
+  "requireApproval": "never"
 }

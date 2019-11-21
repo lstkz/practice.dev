@@ -53,10 +53,7 @@ export async function handler(event: APIGatewayProxyEvent | SNSEvent) {
     const ret = await rpcHandler(exec[1], params, event.headers['x-token']);
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        ok: true,
-        result: ret,
-      }),
+      body: JSON.stringify(ret),
     };
   } catch (e) {
     const serialized = util.inspect(e, { depth: null });

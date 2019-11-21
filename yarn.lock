@@ -71,7 +71,7 @@
     "@aws-cdk/aws-iam" "1.17.1"
     "@aws-cdk/core" "1.17.1"
 
-"@aws-cdk/aws-dynamodb@1.17.1":
+"@aws-cdk/aws-dynamodb@1.17.1", "@aws-cdk/aws-dynamodb@^1.17.1":
   version "1.17.1"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-dynamodb/-/aws-dynamodb-1.17.1.tgz#e8ae1b1052075f9ac9d19f85e47163f4260142a8"
   integrity sha512-ONVA/e4F275A7mzjf5sjMNg85oHy8TSGhkKqkyLQePe5tJXyFWGvyF1f3gy4LcbtsDjGDE4ZCb+yfJAuQqNajg==
