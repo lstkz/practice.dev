@@ -1,4 +1,18 @@
+import dotenv from 'dotenv';
 import { initialize } from 'contract';
+import AWS from 'aws-sdk';
+
+dotenv.config({
+  path: '../../.env',
+});
+
+if (!process.env.TABLE) {
+  throw new Error('TABLE is not set');
+}
+
+export const TABLE_NAME = process.env.TABLE;
+
+export const dynamodb = new AWS.DynamoDB();
 
 export interface CreateRpcBindingOptions {
   public?: true;

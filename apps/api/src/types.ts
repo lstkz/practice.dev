@@ -10,6 +10,35 @@ export interface UserEmailConfirmedEvent {
 
 export type AppEvent = UserRegisteredEvent | UserEmailConfirmedEvent;
 
+export interface DbUser {
+  pk: string;
+  sk: string;
+  userId: string;
+  email: string;
+  username: string;
+  salt: string;
+  password: string;
+  isVerified: boolean;
+}
+
+export interface DbUserEmail {
+  pk: string;
+  sk: string;
+  userId: string;
+}
+
+export interface DbUserUsername {
+  pk: string;
+  sk: string;
+  userId: string;
+}
+
+export interface DbToken {
+  pk: string;
+  sk: string;
+  userId: string;
+}
+
 /* LAMBDA TYPES */
 // from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/aws-lambda/index.d.ts
 
