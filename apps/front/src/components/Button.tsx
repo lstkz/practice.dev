@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { useActions } from 'typeless';
 import { RouterActions } from 'typeless-router';
 import { Theme } from '../common/Theme';
+import { Spinner } from './Spinner';
 
 interface ButtonProps {
   children?: React.ReactNode;
@@ -12,6 +13,7 @@ interface ButtonProps {
   soft?: boolean;
   outline?: boolean;
   block?: boolean;
+  loading?: boolean;
   type:
     | 'primary'
     | 'secondary'
@@ -40,10 +42,11 @@ const Icon = styled.span`
 `;
 
 const _Button = (props: ButtonProps) => {
-  const { className, href, onClick, children, icon, htmlType } = props;
+  const { className, href, onClick, children, icon, htmlType, loading } = props;
   const { push } = useActions(RouterActions);
   const inner = (
     <>
+      {loading && <Spinner />}
       {icon && <Icon>{icon}</Icon>}
       <span>{children}</span>
     </>
@@ -72,7 +75,12 @@ const _Button = (props: ButtonProps) => {
     );
   } else {
     return (
-      <button onClick={onClick as any} className={className} type={htmlType}>
+      <button
+        disabled={loading}
+        onClick={onClick as any}
+        className={className}
+        type={htmlType || 'button'}
+      >
         {inner}
       </button>
     );
@@ -83,7 +91,9 @@ export const Button = styled(_Button)`
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.5;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.75rem 1.75rem;
   user-select: none;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
@@ -99,8 +109,16 @@ export const Button = styled(_Button)`
   width: ${props => (props.block ? '100%' : null)};
   outline: none;
 
+  ${Spinner} {
+    margin-right: 10px;
+  }
+
   &:hover {
     transform: ${props => props.hoverTranslateY && 'translateY(-3px)'};
+  }
+
+  &:disabled {
+    opacity: 0.65;
   }
 
   &:not(:disabled) {

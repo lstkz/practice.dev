@@ -20,7 +20,7 @@ export const [
       errors,
       values,
       S.object().keys({
-        email: S.string(),
+        email: S.string().email(),
         password: S.string(),
       })
     );

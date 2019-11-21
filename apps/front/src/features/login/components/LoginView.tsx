@@ -14,8 +14,9 @@ import { FullPageForm } from '../../../components/FullPageForm';
 import { createUrl } from '../../../common/url';
 import { SocialFormButtons } from '../../../components/SocialFormButtons';
 import styled from 'styled-components';
-import { Theme } from '../../../common/Theme';
 import { useActions } from 'typeless';
+import { getLoginState } from '../interface';
+import { Alert } from 'src/components/Alert';
 
 const DashedLink = styled(Link)`
   font-size: 80%;
@@ -29,6 +30,7 @@ export function LoginView() {
   useLoginForm();
   useLoginModule();
   const { submit } = useActions(LoginFormActions);
+  const { isSubmitting, error } = getLoginState.useState();
 
   return (
     <FullPageForm
@@ -50,6 +52,8 @@ export function LoginView() {
             submit();
           }}
         >
+          {error && <Alert type="danger">{error}</Alert>}
+
           <FormInput
             name="email"
             label="email address"
@@ -69,7 +73,7 @@ export function LoginView() {
               </DashedLink>
             }
           />
-          <Button type="primary" block>
+          <Button type="primary" block loading={isSubmitting} htmlType="submit">
             Sign in
           </Button>
           <SocialFormButtons

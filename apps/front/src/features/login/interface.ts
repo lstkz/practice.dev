@@ -4,7 +4,11 @@ import { LoginSymbol } from './symbol';
 
 // --- Actions ---
 export const [handle, LoginActions, getLoginState] = createModule(LoginSymbol)
-  .withActions({})
+  .withActions({
+    $init: null,
+    setSubmitting: (isSubmitting: boolean) => ({ payload: { isSubmitting } }),
+    setError: (error: string | null) => ({ payload: { error } }),
+  })
   .withState<LoginState>();
 
 // --- Routing ---
@@ -21,5 +25,6 @@ export const routeConfig: RouteConfig = {
 
 // --- Types ---
 export interface LoginState {
-  foo: string;
+  isSubmitting: boolean;
+  error: string | null;
 }

@@ -34,6 +34,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js', '.json', 'json5'],
+    alias: {
+      src: path.join(__dirname, './src'),
+    },
   },
   optimization: __DEV__
     ? {
