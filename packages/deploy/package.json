@@ -1,0 +1,13 @@
+{
+  "name": "deploy",
+  "version": "1.0.0",
+  "scripts": {
+    "ts-node": "ts-node"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-apigateway": "^1.17.1",
+    "@aws-cdk/aws-lambda": "^1.17.1",
+    "@aws-cdk/aws-lambda-event-sources": "^1.17.1",
+    "@aws-cdk/core": "^1.17.1"
+  }
+}

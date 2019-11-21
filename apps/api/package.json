@@ -1,0 +1,24 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "tsc": "tsc --noEmit",
+    "dev": "NODE_ENV=development nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm dist/*; webpack --progress --colors"
+  },
+  "sideEffects": false,
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "aws-sdk": "^2.557.0",
+    "chokidar": "^3.2.3",
+    "webpack": "^4.41.2",
+    "nodemon": "^1.19.1",
+    "ts-loader": "^6.2.1",
+    "webpack-cli": "^3.3.8"
+  }
+}

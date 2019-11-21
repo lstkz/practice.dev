@@ -25,6 +25,6 @@ module.exports = {
    *   - "flow"
    *   - "babylon"
    */
-  parser: 'typescript',
+  // parser: 'typescript',
   arrowParens: 'avoid',
 };

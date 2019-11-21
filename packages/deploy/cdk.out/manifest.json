@@ -1,0 +1,618 @@
+{
+  "version": "1.16.0",
+  "artifacts": {
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    },
+    "pd-dev": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "pd-dev.template.json"
+      },
+      "metadata": {
+        "/pd-dev": [
+          {
+            "type": "aws:cdk:asset",
+            "data": {
+              "path": "asset.8237a4351fd9f44e18aa6019b007e4a69856ef9f1eb063412a044b7eef59da18",
+              "id": "8237a4351fd9f44e18aa6019b007e4a69856ef9f1eb063412a044b7eef59da18",
+              "packaging": "zip",
+              "sourceHash": "8237a4351fd9f44e18aa6019b007e4a69856ef9f1eb063412a044b7eef59da18",
+              "s3BucketParameter": "AssetParameters8237a4351fd9f44e18aa6019b007e4a69856ef9f1eb063412a044b7eef59da18S3BucketCC6D3D1B",
+              "s3KeyParameter": "AssetParameters8237a4351fd9f44e18aa6019b007e4a69856ef9f1eb063412a044b7eef59da18S3VersionKey4C244461",
+              "artifactHashParameter": "AssetParameters8237a4351fd9f44e18aa6019b007e4a69856ef9f1eb063412a044b7eef59da18ArtifactHash27B6750B"
+            },
+            "trace": [
+              "MainStack.addFileAsset (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/core/lib/stack.ts:524:17)",
+              "new Asset (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-s3-assets/lib/asset.ts:113:28)",
+              "AssetCode.bind (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-lambda/lib/code.ts:180:20)",
+              "new Function (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-lambda/lib/function.ts:431:29)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:13:23)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/EventBus/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "EventBus7B8748AA",
+            "trace": [
+              "new Topic (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-sns/lib/topic.ts:53:22)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:11:19)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/api-lambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apilambdaServiceRoleF2D743F5",
+            "trace": [
+              "new Role (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-iam/lib/role.ts:300:18)",
+              "new Function (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-lambda/lib/function.ts:414:31)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:13:23)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/api-lambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apilambdaServiceRoleDefaultPolicyCFD83890",
+            "trace": [
+              "new Policy (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-iam/lib/policy.ts:102:22)",
+              "Role.addToPolicy (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-iam/lib/role.ts:340:28)",
+              "Function.addToPrincipal (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-iam/lib/grant.ts:147:61)",
+              "Function.addToPrincipalOrResource (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-iam/lib/grant.ts:117:26)",
+              "Topic.grantPublish (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-sns/lib/topic-base.ts:97:22)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:27:11)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/api-lambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apilambda052863DD",
+            "trace": [
+              "new Function (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-lambda/lib/function.ts:434:35)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:13:23)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/AssetParameters/8237a4351fd9f44e18aa6019b007e4a69856ef9f1eb063412a044b7eef59da18/S3Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters8237a4351fd9f44e18aa6019b007e4a69856ef9f1eb063412a044b7eef59da18S3BucketCC6D3D1B",
+            "trace": [
+              "new FileAssetParameters (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/core/lib/private/asset-parameters.ts:16:32)",
+              "MainStack.addFileAsset (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/core/lib/stack.ts:511:16)",
+              "new Asset (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-s3-assets/lib/asset.ts:113:28)",
+              "AssetCode.bind (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-lambda/lib/code.ts:180:20)",
+              "new Function (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-lambda/lib/function.ts:431:29)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:13:23)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/AssetParameters/8237a4351fd9f44e18aa6019b007e4a69856ef9f1eb063412a044b7eef59da18/S3VersionKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters8237a4351fd9f44e18aa6019b007e4a69856ef9f1eb063412a044b7eef59da18S3VersionKey4C244461",
+            "trace": [
+              "new FileAssetParameters (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/core/lib/private/asset-parameters.ts:21:31)",
+              "MainStack.addFileAsset (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/core/lib/stack.ts:511:16)",
+              "new Asset (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-s3-assets/lib/asset.ts:113:28)",
+              "AssetCode.bind (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-lambda/lib/code.ts:180:20)",
+              "new Function (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-lambda/lib/function.ts:431:29)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:13:23)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/AssetParameters/8237a4351fd9f44e18aa6019b007e4a69856ef9f1eb063412a044b7eef59da18/ArtifactHash": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters8237a4351fd9f44e18aa6019b007e4a69856ef9f1eb063412a044b7eef59da18ArtifactHash27B6750B",
+            "trace": [
+              "new FileAssetParameters (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/core/lib/private/asset-parameters.ts:26:36)",
+              "MainStack.addFileAsset (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/core/lib/stack.ts:511:16)",
+              "new Asset (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-s3-assets/lib/asset.ts:113:28)",
+              "AssetCode.bind (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-lambda/lib/code.ts:180:20)",
+              "new Function (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-lambda/lib/function.ts:431:29)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:13:23)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/api/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiC8550315",
+            "trace": [
+              "new RestApi (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/restapi.ts:229:22)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:29:17)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/api/Deployment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiDeployment149F1294306d87d68345d01c329115e12e764d61",
+            "trace": [
+              "new Deployment (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/deployment.ts:69:21)",
+              "RestApi.configureDeployment (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/restapi.ts:387:32)",
+              "new RestApi (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/restapi.ts:245:10)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:29:17)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/api/DeploymentStage.prod/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiDeploymentStageprod896C8101",
+            "trace": [
+              "new Stage (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/stage.ts:186:22)",
+              "RestApi.configureDeployment (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/restapi.ts:397:30)",
+              "new RestApi (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/restapi.ts:245:10)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:29:17)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/api/Endpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiEndpoint9349E63C",
+            "trace": [
+              "RestApi.configureDeployment (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/restapi.ts:402:7)",
+              "new RestApi (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/restapi.ts:245:10)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:29:17)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/api/CloudWatchRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiCloudWatchRoleAC81D93E",
+            "trace": [
+              "new Role (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-iam/lib/role.ts:300:18)",
+              "RestApi.configureCloudWatchRole (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/restapi.ts:411:18)",
+              "new RestApi (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/restapi.ts:249:12)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:29:17)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/api/Account": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiAccount57E28B43",
+            "trace": [
+              "RestApi.configureCloudWatchRole (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/restapi.ts:416:22)",
+              "new RestApi (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/restapi.ts:249:12)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:29:17)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/api/Default/{proxy+}/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiproxy4EA44110",
+            "trace": [
+              "new Resource (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/resource.ts:387:22)",
+              "RootResource.addResource (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/resource.ts:171:12)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:33:31)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/api/Default/{proxy+}/POST/ApiPermission.pddevapi8C49CA15.POST..{proxy+}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiproxyPOSTApiPermissionpddevapi8C49CA15POSTproxy7C3786A1",
+            "trace": [
+              "Function.addPermission (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-lambda/lib/function-base.ts:197:5)",
+              "LambdaIntegration.bind (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/integrations/lambda.ts:60:18)",
+              "Method.renderIntegration (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/method.ts:189:17)",
+              "new Method (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/method.ts:130:25)",
+              "Resource.addMethod (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/resource.ts:175:12)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:36:14)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/api/Default/{proxy+}/POST/ApiPermission.Test.pddevapi8C49CA15.POST..{proxy+}": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiproxyPOSTApiPermissionTestpddevapi8C49CA15POSTproxy42FE878C",
+            "trace": [
+              "Function.addPermission (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-lambda/lib/function-base.ts:197:5)",
+              "LambdaIntegration.bind (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/integrations/lambda.ts:68:20)",
+              "Method.renderIntegration (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/method.ts:189:17)",
+              "new Method (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/method.ts:130:25)",
+              "Resource.addMethod (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/resource.ts:175:12)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:36:14)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/api/Default/{proxy+}/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiproxyPOST256ACAD7",
+            "trace": [
+              "new Method (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/method.ts:136:22)",
+              "Resource.addMethod (/Users/sky/work/practice-dev/practice-dev-repo/node_modules/@aws-cdk/aws-apigateway/lib/resource.ts:175:12)",
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:36:14)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ],
+        "/pd-dev/apiLambdaArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "apiLambdaArn",
+            "trace": [
+              "new MainStack (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:38:5)",
+              "Object.<anonymous> (/Users/sky/work/practice-dev/practice-dev-repo/packages/deploy/src/MainStack.ts:45:1)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Module.m._compile (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:473:23)",
+              "Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Object.require.extensions.(anonymous function) [as .ts] (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/index.ts:476:12)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "Object.<anonymous> (/Users/sky/.nvm/versions/node/v10.12.0/lib/node_modules/ts-node/src/bin.ts:158:12)",
+              "Module._compile (internal/modules/cjs/loader.js:688:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:699:10)",
+              "Module.load (internal/modules/cjs/loader.js:598:32)",
+              "tryModuleLoad (internal/modules/cjs/loader.js:537:12)",
+              "Function.Module._load (internal/modules/cjs/loader.js:529:3)",
+              "Function.Module.runMain (internal/modules/cjs/loader.js:741:12)",
+              "startup (internal/bootstrap/node.js:285:19)",
+              "bootstrapNodeJSCore (internal/bootstrap/node.js:739:3)"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "runtime": {
+    "libraries": {
+      "@aws-cdk/aws-apigateway": "1.17.1",
+      "@aws-cdk/aws-iam": "1.17.1",
+      "@aws-cdk/core": "1.17.1",
+      "@aws-cdk/cx-api": "1.17.1",
+      "@aws-cdk/region-info": "1.17.1",
+      "@aws-cdk/aws-lambda": "1.17.1",
+      "@aws-cdk/aws-cloudwatch": "1.17.1",
+      "@aws-cdk/aws-ec2": "1.17.1",
+      "@aws-cdk/aws-ssm": "1.17.1",
+      "@aws-cdk/aws-sqs": "1.17.1",
+      "@aws-cdk/aws-kms": "1.17.1",
+      "@aws-cdk/aws-s3-assets": "1.17.1",
+      "@aws-cdk/assets": "1.17.1",
+      "@aws-cdk/aws-s3": "1.17.1",
+      "@aws-cdk/aws-events": "1.17.1",
+      "@aws-cdk/aws-sns": "1.17.1",
+      "jsii-runtime": "node.js/v10.12.0"
+    }
+  }
+}

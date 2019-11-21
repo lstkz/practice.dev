@@ -1,0 +1,10 @@
+{
+  "extends": "../../base.tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "target": "es2018",
+    "module": "commonjs"
+  },
+  "include": ["src/**/*", "webpack.config.js", "scripts/**/*"],
+  "exclude": ["dist"]
+}
