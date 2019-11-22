@@ -1,8 +1,8 @@
-import { DynamoDB } from 'aws-sdk';
+import { AuthData } from 'shared';
 import { createToken } from './createToken';
 import { DbUser } from '../../types';
 
-export async function _generateAuthData(dbUser: DbUser) {
+export async function _generateAuthData(dbUser: DbUser): Promise<AuthData> {
   return {
     user: {
       id: dbUser.userId,

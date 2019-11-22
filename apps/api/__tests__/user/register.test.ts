@@ -1,7 +1,9 @@
 import { register } from '../../src/contracts/user/register';
 import { resetDb } from '../helper';
 
-beforeEach(resetDb);
+beforeEach(async () => {
+  await resetDb();
+});
 
 describe('validation', () => {
   const validEmail = 'user@example.com';
@@ -70,7 +72,7 @@ it('throw error if username is taken', async () => {
   });
   await expect(
     register({
-      email: 'user1@example.com',
+      email: 'user12345@example.com',
       username: 'user1',
       password: 'password',
     })

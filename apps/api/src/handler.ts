@@ -1,4 +1,4 @@
-import { apiMapping } from './api-mapping';
+import { apiMapping } from './generated/api-mapping';
 
 export async function handler(
   rpcMethod: string,

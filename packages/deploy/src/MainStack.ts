@@ -3,6 +3,7 @@ import lambda = require('@aws-cdk/aws-lambda');
 import sns = require('@aws-cdk/aws-sns');
 import cdk = require('@aws-cdk/core');
 import dynamodb = require('@aws-cdk/aws-dynamodb');
+import subs = require('@aws-cdk/aws-sns-subscriptions');
 import Path from 'path';
 
 export class MainStack extends cdk.Stack {
@@ -50,12 +51,15 @@ export class MainStack extends cdk.Stack {
       environment: {
         NODE_ENV: 'production',
         TOPIC_ARN: topic.topicArn,
+        TABLE: table.tableName,
       },
       timeout: cdk.Duration.seconds(7),
       memorySize: 512,
     });
-
+    table.grantReadWriteData(apiLambda);
     topic.grantPublish(apiLambda);
+
+    topic.addSubscription(new subs.LambdaSubscription(apiLambda));
 
     const api = new apigateway.RestApi(this, 'api', {
       restApiName: `api`,
@@ -76,6 +80,10 @@ export class MainStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, 'table', {
       value: table.tableName,
+    });
+
+    new cdk.CfnOutput(this, 'topicArn', {
+      value: topic.topicArn,
     });
   }
 }

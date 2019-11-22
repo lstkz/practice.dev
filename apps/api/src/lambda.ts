@@ -1,7 +1,7 @@
 import util from 'util';
 import { APIGatewayProxyEvent, SNSEvent, AppEvent } from './types';
 import { handler as rpcHandler } from './handler';
-// import { eventMapping } from './event-mapping';
+import { eventMapping } from './generated/event-mapping';
 
 function getAppEvent(event: SNSEvent): AppEvent {
   const record = event.Records[0];
@@ -14,23 +14,25 @@ function getAppEvent(event: SNSEvent): AppEvent {
 export async function handler(event: APIGatewayProxyEvent | SNSEvent) {
   if ('Records' in event) {
     const appEvent = getAppEvent(event);
+    console.log('processing EVENT', appEvent);
 
-    // const fns = eventMapping[appEvent.type];
-    const fns = [] as any[];
-    if (!fns.length) {
+    const handlerMap = eventMapping[appEvent.type] || {};
+    const keys = Object.keys(handlerMap);
+    if (!keys.length) {
       return;
     }
 
-    if (fns.length > 1) {
+    if (keys.length > 1) {
       throw new Error('Not implemented');
     }
-    const fn = await fns[0]();
-    await fn.eventOptions!.handler(appEvent as any);
+    const { options } = await handlerMap[keys[0]]();
+    await options.handler(appEvent as any);
 
     return;
   }
 
   try {
+    console.log('processing RPC', event.path);
     const exec = /\/rpc\/(.+)/.exec(event.path);
     if (!exec) {
       throw new Error('Invalid url');
