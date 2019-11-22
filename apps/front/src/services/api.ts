@@ -1,3 +1,3 @@
+import { APIClient } from 'shared';
 
-
-export function register
+export const api = new APIClient('http://localhost:3000/api', () => '');

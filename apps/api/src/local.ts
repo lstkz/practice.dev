@@ -42,6 +42,12 @@ const server = http.createServer(async (req, res) => {
     if (!exec) {
       throw new Error('Invalid url');
     }
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    if (req.method === 'OPTIONS') {
+      res.end();
+      return;
+    }
     if (req.method !== 'POST') {
       throw new Error('Method must be POST');
     }

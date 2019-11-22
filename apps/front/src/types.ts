@@ -1,3 +1,5 @@
+export * from 'shared/src/types';
+
 export interface RouteConfig {
   type: 'route';
   path: string | string[];
@@ -5,8 +7,4 @@ export interface RouteConfig {
   auth: boolean;
   component: () => Promise<() => JSX.Element>;
   noLoader?: boolean;
-}
-
-export interface User {
-  id: number;
 }

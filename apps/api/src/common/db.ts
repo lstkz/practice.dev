@@ -48,6 +48,30 @@ export async function putItems(items: any[] | any) {
   }
 }
 
+export async function getItem<T>(
+  pk: string,
+  sk?: string
+): Promise<T | undefined> {
+  const { Item: item } = await dynamodb
+    .getItem({
+      TableName: TABLE_NAME,
+      Key: Converter.marshall({
+        pk,
+        sk: sk || pk,
+      }),
+    })
+    .promise();
+  return item ? (Converter.unmarshall(item) as any) : undefined;
+}
+
+export async function getItemEnsure<T>(pk: string, sk?: string): Promise<T> {
+  const item = await getItem<T>(pk, sk);
+  if (!item) {
+    throw new Error(`Expected object to exists pk = ${pk}, sk = ${sk || pk}`);
+  }
+  return item;
+}
+
 export async function ensureNotExists(values: any, errorMsg: string) {
   const { Item: item } = await dynamodb
     .getItem({

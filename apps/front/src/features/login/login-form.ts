@@ -4,7 +4,7 @@ import { LoginFormSymbol } from './symbol';
 import { validate } from '../../common/helper';
 
 export interface LoginFormValues {
-  username: string;
+  email: string;
   password: string;
 }
 
