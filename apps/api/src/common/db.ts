@@ -39,10 +39,12 @@ export async function putItems(items: any[] | any) {
       )
       .promise();
   } else {
-    await dynamodb.putItem({
-      Item: Converter.marshall(items),
-      TableName: TABLE_NAME,
-    });
+    await dynamodb
+      .putItem({
+        Item: Converter.marshall(items),
+        TableName: TABLE_NAME,
+      })
+      .promise();
   }
 }
 

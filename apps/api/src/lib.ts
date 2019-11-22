@@ -12,7 +12,9 @@ if (!process.env.TABLE) {
 
 export const TABLE_NAME = process.env.TABLE;
 
-export const dynamodb = new AWS.DynamoDB();
+export const dynamodb = new AWS.DynamoDB({
+  endpoint: process.env.MOCK_DB ? 'http://localhost:4569' : undefined,
+});
 
 export interface CreateRpcBindingOptions {
   public?: true;

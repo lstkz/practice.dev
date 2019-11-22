@@ -5,6 +5,11 @@
     "target": "es2018",
     "module": "commonjs"
   },
-  "include": ["src/**/*", "webpack.config.js", "scripts/**/*"],
+  "include": [
+    "__tests__/**/*",
+    "src/**/*",
+    "webpack.config.js",
+    "scripts/**/*"
+  ],
   "exclude": ["dist"]
 }

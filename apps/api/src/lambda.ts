@@ -61,7 +61,6 @@ export async function handler(event: APIGatewayProxyEvent | SNSEvent) {
     return {
       statusCode: 400,
       body: JSON.stringify({
-        ok: false,
         error: e.message,
         requestId: event.requestContext.requestId,
       }),
