@@ -18,3 +18,8 @@ export function validate(
     return ret;
   }, errors as any);
 }
+
+export function getErrorMessage(e: any) {
+  const message = e?.response?.error || e.message;
+  return message.replace('ContractError: ', '');
+}

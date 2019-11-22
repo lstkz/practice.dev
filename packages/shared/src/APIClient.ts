@@ -10,16 +10,21 @@ export class APIClient {
   constructor(private baseUrl: string, private getToken: () => string) {}
 
   // SIGNATURES
-  call(
-    name: 'user.login',
-    values: { email: string; password: string }
-  ): Rx.Observable<AuthData>;
-  call(
-    name: 'user.register',
-    values: { email: string; password: string; username: string }
-  ): Rx.Observable<AuthData>;
+  user_login(values: {
+    email: string;
+    password: string;
+  }): Rx.Observable<AuthData> {
+    return this.call('user.login', values);
+  }
+  user_register(values: {
+    email: string;
+    password: string;
+    username: string;
+  }): Rx.Observable<AuthData> {
+    return this.call('user.register', values);
+  }
   // SIGNATURES END
-  call(name: string, ...params: any[]): any {
+  private call(name: string, ...params: any[]): any {
     return ajax
       .post(`${this.baseUrl}/rpc/${name}`, JSON.stringify(params), {
         'content-type': 'application/json',

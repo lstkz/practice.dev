@@ -6,7 +6,11 @@ import { RegisterSymbol } from './symbol';
 export const [handle, RegisterActions, getRegisterState] = createModule(
   RegisterSymbol
 )
-  .withActions({})
+  .withActions({
+    $init: null,
+    setSubmitting: (isSubmitting: boolean) => ({ payload: { isSubmitting } }),
+    setError: (error: string | null) => ({ payload: { error } }),
+  })
   .withState<RegisterState>();
 
 // --- Routing ---
@@ -23,5 +27,6 @@ export const routeConfig: RouteConfig = {
 
 // --- Types ---
 export interface RegisterState {
-  foo: string;
+  isSubmitting: false;
+  error: null;
 }

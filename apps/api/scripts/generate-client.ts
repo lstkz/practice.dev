@@ -96,6 +96,7 @@ function checkNode(node: ts.Node, checker: ts.TypeChecker) {
   let returnType = '';
   let signature = '';
   let params = [] as string[];
+  let paramNames = [] as string[];
 
   props.forEach(prop => {
     const name = (prop.name as ts.Identifier).escapedText?.toString();
@@ -123,18 +124,19 @@ function checkNode(node: ts.Node, checker: ts.TypeChecker) {
           param,
           param.valueDeclaration!
         );
-        params.push(
-          `${param.escapedName.toString()}: ${checker.typeToString(type)},`
-        );
+        const paramName = param.escapedName.toString();
+        params.push(`${paramName}: ${checker.typeToString(type)},`);
+        paramNames.push(paramName);
       });
     }
   });
 
   signatures.push(
-    `call(
-    name: '${signature}',
+    `${signature.replace('.', '_')}(
     ${params.join('\n')}
-  ): Rx.Observable<${returnType}>;`
+  ): Rx.Observable<${returnType}> {
+    return this.call('${signature}', ${paramNames.join(', ')})
+  }`
   );
 
   // contractType.

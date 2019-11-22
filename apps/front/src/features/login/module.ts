@@ -3,11 +3,7 @@ import { LoginActions, LoginState, handle } from './interface';
 import { LoginFormActions, getLoginFormState } from './login-form';
 import { api } from 'src/services/api';
 import { GlobalActions } from '../global/interface';
-
-function getError(e: any) {
-  const message = e?.response?.error || e.message;
-  return message.replace('ContractError: ', '');
-}
+import { getErrorMessage } from 'src/common/helper';
 
 // --- Epic ---
 handle
@@ -17,10 +13,10 @@ handle
     return Rx.concatObs(
       Rx.of(LoginActions.setSubmitting(true)),
       Rx.of(LoginActions.setError(null)),
-      api.call('user.login', getLoginFormState().values).pipe(
+      api.user_login(getLoginFormState().values).pipe(
         Rx.map(ret => GlobalActions.loggedIn(ret.user)),
         Rx.catchLog(e => {
-          return Rx.of(LoginActions.setError(getError(e)));
+          return Rx.of(LoginActions.setError(getErrorMessage(e)));
         })
       ),
       Rx.of(LoginActions.setSubmitting(false))
