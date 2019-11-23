@@ -2,6 +2,8 @@ import apigateway = require('@aws-cdk/aws-apigateway');
 import lambda = require('@aws-cdk/aws-lambda');
 import sns = require('@aws-cdk/aws-sns');
 import cdk = require('@aws-cdk/core');
+import ses = require('@aws-cdk/aws-ses');
+import iam = require('@aws-cdk/aws-iam');
 import dynamodb = require('@aws-cdk/aws-dynamodb');
 import subs = require('@aws-cdk/aws-sns-subscriptions');
 import Path from 'path';
@@ -49,6 +51,7 @@ export class MainStack extends cdk.Stack {
       handler: 'app-lambda.handler',
       runtime: lambda.Runtime.NODEJS_10_X,
       environment: {
+        IS_AWS: '1',
         NODE_ENV: 'production',
         TOPIC_ARN: topic.topicArn,
         TABLE: table.tableName,
@@ -56,6 +59,11 @@ export class MainStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(7),
       memorySize: 512,
     });
+    const apiLambdaPolicy = new iam.PolicyStatement();
+    apiLambdaPolicy.addAllResources();
+    apiLambdaPolicy.addActions('ses:sendEmail');
+    apiLambda.addToRolePolicy(apiLambdaPolicy);
+
     table.grantReadWriteData(apiLambda);
     topic.grantPublish(apiLambda);
 

@@ -14,10 +14,9 @@ export const createToken = createContract('user.createToken')
   })
   .fn(async (userId, fixedToken) => {
     const token = fixedToken || uuid();
-    const tokenKey = createKey('TOKEN', token);
+    const tokenKey = createKey({ type: 'TOKEN', token });
     const dbToken: DbToken = {
-      sk: tokenKey,
-      pk: tokenKey,
+      ...tokenKey,
       userId,
     };
     await putItems(dbToken);

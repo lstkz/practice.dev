@@ -224,6 +224,15 @@
     "@aws-cdk/aws-kms" "1.17.1"
     "@aws-cdk/core" "1.17.1"
 
+"@aws-cdk/aws-ses@^1.17.1":
+  version "1.17.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-ses/-/aws-ses-1.17.1.tgz#b307c5dc4d5fbce695c3b28d41633a110da7c954"
+  integrity sha512-cweqNgH6MyGyobhUbWWyvovIej2lZONX3q+jZfFMLp9ONOU1k9TwwiC2CW4pLT4tTXh6hUcRddpYtMmGg5lx/g==
+  dependencies:
+    "@aws-cdk/aws-iam" "1.17.1"
+    "@aws-cdk/aws-lambda" "1.17.1"
+    "@aws-cdk/core" "1.17.1"
+
 "@aws-cdk/aws-sns-subscriptions@1.17.1":
   version "1.17.1"
   resolved "https://registry.yarnpkg.com/@aws-cdk/aws-sns-subscriptions/-/aws-sns-subscriptions-1.17.1.tgz#22c849b3257747d187030dd1b26615d2c74356c4"

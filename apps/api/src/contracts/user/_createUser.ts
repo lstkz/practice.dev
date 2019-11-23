@@ -14,32 +14,22 @@ interface CreateUserValues {
 
 export async function _createUser(values: CreateUserValues) {
   const userId = values.userId || uuid();
-  const userIdKey = createKey('USER', userId);
-  const uniqueEmailKey = createKey('USER_EMAIL', values.email);
-  const uniqueUsernameKey = createKey('USER_USERNAME', values.username);
+  const userKey = createKey({ type: 'USER', userId: userId });
+  const uniqueEmailKey = createKey({ type: 'USER_EMAIL', email: values.email });
+  const uniqueUsernameKey = createKey({
+    type: 'USER_USERNAME',
+    username: values.username,
+  });
   const salt = await randomSalt();
   const password = await createPasswordHash(values.password, salt);
 
   await Promise.all([
-    ensureNotExists(
-      {
-        pk: uniqueEmailKey,
-        sk: uniqueEmailKey,
-      },
-      'Email is already registered'
-    ),
-    ensureNotExists(
-      {
-        pk: uniqueUsernameKey,
-        sk: uniqueUsernameKey,
-      },
-      'Username is already taken'
-    ),
+    ensureNotExists(uniqueEmailKey, 'Email is already registered'),
+    ensureNotExists(uniqueUsernameKey, 'Username is already taken'),
   ]);
 
   const dbUser: DbUser = {
-    pk: userIdKey,
-    sk: userIdKey,
+    ...userKey,
     userId: userId,
     email: values.email,
     username: values.username,
@@ -48,13 +38,11 @@ export async function _createUser(values: CreateUserValues) {
     isVerified: values.isVerified,
   };
   const dbUserEmail: DbUserEmail = {
-    pk: uniqueEmailKey,
-    sk: uniqueEmailKey,
+    ...uniqueEmailKey,
     userId,
   };
   const dbUsernameEmail: DbUserUsername = {
-    pk: uniqueUsernameKey,
-    sk: uniqueUsernameKey,
+    ...uniqueUsernameKey,
     userId,
   };
 

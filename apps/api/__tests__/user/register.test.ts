@@ -1,6 +1,8 @@
 import { register } from '../../src/contracts/user/register';
 import { resetDb } from '../helper';
 
+jest.mock('../../src/dispatch');
+
 beforeEach(async () => {
   await resetDb();
 });
@@ -70,13 +72,12 @@ it('throw error if username is taken', async () => {
     username: 'user1',
     password: 'password',
   });
-  await expect(
-    register({
-      email: 'user12345@example.com',
-      username: 'user1',
-      password: 'password',
-    })
-  ).rejects.toThrow('Username is already taken');
+  const promise = register({
+    email: 'user12345@example.com',
+    username: 'user1',
+    password: 'password',
+  });
+  await expect(promise).rejects.toThrow('Username is already taken');
 });
 
 it('throw error if email is taken', async () => {
@@ -85,11 +86,10 @@ it('throw error if email is taken', async () => {
     username: 'user1',
     password: 'password',
   });
-  await expect(
-    register({
-      email: 'useR1@example.com',
-      username: 'user123456',
-      password: 'password',
-    })
-  ).rejects.toThrow('Email is already registered');
+  const promise = register({
+    email: 'useR1@example.com',
+    username: 'user123456',
+    password: 'password',
+  });
+  await expect(promise).rejects.toThrow('Email is already registered');
 });

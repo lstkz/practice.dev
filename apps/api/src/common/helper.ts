@@ -51,3 +51,19 @@ export async function createPasswordHash(password: string, salt: string) {
   );
   return hash.toString('hex');
 }
+
+export function randomString(length: number) {
+  const chars = 'abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789';
+  const randomBytes = crypto.randomBytes(length);
+  const result = new Array(length);
+  let cursor = 0;
+  for (let i = 0; i < length; i++) {
+    cursor += randomBytes[i];
+    result[i] = chars[cursor % chars.length];
+  }
+  return result.join('');
+}
+
+export function randomUniqString() {
+  return randomString(15);
+}

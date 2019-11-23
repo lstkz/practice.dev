@@ -9,9 +9,9 @@ interface EventMapping {
 }
 export const eventMapping: EventMapping = {
   UserRegisteredEvent: {
-    sendWelcomeEmailEvent: () =>
+    sendConfirmEmailEvent: () =>
       import(
-        /* webpackChunkName: "UserRegisteredEvent.sendWelcomeEmailEvent"*/ '../contracts/notification/sendWelcomeEmail'
-      ).then(x => x['sendWelcomeEmailEvent']),
+        /* webpackChunkName: "UserRegisteredEvent.sendConfirmEmailEvent"*/ '../contracts/notification/sendConfirmEmail'
+      ).then(x => x['sendConfirmEmailEvent']),
   },
 };

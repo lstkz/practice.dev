@@ -10,9 +10,12 @@ export interface UserEmailConfirmedEvent {
 
 export type AppEvent = UserRegisteredEvent | UserEmailConfirmedEvent;
 
-export interface DbUser {
+export interface DbKey {
   pk: string;
   sk: string;
+}
+
+export interface DbUser extends DbKey {
   userId: string;
   email: string;
   username: string;
@@ -21,22 +24,21 @@ export interface DbUser {
   isVerified: boolean;
 }
 
-export interface DbUserEmail {
-  pk: string;
-  sk: string;
+export interface DbUserEmail extends DbKey {
   userId: string;
 }
 
-export interface DbUserUsername {
-  pk: string;
-  sk: string;
+export interface DbUserUsername extends DbKey {
   userId: string;
 }
 
-export interface DbToken {
-  pk: string;
-  sk: string;
+export interface DbToken extends DbKey {
   userId: string;
+}
+
+export interface DbConfirmCode extends DbKey {
+  userId: string;
+  code: string;
 }
 
 /* LAMBDA TYPES */

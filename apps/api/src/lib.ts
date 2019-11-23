@@ -22,6 +22,14 @@ export const dynamodb = new AWS.DynamoDB({
   endpoint: process.env.MOCK_DB ? 'http://localhost:4569' : undefined,
 });
 
+export const ses = new AWS.SES({
+  region: 'eu-west-1',
+});
+
+export const EMAIL_SENDER = 'Practice.dev <no-reply@practice.dev>';
+
+export const BASE_URL = process.env.BASE_URL || 'https://practice.dev';
+
 export interface CreateRpcBindingOptions {
   public?: true;
   signature: string;
