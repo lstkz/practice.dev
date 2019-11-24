@@ -22,6 +22,7 @@ module.exports = {
   target: 'web',
   mode: __DEV__ ? 'development' : 'production',
   entry: {
+    css: ['./assets/fa/all.css'],
     app: './src/main.tsx',
   },
   devServer: {
@@ -93,6 +94,10 @@ module.exports = {
         ],
         exclude: /node_modules/,
       },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
       // {
       //   test: /\.m?js$/,
       //   exclude: /(node_modules)/,
@@ -111,7 +116,7 @@ module.exports = {
       //   },
       // },
       {
-        test: /\.(png|jpg)$/,
+        test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
         use: [
           {
             loader: 'url-loader',

@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import { initialize } from 'contract';
 import AWS from 'aws-sdk';
-import { AppEvent } from './types';
+import { AppEvent, AppContext } from './types';
 
 dotenv.config({
   path: '../../.env',
@@ -44,7 +44,9 @@ export function createRpcBinding(options: CreateRpcBindingOptions) {
   };
 }
 
-export const { createContract } = initialize({
+export const { createContract, runWithContext, getContext } = initialize<
+  AppContext
+>({
   debug: process.env.NODE_ENV === 'development',
 });
 

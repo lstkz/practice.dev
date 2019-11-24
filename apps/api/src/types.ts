@@ -10,6 +10,10 @@ export interface UserEmailConfirmedEvent {
 
 export type AppEvent = UserRegisteredEvent | UserEmailConfirmedEvent;
 
+export interface AppContext {
+  user: DbUser;
+}
+
 export interface DbKey {
   pk: string;
   sk: string;

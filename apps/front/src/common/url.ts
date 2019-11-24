@@ -7,6 +7,12 @@ export type UrlOptions =
     }
   | {
       name: 'forgot-password';
+    }
+  | {
+      name: 'challenges';
+    }
+  | {
+      name: 'home';
     };
 
 export function createUrl(options: UrlOptions) {
@@ -17,5 +23,9 @@ export function createUrl(options: UrlOptions) {
       return '/register';
     case 'forgot-password':
       return '/forgot-password';
+    case 'challenges':
+      return '/';
+    case 'home':
+      return '/';
   }
 }

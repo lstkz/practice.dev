@@ -16,7 +16,7 @@ handle
       Rx.of(RegisterActions.setSubmitting(true)),
       Rx.of(RegisterActions.setError(null)),
       api.user_register(values).pipe(
-        Rx.map(ret => GlobalActions.loggedIn(ret.user)),
+        Rx.map(ret => GlobalActions.auth(ret)),
         Rx.catchLog(e => {
           return Rx.of(RegisterActions.setError(getErrorMessage(e)));
         })
@@ -31,7 +31,17 @@ const initialState: RegisterState = {
   error: null,
 };
 
-handle.reducer(initialState);
+handle
+  .reducer(initialState)
+  .on(RegisterActions.$init, state => {
+    Object.assign(state, initialState);
+  })
+  .on(RegisterActions.setSubmitting, (state, { isSubmitting }) => {
+    state.isSubmitting = isSubmitting;
+  })
+  .on(RegisterActions.setError, (state, { error }) => {
+    state.error = error;
+  });
 
 // --- Module ---
 export function useRegisterModule() {

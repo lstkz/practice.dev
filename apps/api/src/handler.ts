@@ -1,4 +1,7 @@
 import { apiMapping } from './generated/api-mapping';
+import { getDbUserByToken } from './contracts/user/getDbUserByToken';
+import { AppError } from './common/errors';
+import { runWithContext } from './lib';
 
 export async function handler(
   rpcMethod: string,
@@ -7,13 +10,20 @@ export async function handler(
 ) {
   const getFn = apiMapping[rpcMethod];
   if (!getFn) {
-    throw new Error('RPC Method not found');
+    throw new AppError('RPC Method not found');
   }
   const { options } = await getFn();
 
   if (!options.public && !authToken) {
-    throw new Error('authToken required');
+    throw new AppError('authToken required');
+  }
+  if (authToken) {
+    const user = await getDbUserByToken(authToken);
+    if (!user) {
+      throw new AppError('Invalid or expired token');
+    }
+    return runWithContext({ user }, () => options.handler(...rpcParams));
   }
 
-  return await options.handler(...rpcParams);
+  return options.handler(...rpcParams);
 }

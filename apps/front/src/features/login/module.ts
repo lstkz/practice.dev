@@ -14,7 +14,7 @@ handle
       Rx.of(LoginActions.setSubmitting(true)),
       Rx.of(LoginActions.setError(null)),
       api.user_login(getLoginFormState().values).pipe(
-        Rx.map(ret => GlobalActions.loggedIn(ret.user)),
+        Rx.map(ret => GlobalActions.auth(ret)),
         Rx.catchLog(e => {
           return Rx.of(LoginActions.setError(getErrorMessage(e)));
         })

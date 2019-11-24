@@ -1,4 +1,4 @@
-import { RouteConfig, User } from 'src/types';
+import { RouteConfig, User, AuthData } from 'src/types';
 import { createModule } from 'typeless';
 import { GlobalSymbol } from './symbol';
 
@@ -9,6 +9,7 @@ export const [handle, GlobalActions, getGlobalState] = createModule(
   .withActions({
     $mounted: null,
     logout: null,
+    auth: (authData: AuthData) => ({ payload: authData }),
     loggedIn: (user: User | null) => ({
       payload: { user },
     }),

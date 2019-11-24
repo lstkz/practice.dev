@@ -27,6 +27,6 @@ export const routeConfig: RouteConfig = {
 
 // --- Types ---
 export interface RegisterState {
-  isSubmitting: false;
-  error: null;
+  isSubmitting: boolean;
+  error: string | null;
 }

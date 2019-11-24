@@ -29,7 +29,7 @@ export function initialize<T>(config: Partial<ContractConfig> = {}) {
       hook
     ),
     runWithContext: async (context: T, fn: () => any) => {
-      await hook.runInNewScope(() => {
+      return await hook.runInNewScope(() => {
         hook.setContext(context);
         return fn();
       });

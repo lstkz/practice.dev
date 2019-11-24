@@ -15,11 +15,14 @@ import { useActions } from 'typeless';
 import { FullPageForm } from '../../../components/FullPageForm';
 import { SocialFormButtons } from '../../../components/SocialFormButtons';
 import { createUrl } from '../../../common/url';
+import { getRegisterState } from '../interface';
+import { Alert } from 'src/components/Alert';
 
 export function RegisterView() {
   useRegisterForm();
   useRegisterModule();
   const { submit } = useActions(RegisterFormActions);
+  const { isSubmitting, error } = getRegisterState.useState();
 
   return (
     <FullPageForm
@@ -41,6 +44,7 @@ export function RegisterView() {
             submit();
           }}
         >
+          {error && <Alert type="danger">{error}</Alert>}
           <FormInput
             name="username"
             label="username"
@@ -69,7 +73,7 @@ export function RegisterView() {
             type="password"
             icon={<PasswordIcon />}
           />
-          <Button type="primary" block htmlType="submit">
+          <Button type="primary" block loading={isSubmitting} htmlType="submit">
             Create my account
           </Button>
           <SocialFormButtons

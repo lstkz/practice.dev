@@ -10,6 +10,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "user.confirmEmail"*/ '../contracts/user/confirmEmail'
     ).then(x => x['confirmEmailRpc']),
+  'user.getMe': () =>
+    import(/* webpackChunkName: "user.getMe"*/ '../contracts/user/getMe').then(
+      x => x['getMeRpc']
+    ),
   'user.login': () =>
     import(/* webpackChunkName: "user.login"*/ '../contracts/user/login').then(
       x => x['loginRpc']

@@ -14,6 +14,7 @@
 
   <body>
     <div id="root" style="height: 100%"></div>
+    <div id="portals"></div>
     <% for (var chunk in htmlWebpackPlugin.files.js) { %>
     <script src="<%= htmlWebpackPlugin.files.js[chunk] %>"></script>
     <% } %>

@@ -1,9 +1,11 @@
 import React from 'react';
+import * as R from 'remeda';
 import { injectGlobal } from 'emotion';
-import { LandingView } from '../features/landing/components/LandingView';
 import { RouteResolver } from './RouteResolver';
 import { useGlobalModule } from '../features/global/module';
 import { useRouterModule } from '../features/router';
+import { getGlobalState } from 'src/features/global/interface';
+import { useMappedState } from 'typeless';
 
 injectGlobal`
 @import url(https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,700);
@@ -97,6 +99,11 @@ small {
 export function App() {
   useGlobalModule();
   useRouterModule();
+
+  const { isLoaded } = useMappedState([getGlobalState], R.pick(['isLoaded']));
+  if (!isLoaded) {
+    return null;
+  }
   return (
     <>
       <RouteResolver />

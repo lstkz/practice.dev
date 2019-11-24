@@ -31,6 +31,7 @@ interface ButtonProps {
   onClick?: (
     e: React.MouseEvent<HTMLAnchorElement | HTMLDivElement, MouseEvent>
   ) => void;
+  'data-dropdown-toggle'?: boolean;
 }
 
 const Icon = styled.span`
@@ -41,7 +42,7 @@ const Icon = styled.span`
   }
 `;
 
-const _Button = (props: ButtonProps) => {
+const _Button = (props: ButtonProps, ref: any) => {
   const { className, href, onClick, children, icon, htmlType, loading } = props;
   const { push } = useActions(RouterActions);
   const inner = (
@@ -54,8 +55,10 @@ const _Button = (props: ButtonProps) => {
   if (href) {
     return (
       <a
+        data-dropdown-toggle={props['data-dropdown-toggle']}
         className={className}
         href={href}
+        ref={ref}
         onClick={e => {
           e.preventDefault();
           if (href) {
@@ -76,10 +79,12 @@ const _Button = (props: ButtonProps) => {
   } else {
     return (
       <button
+        data-dropdown-toggle={props['data-dropdown-toggle']}
         disabled={loading}
         onClick={onClick as any}
         className={className}
         type={htmlType || 'button'}
+        ref={ref}
       >
         {inner}
       </button>
@@ -87,7 +92,7 @@ const _Button = (props: ButtonProps) => {
   }
 };
 
-export const Button = styled(_Button)`
+export const Button = styled(React.forwardRef(_Button))`
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.5;
@@ -123,6 +128,20 @@ export const Button = styled(_Button)`
 
   &:not(:disabled) {
     cursor: pointer;
+  }
+
+  &[data-dropdown-toggle] {
+    &::after {
+      font-family: 'Font Awesome 5 Free';
+      font-weight: 700;
+      font-style: normal;
+      font-variant: normal;
+      display: inline-block;
+      margin-left: 10.2px;
+      content: '\f107';
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+    }
   }
 
   ${props => {

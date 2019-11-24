@@ -1,4 +1,0 @@
-{ fileNames: [ 'src/contracts/user/register.ts' ] }
-{ params: [ '{ email: string; username: string; password: string; }' ],
-  returnType:
-   'Promise<import("/Users/sky/work/practice-dev/practice-dev-repo/packages/shared/src/types").AuthData>' }

@@ -4,7 +4,7 @@ import { LoginFormSymbol } from './symbol';
 import { validate } from '../../common/helper';
 
 export interface LoginFormValues {
-  email: string;
+  emailOrUsername: string;
   password: string;
 }
 
@@ -20,7 +20,7 @@ export const [
       errors,
       values,
       S.object().keys({
-        email: S.string().email(),
+        emailOrUsername: S.string(),
         password: S.string(),
       })
     );

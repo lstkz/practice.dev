@@ -55,9 +55,9 @@ export function LoginView() {
           {error && <Alert type="danger">{error}</Alert>}
 
           <FormInput
-            name="email"
-            label="email address"
-            placeholder="name@example.com"
+            name="emailOrUsername"
+            label="email address or username"
+            placeholder="name@example.com or coder"
             icon={<EmailIcon />}
           />
 
