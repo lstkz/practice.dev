@@ -35,7 +35,8 @@ body
     margin: 0;
     text-align: left;
     color: #8492a6;
-    background-color: #fff;
+    /* background-color: #fff; */
+    background-color: #f8f9fa;
     height: 100%;
     display: flex;
     flex-direction: column;

@@ -1,4 +1,4 @@
-import { RouteConfig } from 'src/types';
+import { RouteConfig, Challenge } from 'src/types';
 import { createModule } from 'typeless';
 import { ChallengesSymbol } from './symbol';
 
@@ -32,5 +32,5 @@ export const routeConfig: RouteConfig = {
 
 // --- Types ---
 export interface ChallengesState {
-  foo: string;
+  items: Challenge[];
 }
