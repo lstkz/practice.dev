@@ -1,0 +1,19 @@
+{
+  "name": "practice-dev",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "deploy": "yarn run api:build && yarn run cdk:deploy",
+    "api:build": "cd apps/api && yarn run build",
+    "cdk:deploy": "cd packages/deploy && cdk deploy"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "dependencies": {
+    "@types/prettier": "^1.18.4",
+    "prettier": "^1.19.1",
+    "typescript": "^3.7.2"
+  }
+}

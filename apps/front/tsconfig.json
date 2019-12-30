@@ -1,0 +1,17 @@
+{
+  "extends": "../../base.tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "noEmit": true,
+    "baseUrl": "."
+  },
+  "references": [
+    {
+      "path": "../../packages/ui"
+    }
+  ],
+
+  "include": ["src"],
+  "exclude": ["tests", "dist", "build"]
+}

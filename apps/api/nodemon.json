@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "ext": "ts",
+  "exec": "ts-node -T scripts/generate.ts && ts-node -T ./src/local.ts",
+  "ignore": ["src/generated/**"]
+}
