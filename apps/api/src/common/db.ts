@@ -23,6 +23,10 @@ type CreateKeyOptions =
   | {
       type: 'USER';
       userId: string;
+    }
+  | {
+      type: 'GITHUB_USER';
+      id: number;
     };
 
 export function createKey(
@@ -59,6 +63,13 @@ export function createKey(
     }
     case 'USER': {
       const pk = `USER:${options.userId}`;
+      return {
+        pk,
+        sk: pk,
+      };
+    }
+    case 'GITHUB_USER': {
+      const pk = `GITHUB_USER:${options.id}`;
       return {
         pk,
         sk: pk,
@@ -151,6 +162,7 @@ export function prepareUpdate<T extends DbKey>(item: T, keys: Array<keyof T>) {
 interface TransactWriteItems {
   deleteItems?: Array<{ pk: string; sk: string }>;
   updateItems?: Array<Omit<AWS.DynamoDB.Update, 'TableName'>>;
+  putItems?: Array<{ pk: string; sk: string }>;
 }
 
 export async function transactWriteItems(options: TransactWriteItems) {
@@ -168,10 +180,17 @@ export async function transactWriteItems(options: TransactWriteItems) {
     },
   }));
 
+  const putItems = (options.putItems || []).map(item => ({
+    Put: {
+      TableName: TABLE_NAME,
+      Item: Converter.marshall(item),
+    },
+  }));
+
   await dynamodb
     .transactWriteItems(
       {
-        TransactItems: [...deleteItems, ...updateItems],
+        TransactItems: [...deleteItems, ...updateItems, ...putItems],
       },
       undefined
     )

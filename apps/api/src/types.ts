@@ -26,14 +26,17 @@ export interface DbUser extends DbKey {
   salt: string;
   password: string;
   isVerified: boolean;
+  githubId?: number;
 }
 
 export interface DbUserEmail extends DbKey {
   userId: string;
+  email: string;
 }
 
 export interface DbUserUsername extends DbKey {
   userId: string;
+  username: string;
 }
 
 export interface DbToken extends DbKey {
@@ -43,6 +46,11 @@ export interface DbToken extends DbKey {
 export interface DbConfirmCode extends DbKey {
   userId: string;
   code: string;
+}
+
+export interface DbGithubUser extends DbKey {
+  userId: string;
+  githubId: number;
 }
 
 /* LAMBDA TYPES */

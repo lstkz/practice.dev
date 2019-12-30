@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { Response } from 'node-fetch';
 
 const SECURITY = {
   SALT_LENGTH: 64,
@@ -66,4 +67,24 @@ export function randomString(length: number) {
 
 export function randomUniqString() {
   return randomString(15);
+}
+
+export async function getResponseBody<T = any>(opName: string, res: Response) {
+  if (res.status !== 200) {
+    const msg = `${opName} failed with code: ${res.status}`;
+    console.error(msg, {
+      responseText: await res.text(),
+    });
+    throw new Error(msg);
+  }
+  const body = await res.json();
+  if (body.error) {
+    const msg = `${opName} failed with code: ${body.error_description ||
+      body.error}`;
+    console.error(msg, {
+      body,
+    });
+    throw new Error(msg);
+  }
+  return body as T;
 }
