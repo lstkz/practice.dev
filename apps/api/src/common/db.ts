@@ -31,6 +31,10 @@ type CreateKeyOptions =
   | {
       type: 'RESET_PASSWORD_CODE';
       code: string;
+    }
+  | {
+      type: 'CHALLENGE';
+      id: number;
     };
 
 export function createKey(
@@ -84,6 +88,13 @@ export function createKey(
       return {
         pk,
         sk: pk,
+      };
+    }
+    case 'CHALLENGE': {
+      const pk = `CHALLENGE:${options.id}`;
+      return {
+        pk,
+        sk: 'CHALLENGE',
       };
     }
     default:
@@ -168,6 +179,19 @@ export function prepareUpdate<T extends DbKey>(item: T, keys: Array<keyof T>) {
     UpdateExpression: `SET ${mappedKeys.join(', ')}`,
     ExpressionAttributeValues: Converter.marshall(values),
   };
+}
+
+export async function updateItem<T extends DbKey>(
+  item: T,
+  keys: Array<keyof T>
+) {
+  const update = prepareUpdate(item, keys);
+  await dynamodb
+    .updateItem({
+      TableName: TABLE_NAME,
+      ...update,
+    })
+    .promise();
 }
 
 interface TransactWriteItems {

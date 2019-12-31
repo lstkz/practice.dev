@@ -59,6 +59,27 @@ export interface DbResetPasswordCode extends DbKey {
   expireAt: number;
 }
 
+export type ChallengeDomain = 'frontend' | 'backend' | 'fullstack' | 'styling';
+export type ChallengeDifficulty = 'easy' | 'medium' | 'hard';
+
+export interface DbChallenge extends DbKey {
+  // challengeId
+  data_n: number;
+  title: string;
+  description: string;
+  domain: ChallengeDomain;
+  difficulty: ChallengeDifficulty;
+  bundle: string;
+  tests: string;
+  tags: string[];
+  stats: {
+    submissions: number;
+    solved: number;
+    solutions: number;
+    likes: number;
+  };
+}
+
 /* LAMBDA TYPES */
 // from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/aws-lambda/index.d.ts
 

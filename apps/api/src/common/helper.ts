@@ -109,3 +109,12 @@ export function getDuration(n: number, type: 's' | 'm' | 'h' | 'd') {
     }
   }
 }
+
+export function safeAssign<T extends V, V>(target: T, values: V) {
+  Object.assign(target, values);
+  return target;
+}
+
+export function safeKeys<T>(obj: T): Array<keyof T> {
+  return Object.keys(obj) as any;
+}
