@@ -17,13 +17,20 @@ export async function handler(
   if (!options.public && !authToken) {
     throw new AppError('authToken required');
   }
-  if (authToken) {
+
+  const getUser = async () => {
+    if (!authToken) {
+      return null;
+    }
     const user = await getDbUserByToken(authToken);
     if (!user) {
       throw new AppError('Invalid or expired token');
     }
-    return runWithContext({ user }, () => options.handler(...rpcParams));
-  }
-
-  return options.handler(...rpcParams);
+    if (options.admin && !user.isAdmin) {
+      throw new AppError('Admin only');
+    }
+    return user;
+  };
+  const user = await getUser();
+  return runWithContext({ user: user! }, () => options.handler(...rpcParams));
 }

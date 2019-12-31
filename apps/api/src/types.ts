@@ -1,3 +1,5 @@
+import { ChallengeDomain, ChallengeDifficulty, ChallengeStats } from 'shared';
+
 export interface UserRegisteredEvent {
   type: 'UserRegisteredEvent';
   payload: { userId: string; registeredAt: string };
@@ -11,7 +13,7 @@ export interface UserEmailConfirmedEvent {
 export type AppEvent = UserRegisteredEvent | UserEmailConfirmedEvent;
 
 export interface AppContext {
-  user: DbUser;
+  user: DbUser | null;
 }
 
 export interface DbKey {
@@ -27,6 +29,7 @@ export interface DbUser extends DbKey {
   password: string;
   isVerified: boolean;
   githubId?: number;
+  isAdmin: boolean;
 }
 
 export interface DbUserEmail extends DbKey {
@@ -59,9 +62,6 @@ export interface DbResetPasswordCode extends DbKey {
   expireAt: number;
 }
 
-export type ChallengeDomain = 'frontend' | 'backend' | 'fullstack' | 'styling';
-export type ChallengeDifficulty = 'easy' | 'medium' | 'hard';
-
 export interface DbChallenge extends DbKey {
   // challengeId
   data_n: number;
@@ -71,13 +71,15 @@ export interface DbChallenge extends DbKey {
   difficulty: ChallengeDifficulty;
   bundle: string;
   tests: string;
+  createdAt: number;
   tags: string[];
-  stats: {
-    submissions: number;
-    solved: number;
-    solutions: number;
-    likes: number;
-  };
+  stats: ChallengeStats;
+}
+
+export interface DbChallengeSolved extends DbKey {
+  userId: string;
+  challengeId: number;
+  solvedAt: number;
 }
 
 /* LAMBDA TYPES */

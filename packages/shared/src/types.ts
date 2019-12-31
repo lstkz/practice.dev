@@ -19,10 +19,16 @@ export interface Challenge {
   isSolved: boolean;
   createdAt: string;
   stats: ChallengeStats;
-  difficulty: number;
+  difficulty: ChallengeDifficulty;
+  domain: ChallengeDomain;
 }
 
 export interface ChallengeStats {
   submissions: number;
   solved: number;
+  solutions: number;
+  likes: number;
 }
+
+export type ChallengeDomain = 'frontend' | 'backend' | 'fullstack' | 'styling';
+export type ChallengeDifficulty = 'easy' | 'medium' | 'hard';

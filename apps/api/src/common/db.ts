@@ -35,6 +35,11 @@ type CreateKeyOptions =
   | {
       type: 'CHALLENGE';
       id: number;
+    }
+  | {
+      type: 'CHALLENGE_SOLVED';
+      challengeId: number;
+      userId: string;
     };
 
 export function createKey(
@@ -91,10 +96,15 @@ export function createKey(
       };
     }
     case 'CHALLENGE': {
-      const pk = `CHALLENGE:${options.id}`;
       return {
-        pk,
+        pk: `CHALLENGE:${options.id}`,
         sk: 'CHALLENGE',
+      };
+    }
+    case 'CHALLENGE_SOLVED': {
+      return {
+        pk: `CHALLENGE_SOLVED:${options.userId}`,
+        sk: `CHALLENGE_SOLVED:${options.challengeId}`,
       };
     }
     default:
@@ -168,8 +178,12 @@ export function prepareUpdate<T extends DbKey>(item: T, keys: Array<keyof T>) {
     ret[`:${key}`] = item[key];
     return ret;
   }, {} as { [x: string]: any });
+  const names = keys.reduce((ret, key) => {
+    ret[`#${key}`] = key;
+    return ret;
+  }, {} as { [x: string]: any });
 
-  const mappedKeys = keys.map(key => `${key} = :${key}`);
+  const mappedKeys = keys.map(key => `#${key} = :${key}`);
 
   return {
     Key: {
@@ -178,6 +192,7 @@ export function prepareUpdate<T extends DbKey>(item: T, keys: Array<keyof T>) {
     },
     UpdateExpression: `SET ${mappedKeys.join(', ')}`,
     ExpressionAttributeValues: Converter.marshall(values),
+    ExpressionAttributeNames: names,
   };
 }
 

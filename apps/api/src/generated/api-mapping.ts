@@ -6,6 +6,10 @@ interface ApiMapping {
   [x: string]: () => Promise<BindingResult>;
 }
 export const apiMapping: ApiMapping = {
+  'challenge.updateChallenge': () =>
+    import(
+      /* webpackChunkName: "challenge.updateChallenge"*/ '../contracts/challenge/updateChallenge'
+    ).then(x => x['updateChallengeRpc']),
   'user.authGithub': () =>
     import(
       /* webpackChunkName: "user.authGithub"*/ '../contracts/user/authGithub'

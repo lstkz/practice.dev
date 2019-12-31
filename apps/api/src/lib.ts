@@ -42,6 +42,7 @@ export const BASE_URL = process.env.BASE_URL || 'https://practice.dev';
 
 export interface CreateRpcBindingOptions {
   public?: true;
+  admin?: true;
   signature: string;
   handler: (...args: any[]) => any;
 }
@@ -59,6 +60,19 @@ export const { createContract, runWithContext, getContext } = initialize<
 >({
   debug: process.env.NODE_ENV === 'development',
 });
+
+export const getLoggedInUser = () => {
+  const { user } = getContext();
+  if (!user) {
+    throw new Error('Expected user to be logged in.');
+  }
+  return user;
+};
+
+export const getLoggedInUserOrAnonymous = () => {
+  const { user } = getContext();
+  return user;
+};
 
 type MapEvents<T> = T extends { type: string }
   ? { type: T['type']; handler: (event: T) => Promise<any> }

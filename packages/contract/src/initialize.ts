@@ -28,7 +28,7 @@ export function initialize<T>(config: Partial<ContractConfig> = {}) {
       },
       hook
     ),
-    runWithContext: async (context: T, fn: () => any) => {
+    runWithContext: async <R>(context: T, fn: () => R): Promise<R> => {
       return await hook.runInNewScope(() => {
         hook.setContext(context);
         return fn();

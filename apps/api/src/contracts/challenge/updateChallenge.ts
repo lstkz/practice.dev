@@ -1,6 +1,6 @@
 import { S } from 'schema';
 import * as R from 'remeda';
-import { createContract } from '../../lib';
+import { createContract, createRpcBinding } from '../../lib';
 import { createKey, getItem, updateItem, putItems } from '../../common/db';
 import { DbChallenge } from '../../types';
 import { safeAssign, safeKeys } from '../../common/helper';
@@ -31,6 +31,7 @@ export const updateChallenge = createContract('challenge.updateChallenge')
         ...challengeKey,
         data_n: values.id,
         ...exactValues,
+        createdAt: Date.now(),
         stats: {
           likes: 0,
           solutions: 0,
@@ -43,3 +44,9 @@ export const updateChallenge = createContract('challenge.updateChallenge')
 
     return values.id;
   });
+
+export const updateChallengeRpc = createRpcBinding({
+  admin: true,
+  signature: 'challenge.updateChallenge',
+  handler: updateChallenge,
+});

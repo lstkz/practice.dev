@@ -1,5 +1,4 @@
 import { S } from 'schema';
-import { AppError } from '../../common/errors';
 import { createContract } from '../../lib';
 import { createKey, getItemEnsure } from '../../common/db';
 import { DbUser } from '../../types';
