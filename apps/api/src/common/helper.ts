@@ -88,3 +88,24 @@ export async function getResponseBody<T = any>(opName: string, res: Response) {
   }
   return body as T;
 }
+
+export function getDuration(n: number, type: 's' | 'm' | 'h' | 'd') {
+  const seconds = 1000;
+  const minutes = seconds * 60;
+  const hours = minutes * 60;
+  const days = 24 * hours;
+  switch (type) {
+    case 's': {
+      return n * seconds;
+    }
+    case 'm': {
+      return n * minutes;
+    }
+    case 'h': {
+      return n * hours;
+    }
+    case 'd': {
+      return n * days;
+    }
+  }
+}

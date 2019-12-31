@@ -53,6 +53,12 @@ export interface DbGithubUser extends DbKey {
   githubId: number;
 }
 
+export interface DbResetPasswordCode extends DbKey {
+  userId: string;
+  code: string;
+  expireAt: number;
+}
+
 /* LAMBDA TYPES */
 // from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/aws-lambda/index.d.ts
 

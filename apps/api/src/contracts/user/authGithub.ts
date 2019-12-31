@@ -1,5 +1,5 @@
 import { S } from 'schema';
-import { createContract } from '../../lib';
+import { createContract, createRpcBinding } from '../../lib';
 import { exchangeCode, getUserData, GitHubUserData } from '../../common/github';
 import {
   createKey,
@@ -79,3 +79,9 @@ export const authGithub = createContract('auth.authGithub')
     });
     return _generateAuthData(createdUser);
   });
+
+export const authGithubRpc = createRpcBinding({
+  public: true,
+  signature: 'user.authGithub',
+  handler: authGithub,
+});

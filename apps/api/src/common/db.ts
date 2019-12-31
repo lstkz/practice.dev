@@ -27,6 +27,10 @@ type CreateKeyOptions =
   | {
       type: 'GITHUB_USER';
       id: number;
+    }
+  | {
+      type: 'RESET_PASSWORD_CODE';
+      code: string;
     };
 
 export function createKey(
@@ -70,6 +74,13 @@ export function createKey(
     }
     case 'GITHUB_USER': {
       const pk = `GITHUB_USER:${options.id}`;
+      return {
+        pk,
+        sk: pk,
+      };
+    }
+    case 'RESET_PASSWORD_CODE': {
+      const pk = `RESET_PASSWORD_CODE:${options.code}`;
       return {
         pk,
         sk: pk,
