@@ -1,5 +1,7 @@
 import crypto from 'crypto';
 import { Response } from 'node-fetch';
+import { DynamoDB } from 'aws-sdk';
+import { AppError } from './errors';
 
 const SECURITY = {
   SALT_LENGTH: 64,
@@ -117,4 +119,35 @@ export function safeAssign<T extends V, V>(target: T, values: V) {
 
 export function safeKeys<T>(obj: T): Array<keyof T> {
   return Object.keys(obj) as any;
+}
+
+function getEncHash(data: string) {
+  return crypto
+    .createHash('md5')
+    .update(data)
+    .digest('hex')
+    .substr(0, 10);
+}
+
+export function encLastKey(key: DynamoDB.Key | undefined) {
+  if (!key) {
+    return undefined;
+  }
+  const data = new Buffer(JSON.stringify(key)).toString('base64');
+  return data + '.' + getEncHash(data);
+}
+
+export function decLastKey(key: string | undefined) {
+  if (!key) {
+    return undefined;
+  }
+  const [data, hash] = key.split('.');
+  if (!hash) {
+    return new AppError('Invalid lastKey');
+  }
+  const expectedHash = getEncHash(data);
+  if (hash !== expectedHash) {
+    return new AppError('Invalid lastKey');
+  }
+  return JSON.parse(new Buffer(data, 'base64').toString('utf8'));
 }

@@ -5,6 +5,11 @@ export interface User {
   isVerified: boolean;
 }
 
+export interface PublicUser {
+  id: string;
+  username: string;
+}
+
 export interface AuthData {
   user: User;
   token: string;
@@ -32,3 +37,20 @@ export interface ChallengeStats {
 
 export type ChallengeDomain = 'frontend' | 'backend' | 'fullstack' | 'styling';
 export type ChallengeDifficulty = 'easy' | 'medium' | 'hard';
+
+export interface Solution {
+  id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  createdAt: string;
+  likes: number;
+  tags: string[];
+  user: PublicUser;
+}
+
+export interface ChallengeSolved {
+  user: PublicUser;
+  challengeId: number;
+  solvedAt: number;
+}

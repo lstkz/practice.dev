@@ -40,6 +40,24 @@ type CreateKeyOptions =
       type: 'CHALLENGE_SOLVED';
       challengeId: number;
       userId: string;
+    }
+  | {
+      type: 'SOLUTION';
+      challengeId: number;
+      solutionId: string;
+      slug: string;
+    }
+  | {
+      type: 'SOLUTION_USER';
+      challengeId: number;
+      solutionId: string;
+      userId: string;
+    }
+  | {
+      type: 'SOLUTION_TAG';
+      challengeId: number;
+      solutionId: string;
+      tag: string;
     };
 
 export function createKey(
@@ -105,6 +123,24 @@ export function createKey(
       return {
         pk: `CHALLENGE_SOLVED:${options.userId}`,
         sk: `CHALLENGE_SOLVED:${options.challengeId}`,
+      };
+    }
+    case 'SOLUTION': {
+      return {
+        pk: `SOLUTION:${options.challengeId}:${options.slug}`,
+        sk: `SOLUTION:${options.challengeId}`,
+      };
+    }
+    case 'SOLUTION_USER': {
+      return {
+        pk: `SOLUTION_USER:${options.solutionId}`,
+        sk: `SOLUTION_USER:${options.userId}`,
+      };
+    }
+    case 'SOLUTION_TAG': {
+      return {
+        pk: `SOLUTION_TAG:${options.solutionId}`,
+        sk: `SOLUTION_TAG:${options.challengeId}:${options.tag}`,
       };
     }
     default:
@@ -213,6 +249,10 @@ interface TransactWriteItems {
   deleteItems?: Array<{ pk: string; sk: string }>;
   updateItems?: Array<Omit<AWS.DynamoDB.Update, 'TableName'>>;
   putItems?: Array<{ pk: string; sk: string }>;
+  conditionalPutItems?: Array<{
+    expression: string;
+    item: { pk: string; sk: string };
+  }>;
 }
 
 export async function transactWriteItems(options: TransactWriteItems) {
@@ -237,10 +277,25 @@ export async function transactWriteItems(options: TransactWriteItems) {
     },
   }));
 
+  const conditionalPutItemsPutItems = (options.conditionalPutItems || []).map(
+    item => ({
+      Put: {
+        TableName: TABLE_NAME,
+        ConditionExpression: item.expression,
+        Item: Converter.marshall(item.item),
+      },
+    })
+  );
+
   await dynamodb
     .transactWriteItems(
       {
-        TransactItems: [...deleteItems, ...updateItems, ...putItems],
+        TransactItems: [
+          ...deleteItems,
+          ...updateItems,
+          ...putItems,
+          ...conditionalPutItemsPutItems,
+        ],
       },
       undefined
     )

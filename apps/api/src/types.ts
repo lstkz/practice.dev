@@ -79,7 +79,23 @@ export interface DbChallenge extends DbKey {
 export interface DbChallengeSolved extends DbKey {
   userId: string;
   challengeId: number;
-  solvedAt: number;
+  // solvedAt
+  data_n: number;
+}
+
+export interface DbSolution extends DbKey {
+  // createdAt
+  data_n: number;
+  // likes
+  data2_n: number;
+  solutionId: string;
+  description?: string;
+  challengeId: number;
+  userId: string;
+  title: string;
+  slug: string;
+  url: string;
+  tags: string[];
 }
 
 /* LAMBDA TYPES */

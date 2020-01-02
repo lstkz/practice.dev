@@ -1,6 +1,5 @@
 import { registerSampleUsers } from '../seed-data';
 import { resetDb, setChallengeStats } from '../helper';
-import { getUserByToken } from '../../src/contracts/user/getUserByToken';
 import { makeAdmin } from '../../src/contracts/user/makeAdmin';
 import { updateChallenge } from '../../src/contracts/challenge/updateChallenge';
 import { getChallengeById } from '../../src/contracts/challenge/getChallengeById';

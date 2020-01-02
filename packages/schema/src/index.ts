@@ -36,6 +36,12 @@ export const S = {
   or() {
     return new OrSchema();
   },
+  pageSize() {
+    return this.number()
+      .min(1)
+      .max(100)
+      .default(30);
+  },
 };
 
 export {

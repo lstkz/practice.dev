@@ -55,4 +55,21 @@ export class AnySchema<TReq = true, TNull = false> {
     });
     return (this as any) as AnySchema<TReq, true>;
   }
+
+  default(defaultValue: any) {
+    this.validators.push({
+      priority: -200,
+      type: 'base.default',
+      validate: (value: any, path) => {
+        if (value == null) {
+          return {
+            stop: true,
+            value: defaultValue,
+          };
+        }
+        return null;
+      },
+    });
+    return this;
+  }
 }

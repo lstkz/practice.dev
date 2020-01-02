@@ -10,6 +10,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "challenge.updateChallenge"*/ '../contracts/challenge/updateChallenge'
     ).then(x => x['updateChallengeRpc']),
+  'solution.createSolution': () =>
+    import(
+      /* webpackChunkName: "solution.createSolution"*/ '../contracts/solution/createSolution'
+    ).then(x => x['createSolutionRpc']),
   'user.authGithub': () =>
     import(
       /* webpackChunkName: "user.authGithub"*/ '../contracts/user/authGithub'

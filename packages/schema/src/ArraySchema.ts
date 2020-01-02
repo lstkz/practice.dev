@@ -77,4 +77,46 @@ export class ArraySchema<
   nullable() {
     return (super.nullable() as any) as ArraySchema<TReq, true, TItem>;
   }
+
+  min(min: number) {
+    this.validators.push({
+      type: 'array.min',
+      validate: (value: any[], path) => {
+        if (value.length < min) {
+          return {
+            stop: true,
+            error: {
+              type: 'array.port',
+              message: `must have at least ${min} item`,
+              path,
+              value,
+            },
+          };
+        }
+        return null;
+      },
+    });
+    return this;
+  }
+
+  max(max: number) {
+    this.validators.push({
+      type: 'array.max',
+      validate: (value: any[], path) => {
+        if (value.length > max) {
+          return {
+            stop: true,
+            error: {
+              type: 'array.port',
+              message: `must have max ${max} items`,
+              path,
+              value,
+            },
+          };
+        }
+        return null;
+      },
+    });
+    return this;
+  }
 }
