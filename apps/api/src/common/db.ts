@@ -437,7 +437,23 @@ export async function queryIndex<T>(options: QueryIndexOptions) {
   );
 }
 
-interface QueryMainIndexOptions {
+export async function queryIndexAll<T>(options: QueryIndexOptions) {
+  const result: T[] = [];
+  const travel = async (cursor: null | string) => {
+    const ret = await queryIndex<T>({
+      ...options,
+      cursor,
+    });
+    result.push(...ret.items);
+    if (ret.cursor) {
+      await travel(ret.cursor);
+    }
+  };
+  await travel(null);
+  return result;
+}
+
+interface QueryMainIndexOptions extends BaseQueryOptions {
   pk: string;
 }
 
@@ -453,6 +469,22 @@ export async function queryMainIndex<T>(options: QueryMainIndexOptions) {
     },
     base
   );
+}
+
+export async function queryMainIndexAll<T>(options: QueryMainIndexOptions) {
+  const result: T[] = [];
+  const travel = async (cursor: null | string) => {
+    const ret = await queryMainIndex<T>({
+      ...options,
+      cursor,
+    });
+    result.push(...ret.items);
+    if (ret.cursor) {
+      await travel(ret.cursor);
+    }
+  };
+  await travel(null);
+  return result;
 }
 
 async function _query<T>(

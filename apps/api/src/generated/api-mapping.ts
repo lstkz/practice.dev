@@ -6,6 +6,10 @@ interface ApiMapping {
   [x: string]: () => Promise<BindingResult>;
 }
 export const apiMapping: ApiMapping = {
+  'challenge.searchChallenges': () =>
+    import(
+      /* webpackChunkName: "challenge.searchChallenges"*/ '../contracts/challenge/searchChallenges'
+    ).then(x => x['searchChallengesRpc']),
   'challenge.searchSolved': () =>
     import(
       /* webpackChunkName: "challenge.searchSolved"*/ '../contracts/challenge/searchSolved'

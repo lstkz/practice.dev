@@ -1,4 +1,4 @@
-import { createContract, getLoggedInUser } from '../../lib';
+import { createContract } from '../../lib';
 import { S } from 'schema';
 import { createStatsUpdate } from './createStatsUpdate';
 import { transactWriteItems, createKey } from '../../common/db';

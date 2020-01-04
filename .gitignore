@@ -9,6 +9,7 @@ build/
 *.tsbuildinfo
 cdk.out
 .cache
+.env-prod
 
 # Runtime data
 pids
