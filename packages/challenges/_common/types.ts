@@ -1,8 +1,8 @@
-export type ChallengeTag = 'frontend' | 'easy' | 'medium' | 'hard';
-
 export interface ChallengeInfo {
-  id: 1;
+  id: number;
   title: string;
   description: string;
-  tags: ChallengeTag[];
+  tags: string[];
+  domain: 'frontend' | 'backend' | 'fullstack' | 'styling';
+  difficulty: 'easy' | 'medium' | 'hard';
 }

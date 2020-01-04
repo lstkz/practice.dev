@@ -40,7 +40,14 @@ export const S = {
     return this.number()
       .min(1)
       .max(100)
+      .optional()
       .default(30);
+  },
+  pageNumber() {
+    return this.number()
+      .optional()
+      .default(0)
+      .min(0);
   },
 };
 

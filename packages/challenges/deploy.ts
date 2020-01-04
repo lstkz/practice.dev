@@ -1,8 +1,13 @@
 import path from 'path';
 import fs from 'fs-extra';
-import fetch from 'node-fetch';
 import AWS from 'aws-sdk';
 import { ChallengeInfo } from './_common/types';
+import { APIClient } from 'shared';
+import { XMLHttpRequest } from 'xmlhttprequest';
+
+function createXHR() {
+  return new XMLHttpRequest();
+}
 
 const API_URL = process.env.API_URL!;
 const API_TOKEN = process.env.API_TOKEN!;
@@ -20,6 +25,8 @@ if (!API_TOKEN) {
 if (!S3_BUCKET_NAME) {
   throw new Error('S3_BUCKET_NAME is not defined');
 }
+
+const api = new APIClient(API_URL, () => API_TOKEN, createXHR);
 
 // if (!AWS_REGION) {
 //   throw new Error('AWS_REGION is not defined');
@@ -136,34 +143,13 @@ Object.values(packageMap).forEach(async pkg => {
       uploadFile(testFile!, 'tests'),
     ]);
 
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        authorization: `Bearer ${API_TOKEN}`,
-      },
-      body: JSON.stringify({
-        query: /* GraphQL */ `
-          mutation updateChallenge($values: UpdateChallengeValues!) {
-            updateChallenge(values: $values)
-          }
-        `,
-        variables: {
-          values: {
-            ...info,
-            bundle: detailsS3Key,
-            tests: testsS3Key,
-          },
-        },
-      }),
-    });
-
-    const body = await res.json();
-    if (res.status !== 200 || (body.errors && body.errors.length)) {
-      console.error('Failed to process ', name);
-      console.error(body.errors);
-      process.exit(1);
-    }
+    await api
+      .challenge_updateChallenge({
+        ...info,
+        bundle: detailsS3Key,
+        tests: testsS3Key,
+      })
+      .toPromise();
   } catch (e) {
     console.error('Failed to process ', name);
     console.error(e);

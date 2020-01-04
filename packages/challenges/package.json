@@ -19,12 +19,14 @@
   "dependencies": {
     "@types/fs-extra": "^5.1.0",
     "@types/node-fetch": "^2.3.3",
+    "clean-webpack-plugin": "^0.1.19",
     "fs-extra": "^8.0.0",
     "node-fetch": "^2.5.0",
     "raw-loader": "^2.0.0",
     "tester": "*",
     "webpack": "^4.41.2",
-    "webpack-dev-server": "^3.8.0"
+    "webpack-dev-server": "^3.8.0",
+    "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {},
   "keywords": [],

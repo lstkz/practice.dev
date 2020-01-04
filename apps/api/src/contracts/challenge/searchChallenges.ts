@@ -119,7 +119,7 @@ export const searchChallenges = createContract('challenge.searchChallenges')
   });
 
 export const searchChallengesRpc = createRpcBinding({
-  admin: true,
+  public: true,
   signature: 'challenge.searchChallenges',
   handler: searchChallenges,
 });

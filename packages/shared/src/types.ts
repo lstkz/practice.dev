@@ -162,3 +162,11 @@ export type SocketMessage =
         success: boolean;
       };
     };
+
+export interface PagedResult<T> {
+  items: T[];
+  total: number;
+  pageSize: number;
+  pageNumber: number;
+  totalPages: number;
+}
