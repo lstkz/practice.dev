@@ -2,8 +2,8 @@
 
 import { Browser } from 'puppeteer';
 
-const chromium = process.env.AWS ? require('chrome-aws-lambda') : null;
-const puppeteer = process.env.AWS
+const chromium = process.env.IS_AWS ? require('chrome-aws-lambda') : null;
+const puppeteer = process.env.IS_AWS
   ? require('puppeteer-core')
   : require('puppeteer');
 
@@ -13,7 +13,7 @@ export function connect(options: any): Browser {
 
 export async function launch({ headless }: { headless: boolean }) {
   return (await puppeteer.launch(
-    process.env.AWS
+    process.env.IS_AWS
       ? {
           args: chromium.args,
           defaultViewport: chromium.defaultViewport,

@@ -84,7 +84,7 @@ export class MainStack extends cdk.Stack {
 
     const layer = new lambda.LayerVersion(this, 'TesterLayer', {
       code: lambda.Code.fromAsset(Path.join(__dirname, '../tester-layer')),
-      compatibleRuntimes: [lambda.Runtime.NODEJS_8_10],
+      compatibleRuntimes: [lambda.Runtime.NODEJS_10_X],
       license: 'Apache-2.0',
     });
 
@@ -93,7 +93,7 @@ export class MainStack extends cdk.Stack {
         Path.join(__dirname, '../../../apps/api/dist')
       ),
       handler: 'app-lambda.handler',
-      runtime: lambda.Runtime.NODEJS_8_10,
+      runtime: lambda.Runtime.NODEJS_10_X,
       environment: envVariables,
       timeout: cdk.Duration.seconds(90),
       memorySize: 1856,

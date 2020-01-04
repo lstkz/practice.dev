@@ -40,7 +40,9 @@ module.exports = {
   },
   externals: [
     function(context, request, callback) {
-      if (/^aws-sdk|chrome-aws-lambda|puppeteer-core|puppeteer/.test(request)) {
+      if (
+        /^aws-sdk|^chrome-aws-lambda|^puppeteer-core|^puppeteer/.test(request)
+      ) {
         return callback(null, 'commonjs ' + request);
       }
       callback();
