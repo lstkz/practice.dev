@@ -1,7 +1,9 @@
+import * as R from 'remeda';
 import { dynamodb, TABLE_NAME } from '../lib';
 import { AppError, UnreachableCaseError } from './errors';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { DbKey } from '../types';
+import DynamoDB = require('aws-sdk/clients/dynamodb');
 
 type CreateKeyOptions =
   | {
@@ -58,6 +60,19 @@ type CreateKeyOptions =
       challengeId: number;
       solutionId: string;
       tag: string;
+    }
+  | {
+      type: 'SEQUENCE';
+      key: string;
+    }
+  | {
+      type: 'RATE_LIMIT';
+      key: string;
+    }
+  | {
+      type: 'SOCKET_CONNECTION';
+      connectionId: string;
+      userId: string;
     };
 
 export function createKey(
@@ -143,6 +158,26 @@ export function createKey(
         sk: `SOLUTION_TAG:${options.challengeId}:${options.tag}`,
       };
     }
+    case 'SEQUENCE': {
+      const pk = `SEQUENCE:${options.key}`;
+      return {
+        pk,
+        sk: pk,
+      };
+    }
+    case 'RATE_LIMIT': {
+      const pk = `RATE_LIMIT:${options.key}`;
+      return {
+        pk,
+        sk: pk,
+      };
+    }
+    case 'SOCKET_CONNECTION': {
+      return {
+        pk: `SOCKET_CONNECTION:${options.connectionId}`,
+        sk: `SOCKET_CONNECTION:${options.userId}`,
+      };
+    }
     default:
       throw new UnreachableCaseError(options);
   }
@@ -173,14 +208,22 @@ export async function putItems(items: any[] | any) {
   }
 }
 
-export async function getItem<T>(key: {
-  pk: string;
-  sk: string;
-}): Promise<T | undefined> {
+interface GetItemOptions {
+  consistentRead?: boolean;
+}
+
+export async function getItem<T>(
+  key: {
+    pk: string;
+    sk: string;
+  },
+  options: GetItemOptions = {}
+): Promise<T | undefined> {
   const { Item: item } = await dynamodb
     .getItem({
       TableName: TABLE_NAME,
       Key: Converter.marshall(key),
+      ConsistentRead: options.consistentRead,
     })
     .promise();
   return item ? (Converter.unmarshall(item) as any) : undefined;
@@ -300,4 +343,85 @@ export async function transactWriteItems(options: TransactWriteItems) {
       undefined
     )
     .promise();
+}
+
+export async function batchRawWriteItemWithRetry(
+  requestItems: DynamoDB.BatchWriteItemRequestMap,
+  retry = 20
+) {
+  if (!retry) {
+    console.error('requestItems', requestItems);
+    throw new Error('Cannot process batchWriteItemWithRetry. Retry = 0.');
+  }
+  const result = await dynamodb
+    .batchWriteItem({
+      RequestItems: requestItems,
+    })
+    .promise();
+
+  if (result.UnprocessedItems && Object.keys(result.UnprocessedItems).length) {
+    await batchRawWriteItemWithRetry(result.UnprocessedItems);
+  }
+}
+
+export async function batchDelete<T extends DbKey>(items: T[]) {
+  if (!items.length) {
+    return;
+  }
+  await batchRawWriteItemWithRetry({
+    [TABLE_NAME]: items.map(item => ({
+      DeleteRequest: {
+        Key: Converter.marshall(R.pick(item, ['sk', 'pk'])),
+      },
+    })),
+  });
+}
+
+interface QueryIndexOptions {
+  index: 'sk-data_n-index' | 'sk-data2_n-index';
+  sk: string;
+}
+
+export async function queryIndex<T>(options: QueryIndexOptions) {
+  const { index, sk } = options;
+  const result = await dynamodb
+    .query({
+      TableName: TABLE_NAME,
+      IndexName: index,
+      KeyConditionExpression: 'sk = :sk',
+      ExpressionAttributeValues: {
+        ':sk': {
+          S: sk,
+        },
+      },
+    })
+    .promise();
+  return _mapQueryResult<T>(result);
+}
+
+interface QueryMainIndexOptions {
+  pk: string;
+}
+
+export async function queryMainIndex<T>(options: QueryMainIndexOptions) {
+  const { pk } = options;
+  const result = await dynamodb
+    .query({
+      TableName: TABLE_NAME,
+      KeyConditionExpression: 'pk = :pk',
+      ExpressionAttributeValues: {
+        ':pk': {
+          S: pk,
+        },
+      },
+    })
+    .promise();
+  return _mapQueryResult<T>(result);
+}
+
+function _mapQueryResult<T>(result: DynamoDB.QueryOutput) {
+  return {
+    items: (result.Items || []).map(item => Converter.unmarshall(item) as T),
+    lastEvaluatedKey: result.LastEvaluatedKey,
+  };
 }

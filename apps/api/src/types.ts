@@ -98,6 +98,18 @@ export interface DbSolution extends DbKey {
   tags: string[];
 }
 
+export interface DbRateLimit extends DbKey {
+  count: number;
+  expireAt: number;
+  version: number;
+}
+
+export interface DbSocketConnection extends DbKey {
+  // createdAt
+  data_n: number;
+  connectionId: string;
+}
+
 /* LAMBDA TYPES */
 // from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/aws-lambda/index.d.ts
 
