@@ -1,10 +1,11 @@
 import { AWSError, DynamoDB } from 'aws-sdk';
 import { AppError } from '../../common/errors';
-import { dynamodb, TABLE_NAME, createContract } from '../../lib';
+import { dynamodb, createContract } from '../../lib';
 import { S } from 'schema';
 import { createKey, getItem } from '../../common/db';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { DbRateLimit } from '../../types';
+import { TABLE_NAME } from '../../config';
 
 async function updateWithConditionCheck(params: DynamoDB.PutItemInput) {
   try {

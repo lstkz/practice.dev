@@ -1,10 +1,11 @@
 import * as R from 'remeda';
-import { dynamodb, TABLE_NAME } from '../lib';
+import { dynamodb } from '../lib';
 import { AppError, UnreachableCaseError } from './errors';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { DbKey } from '../types';
 import DynamoDB = require('aws-sdk/clients/dynamodb');
 import { decLastKey, encLastKey } from './helper';
+import { TABLE_NAME } from '../config';
 
 type CreateKeyOptions =
   | {

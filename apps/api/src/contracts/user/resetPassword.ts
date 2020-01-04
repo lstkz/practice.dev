@@ -1,11 +1,5 @@
 import { S } from 'schema';
-import {
-  createContract,
-  createRpcBinding,
-  ses,
-  EMAIL_SENDER,
-  BASE_URL,
-} from '../../lib';
+import { createContract, createRpcBinding, ses } from '../../lib';
 import { _createUser } from './_createUser';
 import { _generateAuthData } from './_generateAuthData';
 import { AppError } from '../../common/errors';
@@ -14,6 +8,7 @@ import { randomUniqString, getDuration } from '../../common/helper';
 import { createKey, putItems } from '../../common/db';
 import { DbResetPasswordCode } from '../../types';
 import { getDbUserById } from './getDbUserById';
+import { BASE_URL, EMAIL_SENDER } from '../../config';
 
 export const resetPassword = createContract('user.resetPassword')
   .params('emailOrUsername')

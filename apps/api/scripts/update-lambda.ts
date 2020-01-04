@@ -2,7 +2,7 @@ import Lambda from 'aws-sdk/clients/lambda';
 import AdmZip from 'adm-zip';
 import path from 'path';
 import fs from 'fs';
-import { AWS_REGION } from '../config';
+
 function getLambdaZipFile() {
   const baseDir = path.join(__dirname, '../dist');
   const zip = new AdmZip();
@@ -20,7 +20,7 @@ function getLambdaZipFile() {
 }
 
 const lambda = new Lambda({
-  region: AWS_REGION,
+  // region: AWS_REGION,
 });
 
 lambda

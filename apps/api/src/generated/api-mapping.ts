@@ -6,6 +6,10 @@ interface ApiMapping {
   [x: string]: () => Promise<BindingResult>;
 }
 export const apiMapping: ApiMapping = {
+  'challenge.searchSolved': () =>
+    import(
+      /* webpackChunkName: "challenge.searchSolved"*/ '../contracts/challenge/searchSolved'
+    ).then(x => x['searchSolvedRpc']),
   'challenge.updateChallenge': () =>
     import(
       /* webpackChunkName: "challenge.updateChallenge"*/ '../contracts/challenge/updateChallenge'
@@ -14,6 +18,14 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "solution.createSolution"*/ '../contracts/solution/createSolution'
     ).then(x => x['createSolutionRpc']),
+  'submission.searchSubmissions': () =>
+    import(
+      /* webpackChunkName: "submission.searchSubmissions"*/ '../contracts/submission/searchSubmissions'
+    ).then(x => x['searchSubmissionsRpc']),
+  'challenge.submit': () =>
+    import(
+      /* webpackChunkName: "challenge.submit"*/ '../contracts/submission/submit'
+    ).then(x => x['submitRpc']),
   'user.authGithub': () =>
     import(
       /* webpackChunkName: "user.authGithub"*/ '../contracts/user/authGithub'

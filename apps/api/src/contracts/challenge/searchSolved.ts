@@ -1,10 +1,5 @@
 import { QueryInput } from 'aws-sdk/clients/dynamodb';
-import {
-  createContract,
-  createRpcBinding,
-  dynamodb,
-  TABLE_NAME,
-} from '../../lib';
+import { createContract, createRpcBinding, dynamodb } from '../../lib';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { S } from 'schema';
 import { AppError } from '../../common/errors';
@@ -14,6 +9,7 @@ import { getDbUserByUsername } from '../user/getDbUserByUsername';
 import { getUsersByIds } from '../user/getUsersByIds';
 import { DbChallengeSolved } from '../../types';
 import { mapDbChallengeSolvedMany } from '../../common/mapping';
+import { TABLE_NAME } from '../../config';
 
 export const searchSolved = createContract('challenge.searchSolved')
   .params('criteria')

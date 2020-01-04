@@ -34,7 +34,7 @@ export interface DbUser extends DbKey {
   password: string;
   isVerified: boolean;
   githubId?: number;
-  isAdmin: boolean;
+  isAdmin?: boolean;
 }
 
 export interface DbUserEmail extends DbKey {

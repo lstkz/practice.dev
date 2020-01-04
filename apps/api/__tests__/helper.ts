@@ -1,7 +1,8 @@
-import { dynamodb, TABLE_NAME } from '../src/lib';
+import { dynamodb } from '../src/lib';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { ChallengeStats } from 'shared';
 import { createKey } from '../src/common/db';
+import { TABLE_NAME } from '../src/config';
 
 export async function resetDb() {
   const deleteNext = async () => {

@@ -1,10 +1,10 @@
-import { createContract, getContext, createRpcBinding } from '../../lib';
+import { createContract, createRpcBinding, getLoggedInUser } from '../../lib';
 import { mapDbUser } from '../../common/mapping';
 
 export const getMe = createContract('user.getMe')
   .params()
   .fn(async () => {
-    const { user } = getContext();
+    const user = getLoggedInUser();
     return mapDbUser(user);
   });
 

@@ -1,9 +1,10 @@
-import { createContract, TABLE_NAME, dynamodb } from '../../lib';
+import { createContract, dynamodb } from '../../lib';
 import { S } from 'schema';
 import * as R from 'remeda';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { createKey } from '../../common/db';
 import { DbUser } from '../../types';
+import { TABLE_NAME } from '../../config';
 
 export const getUsersByIds = createContract('user.getUsersByIds')
   .params('ids')

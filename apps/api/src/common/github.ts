@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
-import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from '../lib';
 import { getResponseBody } from './helper';
+import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from '../config';
 
 const BASE_URL = `https://api.github.com`;
 

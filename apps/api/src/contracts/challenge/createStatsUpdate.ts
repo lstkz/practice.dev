@@ -1,7 +1,7 @@
-import { TABLE_NAME } from '../../lib';
 import { ChallengeStats } from 'shared';
 import { createKey } from '../../common/db';
 import { Converter } from 'aws-sdk/clients/dynamodb';
+import { TABLE_NAME } from '../../config';
 
 export function createStatsUpdate(
   challengeId: number,

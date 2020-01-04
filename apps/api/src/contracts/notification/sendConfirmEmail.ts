@@ -1,15 +1,10 @@
 import { S } from 'schema';
-import {
-  createContract,
-  createEventBinding,
-  BASE_URL,
-  EMAIL_SENDER,
-  ses,
-} from '../../lib';
+import { createContract, createEventBinding, ses } from '../../lib';
 import { randomUniqString } from '../../common/helper';
 import { getDbUserById } from '../user/getDbUserById';
 import { putItems, createKey } from '../../common/db';
 import { DbConfirmCode } from '../../types';
+import { BASE_URL, EMAIL_SENDER } from '../../config';
 
 export const sendConfirmEmail = createContract('notification.sendConfirmEmail')
   .params('userId', 'registeredAt')

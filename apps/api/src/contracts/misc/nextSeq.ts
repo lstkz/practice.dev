@@ -1,7 +1,8 @@
 import { S } from 'schema';
 import { Converter } from 'aws-sdk/clients/dynamodb';
-import { createContract, dynamodb, TABLE_NAME } from '../../lib';
+import { createContract, dynamodb } from '../../lib';
 import { createKey } from '../../common/db';
+import { TABLE_NAME } from '../../config';
 
 export const nexSeq = createContract('misc.nextSeq')
   .params('key')
