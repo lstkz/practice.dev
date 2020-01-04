@@ -1,6 +1,19 @@
 import * as R from 'remeda';
-import { DbUser, DbChallenge, DbSolution, DbChallengeSolved } from '../types';
-import { User, Challenge, Solution, ChallengeSolved } from 'shared';
+import {
+  DbUser,
+  DbChallenge,
+  DbSolution,
+  DbChallengeSolved,
+  DbSubmission,
+} from '../types';
+import {
+  User,
+  Challenge,
+  Solution,
+  ChallengeSolved,
+  Submission,
+  PublicUser,
+} from 'shared';
 
 export function mapDbUser(item: DbUser): User {
   return {
@@ -8,6 +21,13 @@ export function mapDbUser(item: DbUser): User {
     email: item.email,
     username: item.username,
     isVerified: item.isVerified,
+  };
+}
+
+function mapToPublicUser(item: DbUser): PublicUser {
+  return {
+    id: item.userId,
+    username: item.username,
   };
 }
 
@@ -35,10 +55,7 @@ export function mapDbSolution(item: DbSolution, user: DbUser): Solution {
     createdAt: new Date(item.data_n).toISOString(),
     likes: item.data2_n,
     tags: item.tags,
-    user: {
-      id: user.userId,
-      username: user.username,
-    },
+    user: mapToPublicUser(user),
   };
 }
 
@@ -49,10 +66,7 @@ export function mapDbChallengeSolved(
   return {
     challengeId: item.challengeId,
     solvedAt: item.data_n,
-    user: {
-      id: user.userId,
-      username: user.username,
-    },
+    user: mapToPublicUser(user),
   };
 }
 
@@ -62,4 +76,22 @@ export function mapDbChallengeSolvedMany(
 ): ChallengeSolved[] {
   const userMap = R.indexBy(users, x => x.userId);
   return items.map(item => mapDbChallengeSolved(item, userMap[item.userId]));
+}
+
+export function mapDbSubmission(item: DbSubmission, user: DbUser): Submission {
+  return {
+    id: item.submissionId,
+    challengeId: item.challengeId,
+    user: mapToPublicUser(user),
+    status: item.status,
+    createdAt: new Date(item.data_n).toISOString(),
+  };
+}
+
+export function mapDbSubmissionMany(
+  items: DbSubmission[],
+  users: DbUser[]
+): Submission[] {
+  const userMap = R.indexBy(users, x => x.userId);
+  return items.map(item => mapDbSubmission(item, userMap[item.userId]));
 }

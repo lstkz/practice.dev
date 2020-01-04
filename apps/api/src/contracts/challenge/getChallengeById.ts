@@ -1,9 +1,9 @@
 import { createContract, getLoggedInUserOrAnonymous } from '../../lib';
 import { S } from 'schema';
-import { AppError } from '../../common/errors';
 import { createKey, getItem } from '../../common/db';
-import { DbChallengeSolved, DbChallenge } from '../../types';
+import { DbChallengeSolved } from '../../types';
 import { mapDbChallenge } from '../../common/mapping';
+import { getDbChallengeById } from './getDbChallengeById';
 
 async function getIsSolved(challengeId: number) {
   const user = getLoggedInUserOrAnonymous();
@@ -25,13 +25,9 @@ export const getChallengeById = createContract('challenge.getChallengeById')
     id: S.number(),
   })
   .fn(async id => {
-    const challengeKey = createKey({ type: 'CHALLENGE', id });
     const [dbChallenge, isSolved] = await Promise.all([
-      getItem<DbChallenge>(challengeKey),
+      getDbChallengeById(id),
       getIsSolved(id),
     ]);
-    if (!dbChallenge) {
-      throw new AppError(`Challenge "${id}" does not exist`);
-    }
     return mapDbChallenge(dbChallenge, isSolved);
   });

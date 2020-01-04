@@ -4,6 +4,7 @@ import { AppError, UnreachableCaseError } from './errors';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { DbKey } from '../types';
 import DynamoDB = require('aws-sdk/clients/dynamodb');
+import { decLastKey, encLastKey } from './helper';
 
 type CreateKeyOptions =
   | {
@@ -73,6 +74,20 @@ type CreateKeyOptions =
       type: 'SOCKET_CONNECTION';
       connectionId: string;
       userId: string;
+    }
+  | {
+      type: 'SUBMISSION';
+      submissionId: string;
+    }
+  | {
+      type: 'SUBMISSION_USER';
+      userId: string;
+      submissionId: string;
+    }
+  | {
+      type: 'SUBMISSION_CHALLENGE';
+      challengeId: number;
+      submissionId: string;
     };
 
 export function createKey(
@@ -176,6 +191,25 @@ export function createKey(
       return {
         pk: `SOCKET_CONNECTION:${options.connectionId}`,
         sk: `SOCKET_CONNECTION:${options.userId}`,
+      };
+    }
+    case 'SUBMISSION': {
+      const pk = `SUBMISSION:${options.submissionId}`;
+      return {
+        pk,
+        sk: pk,
+      };
+    }
+    case 'SUBMISSION_USER': {
+      return {
+        pk: `SUBMISSION_USER:${options.submissionId}`,
+        sk: `SUBMISSION_USER:${options.userId}`,
+      };
+    }
+    case 'SUBMISSION_CHALLENGE': {
+      return {
+        pk: `SUBMISSION_CHALLENGE:${options.submissionId}`,
+        sk: `SUBMISSION_CHALLENGE:${options.challengeId}`,
       };
     }
     default:
@@ -377,26 +411,29 @@ export async function batchDelete<T extends DbKey>(items: T[]) {
   });
 }
 
-interface QueryIndexOptions {
+interface BaseQueryOptions {
+  cursor?: string | null;
+  descending?: boolean;
+  limit?: number;
+}
+
+interface QueryIndexOptions extends BaseQueryOptions {
   index: 'sk-data_n-index' | 'sk-data2_n-index';
   sk: string;
 }
 
 export async function queryIndex<T>(options: QueryIndexOptions) {
-  const { index, sk } = options;
-  const result = await dynamodb
-    .query({
-      TableName: TABLE_NAME,
-      IndexName: index,
-      KeyConditionExpression: 'sk = :sk',
-      ExpressionAttributeValues: {
-        ':sk': {
-          S: sk,
-        },
+  const { index, sk, ...base } = options;
+  return _query<T>(
+    index,
+    'sk = :sk',
+    {
+      ':sk': {
+        S: sk,
       },
-    })
-    .promise();
-  return _mapQueryResult<T>(result);
+    },
+    base
+  );
 }
 
 interface QueryMainIndexOptions {
@@ -404,24 +441,43 @@ interface QueryMainIndexOptions {
 }
 
 export async function queryMainIndex<T>(options: QueryMainIndexOptions) {
-  const { pk } = options;
-  const result = await dynamodb
-    .query({
-      TableName: TABLE_NAME,
-      KeyConditionExpression: 'pk = :pk',
-      ExpressionAttributeValues: {
-        ':pk': {
-          S: pk,
-        },
+  const { pk, ...base } = options;
+  return _query<T>(
+    undefined,
+    'pk = :pk',
+    {
+      ':pk': {
+        S: pk,
       },
-    })
-    .promise();
-  return _mapQueryResult<T>(result);
+    },
+    base
+  );
 }
 
-function _mapQueryResult<T>(result: DynamoDB.QueryOutput) {
+async function _query<T>(
+  index: string | undefined,
+  keyConditionExpression: string,
+  expressionValues: DynamoDB.ExpressionAttributeValueMap,
+  options: BaseQueryOptions
+) {
+  const result = await dynamodb
+    .query(
+      {
+        TableName: TABLE_NAME,
+        IndexName: index,
+        KeyConditionExpression: keyConditionExpression,
+        ExpressionAttributeValues: expressionValues,
+        Limit: options.limit,
+        ExclusiveStartKey: options.cursor
+          ? decLastKey(options.cursor)
+          : undefined,
+        ScanIndexForward: !options.descending,
+      },
+      undefined
+    )
+    .promise();
   return {
     items: (result.Items || []).map(item => Converter.unmarshall(item) as T),
-    lastEvaluatedKey: result.LastEvaluatedKey,
+    cursor: encLastKey(result.LastEvaluatedKey),
   };
 }

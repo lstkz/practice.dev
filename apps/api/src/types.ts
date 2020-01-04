@@ -1,4 +1,9 @@
-import { ChallengeDomain, ChallengeDifficulty, ChallengeStats } from 'shared';
+import {
+  ChallengeDomain,
+  ChallengeDifficulty,
+  ChallengeStats,
+  SubmissionStatus,
+} from 'shared';
 
 export interface UserRegisteredEvent {
   type: 'UserRegisteredEvent';
@@ -108,6 +113,17 @@ export interface DbSocketConnection extends DbKey {
   // createdAt
   data_n: number;
   connectionId: string;
+}
+
+export interface DbSubmission extends DbKey {
+  submissionId: string;
+  // createdAt
+  data_n: number;
+  challengeId: number;
+  userId: string;
+  status: SubmissionStatus;
+  result?: string;
+  testUrl: string;
 }
 
 /* LAMBDA TYPES */

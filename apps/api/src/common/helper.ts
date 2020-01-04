@@ -133,7 +133,7 @@ export function encLastKey(key: DynamoDB.Key | undefined) {
   if (!key) {
     return undefined;
   }
-  const data = new Buffer(JSON.stringify(key)).toString('base64');
+  const data = Buffer.from(JSON.stringify(key)).toString('base64');
   return data + '.' + getEncHash(data);
 }
 
@@ -149,5 +149,5 @@ export function decLastKey(key: string | undefined) {
   if (hash !== expectedHash) {
     return new AppError('Invalid lastKey');
   }
-  return JSON.parse(new Buffer(data, 'base64').toString('utf8'));
+  return JSON.parse(Buffer.from(data, 'base64').toString('utf8'));
 }

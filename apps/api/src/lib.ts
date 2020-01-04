@@ -15,6 +15,10 @@ if (!process.env.TOPIC_ARN) {
   throw new Error('TOPIC_ARN is not set');
 }
 
+if (!process.env.TESTER_TOPIC_ARN) {
+  throw new Error('TESTER_TOPIC_ARN is not set');
+}
+
 if (!process.env.GITHUB_CLIENT_ID) {
   throw new Error('GITHUB_CLIENT_ID is not set');
 }
@@ -26,6 +30,7 @@ if (!process.env.GITHUB_CLIENT_SECRET) {
 export const TABLE_NAME = process.env.TABLE;
 export const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 export const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+export const TESTER_TOPIC_ARN = process.env.TESTER_TOPIC_ARN;
 
 export const sns = new AWS.SNS({});
 export const dynamodb = new AWS.DynamoDB({

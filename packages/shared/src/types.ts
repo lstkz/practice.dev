@@ -1,3 +1,8 @@
+export interface SearchResult<T> {
+  items: T[];
+  cursor: null | string;
+}
+
 export interface User {
   id: string;
   email: string;
@@ -53,4 +58,25 @@ export interface ChallengeSolved {
   user: PublicUser;
   challengeId: number;
   solvedAt: number;
+}
+export enum SubmissionStatus {
+  Queued = 'QUEUED',
+  Running = 'RUNNING',
+  Pass = 'PASS',
+  Fail = 'FAIL',
+}
+
+export interface Submission {
+  id: string;
+  challengeId: number;
+  user: PublicUser;
+  status: SubmissionStatus;
+  createdAt: string;
+}
+export interface TesterMessage {
+  id: string;
+  challengeId: number;
+  testUrl: string;
+  tests: string;
+  userId: string;
 }
