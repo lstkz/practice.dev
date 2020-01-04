@@ -8,6 +8,7 @@ yarn-error.log*
 build/
 *.tsbuildinfo
 cdk.out
+.cache
 
 # Runtime data
 pids

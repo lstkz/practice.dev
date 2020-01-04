@@ -1,0 +1,33 @@
+{
+  "name": "challenges",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "sideEffects": false,
+  "scripts": {
+    "tsc": "tsc --noEmit",
+    "ts-node": "ts-node -T",
+    "lint": "tslint -c tslint.json \"src/**/*.{ts,tsx}\"",
+    "prettier": "prettier --write '{src,scripts}/*.{ts,tsx}'",
+    "start": "webpack-dev-server --config webpack.demo.config",
+    "build": "yarn run build:test && yarn run build:details",
+    "build:test": "webpack --config webpack.test.config",
+    "build:details": "webpack --config webpack.details.config",
+    "deploy": "yarn run build && ts-node -T -r dotenv/config deploy dotenv_config_path=../../$ENV_FILE",
+    "test": "yarn run tsc && yarn run lint"
+  },
+  "dependencies": {
+    "@types/fs-extra": "^5.1.0",
+    "@types/node-fetch": "^2.3.3",
+    "fs-extra": "^8.0.0",
+    "node-fetch": "^2.5.0",
+    "raw-loader": "^2.0.0",
+    "tester": "*",
+    "webpack": "^4.41.2",
+    "webpack-dev-server": "^3.8.0"
+  },
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED"
+}

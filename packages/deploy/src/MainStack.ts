@@ -13,6 +13,7 @@ export class MainStack extends cdk.Stack {
     super(app, id);
 
     const topic = new sns.Topic(this, 'EventBus', {});
+    const testerTopic = new sns.Topic(this, 'Tester', {});
 
     const table = new dynamodb.Table(this, 'main', {
       partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
@@ -54,20 +55,42 @@ export class MainStack extends cdk.Stack {
         IS_AWS: '1',
         NODE_ENV: 'production',
         TOPIC_ARN: topic.topicArn,
+        TESTER_TOPIC_ARN: testerTopic.topicArn,
         TABLE: table.tableName,
       },
       timeout: cdk.Duration.seconds(7),
       memorySize: 512,
     });
+
+    const testerLambda = new lambda.Function(this, `tester-lambda`, {
+      code: new lambda.AssetCode(
+        Path.join(__dirname, '../../../apps/api/dist')
+      ),
+      handler: 'app-lambda.handler',
+      runtime: lambda.Runtime.NODEJS_8_10,
+      environment: {
+        IS_AWS: '1',
+        NODE_ENV: 'production',
+        TOPIC_ARN: topic.topicArn,
+        TESTER_TOPIC_ARN: testerTopic.topicArn,
+        TABLE: table.tableName,
+      },
+      timeout: cdk.Duration.seconds(90),
+      memorySize: 1856,
+    });
+
     const apiLambdaPolicy = new iam.PolicyStatement();
     apiLambdaPolicy.addAllResources();
     apiLambdaPolicy.addActions('ses:sendEmail');
     apiLambda.addToRolePolicy(apiLambdaPolicy);
 
     table.grantReadWriteData(apiLambda);
+    table.grantReadWriteData(testerLambda);
     topic.grantPublish(apiLambda);
+    testerTopic.grantPublish(apiLambda);
 
     topic.addSubscription(new subs.LambdaSubscription(apiLambda));
+    testerTopic.addSubscription(new subs.LambdaSubscription(testerLambda));
 
     const api = new apigateway.RestApi(this, 'api', {
       restApiName: `api`,
@@ -92,6 +115,10 @@ export class MainStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, 'topicArn', {
       value: topic.topicArn,
+    });
+
+    new cdk.CfnOutput(this, 'testerTopicArn', {
+      value: testerTopic.topicArn,
     });
   }
 }
