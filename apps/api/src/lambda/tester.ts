@@ -14,6 +14,10 @@ import { S3_BUCKET_NAME } from '../config';
 
 import('aws-sdk/clients/apigatewaymanagementapi');
 
+if (!process.env.API_GATEWAY_ENDPOINT) {
+  throw new Error('API_GATEWAY_ENDPOINT is not defined');
+}
+
 export async function testerHandler(event: SNSEvent) {
   if (event.Records.length !== 1) {
     throw new Error('Expected exactly 1 Record');

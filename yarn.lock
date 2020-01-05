@@ -275,6 +275,11 @@
     "@aws-cdk/core" "1.19.0"
     "@aws-cdk/cx-api" "1.19.0"
 
+"@aws-cdk/cdk@^0.36.1":
+  version "0.36.1"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cdk/-/cdk-0.36.1.tgz#81dfc535fbd66d8df5b00566261e489795a49705"
+  integrity sha512-zANjIxZZM/sFns5zUbGEBikZcF4m+77aNQ6o6vcQkVcglky9peZ0q7T4urngSDP/QHnjsqpp6QrJaLSvjcInJg==
+
 "@aws-cdk/core@1.19.0", "@aws-cdk/core@^1.19.0":
   version "1.19.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/core/-/core-1.19.0.tgz#d2997fd1104f4728b045d20c934c2cd281f14d33"

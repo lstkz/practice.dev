@@ -9,6 +9,7 @@ import dynamodb = require('@aws-cdk/aws-dynamodb');
 import subs = require('@aws-cdk/aws-sns-subscriptions');
 import Path from 'path';
 import dotenv from 'dotenv';
+import { Socket } from './Socket';
 
 dotenv.config({
   path: Path.join(__dirname, '../../../.env-prod'),
@@ -20,6 +21,10 @@ if (!process.env.GITHUB_CLIENT_ID) {
 
 if (!process.env.GITHUB_CLIENT_SECRET) {
   throw new Error('GITHUB_CLIENT_SECRET is not set');
+}
+
+if (!process.env.API_GATEWAY_ENDPOINT) {
+  throw new Error('API_GATEWAY_ENDPOINT is not set');
 }
 
 export class MainStack extends cdk.Stack {
@@ -68,6 +73,7 @@ export class MainStack extends cdk.Stack {
       TABLE: table.tableName,
       GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID!,
       GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET!,
+      API_GATEWAY_ENDPOINT: process.env.API_GATEWAY_ENDPOINT!,
       S3_BUCKET_NAME: bucket.bucketName,
     };
 
@@ -105,6 +111,11 @@ export class MainStack extends cdk.Stack {
     apiLambdaPolicy.addActions('ses:sendEmail');
     apiLambda.addToRolePolicy(apiLambdaPolicy);
 
+    const testerLambdaPolicy = new iam.PolicyStatement();
+    testerLambdaPolicy.addAllResources();
+    testerLambdaPolicy.addActions('execute-api:ManageConnections');
+    testerLambda.addToRolePolicy(testerLambdaPolicy);
+
     table.grantReadWriteData(apiLambda);
     table.grantReadWriteData(testerLambda);
     topic.grantPublish(apiLambda);
@@ -124,6 +135,8 @@ export class MainStack extends cdk.Stack {
 
     const apiLambdaIntegration = new apigateway.LambdaIntegration(apiLambda);
     resource.addMethod('POST', apiLambdaIntegration);
+
+    const socket = new Socket(this, 'socket', apiLambda);
 
     new cdk.CfnOutput(this, 'apiLambdaArn', {
       value: apiLambda.functionArn,
@@ -147,6 +160,10 @@ export class MainStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, 'bucketName', {
       value: bucket.bucketName,
+    });
+
+    new cdk.CfnOutput(this, 'socketUrl', {
+      value: socket.url,
     });
   }
 }
