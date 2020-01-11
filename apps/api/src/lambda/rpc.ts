@@ -1,36 +1,8 @@
 import util from 'util';
-import { APIGatewayProxyEvent, SNSEvent, AppEvent } from './types';
-import { handler as rpcHandler } from './handler';
-import { eventMapping } from './generated/event-mapping';
+import { APIGatewayProxyEvent } from '../types';
+import { handler as rpcHandler } from '../handler';
 
-function getAppEvent(event: SNSEvent): AppEvent {
-  const record = event.Records[0];
-  if ('Sns' in record) {
-    return JSON.parse(record.Sns.Message);
-  }
-  throw new Error('Not supported event type');
-}
-
-export async function handler(event: APIGatewayProxyEvent | SNSEvent) {
-  if ('Records' in event) {
-    const appEvent = getAppEvent(event);
-    console.log('processing EVENT', appEvent);
-
-    const handlerMap = eventMapping[appEvent.type] || {};
-    const keys = Object.keys(handlerMap);
-    if (!keys.length) {
-      return;
-    }
-
-    if (keys.length > 1) {
-      throw new Error('Not implemented');
-    }
-    const { options } = await handlerMap[keys[0]]();
-    await options.handler(appEvent as any);
-
-    return;
-  }
-
+export async function handler(event: APIGatewayProxyEvent) {
   try {
     console.log('processing RPC', event.path);
     const exec = /\/rpc\/(.+)/.exec(event.path);

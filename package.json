@@ -5,7 +5,10 @@
     "build": "tsc",
     "deploy": "yarn run api:build && yarn run cdk:deploy",
     "api:build": "cd apps/api && yarn run build",
-    "cdk:deploy": "cd packages/deploy && cdk deploy"
+    "cdk:deploy": "cd packages/deploy && cdk deploy",
+    "deploy-challenges": "cd packages/challenges && yarn run deploy",
+    "deploy-challenges:stage": "ENV_FILE=.env-stage yarn run deploy-challenges",
+    "deploy-challenges:prod": "ENV_FILE=.env-prod yarn run deploy-challenges"
   },
   "workspaces": [
     "packages/*",
@@ -14,6 +17,6 @@
   "dependencies": {
     "@types/prettier": "^1.18.4",
     "prettier": "^1.19.1",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.4"
   }
 }

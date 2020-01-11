@@ -5,7 +5,7 @@ module.exports = {
   target: 'node',
   mode: 'none',
   devtool: false,
-  entry: path.join(__dirname, './src/lambda.ts'),
+  entry: path.join(__dirname, './src/lambda/entry.ts'),
   optimization: {
     namedModules: false,
     namedChunks: true,
@@ -40,7 +40,9 @@ module.exports = {
   },
   externals: [
     function(context, request, callback) {
-      if (/^aws-sdk/.test(request)) {
+      if (
+        /^aws-sdk|^chrome-aws-lambda|^puppeteer-core|^puppeteer/.test(request)
+      ) {
         return callback(null, 'commonjs ' + request);
       }
       callback();

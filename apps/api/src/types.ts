@@ -1,3 +1,10 @@
+import {
+  ChallengeDomain,
+  ChallengeDifficulty,
+  ChallengeStats,
+  SubmissionStatus,
+} from 'shared';
+
 export interface UserRegisteredEvent {
   type: 'UserRegisteredEvent';
   payload: { userId: string; registeredAt: string };
@@ -11,7 +18,7 @@ export interface UserEmailConfirmedEvent {
 export type AppEvent = UserRegisteredEvent | UserEmailConfirmedEvent;
 
 export interface AppContext {
-  user: DbUser;
+  user: DbUser | null;
 }
 
 export interface DbKey {
@@ -26,14 +33,18 @@ export interface DbUser extends DbKey {
   salt: string;
   password: string;
   isVerified: boolean;
+  githubId?: number;
+  isAdmin?: boolean;
 }
 
 export interface DbUserEmail extends DbKey {
   userId: string;
+  email: string;
 }
 
 export interface DbUserUsername extends DbKey {
   userId: string;
+  username: string;
 }
 
 export interface DbToken extends DbKey {
@@ -43,6 +54,76 @@ export interface DbToken extends DbKey {
 export interface DbConfirmCode extends DbKey {
   userId: string;
   code: string;
+}
+
+export interface DbGithubUser extends DbKey {
+  userId: string;
+  githubId: number;
+}
+
+export interface DbResetPasswordCode extends DbKey {
+  userId: string;
+  code: string;
+  expireAt: number;
+}
+
+export interface DbChallenge extends DbKey {
+  // challengeId
+  data_n: number;
+  title: string;
+  description: string;
+  domain: ChallengeDomain;
+  difficulty: ChallengeDifficulty;
+  bundle: string;
+  tests: string;
+  createdAt: number;
+  tags: string[];
+  stats: ChallengeStats;
+}
+
+export interface DbChallengeSolved extends DbKey {
+  userId: string;
+  challengeId: number;
+  // solvedAt
+  data_n: number;
+}
+
+export interface DbSolution extends DbKey {
+  // createdAt
+  data_n: number;
+  // likes
+  data2_n: number;
+  solutionId: string;
+  description?: string;
+  challengeId: number;
+  userId: string;
+  title: string;
+  slug: string;
+  url: string;
+  tags: string[];
+}
+
+export interface DbRateLimit extends DbKey {
+  count: number;
+  expireAt: number;
+  version: number;
+}
+
+export interface DbSocketConnection extends DbKey {
+  // createdAt
+  data_n: number;
+  connectionId: string;
+}
+
+export interface DbSubmission extends DbKey {
+  submissionId: string;
+  // createdAt
+  data_n: number;
+  challengeId: number;
+  userId: string;
+  status: SubmissionStatus;
+  result?: string;
+  testUrl: string;
 }
 
 /* LAMBDA TYPES */

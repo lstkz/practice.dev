@@ -1,4 +1,7 @@
 import crypto from 'crypto';
+import { Response } from 'node-fetch';
+import { DynamoDB } from 'aws-sdk';
+import { AppError } from './errors';
 
 const SECURITY = {
   SALT_LENGTH: 64,
@@ -66,4 +69,85 @@ export function randomString(length: number) {
 
 export function randomUniqString() {
   return randomString(15);
+}
+
+export async function getResponseBody<T = any>(opName: string, res: Response) {
+  if (res.status !== 200) {
+    const msg = `${opName} failed with code: ${res.status}`;
+    console.error(msg, {
+      responseText: await res.text(),
+    });
+    throw new Error(msg);
+  }
+  const body = await res.json();
+  if (body.error) {
+    const msg = `${opName} failed with code: ${body.error_description ||
+      body.error}`;
+    console.error(msg, {
+      body,
+    });
+    throw new Error(msg);
+  }
+  return body as T;
+}
+
+export function getDuration(n: number, type: 's' | 'm' | 'h' | 'd') {
+  const seconds = 1000;
+  const minutes = seconds * 60;
+  const hours = minutes * 60;
+  const days = 24 * hours;
+  switch (type) {
+    case 's': {
+      return n * seconds;
+    }
+    case 'm': {
+      return n * minutes;
+    }
+    case 'h': {
+      return n * hours;
+    }
+    case 'd': {
+      return n * days;
+    }
+  }
+}
+
+export function safeAssign<T extends V, V>(target: T, values: V) {
+  Object.assign(target, values);
+  return target;
+}
+
+export function safeKeys<T>(obj: T): Array<keyof T> {
+  return Object.keys(obj) as any;
+}
+
+function getEncHash(data: string) {
+  return crypto
+    .createHash('md5')
+    .update(data)
+    .digest('hex')
+    .substr(0, 10);
+}
+
+export function encLastKey(key: DynamoDB.Key | undefined) {
+  if (!key) {
+    return undefined;
+  }
+  const data = Buffer.from(JSON.stringify(key)).toString('base64');
+  return data + '.' + getEncHash(data);
+}
+
+export function decLastKey(key: string | undefined) {
+  if (!key) {
+    return undefined;
+  }
+  const [data, hash] = key.split('.');
+  if (!hash) {
+    return new AppError('Invalid lastKey');
+  }
+  const expectedHash = getEncHash(data);
+  if (hash !== expectedHash) {
+    return new AppError('Invalid lastKey');
+  }
+  return JSON.parse(Buffer.from(data, 'base64').toString('utf8'));
 }

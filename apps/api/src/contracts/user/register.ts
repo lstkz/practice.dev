@@ -19,7 +19,6 @@ export const register = createContract('user.register')
       password: S.string().min(5),
     }),
   })
-
   .fn(async values => {
     const dbUser = await _createUser({
       ...values,

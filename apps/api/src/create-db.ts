@@ -1,4 +1,5 @@
-import { dynamodb, TABLE_NAME } from './lib';
+import { dynamodb } from './lib';
+import { TABLE_NAME } from './config';
 
 export async function createTable() {
   const exists = await dynamodb

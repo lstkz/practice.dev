@@ -6,6 +6,7 @@ import { createKey, getItem, getItemEnsure } from '../../common/db';
 import { DbUserEmail, DbUser, DbUserUsername } from '../../types';
 import { AppError } from '../../common/errors';
 import { createPasswordHash } from '../../common/helper';
+import { _getDbUserByEmailOrUsername } from './_getDbUserByEmailOrUsername';
 
 const INVALID_CRED = 'Invalid credentials or user not found';
 
@@ -21,12 +22,9 @@ export const login = createContract('user.login')
   .fn(async values => {
     const { emailOrUsername } = values;
 
-    const dbUserEmailOrUsername = await getItem<DbUserEmail | DbUserUsername>(
-      emailOrUsername.includes('@')
-        ? createKey({ type: 'USER_EMAIL', email: emailOrUsername })
-        : createKey({ type: 'USER_USERNAME', username: emailOrUsername })
+    const dbUserEmailOrUsername = await _getDbUserByEmailOrUsername(
+      emailOrUsername
     );
-
     if (!dbUserEmailOrUsername) {
       throw new AppError(INVALID_CRED);
     }
