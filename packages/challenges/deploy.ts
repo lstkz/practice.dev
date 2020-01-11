@@ -2,8 +2,9 @@ import path from 'path';
 import fs from 'fs-extra';
 import AWS from 'aws-sdk';
 import { ChallengeInfo } from './_common/types';
-import { APIClient } from 'shared';
+import { APIClient, TestInfo } from 'shared';
 import { XMLHttpRequest } from 'xmlhttprequest';
+import { TestConfiguration, Tester } from 'tester';
 
 function createXHR() {
   return new XMLHttpRequest();
@@ -12,7 +13,6 @@ function createXHR() {
 const API_URL = process.env.API_URL!;
 const API_TOKEN = process.env.API_TOKEN!;
 const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME!;
-// const AWS_REGION = process.env.AWS_REGION!;
 
 if (!API_URL) {
   throw new Error('API_URL is not defined');
@@ -27,17 +27,6 @@ if (!S3_BUCKET_NAME) {
 }
 
 const api = new APIClient(API_URL, () => API_TOKEN, createXHR);
-
-// if (!AWS_REGION) {
-//   throw new Error('AWS_REGION is not defined');
-// }
-
-// AWS.config = new AWS.Config({
-//   region: AWS_REGION,
-//   apiVersions: {
-//     s3: '2006-03-01',
-//   },
-// });
 
 const s3 = new AWS.S3();
 
@@ -138,6 +127,26 @@ Object.values(packageMap).forEach(async pkg => {
   const { name, info, testFile, detailsFile } = pkg;
 
   try {
+    const testConfiguration = require(testFile!).default as TestConfiguration;
+    const tester = new Tester();
+    await testConfiguration.handler({
+      tester,
+      url: 'mock',
+      createPage: async () => {
+        throw new Error('Not implemented');
+      },
+    });
+    const tests: TestInfo[] = tester.tests.map(test => ({
+      id: test.id,
+      name: test.name,
+      result: 'pending' as 'pending',
+      steps: test.steps.map(step => ({
+        id: step.id,
+        name: step.name,
+        result: 'pending' as 'pending',
+      })),
+    }));
+
     const [detailsS3Key, testsS3Key] = await Promise.all([
       uploadFile(detailsFile!, 'bundle'),
       uploadFile(testFile!, 'tests'),
@@ -146,8 +155,9 @@ Object.values(packageMap).forEach(async pkg => {
     await api
       .challenge_updateChallenge({
         ...info,
-        bundle: detailsS3Key,
-        tests: testsS3Key,
+        testCase: JSON.stringify(tests),
+        detailsBundleS3Key: detailsS3Key,
+        testsBundleS3Key: testsS3Key,
       })
       .toPromise();
   } catch (e) {

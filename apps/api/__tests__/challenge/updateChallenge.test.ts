@@ -30,11 +30,12 @@ it('create and update a challenge', async () => {
         id: 1,
         title: 'foo',
         description: 'desc',
-        bundle: 'http://example.org',
-        tests: 'http://example.org/tests',
+        detailsBundleS3Key: 'http://example.org',
+        testsBundleS3Key: 'http://example.org/testsBundleS3Key',
         domain: 'frontend',
         difficulty: 'easy',
         tags: ['foo'],
+        testCase: 'a',
       });
 
       const challenge = await getChallengeById(1);
@@ -42,12 +43,13 @@ it('create and update a challenge', async () => {
         id: 1,
         title: 'foo',
         description: 'desc',
-        bundle: 'http://example.org',
+        detailsBundleS3Key: 'http://example.org',
         createdAt: new Date(123).toISOString(),
         isSolved: false,
         domain: 'frontend',
         difficulty: 'easy',
         tags: ['foo'],
+        testCase: 'a',
         stats: {
           submissions: 0,
           solutions: 0,
@@ -68,11 +70,12 @@ it('create and update a challenge', async () => {
         id: 1,
         title: 'bar',
         description: 'desc2',
-        bundle: 'http://example2.org',
-        tests: 'http://example.org',
+        detailsBundleS3Key: 'http://example2.org',
+        testsBundleS3Key: 'http://example.org',
         tags: ['foo', 'foo2'],
         domain: 'fullstack',
         difficulty: 'hard',
+        testCase: 'b',
       });
 
       const challenge2 = await getChallengeById(1);
@@ -80,12 +83,13 @@ it('create and update a challenge', async () => {
         id: 1,
         title: 'bar',
         description: 'desc2',
-        bundle: 'http://example2.org',
+        detailsBundleS3Key: 'http://example2.org',
         tags: ['foo', 'foo2'],
         createdAt: new Date(123).toISOString(),
         isSolved: false,
         domain: 'fullstack',
         difficulty: 'hard',
+        testCase: 'b',
         stats: {
           submissions: 1,
           solutions: 2,

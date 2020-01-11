@@ -24,7 +24,8 @@ export interface Challenge {
   id: number;
   title: string;
   description: string;
-  bundle: string;
+  detailsBundleS3Key: string;
+  testCase: string;
   tags: string[];
   isSolved: boolean;
   createdAt: string;

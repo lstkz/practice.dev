@@ -74,11 +74,12 @@ export interface DbChallenge extends DbKey {
   description: string;
   domain: ChallengeDomain;
   difficulty: ChallengeDifficulty;
-  bundle: string;
-  tests: string;
+  detailsBundleS3Key: string;
+  testsBundleS3Key: string;
   createdAt: number;
   tags: string[];
   stats: ChallengeStats;
+  testCase: string;
 }
 
 export interface DbChallengeSolved extends DbKey {

@@ -64,7 +64,7 @@ export const submit = createContract('submission.submit')
       challengeId: values.challengeId,
       testUrl: values.testUrl,
       userId,
-      tests: challenge.tests,
+      tests: challenge.testsBundleS3Key,
     };
 
     await sns
