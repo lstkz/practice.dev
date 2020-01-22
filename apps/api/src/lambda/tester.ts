@@ -52,5 +52,10 @@ export async function testerHandler(event: SNSEvent) {
       ? __non_webpack_require__
       : require;
 
-  await runTests(msg.testUrl, requireFunc(testPath).default, multiNotifier);
+  await runTests(
+    msg.id,
+    msg.testUrl,
+    requireFunc(testPath).default,
+    multiNotifier
+  );
 }

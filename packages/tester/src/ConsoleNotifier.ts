@@ -9,9 +9,6 @@ export class ConsoleNotifier implements Notifier {
   private getTest(id: number) {
     return this.tests!.find(x => x.id === id)!;
   }
-  private getStep(testId: number, stepId: number) {
-    return this.getTest(testId).steps.find(x => x.id === stepId)!;
-  }
 
   async flush() {
     //
@@ -32,14 +29,21 @@ export class ConsoleNotifier implements Notifier {
         console.log(` Test ${test.id}: ${test.name}`);
         break;
       }
-      case 'STEP_PASS': {
-        const step = this.getStep(action.payload.testId, action.payload.stepId);
-        console.log(chalk.green('    ✓ ') + chalk.gray(step.name));
+      case 'STEP': {
+        const msg = '    ' + chalk.gray(action.payload.text);
+        if (action.payload.data) {
+          console.log(msg, action.payload.data);
+        } else {
+          console.log(msg);
+        }
         break;
       }
-      case 'STEP_FAIL': {
-        const step = this.getStep(action.payload.testId, action.payload.stepId);
-        console.log(chalk.red('    ✕ ') + chalk.gray(step.name));
+      case 'TEST_PASS': {
+        console.log(chalk.green('    ✓ PASS'));
+        break;
+      }
+      case 'TEST_FAIL': {
+        console.log(chalk.red('    ✕ FAIL'));
         console.error('  ' + chalk.red(action.payload.error));
         break;
       }

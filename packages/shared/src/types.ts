@@ -82,20 +82,6 @@ export interface TesterMessage {
   userId: string;
 }
 
-export type StepResult =
-  | 'pass'
-  | 'fail'
-  | 'pending'
-  | 'running'
-  | 'fail-skipped';
-
-export interface Step {
-  id: number;
-  name: string;
-  result: StepResult;
-  error?: string;
-}
-
 export type TestResult =
   | 'pass'
   | 'fail'
@@ -107,58 +93,61 @@ export interface TestInfo {
   id: number;
   name: string;
   result: TestResult;
-  steps: Step[];
 }
 
 export type SocketMessage =
   | {
       type: 'TEST_INFO';
+      meta: {
+        id: string;
+      };
       payload: {
         tests: TestInfo[];
       };
     }
   | {
       type: 'STARTING_TEST';
+      meta: {
+        id: string;
+      };
       payload: {
         testId: number;
       };
     }
   | {
       type: 'TEST_FAIL';
-      payload: {
-        testId: number;
+      meta: {
+        id: string;
       };
-    }
-  | {
-      type: 'TEST_PASS';
       payload: {
         testId: number;
-      };
-    }
-  | {
-      type: 'STARTING_STEP';
-      payload: {
-        testId: number;
-        stepId: number;
-      };
-    }
-  | {
-      type: 'STEP_PASS';
-      payload: {
-        testId: number;
-        stepId: number;
-      };
-    }
-  | {
-      type: 'STEP_FAIL';
-      payload: {
-        testId: number;
-        stepId: number;
         error: string;
       };
     }
   | {
+      type: 'TEST_PASS';
+      meta: {
+        id: string;
+      };
+      payload: {
+        testId: number;
+      };
+    }
+  | {
+      type: 'STEP';
+      meta: {
+        id: string;
+      };
+      payload: {
+        text: string;
+        data: any;
+      };
+    }
+  | {
       type: 'RESULT';
+      meta: {
+        id: string;
+      };
       payload: {
         success: boolean;
       };

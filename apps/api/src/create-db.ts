@@ -1,10 +1,18 @@
 import { dynamodb } from './lib';
 import { TABLE_NAME } from './config';
+import os from 'os';
 
-export async function createTable() {
+const cpusCount = os.cpus().length;
+
+if (!process.env.MOCK_DB) {
+  throw new Error('MOCK_DB must be set');
+}
+
+async function _create(id: number) {
+  const name = TABLE_NAME + id;
   const exists = await dynamodb
     .describeTable({
-      TableName: TABLE_NAME,
+      TableName: name,
     })
     .promise()
     .then(
@@ -16,7 +24,7 @@ export async function createTable() {
   }
   await dynamodb
     .createTable({
-      TableName: TABLE_NAME,
+      TableName: name,
       BillingMode: 'PAY_PER_REQUEST',
       KeySchema: [
         {
@@ -118,6 +126,13 @@ export async function createTable() {
       },
     })
     .promise();
+}
+
+export async function createTable() {
+  const ids = Array(cpusCount - 1)
+    .fill(0)
+    .map((_, i) => i + 1);
+  await Promise.all(ids.map(_create));
 }
 
 async function start() {
