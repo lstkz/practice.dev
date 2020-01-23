@@ -11,7 +11,6 @@ function getAppEvent(event: SNSEvent): AppEvent {
 
 export async function handler(event: SNSEvent) {
   const appEvent = getAppEvent(event);
-  console.log('processing EVENT', appEvent);
 
   const handlerMap = eventMapping[appEvent.type] || {};
   const keys = Object.keys(handlerMap);

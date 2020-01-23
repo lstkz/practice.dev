@@ -11,13 +11,13 @@ export class BooleanSchema<TReq = true, TNull = false> extends AnySchema<
     this.validators.push({
       type: 'boolean.base',
       validate: (value, path) => {
-        if (typeof value === 'string') {
-          if (value === 'true' || value === 'false') {
-            return {
-              value: value === 'true',
-            };
-          }
-        }
+        // if (typeof value === 'string') {
+        //   if (value === 'true' || value === 'false') {
+        //     return {
+        //       value: value === 'true',
+        //     };
+        //   }
+        // }
         if (typeof value !== 'boolean') {
           return {
             stop: true,

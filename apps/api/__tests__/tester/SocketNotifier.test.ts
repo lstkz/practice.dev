@@ -38,7 +38,11 @@ function createNotifier() {
 }
 
 function getMsg(nr: number): SocketMessage {
-  return { type: 'STARTING_TEST', payload: { testId: nr } };
+  return {
+    type: 'STARTING_TEST',
+    meta: { id: 'mock' },
+    payload: { testId: nr },
+  };
 }
 
 function assertInvokes(...nr: number[]) {

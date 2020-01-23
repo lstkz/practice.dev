@@ -141,12 +141,17 @@ async function getFrontendTests(testConfiguration: TestConfiguration) {
     id: test.id,
     name: test.name,
     result: 'pending' as 'pending',
+    steps: [],
   }));
   return tests;
 }
 
 async function getApiTests(testConfiguration: ApiTestConfiguration) {
-  const tester = new ApiTester();
+  const tester = new ApiTester({
+    notify() {
+      throw new Error('Not supported');
+    },
+  });
   await testConfiguration.handler({
     tester,
     url: 'mock',
@@ -175,7 +180,7 @@ Object.values(packageMap).forEach(async pkg => {
   const { name, info, testFile, detailsFile } = pkg;
 
   try {
-    const tests = await getTests(info, testFile);
+    const tests = await getTests(info!, testFile!);
 
     const [detailsS3Key, testsS3Key] = await Promise.all([
       uploadFile(detailsFile!, 'bundle'),
@@ -184,7 +189,7 @@ Object.values(packageMap).forEach(async pkg => {
 
     await api
       .challenge_updateChallenge({
-        ...info,
+        ...info!,
         testCase: JSON.stringify(tests),
         detailsBundleS3Key: detailsS3Key,
         testsBundleS3Key: testsS3Key,

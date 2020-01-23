@@ -80,6 +80,7 @@ export interface TesterMessage {
   testUrl: string;
   tests: string;
   userId: string;
+  type: 'frontend' | 'backend';
 }
 
 export type TestResult =
@@ -89,9 +90,16 @@ export type TestResult =
   | 'running'
   | 'fail-skipped';
 
+export interface Step {
+  text: string;
+  data?: any;
+}
+
 export interface TestInfo {
   id: number;
   name: string;
+  error?: string;
+  steps: Step[];
   result: TestResult;
 }
 
@@ -139,6 +147,7 @@ export type SocketMessage =
         id: string;
       };
       payload: {
+        testId: number;
         text: string;
         data: any;
       };

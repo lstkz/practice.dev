@@ -6,7 +6,7 @@
     "tsc": "tsc --noEmit",
     "dev": "NODE_ENV=development nodemon",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm dist/*; webpack --progress --colors",
+    "build": "rm dist/*; yarn run webpack --progress --colors",
     "jest": "MOCK_DB=1 jest"
   },
   "sideEffects": false,
