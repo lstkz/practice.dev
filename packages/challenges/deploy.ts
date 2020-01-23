@@ -160,6 +160,7 @@ async function getApiTests(testConfiguration: ApiTestConfiguration) {
     id: test.id,
     name: test.name,
     result: 'pending' as 'pending',
+    steps: [],
   }));
   return tests;
 }
