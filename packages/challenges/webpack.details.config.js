@@ -26,6 +26,9 @@ module.exports = {
   },
   entry: {
     '001-counter': ['./001-counter/details/index.tsx'],
+    '002-simple-password-validator': [
+      './002-simple-password-validator/details/index.tsx',
+    ],
   },
   externals: {
     react: 'root React',

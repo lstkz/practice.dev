@@ -7,7 +7,7 @@ import {
 import { rateLimit } from '../misc/rateLimit';
 import { getDuration } from '../../common/helper';
 import { S } from 'schema';
-import uuid = require('uuid');
+import uuid from 'uuid';
 import { SubmissionStatus, TesterMessage } from 'shared';
 import { _putSubmission } from './_putSubmission';
 import { getDbChallengeById } from '../challenge/getDbChallengeById';
@@ -65,6 +65,7 @@ export const submit = createContract('submission.submit')
       testUrl: values.testUrl,
       userId,
       tests: challenge.testsBundleS3Key,
+      type: challenge.domain === 'backend' ? 'backend' : 'frontend',
     };
 
     await sns

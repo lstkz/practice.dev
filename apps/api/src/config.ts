@@ -28,7 +28,9 @@ if (!process.env.S3_BUCKET_NAME) {
   throw new Error('S3_BUCKET_NAME is not set');
 }
 
-export const TABLE_NAME = process.env.TABLE;
+export const TABLE_NAME =
+  process.env.TABLE +
+  (process.env.JEST_WORKER_ID ? process.env.JEST_WORKER_ID : '');
 export const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 export const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 export const TESTER_TOPIC_ARN = process.env.TESTER_TOPIC_ARN;

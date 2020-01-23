@@ -11,14 +11,14 @@ export class NumberSchema<TReq = true, TNull = false> extends AnySchema<
     this.validators.push({
       type: 'number.base',
       validate: (value, path) => {
-        if (typeof value === 'string') {
-          const parsed = Number(value);
-          if (!isNaN(parsed)) {
-            return {
-              value: parsed,
-            };
-          }
-        }
+        // if (typeof value === 'string') {
+        //   const parsed = Number(value);
+        //   if (!isNaN(parsed)) {
+        //     return {
+        //       value: parsed,
+        //     };
+        //   }
+        // }
         if (typeof value !== 'number') {
           return {
             stop: true,

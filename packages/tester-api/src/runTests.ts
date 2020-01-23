@@ -1,17 +1,11 @@
-import { TestConfiguration, Notifier } from './types';
+import { ApiTestConfiguration, Notifier } from './types';
 import { Tester } from './Tester';
-import { getBrowser } from './getBrowser';
-
-async function getPage() {
-  const browser = await getBrowser();
-  const page = await browser.newPage();
-  return page;
-}
+import { TestError } from './TestError';
 
 export async function runTests(
   id: string,
   url: string,
-  config: TestConfiguration,
+  config: ApiTestConfiguration,
   notifier: Notifier
 ) {
   const meta = { id: id };
@@ -30,16 +24,7 @@ export async function runTests(
   await config.handler({
     tester,
     url,
-    createPage: async () => {
-      if (config.page === 'single') {
-        throw new Error('createPage cannot be called in single mode');
-      }
-      return await getPage();
-    },
   });
-  if (config.page === 'single') {
-    tester.page = await getPage();
-  }
 
   let success = true;
 
@@ -58,6 +43,7 @@ export async function runTests(
   await notifier.flush();
 
   for (const test of tester.tests) {
+    currentTestId = test.id;
     await notifier.notify({
       type: 'STARTING_TEST',
       meta,
@@ -73,11 +59,20 @@ export async function runTests(
       });
     } catch (e) {
       success = false;
-      await notifier.notify({
-        type: 'TEST_FAIL',
-        meta,
-        payload: { testId: test.id, error: e.message },
-      });
+      if (e instanceof TestError) {
+        await notifier.notify({
+          type: 'TEST_FAIL',
+          meta,
+          payload: { testId: test.id, error: e.message },
+        });
+      } else {
+        console.error(`Internal error when testing ${id}`, e);
+        await notifier.notify({
+          type: 'TEST_FAIL',
+          meta,
+          payload: { testId: test.id, error: 'Internal Error' },
+        });
+      }
       break;
     }
   }

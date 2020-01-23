@@ -5,6 +5,7 @@ const [, , id, url] = process.argv;
 async function run() {
   try {
     await runTests(
+      'mock',
       url || 'http://localhost:1234',
       require(`./${id}/test-case`).default,
       new ConsoleNotifier()

@@ -4,7 +4,8 @@ import AWS from 'aws-sdk';
 import { ChallengeInfo } from './_common/types';
 import { APIClient, TestInfo } from 'shared';
 import { XMLHttpRequest } from 'xmlhttprequest';
-import { TestConfiguration, Tester } from 'tester';
+import { TestConfiguration, Tester as FrontendTester } from 'tester';
+import { ApiTestConfiguration, Tester as ApiTester } from 'tester-api';
 
 function createXHR() {
   return new XMLHttpRequest();
@@ -123,29 +124,64 @@ Object.values(packageMap).forEach(pkg => {
   }
 });
 
+async function getFrontendTests(testConfiguration: TestConfiguration) {
+  const tester = new FrontendTester({
+    notify() {
+      throw new Error('Not supported');
+    },
+  });
+  await testConfiguration.handler({
+    tester,
+    url: 'mock',
+    createPage: async () => {
+      throw new Error('Not implemented');
+    },
+  });
+  const tests: TestInfo[] = tester.tests.map(test => ({
+    id: test.id,
+    name: test.name,
+    result: 'pending' as 'pending',
+    steps: [],
+  }));
+  return tests;
+}
+
+async function getApiTests(testConfiguration: ApiTestConfiguration) {
+  const tester = new ApiTester({
+    notify() {
+      throw new Error('Not supported');
+    },
+  });
+  await testConfiguration.handler({
+    tester,
+    url: 'mock',
+  });
+  const tests: TestInfo[] = tester.tests.map(test => ({
+    id: test.id,
+    name: test.name,
+    result: 'pending' as 'pending',
+    steps: [],
+  }));
+  return tests;
+}
+
+function getTests(info: ChallengeInfo, testFile: string) {
+  const testConfiguration = require(testFile!).default;
+  switch (info.domain) {
+    case 'backend':
+      return getApiTests(testConfiguration);
+    case 'frontend':
+      return getFrontendTests(testConfiguration);
+    default:
+      throw new Error('Domain not supported: ' + info.domain);
+  }
+}
+
 Object.values(packageMap).forEach(async pkg => {
   const { name, info, testFile, detailsFile } = pkg;
 
   try {
-    const testConfiguration = require(testFile!).default as TestConfiguration;
-    const tester = new Tester();
-    await testConfiguration.handler({
-      tester,
-      url: 'mock',
-      createPage: async () => {
-        throw new Error('Not implemented');
-      },
-    });
-    const tests: TestInfo[] = tester.tests.map(test => ({
-      id: test.id,
-      name: test.name,
-      result: 'pending' as 'pending',
-      steps: test.steps.map(step => ({
-        id: step.id,
-        name: step.name,
-        result: 'pending' as 'pending',
-      })),
-    }));
+    const tests = await getTests(info!, testFile!);
 
     const [detailsS3Key, testsS3Key] = await Promise.all([
       uploadFile(detailsFile!, 'bundle'),
@@ -154,7 +190,7 @@ Object.values(packageMap).forEach(async pkg => {
 
     await api
       .challenge_updateChallenge({
-        ...info,
+        ...info!,
         testCase: JSON.stringify(tests),
         detailsBundleS3Key: detailsS3Key,
         testsBundleS3Key: testsS3Key,

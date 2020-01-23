@@ -8,12 +8,16 @@ export function handler(
 ) {
   if ('Records' in event) {
     if (event.Records[0]?.Sns.TopicArn === TESTER_TOPIC_ARN) {
+      return import(
+        /* webpackChunkName: "tester" */
+        './tester'
+      ).then(module => module.testerHandler(event));
     } else {
+      return import(
+        /* webpackChunkName: "event" */
+        './event'
+      ).then(module => module.handler(event));
     }
-    return import(
-      /* webpackChunkName: "tester" */
-      './tester'
-    ).then(module => module.testerHandler(event));
   } else if (event.requestContext.connectionId) {
     return import(
       /* webpackChunkName: "socket" */

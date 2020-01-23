@@ -14,6 +14,9 @@ module.exports = {
   },
   entry: {
     '001-counter': ['./001-counter/test-case.ts'],
+    '002-simple-password-validator': [
+      './002-simple-password-validator/test-case.ts',
+    ],
   },
   output: {
     filename: '[name].[hash].js',

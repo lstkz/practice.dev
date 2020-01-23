@@ -9,6 +9,7 @@ import dynamodb = require('@aws-cdk/aws-dynamodb');
 import subs = require('@aws-cdk/aws-sns-subscriptions');
 import Path from 'path';
 import dotenv from 'dotenv';
+import fs from 'fs';
 import { Socket } from './Socket';
 
 dotenv.config({
@@ -25,6 +26,12 @@ if (!process.env.GITHUB_CLIENT_SECRET) {
 
 if (!process.env.API_GATEWAY_ENDPOINT) {
   throw new Error('API_GATEWAY_ENDPOINT is not set');
+}
+
+if (
+  !fs.existsSync(Path.join(__dirname, '../tester-layer/nodejs/node_modules'))
+) {
+  throw new Error('node_modules for tester-layer are not installed!');
 }
 
 export class MainStack extends cdk.Stack {
