@@ -1,42 +1,48 @@
 import * as React from 'react';
 import styled from 'styled-components';
+import { Theme } from 'src/common/Theme';
 
 interface BoxProps {
   className?: string;
-  title: string;
-  text: string;
-  icon?: React.ReactChild;
+  title: React.ReactNode;
+  children: React.ReactNode;
+  icon: React.ReactNode;
 }
 
-const Icon = styled.div`
+const Left = styled.div`
   svg {
-    max-width: 32px;
-    height: auto;
+    width: 60px;
   }
-  margin-top: 5px;
-  margin-right: 16px;
+`;
+const Right = styled.div`
+  margin-left: 30px;
+`;
+
+const Title = styled.div`
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 500;
+  color: ${Theme.textDark};
+`;
+
+const Desc = styled.div`
+  margin-top: 10px;
 `;
 
 const _Box = (props: BoxProps) => {
-  const { className, icon, title, text } = props;
+  const { className, title, children, icon } = props;
   return (
     <div className={className}>
-      <Icon>{icon}</Icon>
-      <div>
-        <h5>{title}</h5>
-        <p>{text}</p>
-      </div>
+      <Left>{icon}</Left>
+      <Right>
+        <Title>{title}</Title>
+        <Desc>{children}</Desc>
+      </Right>
     </div>
   );
 };
 
 export const Box = styled(_Box)`
-  padding: 72px 0;
   display: flex;
-  p {
-    line-height: 1.9;
-  }
-  h5 {
-    margin-top: 0;
-  }
+  margin-top: 50px;
 `;

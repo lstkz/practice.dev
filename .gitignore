@@ -10,6 +10,7 @@ build/
 cdk.out
 .cache
 .env-prod
+apps/front copy
 
 # Runtime data
 pids
