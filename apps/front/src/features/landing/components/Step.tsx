@@ -24,6 +24,7 @@ const Nr = styled.div`
   position: absolute;
   font-size: 24px;
   line-height: 32px;
+  user-select: none;
 `;
 
 const _Step = (props: StepProps) => {
@@ -39,13 +40,14 @@ const _Step = (props: StepProps) => {
 
 export const Step = styled(_Step)`
   display: block;
-  height: 68px;
   width: 240px;
   background: #ffffff;
   box-shadow: 0px 2px 6px ${Theme.shadow};
   border-radius: 5px;
   position: relative;
   margin-left: ${props => (props.nr % 2 === 0 ? 'auto' : 0)};
-  padding: 30px 15px 15px;
+  padding: 30px 20px 17px;
   text-align: center;
+  margin-bottom: 10px;
+  line-height: 19px;
 `;

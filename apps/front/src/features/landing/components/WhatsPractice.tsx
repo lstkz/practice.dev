@@ -16,6 +16,7 @@ interface WhatsPracticeProps {
 }
 
 const Title = styled.h2`
+  font-size: 24px;
   margin-top: 70px;
   margin-bottom: 0;
   color: ${Theme.textDark};

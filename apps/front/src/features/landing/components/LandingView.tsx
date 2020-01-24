@@ -19,8 +19,8 @@ handle.epic().on(LandingActions.$mounted, () => {
 export function LandingView() {
   return (
     <>
-      {/* <TopBanner />
-      <WhatsPractice /> */}
+      <TopBanner />
+      <WhatsPractice />
       <HowItWorks />
     </>
   );
