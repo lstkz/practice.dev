@@ -6,7 +6,7 @@ export type UrlOptions =
       name: 'register';
     }
   | {
-      name: 'forgot-password';
+      name: 'reset-password';
     }
   | {
       name: 'challenges';
@@ -21,8 +21,8 @@ export function createUrl(options: UrlOptions) {
       return '/login';
     case 'register':
       return '/register';
-    case 'forgot-password':
-      return '/forgot-password';
+    case 'reset-password':
+      return '/reset-password';
     case 'challenges':
       return '/';
     case 'home':

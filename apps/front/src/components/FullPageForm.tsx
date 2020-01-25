@@ -6,16 +6,19 @@ import { Logo } from './Logo';
 interface AuthFormProps {
   className?: string;
   title: string;
-  subTitle?: string;
+  subTitle?: React.ReactNode;
   children: React.ReactNode;
   bottom?: React.ReactNode;
+  padding?: 'sm' | 'default';
 }
 
-const Card = styled.div`
+const Card = styled.div<{
+  padding?: 'sm' | 'default';
+}>`
   border: 1px solid ${Theme.grayLight};
   border-radius: 5px;
   background: white;
-  padding: 20px 55px 30px;
+  padding: 20px ${props => (props.padding === 'sm' ? '25px' : '55px')} 30px;
 `;
 
 const Wrapper = styled.div`
@@ -61,11 +64,11 @@ const Bottom = styled.div`
 `;
 
 export function FullPageForm(props: AuthFormProps) {
-  const { title, subTitle, children, bottom } = props;
+  const { title, subTitle, children, bottom, padding } = props;
   return (
     <Wrapper>
       <Logo type="dark" />
-      <Card>
+      <Card padding={padding}>
         <Top>
           <Title>{title}</Title>
           {subTitle && <SubTitle>{subTitle}</SubTitle>}

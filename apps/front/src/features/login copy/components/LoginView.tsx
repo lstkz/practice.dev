@@ -13,8 +13,8 @@ import { createUrl } from '../../../common/url';
 import styled from 'styled-components';
 import { useActions } from 'typeless';
 import { getLoginState } from '../interface';
-import { Alert } from 'src/components/Alert';
-import { SocialFormButtons } from 'src/components/SocialFormButtons';
+import { Alert } from './node_modules/src/components/Alert';
+import { SocialFormButtons } from './node_modules/src/components/SocialFormButtons';
 
 export function LoginView() {
   useLoginForm();
@@ -55,7 +55,7 @@ export function LoginView() {
             placeholder="********"
             type="password"
             rightLabel={
-              <Link href={createUrl({ name: 'reset-password' })}>
+              <Link href={createUrl({ name: 'forgot-password' })}>
                 Lost password?
               </Link>
             }
