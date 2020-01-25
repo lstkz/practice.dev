@@ -65,29 +65,29 @@ const _HowItWorks = (props: HowItWorksProps) => {
                 <LineSvg />
               </LineBg>
               <Step nr={1} icon={<PickIcon />}>
-                Pick a Challenge
+                Pick a challenge.
               </Step>
               <Step nr={2} icon={<SpecIcon />}>
-                Read the requirements
+                Read the requirements.
               </Step>
               <Step nr={3} icon={<SolveIcon />}>
-                Solve it
+                Solve it.
               </Step>
               <Step nr={4} icon={<UrlIcon />}>
-                Provide the URL <br /> of your application
+                Provide the URL <br /> of your application.
               </Step>
               <Step nr={5} icon={<WaitIcon />}>
                 Wait for the testing results.
                 <br /> It will take less than 10s.
               </Step>
               <Step nr={6} icon={<SuccessIcon />}>
-                <Colored color="green">Success?</Colored> Congrats!
+                <Colored color="green2">Success?</Colored> Congrats!
                 <br />
-                Try to solve the next challenge
+                Try to solve the next challenge.
               </Step>
               <Step nr={7} icon={<ErrorIcon />}>
                 <Colored color="red">Failure?</Colored> Debug the errors, and
-                try again
+                try again.
               </Step>
             </StepsWrapper>
           </Left>

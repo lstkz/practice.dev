@@ -5,6 +5,8 @@ import { LandingSymbol } from '../../../symbols';
 import { TopBanner } from './TopBanner';
 import { WhatsPractice } from './WhatsPractice';
 import { HowItWorks } from './HowItWorks';
+import { ReadyToCode } from './ReadyToCode';
+import { Footer } from 'src/components/Footer';
 
 export const [handle, LandingActions] = createModule(LandingSymbol).withActions(
   {
@@ -22,6 +24,8 @@ export function LandingView() {
       <TopBanner />
       <WhatsPractice />
       <HowItWorks />
+      <ReadyToCode />
+      <Footer />
     </>
   );
 }
