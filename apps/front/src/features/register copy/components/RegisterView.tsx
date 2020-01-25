@@ -13,8 +13,8 @@ import { FullPageForm } from '../../../components/FullPageForm';
 import { SocialFormButtons } from '../../../components/SocialFormButtons';
 import { createUrl } from '../../../common/url';
 import { getRegisterState } from '../interface';
-import { Alert } from 'src/components/Alert';
-import { Colored } from 'src/components/Colored';
+import { Alert } from './node_modules/src/components/Alert';
+import { Colored } from './node_modules/src/components/Colored';
 
 export function RegisterView() {
   useRegisterForm();
