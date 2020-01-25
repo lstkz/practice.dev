@@ -4,6 +4,7 @@ import { Container } from 'src/components/Container';
 import { Theme } from 'src/common/Theme';
 import { Button } from 'src/components/Button';
 import { ReadyToCodeSvg } from './ReadyToCodeSvg';
+import { createUrl } from 'src/common/url';
 
 interface ReadyToCodeProps {
   className?: string;
@@ -33,7 +34,9 @@ const _ReadyToCode = (props: ReadyToCodeProps) => {
         <Inner>
           <Text>Ready to code?</Text>
           <ReadyToCodeSvg />
-          <Button type="primary">START CODING</Button>
+          <Button type="primary" href={createUrl({ name: 'register' })}>
+            START CODING
+          </Button>
         </Inner>
       </Container>
     </div>

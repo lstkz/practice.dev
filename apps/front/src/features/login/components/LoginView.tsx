@@ -63,14 +63,7 @@ export function LoginView() {
           <Button type="primary" block loading={isSubmitting} htmlType="submit">
             SIGN IN
           </Button>
-          <SocialFormButtons
-            onGithubClick={() => {
-              //
-            }}
-            onGoogleClick={() => {
-              //
-            }}
-          />
+          <SocialFormButtons />
         </form>
       </LoginFormProvider>
     </FullPageForm>

@@ -17,6 +17,7 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-tooltip": "^3.11.0",
     "@types/styled-components": "^4.1.19",
+    "@types/tether": "^1.4.4",
     "@types/typed.js": "^2.0.9",
     "@types/webpack-env": "^1.14.0",
     "babel-loader": "^8.0.6",

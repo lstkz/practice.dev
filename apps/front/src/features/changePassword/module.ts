@@ -12,6 +12,7 @@ import {
 import { api } from 'src/services/api';
 import { GlobalActions } from '../global/interface';
 import { getErrorMessage } from 'src/common/helper';
+import { getRouteParams } from 'src/common/url';
 
 // --- Epic ---
 handle
@@ -21,10 +22,11 @@ handle
     const values = R.omit(getChangePasswordFormState().values, [
       'confirmPassword',
     ]);
+    const { code } = getRouteParams('reset-password');
     return Rx.concatObs(
       Rx.of(ChangePasswordActions.setSubmitting(true)),
       Rx.of(ChangePasswordActions.setError(null)),
-      api.user_confirmResetPassword('', values.password).pipe(
+      api.user_confirmResetPassword(code, values.password).pipe(
         Rx.map(ret => GlobalActions.auth(ret)),
         Rx.catchLog(e => {
           return Rx.of(ChangePasswordActions.setError(getErrorMessage(e)));

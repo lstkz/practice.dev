@@ -76,14 +76,7 @@ export function RegisterView() {
           <Button type="primary" block loading={isSubmitting} htmlType="submit">
             CREATE MY ACCOUNT
           </Button>
-          <SocialFormButtons
-            onGithubClick={() => {
-              //
-            }}
-            onGoogleClick={() => {
-              //
-            }}
-          />
+          <SocialFormButtons />
         </form>
       </RegisterFormProvider>
     </FullPageForm>

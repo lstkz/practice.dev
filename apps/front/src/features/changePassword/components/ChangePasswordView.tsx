@@ -22,11 +22,7 @@ export function ChangePasswordView() {
   return (
     <FullPageForm
       title="Change Password"
-      subTitle={
-        <>
-          We will send you an email that will allow you to change your password
-        </>
-      }
+      subTitle={<>Set your new password.</>}
     >
       <ChangePasswordFormProvider>
         <form
@@ -36,6 +32,13 @@ export function ChangePasswordView() {
           }}
         >
           {error && <Alert type="error">{error}</Alert>}
+          <FormInput
+            id="password"
+            name="password"
+            label="Password"
+            placeholder="********"
+            type="password"
+          />
           <FormInput
             id="confirmPassword"
             name="confirmPassword"

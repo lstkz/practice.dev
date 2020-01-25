@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Hmr, Registry, startHmr, TypelessContext } from 'typeless';
-
 import { GlobalStyle } from './components/GlobalStyle';
 
 const MOUNT_NODE = document.getElementById('root')!;
@@ -38,5 +37,18 @@ if (module.hot) {
     render();
   });
 }
-
-render();
+if (window.location.pathname === '/github') {
+  if (window.opener) {
+    const code = /code=(\w+)/.exec(window.location.search)![1];
+    (window.opener as any).githubCallback(code);
+    window.close();
+  }
+} else if (window.location.pathname === '/google') {
+  if (window.opener) {
+    const token = /access_token=([^&]+)/.exec(window.location.hash)![1];
+    (window.opener as any).googleCallback(token);
+    window.close();
+  }
+} else {
+  render();
+}

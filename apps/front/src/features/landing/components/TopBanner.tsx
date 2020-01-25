@@ -91,7 +91,9 @@ const _TopBanner = (props: TopBannerProps) => {
             <Button type="secondary" href={createUrl({ name: 'login' })}>
               LOGIN
             </Button>
-            <Button type="primary">JOIN NOW</Button>
+            <Button type="primary" href={createUrl({ name: 'register' })}>
+              JOIN NOW
+            </Button>
           </Buttons>
         </TopNav>
         <Main>
@@ -112,7 +114,9 @@ const _TopBanner = (props: TopBannerProps) => {
               technology, and learn by doing.
             </Desc>
             <BannerButtonWrapper>
-              <Button type="primary">JOIN NOW</Button>
+              <Button type="primary" href={createUrl({ name: 'register' })}>
+                JOIN NOW
+              </Button>
               <FreeText>It’s free!</FreeText>
             </BannerButtonWrapper>
           </Right>

@@ -1,3 +1,6 @@
+import { getRouterState } from 'typeless-router';
+import * as R from 'remeda';
+
 export type UrlOptions =
   | {
       name: 'login';
@@ -27,5 +30,18 @@ export function createUrl(options: UrlOptions) {
       return '/';
     case 'home':
       return '/';
+  }
+}
+
+export function getRouteParams(name: 'reset-password'): { code: string };
+export function getRouteParams(name: 'reset-password'): any {
+  const location = getRouterState().location!;
+  switch (name) {
+    case 'reset-password': {
+      const split = location.pathname.split('/');
+      return {
+        code: R.last(split),
+      };
+    }
   }
 }

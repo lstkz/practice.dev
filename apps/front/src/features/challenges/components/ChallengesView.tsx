@@ -25,7 +25,7 @@ const Wrapper = styled.div`
 
 export function ChallengesView() {
   useChallengesModule();
-  const { isLoading, items } = getChallengesState.useState();
+  const { items } = getChallengesState.useState();
 
   return (
     <Dashboard>
