@@ -1,66 +1,125 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Row, Col } from './Grid';
+import { Theme } from 'src/common/Theme';
+import { createUrl } from 'src/common/url';
+import { Link } from './Link';
 import { Container } from './Container';
 
 interface FooterProps {
   className?: string;
 }
 
-const Copyright = styled.div`
-  font-size: 0.875rem;
-  font-weight: 600;
-`;
-const Links = styled.ul`
+const Links = styled.div`
   display: flex;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-end;
-
-  li {
-    a {
-      font-size: 0.875rem;
-      color: #8492a6;
-      display: block;
-      padding: 4px 16px;
+  justify-content: center;
+  a {
+    text-decoration: none;
+    margin: 8px;
+    &:hover {
+      text-decoration: underline;
     }
   }
+`;
+
+const BottomSep = styled.div`
+  border: 1px solid ${Theme.gray2};
+  margin-top: 30px;
+  margin-bottom: 20px;
+`;
+
+const Bottom = styled.div`
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const _Footer = (props: FooterProps) => {
   const { className } = props;
   return (
-    <Container className={className}>
-      <Row>
-        <Col lg={6}>
-          <Copyright>
-            © {new Date().getFullYear()} Practice.dev. All rights reserved.
-          </Copyright>
-        </Col>
-        <Col lg={6}>
-          <Links>
-            <li>
-              <a href="void:">Support</a>
-            </li>
-            <li>
-              <a href="void:">Terms</a>
-            </li>
-            <li>
-              <a href="void:">Privacy</a>
-            </li>
-          </Links>
-        </Col>
-      </Row>
-    </Container>
+    <div className={className}>
+      <Container>
+        <Links>
+          <Link
+            href={createUrl({
+              name: 'home',
+            })}
+          >
+            Challenges
+          </Link>
+          {' | '}
+          <Link
+            href={createUrl({
+              name: 'home',
+            })}
+          >
+            Projects
+          </Link>
+          {' | '}
+          <Link
+            href={createUrl({
+              name: 'home',
+            })}
+          >
+            Contests
+          </Link>
+          {' | '}
+          <Link
+            href={createUrl({
+              name: 'home',
+            })}
+          >
+            Forums
+          </Link>
+          {' | '}
+          <Link
+            href={createUrl({
+              name: 'home',
+            })}
+          >
+            Help
+          </Link>
+          {' | '}
+          <Link
+            href={createUrl({
+              name: 'home',
+            })}
+          >
+            Contact us
+          </Link>
+          {' | '}
+          <Link
+            href={createUrl({
+              name: 'home',
+            })}
+          >
+            Terms
+          </Link>
+          {' | '}
+          <Link
+            href={createUrl({
+              name: 'home',
+            })}
+          >
+            Privacy Policy
+          </Link>
+        </Links>
+        <BottomSep />
+        <Bottom>
+          © {new Date().getFullYear()} Practice.dev All Rights Reserved
+        </Bottom>
+      </Container>
+    </div>
   );
 };
 
 export const Footer = styled(_Footer)`
   display: block;
-  border-top: 1px solid #eff2f7 !important;
-  margin-top: auto;
-  padding: 24px 0;
+  padding: 30px 0;
+  background: ${Theme.text};
+  color: ${Theme.grayLight};
+  a {
+    color: ${Theme.grayLight};
+  }
 `;

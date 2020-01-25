@@ -1,67 +1,72 @@
-import React from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
-import { Row, Col } from '../../../components/Grid';
-import { Card } from '../../../components/Card';
-import { Theme } from '../../../common/Theme';
-import { Container } from '../../../components/Container';
+import { Container } from 'src/components/Container';
+import { Theme } from 'src/common/Theme';
+import { LogoDark } from 'src/icons/LogoDark';
+import { Link } from 'src/components/Link';
+import { createUrl } from 'src/common/url';
+import { Button } from 'src/components/Button';
+import { BannerSvg } from './BannerSvg';
 import Typed from 'typed.js';
-import { Button } from '../../../components/Button';
-import { createUrl } from '../../../common/url';
 
 interface TopBannerProps {
   className?: string;
 }
 
-const BgWrapper = styled.div`
-  position: absolute;
-  z-index: -2;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  max-width: 75%;
-  border-radius: 0px 8px 8px 0px;
-  background-color: #0c66ff;
-  overflow: hidden;
+const TopNav = styled.div`
+  display: flex;
+  margin-bottom: 60px;
 `;
 
-const BgImg = styled.img`
-  position: absolute;
-  z-index: 0;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  mix-blend-mode: multiply;
+const Buttons = styled.div`
+  display: flex;
+  margin-left: auto;
+  ${Button} + ${Button} {
+    margin-left: 20px;
+  }
 `;
 
-const Title = styled.h2`
-  padding: 72px 48px;
-  font-weight: 600;
-  color: #3c4858;
-  font-size: calc(1.375rem + 1.5vw);
-  line-height: 1.5;
+const Main = styled.div`
+  display: flex;
+`;
+const Left = styled.div``;
+const Right = styled.div`
+  padding-left: 60px;
+`;
+
+const Title = styled.h1`
+  font-size: 34px;
+  color: ${Theme.textDark};
+  font-weight: 500;
   margin: 0;
-  padding: 0;
+  line-height: 1.3;
 `;
 
-const Desc = styled.p`
-  line-height: 1.8;
-  font-size: 1.25rem;
-  font-weight: 300;
-`;
-
-const CardInner = styled.div`
-  padding: 72px 48px;
-`;
 const Animated = styled.span`
   display: inline-block;
   white-space: nowrap;
   span:first-child {
-    color: ${Theme.warning};
+    color: ${Theme.green};
   }
   width: 200px;
+`;
+
+const Desc = styled.div`
+  margin-top: 25px;
+  margin-bottom: 30px;
+  font-size: 22px;
+  color: ${Theme.textDark};
+`;
+
+const BannerButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const FreeText = styled.div`
+  color: ${Theme.green};
+  font-size: 16px;
+  margin-left: 20px;
 `;
 
 const _TopBanner = (props: TopBannerProps) => {
@@ -78,45 +83,48 @@ const _TopBanner = (props: TopBannerProps) => {
 
   return (
     <div className={className}>
-      <BgWrapper>
-        <BgImg src={require('../../../../assets/bg.jpg')} />
-      </BgWrapper>
-
       <Container>
-        <Row>
-          <Col lg={7} style={{ marginLeft: 'auto' }}>
-            <Card shadow="lg">
-              <CardInner>
-                <Title>
-                  Boost your{' '}
-                  <Animated>
-                    <span id="typed-text"></span>
-                  </Animated>{' '}
-                  <br />
-                  skills.
-                </Title>
-                <Desc>
-                  Solve real web development challenges using your favorite
-                  language and technology, and learn by doing.
-                </Desc>
-                <Button
-                  type="warning"
-                  hoverTranslateY
-                  href={createUrl({ name: 'register' })}
-                >
-                  Join Now (it's free)
-                </Button>
-              </CardInner>
-            </Card>
-          </Col>
-        </Row>
+        <TopNav>
+          <div>
+            <Link href={createUrl({ name: 'home' })} aria-label="logo">
+              <LogoDark />
+            </Link>
+          </div>
+          <Buttons>
+            <Button type="secondary">LOGIN</Button>
+            <Button type="primary">JOIN NOW</Button>
+          </Buttons>
+        </TopNav>
+        <Main>
+          <Left>
+            <BannerSvg />
+          </Left>
+          <Right>
+            <Title>
+              Boost your{' '}
+              <Animated>
+                <span id="typed-text"></span>
+              </Animated>{' '}
+              <br />
+              skills.
+            </Title>
+            <Desc>
+              Solve real web development challenges using favorite language and
+              technology, and learn by doing.
+            </Desc>
+            <BannerButtonWrapper>
+              <Button type="primary">JOIN NOW</Button>
+              <FreeText>It’s free!</FreeText>
+            </BannerButtonWrapper>
+          </Right>
+        </Main>
       </Container>
     </div>
   );
 };
 
 export const TopBanner = styled(_TopBanner)`
-  position: relative;
-  margin-top: 50px;
-  padding: 112px 80px;
+  display: block;
+  padding: 30px 0;
+  background: ${Theme.bgLightGray};
 `;

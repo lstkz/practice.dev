@@ -22,7 +22,6 @@ module.exports = {
   target: 'web',
   mode: __DEV__ ? 'development' : 'production',
   entry: {
-    css: ['./assets/fa/all.css'],
     app: './src/main.tsx',
   },
   devServer: {

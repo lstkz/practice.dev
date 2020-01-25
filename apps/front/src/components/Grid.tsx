@@ -5,14 +5,8 @@ import styled from 'styled-components';
 interface RowProps {
   children?: React.ReactNode;
   className?: string;
+  gutter?: number;
 }
-
-export const Row = styled.div<RowProps>`
-  display: flex;
-  margin-right: -15px;
-  margin-left: -15px;
-  flex-wrap: wrap;
-`;
 
 interface ColProps {
   children?: React.ReactNode;
@@ -24,9 +18,20 @@ interface ColProps {
 export const Col = styled.div<ColProps>`
   position: relative;
   width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
   max-width: ${props => ((props.lg || 1) / 12) * 100}%;
   flex: 0 0 ${props => ((props.lg || 1) / 12) * 100}%;
   margin: ${props => (props.center ? '0 auto' : null)};
+`;
+
+const DEFAULT_GUTTER = 30;
+
+export const Row = styled.div<RowProps>`
+  display: flex;
+  margin-right: -${props => (props.gutter || DEFAULT_GUTTER) / 2}px;
+  margin-left: -${props => (props.gutter || DEFAULT_GUTTER) / 2}px;
+  flex-wrap: wrap;
+  ${Col} {
+    padding-right: ${props => (props.gutter || DEFAULT_GUTTER) / 2}px;
+    padding-left: ${props => (props.gutter || DEFAULT_GUTTER) / 2}px;
+  }
 `;

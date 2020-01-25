@@ -1,4 +1,4 @@
-import { RouteConfig, User, AuthData } from 'src/types';
+import { User, AuthData } from 'src/types';
 import { createModule } from 'typeless';
 import { GlobalSymbol } from './symbol';
 
@@ -15,15 +15,6 @@ export const [handle, GlobalActions, getGlobalState] = createModule(
     }),
   })
   .withState<GlobalState>();
-
-// --- Routing ---
-
-export const routeConfig: RouteConfig = {
-  type: 'route',
-  auth: true,
-  path: '/global',
-  component: () => import('./components/GlobalView').then(x => x.GlobalView),
-};
 
 // --- Types ---
 export interface GlobalState {
