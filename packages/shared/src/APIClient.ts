@@ -1,5 +1,5 @@
 import * as Rx from 'rxjs';
-import { ajax } from 'rxjs/ajax';
+import { ajax, AjaxRequest } from 'rxjs/ajax';
 import { map } from 'rxjs/operators';
 
 // IMPORTS
@@ -128,12 +128,15 @@ export class APIClient {
     if (token) {
       headers['x-token'] = token;
     }
-    return ajax({
-      createXHR: this.createXHR,
+    const options: AjaxRequest = {
       url: `${this.baseUrl}/rpc/${name}`,
       method: 'POST',
       body: JSON.stringify(params),
       headers,
-    }).pipe(map(res => res.response));
+    };
+    if (this.createXHR) {
+      options.createXHR = this.createXHR;
+    }
+    return ajax(options).pipe(map(res => res.response));
   }
 }

@@ -13,6 +13,8 @@ export const [handle, GlobalActions, getGlobalState] = createModule(
     loggedIn: (user: User | null) => ({
       payload: { user },
     }),
+    githubCallback: (code: string) => ({ payload: { code } }),
+    googleCallback: (token: string) => ({ payload: { token } }),
   })
   .withState<GlobalState>();
 

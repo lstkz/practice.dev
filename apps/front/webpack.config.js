@@ -1,5 +1,8 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const dotenv = require('dotenv');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin;
 
@@ -9,6 +12,10 @@ const createStyledComponentsTransformer = require('typescript-plugin-styled-comp
 const __DEV__ = process.env.NODE_ENV === 'development';
 
 const title = 'Practice.dev';
+
+dotenv.config({
+  path: '../../.env',
+});
 
 const styledComponentsTransformer = createStyledComponentsTransformer({
   getDisplayName: (filename, bindingName) => {
@@ -64,6 +71,10 @@ module.exports = {
     publicPath: '/',
   },
   plugins: [
+    new CleanWebpackPlugin(['build'], {
+      root: __dirname,
+      verbose: false,
+    }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, './index.ejs'),
       hash: false,
@@ -73,6 +84,16 @@ module.exports = {
         collapseWhitespace: false,
       },
       title,
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+        GITHUB_CLIENT_ID: JSON.stringify(process.env.GITHUB_CLIENT_ID),
+        GOOGLE_CLIENT_ID: JSON.stringify(process.env.GOOGLE_CLIENT_ID),
+        API_URL: JSON.stringify(
+          process.env.API_URL || 'http://localhost:3100/api'
+        ),
+      },
     }),
     // new BundleAnalyzerPlugin(),
   ],

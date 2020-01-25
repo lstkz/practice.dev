@@ -36,11 +36,20 @@ body
     margin: 0;
     text-align: left;
     color: ${Theme.text};
-    background-color: white;
+    background-color: ${Theme.bgLightGray4};
     height: 100%;
     display: flex;
     flex-direction: column;
 }
+
+a {
+  color: ${Theme.blue};
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 
 #root {
     height: 100% ;

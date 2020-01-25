@@ -21,7 +21,9 @@ interface ButtonProps {
 }
 
 const Icon = styled.span`
-  margin-right: 12px;
+  margin-right: 10px;
+  display: inline-flex;
+  align-items: center;
   svg {
     vertical-align: middle;
     border-style: none;
@@ -82,7 +84,8 @@ export const Button = styled(React.forwardRef(_Button))`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 25px;
+  padding: 0 25px;
+  height: 40px;
   user-select: none;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
     border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -97,6 +100,9 @@ export const Button = styled(React.forwardRef(_Button))`
   width: ${props => (props.block ? '100%' : null)};
   font: inherit;
   outline: none;
+  && {
+    text-decoration: none;
+  }
 
   ${Spinner} {
     margin-right: 10px;
