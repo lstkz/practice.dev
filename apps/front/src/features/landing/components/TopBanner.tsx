@@ -13,11 +13,6 @@ interface TopBannerProps {
   className?: string;
 }
 
-const Logo = styled(Link)`
-  width: 180px;
-  display: block;
-`;
-
 const TopNav = styled.div`
   display: flex;
   margin-bottom: 60px;
@@ -90,11 +85,11 @@ const _TopBanner = (props: TopBannerProps) => {
     <div className={className}>
       <Container>
         <TopNav>
-          <Logo>
+          <div>
             <Link href={createUrl({ name: 'home' })} aria-label="logo">
               <LogoDark />
             </Link>
-          </Logo>
+          </div>
           <Buttons>
             <Button type="secondary">LOGIN</Button>
             <Button type="primary">JOIN NOW</Button>

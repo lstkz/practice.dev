@@ -8,6 +8,7 @@ export const Theme = {
   grayLight: '#D4D6DB',
   gray: '#8590A3',
   green: '#00CC8A',
+  red: '#FF2C4D',
   primaryGradient: 'linear-gradient(180deg, #329AFF 0%, #237AD2 100%)',
   primaryGradientHover: 'linear-gradient(360deg, #33A9FF 0%, #0D7AFF 100%)',
   primaryGradientActive: 'linear-gradient(180deg, #33A9FF 0%, #0D7AFF 100%)',

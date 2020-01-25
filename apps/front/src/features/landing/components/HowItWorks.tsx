@@ -7,6 +7,12 @@ import { LineSvg } from './LineSvg';
 import { Step } from './Step';
 import { PickIcon } from 'src/icons/PickIcon';
 import { SpecIcon } from 'src/icons/SpecIcon';
+import { UrlIcon } from 'src/icons/UrlIcon';
+import { WaitIcon } from 'src/icons/WaitIcon';
+import { SolveIcon } from 'src/icons/SolveIcon';
+import { SuccessIcon } from 'src/icons/SuccessIcon';
+import { ErrorIcon } from 'src/icons/ErrorIcon';
+import { Colored } from 'src/components/Colored';
 
 interface HowItWorksProps {
   className?: string;
@@ -27,9 +33,6 @@ const LineBg = styled.div`
   position: absolute;
   left: 65px;
   top: 65px;
-  svg {
-    width: 225px;
-  }
 `;
 
 const Right = styled.div`
@@ -67,23 +70,24 @@ const _HowItWorks = (props: HowItWorksProps) => {
               <Step nr={2} icon={<SpecIcon />}>
                 Read the requirements
               </Step>
-              <Step nr={3} icon={<SpecIcon />}>
+              <Step nr={3} icon={<SolveIcon />}>
                 Solve it
               </Step>
-              <Step nr={4} icon={<SpecIcon />}>
+              <Step nr={4} icon={<UrlIcon />}>
                 Provide the URL <br /> of your application
               </Step>
-              <Step nr={5} icon={<SpecIcon />}>
+              <Step nr={5} icon={<WaitIcon />}>
                 Wait for the testing results.
                 <br /> It will take less than 10s.
               </Step>
-              <Step nr={6} icon={<SpecIcon />}>
-                Success? Congrats!
+              <Step nr={6} icon={<SuccessIcon />}>
+                <Colored color="green">Success?</Colored> Congrats!
                 <br />
                 Try to solve the next challenge
               </Step>
-              <Step nr={7} icon={<SpecIcon />}>
-                Failure? Debug the errors, and try again
+              <Step nr={7} icon={<ErrorIcon />}>
+                <Colored color="red">Failure?</Colored> Debug the errors, and
+                try again
               </Step>
             </StepsWrapper>
           </Left>

@@ -46,8 +46,8 @@ export const Step = styled(_Step)`
   border-radius: 5px;
   position: relative;
   margin-left: ${props => (props.nr % 2 === 0 ? 'auto' : 0)};
-  padding: 30px 20px 17px;
+  padding: 30px 20px 19px;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   line-height: 19px;
 `;
