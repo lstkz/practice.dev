@@ -21,4 +21,8 @@ const _Logo = (props: LogoProps) => {
   );
 };
 
-export const Logo = styled(_Logo)``;
+export const Logo = styled(_Logo)`
+  a {
+    display: flex;
+  }
+`;
