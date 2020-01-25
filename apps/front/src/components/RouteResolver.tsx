@@ -6,6 +6,7 @@ import LoadingBar from 'react-top-loading-bar';
 import { RouteConfig } from '../types';
 import { getGlobalState } from '../features/global/interface';
 import { usePrevious } from '../hooks/usePrevious';
+import { Theme } from 'src/common/Theme';
 
 // load dynamically all routes from all interfaces
 const reqs = [require.context('../features', true, /interface.tsx?$/)];
@@ -102,7 +103,7 @@ export const RouteResolver = () => {
         ref={loaderRef}
         progress={loadingBarProgress}
         height={3}
-        color="#273444"
+        color={Theme.blue}
       />
       {component}
     </>

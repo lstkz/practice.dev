@@ -2,12 +2,11 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Container } from 'src/components/Container';
 import { Theme } from 'src/common/Theme';
-import { LogoDark } from 'src/icons/LogoDark';
-import { Link } from 'src/components/Link';
 import { createUrl } from 'src/common/url';
 import { Button } from 'src/components/Button';
 import { BannerSvg } from './BannerSvg';
 import Typed from 'typed.js';
+import { Logo } from 'src/components/Logo';
 
 interface TopBannerProps {
   className?: string;
@@ -86,12 +85,12 @@ const _TopBanner = (props: TopBannerProps) => {
       <Container>
         <TopNav>
           <div>
-            <Link href={createUrl({ name: 'home' })} aria-label="logo">
-              <LogoDark />
-            </Link>
+            <Logo type="dark" />
           </div>
           <Buttons>
-            <Button type="secondary">LOGIN</Button>
+            <Button type="secondary" href={createUrl({ name: 'login' })}>
+              LOGIN
+            </Button>
             <Button type="primary">JOIN NOW</Button>
           </Buttons>
         </TopNav>
