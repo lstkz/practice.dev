@@ -1,6 +1,7 @@
 import * as React from 'react';
-import TetherComponent from 'react-tether';
+import * as PopperJS from 'popper.js';
 import styled, { css, keyframes } from 'styled-components';
+import { Manager, Reference, Popper } from 'react-popper';
 import { Theme } from '../common/Theme';
 
 const INPUT_FOCUS_CLASS = 'input-focus';
@@ -91,7 +92,9 @@ const shakeAnimation = keyframes`
   100% { transform: translate(0px); }
 `;
 
-const Error = styled.div`
+const ErrorPopup = styled.div``;
+
+const Error = styled.div<{ placement?: PopperJS.Placement }>`
   padding: 0 12px;
   height: 40px;
   display: flex;
@@ -102,23 +105,25 @@ const Error = styled.div`
   color: white;
   position: relative;
   animation: ${shakeAnimation} 0.4s 1 linear;
-  .tether-target-attached-right & {
-    margin-left: 15px;
-    &:after {
-      right: 100%;
-      top: 50%;
-      border: solid transparent;
-      content: ' ';
-      height: 0;
-      width: 0;
-      position: absolute;
-      pointer-events: none;
-      border-color: transparent;
-      border-right-color: ${Theme.red};
-      border-width: 5px;
-      margin-top: -5px;
-    }
-  }
+  ${props =>
+    props.placement === 'right' &&
+    css`
+      margin-left: 15px;
+      &:after {
+        right: 100%;
+        top: 50%;
+        border: solid transparent;
+        content: ' ';
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-color: transparent;
+        border-right-color: ${Theme.red};
+        border-width: 5px;
+        margin-top: -5px;
+      }
+    `}
 `;
 
 const _Input = (props: InputProps) => {
@@ -161,43 +166,50 @@ const _Input = (props: InputProps) => {
       {...rest}
     />
   );
+
   return (
-    <TetherComponent
-      attachment="bottom left"
-      targetAttachment="bottom right"
-      constraints={[
-        {
-          to: 'scrollParent',
-          attachment: 'together',
-        },
-      ]}
-      renderTarget={ref => (
-        <div className={className} ref={wrapperRef}>
-          {(label || rightLabel) && (
-            <LabelsWrapper>
-              <Label htmlFor={id}>{label}</Label> <div>{rightLabel}</div>
-            </LabelsWrapper>
-          )}
-          {icon ? (
-            <InputGroup ref={ref as any}>
-              <Prepend>
-                <InputGroupText>{icon}</InputGroupText>
-              </Prepend>
-              {getInput(null)}
-            </InputGroup>
-          ) : (
-            getInput(ref)
-          )}
-        </div>
-      )}
-      renderElement={ref =>
-        props.state === 'error' && (
-          <Error role="alert" id={`${id}_error`} ref={ref as any}>
-            {props.feedback}
-          </Error>
-        )
-      }
-    />
+    <Manager>
+      <Reference>
+        {({ ref }) => (
+          <div className={className} ref={wrapperRef}>
+            {(label || rightLabel) && (
+              <LabelsWrapper>
+                <Label htmlFor={id}>{label}</Label> <div>{rightLabel}</div>
+              </LabelsWrapper>
+            )}
+            {icon ? (
+              <InputGroup ref={ref}>
+                <Prepend>
+                  <InputGroupText>{icon}</InputGroupText>
+                </Prepend>
+                {getInput(null)}
+              </InputGroup>
+            ) : (
+              getInput(ref)
+            )}
+          </div>
+        )}
+      </Reference>
+      <Popper placement="right">
+        {({ ref, style, placement, arrowProps }) => {
+          console.log({ placement, arrowProps });
+          return (
+            props.state === 'error' && (
+              <ErrorPopup style={style}>
+                <Error
+                  role="alert"
+                  id={`${id}_error`}
+                  ref={ref as any}
+                  placement={placement}
+                >
+                  {props.feedback}
+                </Error>
+              </ErrorPopup>
+            )
+          );
+        }}
+      </Popper>
+    </Manager>
   );
 };
 

@@ -4,7 +4,7 @@ export interface RouteConfig {
   type: 'route';
   path: string | string[];
   exact?: boolean;
-  auth: boolean;
+  auth: boolean | 'any';
   component: () => Promise<() => JSX.Element>;
   noLoader?: boolean;
 }

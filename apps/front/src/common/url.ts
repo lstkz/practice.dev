@@ -15,6 +15,9 @@ export type UrlOptions =
       name: 'challenges';
     }
   | {
+      name: 'projects';
+    }
+  | {
       name: 'home';
     };
 
@@ -28,6 +31,8 @@ export function createUrl(options: UrlOptions) {
       return '/reset-password';
     case 'challenges':
       return '/';
+    case 'projects':
+      return '/projects';
     case 'home':
       return '/';
   }

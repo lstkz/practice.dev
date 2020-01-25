@@ -36,7 +36,10 @@ function getMatch(loc: RouterLocation | null, isLogged: boolean) {
     return null;
   }
   return routes.find(route => {
-    if ((route.auth && !isLogged) || (!route.auth && isLogged)) {
+    if (
+      route.auth !== 'any' &&
+      ((route.auth && !isLogged) || (!route.auth && isLogged))
+    ) {
       return false;
     }
     return matchesRoute(route.path, loc.pathname);
