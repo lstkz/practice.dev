@@ -5,14 +5,19 @@ import {
   handle,
   getChallengesState,
 } from './interface';
-import { RouterActions } from 'typeless-router';
+import { RouterActions, getRouterState } from 'typeless-router';
 import { api } from 'src/services/api';
 
 // --- Epic ---
 handle
   .epic()
   .on(ChallengesActions.$mounted, () => ChallengesActions.load())
-  .on(RouterActions.locationChange, () => ChallengesActions.load())
+  .on(RouterActions.locationChange, () => {
+    if (getRouterState().location?.pathname !== '/challenges') {
+      return Rx.empty();
+    }
+    return ChallengesActions.load();
+  })
   .on(ChallengesActions.load, () => {
     const { filter } = getChallengesState();
 

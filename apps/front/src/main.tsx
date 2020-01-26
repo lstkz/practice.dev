@@ -1,14 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Hmr, Registry, startHmr, TypelessContext } from 'typeless';
+import { Hmr, startHmr, TypelessContext } from 'typeless';
 import { GlobalStyle } from './components/GlobalStyle';
+import { registry } from './registry';
 
 const MOUNT_NODE = document.getElementById('root')!;
 
-const registry = new Registry();
-
 (window as any)._registry = registry;
-
 const render = () => {
   const App = require('./components/App').App;
   ReactDOM.unmountComponentAtNode(MOUNT_NODE);

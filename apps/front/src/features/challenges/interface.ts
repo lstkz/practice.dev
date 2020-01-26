@@ -27,6 +27,7 @@ export const anonymousRouteConfig: RouteConfig = {
   auth: false,
   path: '/challenges',
   component,
+  waitForAction: ChallengesActions.loaded,
 };
 
 export const routeConfig: RouteConfig = {
@@ -34,6 +35,7 @@ export const routeConfig: RouteConfig = {
   auth: true,
   path: '/',
   component,
+  waitForAction: ChallengesActions.loaded,
 };
 
 // --- Types ---
