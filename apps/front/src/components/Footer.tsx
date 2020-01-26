@@ -43,7 +43,7 @@ const _Footer = (props: FooterProps) => {
         <Links>
           <Link
             href={createUrl({
-              name: 'home',
+              name: 'challenges',
             })}
           >
             Challenges
@@ -51,7 +51,7 @@ const _Footer = (props: FooterProps) => {
           {' | '}
           <Link
             href={createUrl({
-              name: 'home',
+              name: 'projects',
             })}
           >
             Projects

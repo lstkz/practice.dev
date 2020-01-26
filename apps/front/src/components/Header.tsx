@@ -13,6 +13,7 @@ import { useActions } from 'typeless';
 import { GlobalActions, getGlobalState } from 'src/features/global/interface';
 import { useUser } from 'src/hooks/useUser';
 import { getRouterState } from 'typeless-router';
+import { Button } from './Button';
 
 interface HeaderProps {
   className?: string;
@@ -41,7 +42,7 @@ const NavItem = styled.div<{ active?: boolean }>`
     ${props => (props.active ? Theme.green : 'transparent')};
   a {
     text-decoration: none;
-    font-weight: 500px;
+    font-weight: ${props => (props.active ? 500 : null)};
     color: ${props => (props.active ? 'white' : Theme.grayLight)};
     &:hover {
       color: white;
@@ -90,6 +91,15 @@ const Avatar = styled.div`
   border: 1px solid ${Theme.gray3};
 `;
 
+const Buttons = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  ${Button} + ${Button} {
+    margin-left: 20px;
+  }
+`;
+
 const _Header = (props: HeaderProps) => {
   const { className } = props;
   const { logout } = useActions(GlobalActions);
@@ -117,34 +127,45 @@ const _Header = (props: HeaderProps) => {
               <Link href={createUrl({ name: 'challenges' })}>Forums</Link>
             </NavItem>
           </Nav>
-          <UserInfoWrapper>
-            <MenuDropdown
-              dropdown={
-                <Dropdown>
-                  <MenuItem>
-                    <Link href={createUrl({ name: 'challenges' })}>
-                      My Profile
-                    </Link>
-                  </MenuItem>
-                  <MenuItem>
-                    <Link href={createUrl({ name: 'challenges' })}>
-                      Settings
-                    </Link>
-                  </MenuItem>
-                  <MenuSeparator />
-                  <MenuItem red>
-                    <VoidLink onClick={logout}>Logout</VoidLink>
-                  </MenuItem>
-                </Dropdown>
-              }
-            >
-              <UserInfo>
-                <Avatar />
-                <Username>{user?.username}</Username>
-                <Caret />
-              </UserInfo>
-            </MenuDropdown>
-          </UserInfoWrapper>
+          {user ? (
+            <UserInfoWrapper>
+              <MenuDropdown
+                dropdown={
+                  <Dropdown>
+                    <MenuItem>
+                      <Link href={createUrl({ name: 'challenges' })}>
+                        My Profile
+                      </Link>
+                    </MenuItem>
+                    <MenuItem>
+                      <Link href={createUrl({ name: 'challenges' })}>
+                        Settings
+                      </Link>
+                    </MenuItem>
+                    <MenuSeparator />
+                    <MenuItem red>
+                      <VoidLink onClick={logout}>Logout</VoidLink>
+                    </MenuItem>
+                  </Dropdown>
+                }
+              >
+                <UserInfo>
+                  <Avatar />
+                  <Username>{user.username}</Username>
+                  <Caret />
+                </UserInfo>
+              </MenuDropdown>
+            </UserInfoWrapper>
+          ) : (
+            <Buttons>
+              <Button type="secondary" href={createUrl({ name: 'login' })}>
+                LOGIN
+              </Button>
+              <Button type="primary" href={createUrl({ name: 'register' })}>
+                JOIN NOW
+              </Button>
+            </Buttons>
+          )}
         </Inner>
       </Container>
     </div>

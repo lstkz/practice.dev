@@ -1,12 +1,18 @@
-import { RouteConfig, Challenge } from 'src/types';
+import { RouteConfig, Challenge, PagedResult } from 'src/types';
 import { createModule } from 'typeless';
 import { ChallengesSymbol } from './symbol';
+import { ChallengeDifficulty, ChallengeDomain } from 'shared';
 
 // --- Actions ---
 export const [handle, ChallengesActions, getChallengesState] = createModule(
   ChallengesSymbol
 )
-  .withActions({})
+  .withActions({
+    $init: null,
+    $mounted: null,
+    load: null,
+    loaded: (result: PagedResult<Challenge>) => ({ payload: { result } }),
+  })
   .withState<ChallengesState>();
 
 // --- Routing ---
@@ -32,5 +38,17 @@ export const routeConfig: RouteConfig = {
 
 // --- Types ---
 export interface ChallengesState {
+  isLoading: boolean;
+  total: number;
+  pageSize: number;
+  pageNumber: number;
+  totalPages: number;
   items: Challenge[];
+  filter: {
+    status: SolveStatus[];
+    difficulties: ChallengeDifficulty[];
+    domains: ChallengeDomain[];
+  };
 }
+
+export type SolveStatus = 'solved' | 'unsolved' | 'any';
