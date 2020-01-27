@@ -49,12 +49,26 @@ export const searchChallenges = createContract('challenge.searchChallenges')
       tags: S.array()
         .items(S.string())
         .optional(),
-      domain: S.string().optional(),
-      difficulty: S.string().optional(),
+      domains: S.array()
+        .items(S.string())
+        .optional(),
+      difficulties: S.array()
+        .items(S.string())
+        .optional(),
+      statuses: S.array()
+        .items(S.enum().literal('solved', 'unsolved'))
+        .optional(),
     }),
   })
   .fn(async criteria => {
-    const { sortBy, sortOrder, tags, domain, difficulty } = criteria;
+    const {
+      sortBy,
+      sortOrder,
+      tags,
+      domains,
+      difficulties,
+      statuses,
+    } = criteria;
     const pageSize = criteria.pageSize!;
     const pageNumber = criteria.pageNumber!;
 
@@ -63,22 +77,38 @@ export const searchChallenges = createContract('challenge.searchChallenges')
       _getSolvedChallenges(),
     ]);
 
+    const solvedMap = R.indexBy(solved, x => x);
+
     const allChallenges = R.pipe(
       items,
-      R.map(mapDbChallenge),
+      R.map(item => {
+        const mapped = mapDbChallenge(item);
+        if (solvedMap[mapped.id]) {
+          mapped.isSolved = true;
+        }
+        return mapped;
+      }),
       R.filter(item => {
-        if (domain) {
-          if (item.domain !== domain) {
+        if (domains && domains.length) {
+          if (!domains.includes(item.domain)) {
             return false;
           }
         }
-        if (difficulty) {
-          if (item.difficulty !== difficulty) {
+        if (difficulties && difficulties.length) {
+          if (!difficulties.includes(item.difficulty)) {
             return false;
           }
         }
         if (tags) {
           if (R.intersection(tags, item.tags).length !== tags.length) {
+            return false;
+          }
+        }
+        if (statuses && statuses.length) {
+          if (item.isSolved && !statuses.some(x => x === 'solved')) {
+            return false;
+          }
+          if (!item.isSolved && !statuses.some(x => x === 'unsolved')) {
             return false;
           }
         }
@@ -99,13 +129,6 @@ export const searchChallenges = createContract('challenge.searchChallenges')
 
     const start = pageNumber * pageSize;
     const paginated = allChallenges.slice(start, start + pageSize);
-
-    const solvedMap = R.indexBy(solved, x => x);
-    paginated.forEach(item => {
-      if (solvedMap[item.id]) {
-        item.isSolved = true;
-      }
-    });
 
     const total = allChallenges.length;
     const result: PagedResult<Challenge> = {

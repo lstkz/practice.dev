@@ -1,4 +1,7 @@
 import { S, getValidateResult, AnySchema } from 'schema';
+import * as Rx from 'src/rx';
+import type { ActionLike } from 'typeless';
+import { GlobalActions } from 'src/features/global/interface';
 
 function fixErrorMessage(message: string) {
   if (message === 'is required') {
@@ -23,3 +26,9 @@ export function getErrorMessage(e: any) {
   const message = e?.response?.error || e.message;
   return message.replace('ContractError: ', '');
 }
+
+export const catchErrorAndShowModal = () =>
+  Rx.catchLog<ActionLike, ActionLike>((e: any) => {
+    console.error(e); 
+    return Rx.of(GlobalActions.showNotification('error', getErrorMessage(e)));
+  });

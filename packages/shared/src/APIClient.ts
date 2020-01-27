@@ -29,8 +29,9 @@ export class APIClient {
     pageSize?: number | undefined;
     pageNumber?: number | undefined;
     tags?: string[] | undefined;
-    domain?: string | undefined;
-    difficulty?: string | undefined;
+    domains?: string[] | undefined;
+    difficulties?: string[] | undefined;
+    statuses?: ('solved' | 'unsolved')[] | undefined;
   }): Rx.Observable<PagedResult<Challenge>> {
     return this.call('challenge.searchChallenges', criteria);
   }
@@ -47,14 +48,14 @@ export class APIClient {
   }
   challenge_updateChallenge(values: {
     tags: string[];
-    domain: 'frontend' | 'backend' | 'fullstack' | 'styling';
-    difficulty: 'easy' | 'medium' | 'hard';
     id: number;
     title: string;
     description: string;
     detailsBundleS3Key: string;
     testsBundleS3Key: string;
     testCase: string;
+    domain: 'frontend' | 'backend' | 'fullstack' | 'styling';
+    difficulty: 'easy' | 'medium' | 'hard';
   }): Rx.Observable<number> {
     return this.call('challenge.updateChallenge', values);
   }

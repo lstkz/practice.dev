@@ -5,34 +5,44 @@ import {
   handle,
   getChallengesState,
 } from './interface';
-import { RouterActions, getRouterState } from 'typeless-router';
+import { RouterActions } from 'typeless-router';
 import { api } from 'src/services/api';
+import { isRoute } from 'src/common/url';
+import { catchErrorAndShowModal } from 'src/common/helper';
 
 // --- Epic ---
 handle
   .epic()
   .on(ChallengesActions.$mounted, () => ChallengesActions.load())
   .on(RouterActions.locationChange, () => {
-    if (getRouterState().location?.pathname !== '/challenges') {
+    if (!isRoute('challenges')) {
       return Rx.empty();
     }
     return ChallengesActions.load();
   })
+  .on(ChallengesActions.updateFilter, () => ChallengesActions.load())
   .on(ChallengesActions.load, () => {
     const { filter } = getChallengesState();
 
     return api
-      .challenge_searchChallenges({})
-      .pipe(Rx.map(ret => ChallengesActions.loaded(ret)));
+      .challenge_searchChallenges({
+        statuses: Object.values(filter.statuses) as any,
+        difficulties: Object.values(filter.difficulties) as any,
+        domains: Object.values(filter.domains) as any,
+      })
+      .pipe(
+        Rx.map(ret => ChallengesActions.loaded(ret)),
+        catchErrorAndShowModal()
+      );
   });
 
 // --- Reducer ---
 const initialState: ChallengesState = {
   isLoading: true,
   filter: {
-    status: [],
-    difficulties: [],
-    domains: [],
+    statuses: {},
+    difficulties: {},
+    domains: {},
   },
   items: [],
   total: 0,
@@ -53,6 +63,9 @@ handle
     state.pageSize = result.pageSize;
     state.pageNumber = result.pageNumber;
     state.totalPages = result.totalPages;
+  })
+  .on(ChallengesActions.updateFilter, (state, { name, value }) => {
+    state.filter[name] = value;
   });
 
 // --- Module ---

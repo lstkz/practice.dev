@@ -56,3 +56,14 @@ export function getRouteParams(name: 'reset-password'): any {
     }
   }
 }
+
+export function isRoute(name: 'challenges'): boolean;
+export function isRoute(name: 'challenges'): boolean {
+  const location = getRouterState().location!;
+  switch (name) {
+    case 'challenges': {
+      return location.pathname === createUrl({ name });
+    }
+  }
+  return false;
+}

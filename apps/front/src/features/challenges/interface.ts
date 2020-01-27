@@ -12,6 +12,9 @@ export const [handle, ChallengesActions, getChallengesState] = createModule(
     $mounted: null,
     load: null,
     loaded: (result: PagedResult<Challenge>) => ({ payload: { result } }),
+    updateFilter: (name: keyof ChallengesState['filter'], value: any) => ({
+      payload: { name, value },
+    }),
   })
   .withState<ChallengesState>();
 
@@ -47,10 +50,16 @@ export interface ChallengesState {
   totalPages: number;
   items: Challenge[];
   filter: {
-    status: SolveStatus[];
-    difficulties: ChallengeDifficulty[];
-    domains: ChallengeDomain[];
+    statuses: {
+      [x in SolveStatus]?: SolveStatus;
+    };
+    difficulties: {
+      [x in ChallengeDifficulty]?: ChallengeDifficulty;
+    };
+    domains: {
+      [x in ChallengeDomain]?: ChallengeDomain;
+    };
   };
 }
 
-export type SolveStatus = 'solved' | 'unsolved' | 'any';
+export type SolveStatus = 'solved' | 'unsolved';

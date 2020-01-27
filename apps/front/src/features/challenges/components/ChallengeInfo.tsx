@@ -108,12 +108,7 @@ export function ChallengeInfo(props: ChallengeInfoProps) {
         </Title>
         <Desc>{challenge.description}</Desc>
         <Tags>
-          <DomainTag
-            domain={challenge.domain}
-            onClick={() => {
-              //
-            }}
-          />
+          <DomainTag domain={challenge.domain} />
           <Tag type="difficulty">{challenge.difficulty}</Tag>
           {challenge.tags.map((tag, i) => (
             <Tag key={i} type="custom">

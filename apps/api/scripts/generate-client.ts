@@ -125,7 +125,13 @@ function checkNode(node: ts.Node, checker: ts.TypeChecker) {
           param.valueDeclaration!
         );
         const paramName = param.escapedName.toString();
-        params.push(`${paramName}: ${checker.typeToString(type)},`);
+        params.push(
+          `${paramName}: ${checker.typeToString(
+            type,
+            undefined,
+            ts.TypeFormatFlags.NoTruncation
+          )},`
+        );
         paramNames.push(paramName);
       });
     }

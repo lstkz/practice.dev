@@ -15,6 +15,9 @@ export const [handle, GlobalActions, getGlobalState] = createModule(
     }),
     githubCallback: (code: string) => ({ payload: { code } }),
     googleCallback: (token: string) => ({ payload: { token } }),
+    showNotification: (type: 'error' | 'success', message: string) => ({
+      payload: { type, message },
+    }),
   })
   .withState<GlobalState>();
 
