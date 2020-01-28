@@ -5,7 +5,7 @@ import { useActions, useMappedState, getIsHmr } from 'typeless';
 import { getRouterState, RouterActions, RouterLocation } from 'typeless-router';
 import LoadingBar from 'react-top-loading-bar';
 import { RouteConfig } from '../types';
-import { getGlobalState } from '../features/global/interface';
+import { getGlobalState, GlobalActions } from '../features/global/interface';
 import { usePrevious } from '../hooks/usePrevious';
 import { Theme } from 'src/common/Theme';
 import { getOutputStream } from 'src/registry';
@@ -66,6 +66,7 @@ export const RouteResolver = () => {
   );
   const [loadingBarProgress, setLoadingBarProgress] = React.useState(0);
   const { replace } = useActions(RouterActions);
+  const { showAppError } = useActions(GlobalActions);
   const [component1, setComponent1] = useState<JSX.Element | null>(null);
   const [component2, setComponent2] = useState<JSX.Element | null>(null);
   const [currentComponent, setCurrentComponent] = useState(1);
@@ -108,30 +109,42 @@ export const RouteResolver = () => {
         loaderRef.current?.continuousStart();
       }
     }, 5);
-    routeConfig.component().then(Component => {
-      if (routeConfig.waitForAction && prevLocation && !getIsHmr()) {
-        const comp = <Component />;
-        setNextComponent(comp);
-        return getOutputStream()
-          .pipe(
-            Rx.ofType(routeConfig.waitForAction),
-            Rx.tap(() => {
-              if (loadIdRef.current === id) {
-                showNextComponent();
-                loaderRef.current?.complete();
-              }
-            })
-          )
-          .toPromise();
-      } else {
-        clearTimeout(startTimeout);
-        if (!routeConfig.noLoader && isStarted) {
-          loaderRef.current?.complete();
-        }
-        setComponent(<Component />);
-        return null;
+    const tryCompleteLoader = () => {
+      clearTimeout(startTimeout);
+      if (!routeConfig.noLoader && isStarted) {
+        loaderRef.current?.complete();
       }
-    });
+    };
+    routeConfig
+      .component()
+      .then(Component => {
+        if (routeConfig.waitForAction && prevLocation && !getIsHmr()) {
+          const comp = <Component />;
+          setNextComponent(comp);
+          return getOutputStream()
+            .pipe(
+              Rx.ofType([
+                routeConfig.waitForAction,
+                GlobalActions.showAppError,
+              ]),
+              Rx.tap(() => {
+                if (loadIdRef.current === id) {
+                  showNextComponent();
+                  loaderRef.current?.complete();
+                }
+              })
+            )
+            .toPromise();
+        } else {
+          tryCompleteLoader();
+          setComponent(<Component />);
+          return null;
+        }
+      })
+      .catch(() => {
+        tryCompleteLoader();
+        showAppError('No internet connection. Please refresh the page.');
+      });
   };
 
   useEffect(() => {

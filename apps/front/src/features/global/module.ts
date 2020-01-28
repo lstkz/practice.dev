@@ -40,6 +40,7 @@ handle
 const initialState: GlobalState = {
   isLoaded: false,
   user: null,
+  appError: null,
 };
 
 handle
@@ -50,6 +51,12 @@ handle
   })
   .on(GlobalActions.logout, state => {
     state.user = null;
+  })
+  .on(GlobalActions.showAppError, (state, { error, requestId }) => {
+    state.appError = { error, requestId };
+  })
+  .on(GlobalActions.hideAppError, state => {
+    state.appError = null;
   });
 
 // --- Module ---

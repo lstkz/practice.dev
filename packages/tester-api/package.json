@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@types/chalk": "^2.2.0",
-    "typescript": "3.8.0-dev.20200125",
+    "typescript": "3.8.0-dev.20200128",
     "jest": "^24.7.1",
     "tslint": "^5.16.0",
     "ts-jest": "^24.1.0"

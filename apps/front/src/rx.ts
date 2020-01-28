@@ -9,8 +9,8 @@ export const catchLog = <T, O extends ObservableInput<any>>(
   fn: (err: Error, source: Observable<T>) => O
 ) =>
   catchError<T, O>((err, source) => {
+    console.error(err);
     if (process.env.NODE_ENV !== 'test') {
-      // tslint:disable-next-line:no-console
       console.error(err);
     }
     return fn(err, source);

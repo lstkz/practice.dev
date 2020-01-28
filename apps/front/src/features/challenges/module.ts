@@ -8,7 +8,7 @@ import {
 import { RouterActions } from 'typeless-router';
 import { api } from 'src/services/api';
 import { isRoute } from 'src/common/url';
-import { catchErrorAndShowModal } from 'src/common/helper';
+import { handleAppError } from 'src/common/helper';
 
 // --- Epic ---
 handle
@@ -32,7 +32,7 @@ handle
       })
       .pipe(
         Rx.map(ret => ChallengesActions.loaded(ret)),
-        catchErrorAndShowModal()
+        handleAppError()
       );
   });
 

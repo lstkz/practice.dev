@@ -1,7 +1,7 @@
 import { S, getValidateResult, AnySchema } from 'schema';
 import * as Rx from 'src/rx';
-import type { ActionLike } from 'typeless';
 import { GlobalActions } from 'src/features/global/interface';
+import { ActionLike } from 'typeless';
 
 function fixErrorMessage(message: string) {
   if (message === 'is required') {
@@ -23,12 +23,15 @@ export function validate(
 }
 
 export function getErrorMessage(e: any) {
+  if (e?.status === 0) {
+    return 'Cannot connect to API';
+  }
   const message = e?.response?.error || e.message;
   return message.replace('ContractError: ', '');
 }
 
-export const catchErrorAndShowModal = () =>
-  Rx.catchLog<ActionLike, ActionLike>((e: any) => {
-    console.error(e); 
-    return Rx.of(GlobalActions.showNotification('error', getErrorMessage(e)));
+export const handleAppError = () =>
+  Rx.catchLog<ActionLike, Rx.Observable<ActionLike>>((e: any) => {
+    console.error(e);
+    return Rx.of(GlobalActions.showAppError(getErrorMessage(e)));
   });

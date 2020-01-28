@@ -18,6 +18,6 @@
   "dependencies": {
     "@types/prettier": "^1.18.4",
     "prettier": "^1.19.1",
-    "typescript": "3.8.0-dev.20200125"
+    "typescript": "3.8.0-dev.20200128"
   }
 }
