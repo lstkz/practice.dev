@@ -4,10 +4,6 @@ import { FullPageForm } from 'src/components/FullPageForm';
 import { Theme } from 'src/common/Theme';
 import { MailSuccessIcon } from 'src/icons/MailSuccessIcon';
 
-interface PasswordResetSuccessProps {
-  className?: string;
-}
-
 const Content = styled.div`
   border-radius: 5px;
   background: ${Theme.lightGreen};

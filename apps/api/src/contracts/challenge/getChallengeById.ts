@@ -1,4 +1,8 @@
-import { createContract, getLoggedInUserOrAnonymous } from '../../lib';
+import {
+  createContract,
+  getLoggedInUserOrAnonymous,
+  createRpcBinding,
+} from '../../lib';
 import { S } from 'schema';
 import { createKey, getItem } from '../../common/db';
 import { DbChallengeSolved } from '../../types';
@@ -31,3 +35,9 @@ export const getChallengeById = createContract('challenge.getChallengeById')
     ]);
     return mapDbChallenge(dbChallenge, isSolved);
   });
+
+export const getChallengeByIdRpc = createRpcBinding({
+  public: true,
+  signature: 'challenge.getChallengeById',
+  handler: getChallengeById,
+});

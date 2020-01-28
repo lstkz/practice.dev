@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import ReactTooltip from 'react-tooltip';
-import { Button } from 'src/components/Button';
+import { Button } from 'ui';
 import { Link } from 'typeless-router';
 import { Challenge } from 'shared';
 import { Theme } from 'src/common/Theme';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useResetPasswordModule } from '../module';
-import { Button } from '../../../components/Button';
+import { Button } from 'ui';
 import { Link } from '../../../components/Link';
 import {
   useResetPasswordForm,

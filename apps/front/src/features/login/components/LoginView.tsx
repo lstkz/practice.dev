@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLoginModule } from '../module';
-import { Button } from '../../../components/Button';
+import { Button } from 'ui';
 import { Link } from '../../../components/Link';
 import {
   useLoginForm,
@@ -10,7 +10,6 @@ import {
 import { FormInput } from '../../../components/FormInput';
 import { FullPageForm } from '../../../components/FullPageForm';
 import { createUrl } from '../../../common/url';
-import styled from 'styled-components';
 import { useActions } from 'typeless';
 import { getLoginState } from '../interface';
 import { Alert } from 'src/components/Alert';

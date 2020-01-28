@@ -6,3 +6,4 @@ export * from './src/Modal';
 export * from './src/Section';
 export * from './src/Spinner';
 export * from './src/GlobalStyle';
+export * from './src/Theme';

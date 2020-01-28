@@ -33,7 +33,7 @@ export function CopyButton(props: CopyButtonProps) {
   const { content } = props;
 
   React.useEffect(() => {
-    const clip = new Clipboard(rootRef.current, {
+    const clip = new Clipboard(rootRef.current!, {
       text() {
         return content;
       },

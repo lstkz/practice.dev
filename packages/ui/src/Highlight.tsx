@@ -128,11 +128,11 @@ const Wrapper = styled.div`
 `;
 
 export function Highlight(props: HighlightProps) {
-  const ref = React.useRef();
+  const ref = React.useRef<HTMLElement>(null!);
   const { code, lang } = props;
 
   React.useLayoutEffect(() => {
-    Prism.highlightElement(ref.current);
+    Prism.highlightElement(ref.current!);
   }, [code, lang]);
 
   return (

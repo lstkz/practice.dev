@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRegisterModule } from '../module';
-import { Button } from '../../../components/Button';
+import { Button } from 'ui';
 import { Link } from '../../../components/Link';
 import {
   useRegisterForm,

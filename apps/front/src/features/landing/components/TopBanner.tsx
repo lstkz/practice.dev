@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Container } from 'src/components/Container';
 import { Theme } from 'src/common/Theme';
 import { createUrl } from 'src/common/url';
-import { Button } from 'src/components/Button';
+import { Button } from 'ui';
 import { BannerSvg } from './BannerSvg';
 import Typed from 'typed.js';
 import { Logo } from 'src/components/Logo';
@@ -72,7 +72,7 @@ const _TopBanner = (props: TopBannerProps) => {
   const { className } = props;
 
   React.useLayoutEffect(() => {
-    var typed = new Typed('#typed-text', {
+    new Typed('#typed-text', {
       strings: ['frontend', 'backend', 'full-stack'],
       typeSpeed: 70,
       backSpeed: 30,

@@ -1,39 +1,52 @@
 import { createGlobalStyle } from 'styled-components';
+import { Theme } from './Theme';
 
 export const GlobalStyle = createGlobalStyle`
-*, ::after, ::before {
+@import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500,600); 
+
+*,
+*::before,
+*::after
+{
     box-sizing: border-box;
 }
 
-html, body, #app {
-  height: 100%;
-}
+html
+{
+    font-family: sans-serif;
+    line-height: 1.15;
 
-body {
-  background-color: #f5f5f5;
-  margin: 0;
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #212529;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(31, 45, 61, 0);
+    height: 100% !important;
 }
-
-.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
-    margin-bottom: 8px;
-    font-weight: 500;
-    line-height: 1.2;
-    margin-top: 0;
+body
+{
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.7;
+    margin: 0;
+    text-align: left;
+    color: ${Theme.text};
+    background-color: ${Theme.bgLightGray4};
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 a {
-    color: #007bff;
-    text-decoration: none;
-    background-color: transparent;
+  color: ${Theme.blue};
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
-h5 {
-  font-size: 20px;
+#root {
+    height: 100% ;
+    display: flex;
+    flex-direction: column;
 }
 
 `;
