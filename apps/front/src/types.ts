@@ -1,3 +1,5 @@
+import { ActionLike, AC } from 'typeless';
+
 export * from 'shared/src/types';
 
 export interface RouteConfig {
@@ -7,4 +9,5 @@ export interface RouteConfig {
   auth: boolean | 'any';
   component: () => Promise<() => JSX.Element>;
   noLoader?: boolean;
+  waitForAction?: AC;
 }

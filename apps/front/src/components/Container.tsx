@@ -1,9 +1,10 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 interface ContainerProps {
   className?: string;
   children: React.ReactNode;
+  flex?: boolean;
 }
 
 export const Container = styled.div<ContainerProps>`
@@ -24,4 +25,10 @@ export const Container = styled.div<ContainerProps>`
   margin-left: auto;
   padding-right: 15px;
   padding-left: 15px;
+  ${props =>
+    props.flex &&
+    css`
+      /* display: flex; */
+      flex: 1 0 0;
+    `}
 `;

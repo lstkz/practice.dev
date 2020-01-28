@@ -15,6 +15,10 @@ export type UrlOptions =
       name: 'challenges';
     }
   | {
+      name: 'challenge';
+      id: number;
+    }
+  | {
       name: 'projects';
     }
   | {
@@ -30,7 +34,9 @@ export function createUrl(options: UrlOptions) {
     case 'reset-password':
       return '/reset-password';
     case 'challenges':
-      return '/';
+      return '/challenges';
+    case 'challenge':
+      return '/challenges/' + options.id;
     case 'projects':
       return '/projects';
     case 'home':
@@ -49,4 +55,15 @@ export function getRouteParams(name: 'reset-password'): any {
       };
     }
   }
+}
+
+export function isRoute(name: 'challenges'): boolean;
+export function isRoute(name: 'challenges'): boolean {
+  const location = getRouterState().location!;
+  switch (name) {
+    case 'challenges': {
+      return location.pathname === createUrl({ name });
+    }
+  }
+  return false;
 }

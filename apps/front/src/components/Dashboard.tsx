@@ -2,6 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { AppErrorBanner } from './AppErrorBanner';
 
 interface DashboardProps {
   className?: string;
@@ -17,7 +18,10 @@ const _Dashboard = (props: DashboardProps) => {
   return (
     <div className={className}>
       <Header />
-      <Content>{children}</Content>
+      <Content>
+        <AppErrorBanner />
+        {children}
+      </Content>
       <Footer />
     </div>
   );

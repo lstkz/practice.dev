@@ -71,6 +71,12 @@ async function insertSampleData() {
     solved: 0,
     likes: 10,
   });
+
+  await markSolved({
+    userId: '1',
+    challengeId: 2,
+    solvedAt: 1,
+  });
 }
 
 function fixResponse(result: PagedResult<Challenge>) {
@@ -160,6 +166,47 @@ it('should return all challenges with pagination', async () => {
   );
 });
 
+it('filter by solved', async () => {
+  await runWithContext(
+    {
+      user,
+    },
+    async () => {
+      const result = await searchChallenges({
+        statuses: ['solved'],
+      });
+      expect(fixResponse(result)).toEqual({
+        items: [2],
+        pageNumber: 0,
+        pageSize: 30,
+        total: 1,
+        totalPages: 1,
+      });
+      expect(result.items[0].isSolved).toEqual(true);
+    }
+  );
+});
+
+it('filter by unsolved', async () => {
+  await runWithContext(
+    {
+      user,
+    },
+    async () => {
+      const result = await searchChallenges({
+        statuses: ['unsolved'],
+      });
+      expect(fixResponse(result)).toEqual({
+        items: [1, 3, 4],
+        pageNumber: 0,
+        pageSize: 30,
+        total: 3,
+        totalPages: 1,
+      });
+    }
+  );
+});
+
 it('filter by domain', async () => {
   await runWithContext(
     {
@@ -167,7 +214,7 @@ it('filter by domain', async () => {
     },
     async () => {
       const result = await searchChallenges({
-        domain: 'frontend',
+        domains: ['frontend'],
       });
       expect(fixResponse(result)).toEqual({
         items: [1, 2, 3],
@@ -179,6 +226,7 @@ it('filter by domain', async () => {
     }
   );
 });
+
 it('filter by difficulty', async () => {
   await runWithContext(
     {
@@ -186,7 +234,7 @@ it('filter by difficulty', async () => {
     },
     async () => {
       const result = await searchChallenges({
-        difficulty: 'easy',
+        difficulties: ['easy'],
       });
       expect(fixResponse(result)).toEqual({
         items: [1, 2, 4],
@@ -235,32 +283,6 @@ it('filter by two tags', async () => {
         total: 1,
         totalPages: 1,
       });
-    }
-  );
-});
-
-it('with solved', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      await markSolved({
-        challengeId: 1,
-        solvedAt: 1,
-        userId: '1',
-      });
-      const ret = await searchChallenges({
-        pageNumber: 0,
-        pageSize: 2,
-        sortBy: 'created',
-        sortOrder: 'asc',
-      });
-
-      expect(ret.items[0].id).toEqual(1);
-      expect(ret.items[0].isSolved).toEqual(true);
-      expect(ret.items[1].id).toEqual(2);
-      expect(ret.items[1].isSolved).toEqual(false);
     }
   );
 });

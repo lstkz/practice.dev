@@ -15,6 +15,10 @@ export const [handle, GlobalActions, getGlobalState] = createModule(
     }),
     githubCallback: (code: string) => ({ payload: { code } }),
     googleCallback: (token: string) => ({ payload: { token } }),
+    showAppError: (error: string, requestId?: string) => ({
+      payload: { error, requestId },
+    }),
+    hideAppError: null,
   })
   .withState<GlobalState>();
 
@@ -22,4 +26,8 @@ export const [handle, GlobalActions, getGlobalState] = createModule(
 export interface GlobalState {
   isLoaded: boolean;
   user: User | null;
+  appError: {
+    error: string;
+    requestId?: string;
+  } | null;
 }
