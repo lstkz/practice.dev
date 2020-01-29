@@ -1,6 +1,9 @@
 export const Theme = {
-  text: '#6C7481',
-  textDark: '#3C485A',
+  // text: '#6C7481',
+  // textDark: '#3C485A',
+  text: '#3C485A',
+  textDark: '#111',
+  textLight: '#6c7481',
   bgLightGray: '#F2F3F7',
   bgLightGray2: '#F2F3F5',
   bgLightGray3: '#F2F3F8',

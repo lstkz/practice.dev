@@ -40,30 +40,14 @@ handle.epic().on(ChallengeActions.$mounted, (_, { action$ }) => {
     handleAppError()
   );
 });
-// .on(ChallengeActions.challengeLoaded, ({ challenge }, { action$ }) => {
-//   return new Rx.Observable(subscriber => {
-//     removeBundle();
-//     const script = document.createElement('script');
-//     script.type = 'text/javascript';
-//     script.src = BUNDLE_BASE_URL + challenge.detailsBundleS3Key;
-//     document.body.appendChild(script);
-//     (window as any).ChallengeJSONP = (module: any) => {
-//       subscriber.next(ChallengeActions.componentLoaded(module.Details));
-//       subscriber.complete();
-//     };
-//     return () => {
-//       removeBundle();
-//     };
-//   }).pipe(
-//     Rx.takeUntil(action$.pipe(Rx.waitForType(ChallengeActions.$unmounted)))
-//   );
-// });
 
 // --- Reducer ---
 const initialState: ChallengeState = {
   isLoading: true,
   challenge: null!,
   component: null!,
+  tab: 'details',
+  testCase: [],
 };
 
 handle
@@ -73,8 +57,12 @@ handle
   })
   .on(ChallengeActions.loaded, (state, { challenge, component }) => {
     state.challenge = challenge;
+    state.testCase = JSON.parse(challenge.testCase);
     state.component = component;
     state.isLoading = false;
+  })
+  .on(ChallengeActions.changeTab, (state, { tab }) => {
+    state.tab = tab;
   });
 
 // --- Module ---

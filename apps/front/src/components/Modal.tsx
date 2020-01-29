@@ -2,14 +2,17 @@ import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { VoidLink } from './VoidLink';
+import { CloseIcon } from 'src/icons/CloseIcon';
+import { Theme } from 'ui';
+import { FocusContainer } from './FocusContainer';
 
 interface ModalProps {
-  title?: string;
   transparent?: boolean;
   isOpen: boolean;
   close: () => void;
   children: React.ReactNode;
-  size?: 'lg' | 'md';
+  size?: 'lg' | 'md' | 'sm';
   maxHeight?: string;
 }
 
@@ -43,16 +46,7 @@ const ModalContent = styled.div`
   background: white;
   border-radius: 4px;
   position: relative;
-`;
-
-const ModalHeader = styled.div`
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 16px;
-  border-bottom: 1px solid #dee2e6;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+  outline: none;
 `;
 
 const ModalBody = styled.div`
@@ -65,39 +59,21 @@ const ModalBody = styled.div`
     overflow: auto;
   }
 `;
-const ModalTitle = styled.h5`
-  margin-bottom: 0;
-  line-height: 1.5;
-`;
 
-const Close = styled.button`
-  padding: 16px;
-  margin: -16px -16px -16px auto;
-  background-color: transparent;
-  border: 0;
-  appearance: none;
-  float: right;
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1;
-  color: #000;
-  text-shadow: 0 1px 0 #fff;
-  opacity: 0.5;
+const Close = styled(VoidLink)`
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  right: 7px;
+  top: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     opacity: 0.75;
     cursor: pointer;
   }
-`;
-
-const AbsoluteClose = styled(Close)`
-  position: absolute;
-  right: -20px;
-  top: -20px;
-  z-index: 10;
-  opacity: 1;
-  color: white;
-  text-shadow: 0 1px 0 #000;
 `;
 
 const Wrapper = styled.div`
@@ -114,21 +90,17 @@ const Wrapper = styled.div`
 `;
 
 export function Modal(props: ModalProps) {
-  const {
-    isOpen,
-    close,
-    children,
-    title,
-    transparent,
-    size,
-    maxHeight,
-  } = props;
+  const { isOpen, close, children, transparent, size, maxHeight } = props;
+
+  const modalRef = React.useRef<HTMLDivElement | null>(null);
+
   React.useEffect(() => {
     if (!isOpen) {
       return () => {
         //
       };
     }
+
     document.body.classList.add('modal-open');
     const onKeyPress = (ev: KeyboardEvent) => {
       if (ev.key === 'Escape') {
@@ -141,6 +113,16 @@ export function Modal(props: ModalProps) {
       window.removeEventListener('keyup', onKeyPress);
     };
   }, [isOpen]);
+
+  // React.useLayoutEffect(() => {
+  //   if (isOpen) {
+  //     console.log(modalRef.current);
+  //     // setTimeout(() => {
+  //     modalRef.current?.focus();
+  //     // }, 10);
+  //   }
+  // }, [isOpen]);
+
   return (
     <>
       <GlobalStyle />
@@ -152,7 +134,6 @@ export function Modal(props: ModalProps) {
         {isOpen && (
           <Wrapper
             data-modal-wrapper
-            data-focus-root
             onClick={e => {
               const target = e.target as HTMLDivElement;
               if (target.hasAttribute('data-modal-wrapper')) {
@@ -160,28 +141,30 @@ export function Modal(props: ModalProps) {
               }
             }}
           >
-            <ModalContent
-              style={{
-                background: transparent ? 'transparent' : 'white',
-                maxWidth: size === 'md' ? 800 : undefined,
-              }}
-            >
-              {title ? (
-                <ModalHeader>
-                  {<ModalTitle>{title}</ModalTitle>}
-                  <Close onClick={close}>×</Close>
-                </ModalHeader>
-              ) : (
-                <AbsoluteClose onClick={close}>×</AbsoluteClose>
-              )}
-              <ModalBody
+            <FocusContainer data-focus-root>
+              <ModalContent
+                ref={modalRef}
                 style={{
-                  maxHeight,
+                  background: transparent ? 'transparent' : 'white',
+                  maxWidth:
+                    size === 'md' ? 800 : size === 'sm' ? 460 : undefined,
                 }}
+                tabIndex={-1}
+                role="modal"
               >
-                {children}
-              </ModalBody>
-            </ModalContent>
+                <Close onClick={close} aria-label="close">
+                  <CloseIcon scale={1.3} color={Theme.text} />
+                </Close>
+
+                <ModalBody
+                  style={{
+                    maxHeight,
+                  }}
+                >
+                  {children}
+                </ModalBody>
+              </ModalContent>
+            </FocusContainer>
           </Wrapper>
         )}
       </ReactCSSTransitionGroup>

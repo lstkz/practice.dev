@@ -5,13 +5,23 @@ import { ConfirmEmailWarning } from 'src/components/ConfirmEmailWarning';
 import { createUrl } from 'src/common/url';
 import { Breadcrumb } from 'src/components/Breadcrumb';
 import { ChallengesIcon } from 'src/icons/ChallengesIcon';
-import { getChallengeState } from '../interface';
+import {
+  getChallengeState,
+  ChallengeActions,
+  ChallengeTab,
+} from '../interface';
 import styled from 'styled-components';
 import { Theme } from 'src/common/Theme';
 import { ChallengeHeader } from './ChallengeHeader';
 import { Container } from 'src/components/Container';
 import { Tab, Tabs } from 'src/components/Tabs';
-import { DetailsTab } from './DetailsTab';
+import { ChallengeLoader } from './ChallengeLoader';
+import { Stats } from './Stats';
+import { TabContent } from './TabContent';
+import { useActions } from 'typeless';
+import { TestSuite } from './TestSuite';
+import { SubmitModal } from '../../submit/components/SubmitModal';
+import { useSubmitModule } from 'src/features/submit/module';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
@@ -22,11 +32,18 @@ const Wrapper = styled.div`
 
 export function ChallengeView() {
   useChallengeModule();
-  const [tab, setTab] = React.useState('details');
-  const { challenge, isLoading } = getChallengeState.useState();
+  useSubmitModule();
+  const {
+    challenge,
+    isLoading,
+    component: Component,
+    tab,
+  } = getChallengeState.useState();
+  const { changeTab } = useActions(ChallengeActions);
 
   return (
     <Dashboard>
+      <SubmitModal />
       <ConfirmEmailWarning />
       <Container>
         <Breadcrumb
@@ -35,30 +52,32 @@ export function ChallengeView() {
           root="Challenges"
           details={challenge?.title}
         />
-        {isLoading ? (
-          'loading...'
-        ) : (
-          <Wrapper>
-            <ChallengeHeader />
-            <Tabs
-              selectedTab={tab}
-              onIndexChange={(value: string) => setTab(value)}
-            >
-              <Tab title="Details" name="details">
-                <DetailsTab />
-              </Tab>
-              <Tab title="Test Suite" name="testSuite">
-                Test Suite content
-              </Tab>
-              <Tab title="Solutions" name="solutions">
-                Solutions content
-              </Tab>
-              <Tab title="Discussion" name="discussion">
-                Discussion content
-              </Tab>
-            </Tabs>
-          </Wrapper>
-        )}
+        <Wrapper>
+          {isLoading ? (
+            <ChallengeLoader />
+          ) : (
+            <>
+              <ChallengeHeader />
+              <Tabs
+                selectedTab={tab}
+                onIndexChange={(value: ChallengeTab) => changeTab(value)}
+              >
+                <Tab title="Details" name="details">
+                  <TabContent left={<Component />} right={<Stats />} />
+                </Tab>
+                <Tab title="Test Suite" name="testSuite">
+                  <TabContent left={<TestSuite />} right={<Stats />} />
+                </Tab>
+                <Tab title="Solutions" name="solutions">
+                  Solutions content
+                </Tab>
+                <Tab title="Discussion" name="discussion">
+                  Discussion content
+                </Tab>
+              </Tabs>
+            </>
+          )}
+        </Wrapper>
       </Container>
     </Dashboard>
   );

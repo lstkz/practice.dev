@@ -173,5 +173,6 @@ const _Header = (props: HeaderProps) => {
 
 export const Header = styled(_Header)`
   display: block;
-  background: ${Theme.textDark};
+  /* background: ${Theme.textDark}; */
+  background: ${Theme.text};
 `;

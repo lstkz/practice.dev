@@ -1,7 +1,7 @@
 import { RouteConfig } from 'src/types';
 import { createModule } from 'typeless';
 import { ChallengeSymbol } from './symbol';
-import { Challenge } from 'shared';
+import { Challenge, TestInfo } from 'shared';
 
 // --- Actions ---
 export const [handle, ChallengeActions, getChallengeState] = createModule(
@@ -15,6 +15,7 @@ export const [handle, ChallengeActions, getChallengeState] = createModule(
       payload: { challenge, component },
     }),
     challengeLoaded: (challenge: Challenge) => ({ payload: { challenge } }),
+    changeTab: (tab: ChallengeTab) => ({ payload: { tab } }),
   })
   .withState<ChallengeState>();
 
@@ -34,4 +35,8 @@ export interface ChallengeState {
   isLoading: boolean;
   challenge: Challenge;
   component: React.SFC;
+  tab: ChallengeTab;
+  testCase: TestInfo[];
 }
+
+export type ChallengeTab = 'details' | 'testSuite' | 'solutions' | 'discussion';

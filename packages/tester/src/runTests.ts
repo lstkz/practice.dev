@@ -58,6 +58,7 @@ export async function runTests(
   await notifier.flush();
 
   for (const test of tester.tests) {
+    currentTestId = test.id;
     await notifier.notify({
       type: 'STARTING_TEST',
       meta,

@@ -2,7 +2,7 @@ import { SocketMessage, TestInfo } from './types';
 
 interface TestResultState {
   tests: TestInfo[];
-  result: 'PASS' | 'FAIL';
+  result: 'PASS' | 'FAIL' | null;
 }
 
 export function updateTestResult<T extends TestResultState>(
