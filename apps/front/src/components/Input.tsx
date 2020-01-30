@@ -203,8 +203,7 @@ const _Input = (props: InputProps) => {
             },
           }}
         >
-          {({ ref, style, placement, arrowProps }) => {
-            console.log({ placement, arrowProps });
+          {({ ref, style, placement }) => {
             return (
               props.state === 'error' && (
                 <ErrorPopup style={style}>

@@ -7,7 +7,7 @@ import { getChallengeState } from '../interface';
 import { DomainTag } from 'src/components/DomainTag';
 import { Button } from 'ui';
 import { useActions } from 'typeless';
-import { SubmitActions } from 'src/features/submit/interface';
+import { SubmitActions, getSubmitState } from 'src/features/submit/interface';
 
 interface ChallengeHeaderProps {
   className?: string;
@@ -47,6 +47,7 @@ const Tags = styled.div`
 
 const _ChallengeHeader = (props: ChallengeHeaderProps) => {
   const { challenge } = getChallengeState.useState();
+  const { status } = getSubmitState.useState();
   const { show: showSubmit } = useActions(SubmitActions);
   const { className } = props;
   return (
@@ -67,7 +68,12 @@ const _ChallengeHeader = (props: ChallengeHeaderProps) => {
         </Tags>
       </Col2>
       <Col3>
-        <Button block type="primary" onClick={showSubmit}>
+        <Button
+          block
+          type="primary"
+          onClick={showSubmit}
+          disabled={status === 'testing'}
+        >
           SUBMIT
         </Button>
       </Col3>

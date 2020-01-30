@@ -127,7 +127,7 @@ export function ChallengeInfo(props: ChallengeInfoProps) {
         </IconCounter>
         <ReactTooltip place="top" type="dark" effect="solid" />
         <Button type="primary" href={`/challenges/${challenge.id}`}>
-          Solve
+          SOLVE
         </Button>
       </Col3>
     </ChallengeCard>

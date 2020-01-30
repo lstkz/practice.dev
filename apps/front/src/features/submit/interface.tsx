@@ -7,12 +7,14 @@ export const [handle, SubmitActions, getSubmitState] = createModule(
 )
   .withState<SubmitState>()
   .withActions({
+    $init: null,
     show: null,
     close: null,
     connect: null,
     connected: null,
     disconnect: null,
     retry: null,
+    started: null,
     testingDone: (success: boolean) => ({ payload: { success } }),
     setError: (error: string | null) => ({ payload: { error } }),
     socketMessages: (messages: SocketMessage[]) => ({ payload: { messages } }),
@@ -30,5 +32,6 @@ export interface SubmitState {
   tests: TestInfo[];
   result: 'PASS' | 'FAIL' | null;
   submissionId: string | null;
+  started: Date | null;
   isSubmitting: boolean;
 }

@@ -1,6 +1,7 @@
 import { ApiTestConfiguration, Notifier } from './types';
 import { Tester } from './Tester';
 import { TestError } from './TestError';
+import { TestInfo } from 'shared';
 
 export async function runTests(
   id: string,
@@ -28,12 +29,13 @@ export async function runTests(
 
   let success = true;
 
-  const serialized = tester.tests.map(test => ({
+  const serialized: TestInfo[] = tester.tests.map(test => ({
     id: test.id,
     name: test.name,
     result: 'pending' as 'pending',
     steps: [],
   }));
+  serialized[0].result = 'running';
 
   await notifier.notify({
     type: 'TEST_INFO',

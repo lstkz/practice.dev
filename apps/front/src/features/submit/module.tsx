@@ -11,7 +11,7 @@ import {
   getSubmitFormState,
 } from './submit-form';
 import { getAccessToken } from 'src/services/Storage';
-import { SocketMessage, updateTestResult } from 'shared';
+import { SocketMessage, updateTestResult, SubmissionStatus } from 'shared';
 import { api } from 'src/services/api';
 import { getChallengeState, ChallengeActions } from '../challenge/interface';
 import { ActionLike } from 'typeless';
@@ -55,12 +55,27 @@ handle
         const data = JSON.parse(event.data);
         const items: SocketMessage[] = Array.isArray(data) ? data : [data];
         items.forEach(item => {
+          if (item.type === 'TEST_INFO') {
+            subject.next(SubmitActions.started());
+          }
           if (item.meta.id !== getSubmitState().submissionId) {
             return;
           }
           subject.next(SubmitActions.socketMessages([item]));
           if (item.type === 'RESULT') {
             subject.next(SubmitActions.testingDone(item.payload.success));
+            const { submissionId, started } = getSubmitState();
+            subject.next(
+              ChallengeActions.addRecentSubmission({
+                challengeId: getChallengeState().challenge.id,
+                id: submissionId!,
+                createdAt: started!.toISOString(),
+                user: null!,
+                status: item.payload.success
+                  ? SubmissionStatus.Pass
+                  : SubmissionStatus.Fail,
+              })
+            );
             subject.next(SubmitActions.disconnect());
           }
         });
@@ -89,15 +104,16 @@ handle
             testUrl: values.url,
           })
           .pipe(
-            Rx.mergeMap(({ id }) => {
-              return [
-                SubmitActions.setSubmissionId(id),
-                SubmitActions.close(),
-                ChallengeActions.changeTab('testSuite'),
-              ];
-            }),
+            Rx.map(({ id }) => SubmitActions.setSubmissionId(id)),
             Rx.catchLog(e => Rx.of(SubmitActions.setError(e.message)))
-          )
+          ),
+        action$.pipe(
+          Rx.waitForType(SubmitActions.started),
+          Rx.mergeMap(() => [
+            SubmitActions.close(),
+            ChallengeActions.changeTab('testSuite'),
+          ])
+        )
       ).pipe(
         Rx.takeUntil(action$.pipe(Rx.waitForType(SubmitActions.setError)))
       ),
@@ -117,16 +133,19 @@ const initialState: SubmitState = {
   status: 'none',
   tests: [],
   submissionId: null,
+  started: null,
   isSubmitting: false,
 };
 
 handle
   .reducer(initialState)
+  .on(SubmitActions.$init, state => {
+    Object.assign(state, initialState);
+  })
   .on(SubmitActions.setError, (state, { error }) => {
     state.error = error;
   })
   .on(SubmitActions.retry, state => {
-    state.result = null;
     state.tests = [];
   })
   .on(SubmitActions.show, state => {
@@ -142,12 +161,13 @@ handle
     state.isSubmitting = isSubmitting;
   })
   .on(SubmitActions.socketMessages, (state, { messages }) => {
-    console.log(messages);
     messages.forEach(msg => {
       updateTestResult(state, msg);
 
       switch (msg.type) {
         case 'TEST_INFO': {
+          state.result = null;
+          state.started = new Date();
           state.status = 'testing';
           break;
         }

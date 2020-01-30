@@ -13,6 +13,7 @@ interface ButtonProps {
   type: 'primary' | 'secondary' | 'danger';
   href?: string;
   icon?: React.ReactNode;
+  disabled?: boolean;
   htmlType?: 'button' | 'submit' | 'reset';
   onClick?: (
     e: React.MouseEvent<HTMLAnchorElement | HTMLDivElement, MouseEvent>
@@ -31,7 +32,16 @@ const Icon = styled.span`
 `;
 
 const _Button = (props: ButtonProps, ref: any) => {
-  const { className, href, onClick, children, icon, htmlType, loading } = props;
+  const {
+    className,
+    href,
+    onClick,
+    children,
+    icon,
+    htmlType,
+    loading,
+    disabled,
+  } = props;
   const { push } = href ? useActions(RouterActions) : { push: null! };
   const inner = (
     <>
@@ -68,7 +78,7 @@ const _Button = (props: ButtonProps, ref: any) => {
     return (
       <button
         data-dropdown-toggle={props['data-dropdown-toggle']}
-        disabled={loading}
+        disabled={loading || disabled}
         onClick={onClick as any}
         className={className}
         type={htmlType || 'button'}

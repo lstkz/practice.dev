@@ -13,7 +13,16 @@ export function updateTestResult<T extends TestResultState>(
 
   switch (msg.type) {
     case 'TEST_INFO': {
-      state.tests = msg.payload.tests;
+      state.tests = msg.payload.tests.map(test => {
+        if (test.id === 1) {
+          return {
+            ...test,
+            result: 'running',
+          };
+        } else {
+          return test;
+        }
+      });
       break;
     }
     case 'STARTING_TEST': {
@@ -31,7 +40,11 @@ export function updateTestResult<T extends TestResultState>(
     case 'TEST_PASS': {
       const { testId } = msg.payload;
       const test = getTest(testId);
+      const nextTest = getTest(testId + 1);
       test.result = 'pass';
+      if (nextTest) {
+        nextTest.result == 'running';
+      }
       break;
     }
     case 'STEP': {

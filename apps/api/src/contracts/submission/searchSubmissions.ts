@@ -1,4 +1,8 @@
-import { createContract, createRpcBinding } from '../../lib';
+import {
+  createContract,
+  createRpcBinding,
+  getLoggedInUserOrAnonymous,
+} from '../../lib';
 import { S, ValidationError } from 'schema';
 import { getDbUserByUsername } from '../user/getDbUserByUsername';
 import { createKey, queryIndex } from '../../common/db';
@@ -31,17 +35,26 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
     }
 
     const getKey = async () => {
+      const user = username
+        ? await getDbUserByUsername(username).catch(() => -1 as const)
+        : null;
+      if (user === -1) {
+        return null;
+      }
+      if (username && challengeId) {
+        return createKey({
+          type: 'SUBMISSION_USER_CHALLENGE',
+          challengeId,
+          userId: user!.userId,
+          submissionId: '-1',
+        });
+      }
       if (username) {
-        try {
-          const { userId } = await getDbUserByUsername(username);
-          return createKey({
-            type: 'SUBMISSION_USER',
-            userId,
-            submissionId: '-1',
-          });
-        } catch (e) {
-          return null;
-        }
+        return createKey({
+          type: 'SUBMISSION_USER',
+          userId: user!.userId,
+          submissionId: '-1',
+        });
       }
       if (challengeId) {
         return createKey({
@@ -67,8 +80,15 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
       limit: criteria.limit,
     });
     const users = await getUsersByIds(items.map(x => x.userId));
+    const submissions = mapDbSubmissionMany(items, users);
+    const current = getLoggedInUserOrAnonymous();
+    submissions.forEach(item => {
+      if (current?.userId !== item.user.id) {
+        delete item.result;
+      }
+    });
     return {
-      items: mapDbSubmissionMany(items, users),
+      items: submissions,
       cursor,
     };
   });

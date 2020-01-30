@@ -61,10 +61,19 @@ function getTestColor(test: TestInfo) {
   }
 }
 
+const Result = styled.div`
+  display: flex;
+  font-weight: bold;
+  margin-top: 20px;
+`;
+const ResultLabel = styled.div`
+  width: 80px;
+`;
+
 const _TestSuite = (props: TestSuiteProps) => {
   const { className } = props;
   const { testCase } = getChallengeState.useState();
-  const { tests, status } = getSubmitState.useState();
+  const { tests, status, result } = getSubmitState.useState();
   const targetTestCase = status === 'none' ? testCase : tests;
 
   return (
@@ -95,6 +104,13 @@ const _TestSuite = (props: TestSuiteProps) => {
           </TestContent>
         </TestRow>
       ))}
+      {result && (
+        <Result>
+          <ResultLabel>Result:</ResultLabel>
+          {result === 'FAIL' && <Colored color="red">FAIL</Colored>}
+          {result === 'PASS' && <Colored color="green">PASS</Colored>}
+        </Result>
+      )}
     </div>
   );
 };

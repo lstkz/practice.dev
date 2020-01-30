@@ -1,9 +1,14 @@
 import { TestConfiguration, Notifier } from './types';
 import { Tester } from './Tester';
 import { getBrowser } from './getBrowser';
+import { TestInfo } from 'shared';
+import { Browser } from 'puppeteer';
+
+const createdBrowsers: Browser[] = [];
 
 async function getPage() {
   const browser = await getBrowser();
+  createdBrowsers.push(browser);
   const page = await browser.newPage();
   return page;
 }
@@ -43,12 +48,13 @@ export async function runTests(
 
   let success = true;
 
-  const serialized = tester.tests.map(test => ({
+  const serialized: TestInfo[] = tester.tests.map(test => ({
     id: test.id,
     name: test.name,
-    result: 'pending' as 'pending',
+    result: 'pending',
     steps: [],
   }));
+  serialized[0].result = 'running';
 
   await notifier.notify({
     type: 'TEST_INFO',
@@ -84,4 +90,12 @@ export async function runTests(
   }
   await notifier.notify({ type: 'RESULT', meta, payload: { success } });
   await notifier.flush();
+
+  for (const browser of createdBrowsers) {
+    try {
+      browser.close();
+    } catch (e) {
+      console.error(e);
+    }
+  }
 }

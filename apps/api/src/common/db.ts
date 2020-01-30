@@ -89,6 +89,12 @@ type CreateKeyOptions =
       type: 'SUBMISSION_CHALLENGE';
       challengeId: number;
       submissionId: string;
+    }
+  | {
+      type: 'SUBMISSION_USER_CHALLENGE';
+      userId: string;
+      challengeId: number;
+      submissionId: string;
     };
 
 export function createKey(
@@ -211,6 +217,12 @@ export function createKey(
       return {
         pk: `SUBMISSION_CHALLENGE:${options.submissionId}`,
         sk: `SUBMISSION_CHALLENGE:${options.challengeId}`,
+      };
+    }
+    case 'SUBMISSION_USER_CHALLENGE': {
+      return {
+        pk: `SUBMISSION_USER_CHALLENGE:${options.submissionId}`,
+        sk: `SUBMISSION_USER_CHALLENGE:${options.challengeId}:${options.userId}`,
       };
     }
     default:

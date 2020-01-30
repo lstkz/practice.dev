@@ -22,6 +22,7 @@ import { useActions } from 'typeless';
 import { TestSuite } from './TestSuite';
 import { SubmitModal } from '../../submit/components/SubmitModal';
 import { useSubmitModule } from 'src/features/submit/module';
+import { MyRecentSubmissions } from './MyRecentSubmissions';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
@@ -66,7 +67,10 @@ export function ChallengeView() {
                   <TabContent left={<Component />} right={<Stats />} />
                 </Tab>
                 <Tab title="Test Suite" name="testSuite">
-                  <TabContent left={<TestSuite />} right={<Stats />} />
+                  <TabContent
+                    left={<TestSuite />}
+                    right={<MyRecentSubmissions />}
+                  />
                 </Tab>
                 <Tab title="Solutions" name="solutions">
                   Solutions content
