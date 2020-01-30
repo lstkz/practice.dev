@@ -21,10 +21,18 @@ handle.epic().on(ChallengeActions.$mounted, (_, { action$ }) => {
   const { id } = getRouteParams('challenge');
   return Rx.forkJoin([
     api.challenge_getChallengeById(id),
-    api.submission_searchSubmissions({
-      challengeId: id,
-      username: getGlobalState().user!.username,
-      limit: 10,
+    Rx.defer(() => {
+      const { user } = getGlobalState();
+      if (!user) {
+        return Rx.of([]);
+      }
+      return api
+        .submission_searchSubmissions({
+          challengeId: id,
+          username: user.username,
+          limit: 10,
+        })
+        .pipe(Rx.map(ret => ret.items));
     }),
   ]).pipe(
     Rx.mergeMap(([challenge, recentSubmissions]) => {
@@ -38,7 +46,7 @@ handle.epic().on(ChallengeActions.$mounted, (_, { action$ }) => {
           subscriber.next(
             ChallengeActions.loaded(
               challenge,
-              recentSubmissions.items,
+              recentSubmissions,
               module.Details
             )
           );

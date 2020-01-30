@@ -4,6 +4,7 @@ import { SidebarTitle } from './SidebarTitle';
 import { Theme } from 'ui';
 import { getChallengeState } from '../interface';
 import { MySubmission } from './MySubmission';
+import { useUser } from 'src/hooks/useUser';
 
 interface MyRecentSubmissionsProps {
   className?: string;
@@ -16,6 +17,10 @@ const Na = styled.div`
 const _MyRecentSubmissions = (props: MyRecentSubmissionsProps) => {
   const { className } = props;
   const { recentSubmissions } = getChallengeState.useState();
+  const user = useUser();
+  if (!user) {
+    return null;
+  }
   return (
     <div className={className}>
       <SidebarTitle>My Recent Submissions</SidebarTitle>
