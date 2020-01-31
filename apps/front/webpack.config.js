@@ -93,6 +93,9 @@ module.exports = {
         API_URL: JSON.stringify(
           process.env.API_URL || 'http://localhost:3100/api'
         ),
+        BUNDLE_BASE_URL: JSON.stringify(
+          process.env.BUNDLE_BASE_URL || 'http://localhost:3000/'
+        ),
       },
     }),
     // new BundleAnalyzerPlugin(),

@@ -21,6 +21,15 @@ export async function _putSubmission(submission: DbSubmission, isNew: boolean) {
         submissionId: submission.submissionId,
       }),
     },
+    {
+      ...submission,
+      ...createKey({
+        type: 'SUBMISSION_USER_CHALLENGE',
+        userId: submission.userId,
+        challengeId: submission.challengeId,
+        submissionId: submission.submissionId,
+      }),
+    },
   ];
 
   await transactWriteItems({

@@ -73,6 +73,7 @@ export interface Submission {
   user: PublicUser;
   status: SubmissionStatus;
   createdAt: string;
+  result?: string;
 }
 export interface TesterMessage {
   id: string;

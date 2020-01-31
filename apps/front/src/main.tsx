@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import './global-exports';
 import { Hmr, startHmr, TypelessContext } from 'typeless';
-import { GlobalStyle } from './components/GlobalStyle';
 import { registry } from './registry';
+import { GlobalStyle } from 'ui';
 
 const MOUNT_NODE = document.getElementById('root')!;
 

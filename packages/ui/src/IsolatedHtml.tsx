@@ -13,15 +13,16 @@ interface IsolatedHtmlProps {
 
 const Buttons = styled.div`
   text-align: right;
+  margin-top: 15px;
   & > button + button {
-    margin-left: 5px;
+    margin-left: 10px;
   }
 `;
 
 export function IsolatedHtml(props: IsolatedHtmlProps) {
   const [isHTMLVisible, setIsHTMLVisible] = React.useState(false);
   const [isCSSVisible, setIsCSSVisible] = React.useState(false);
-  const iframeRef = React.useRef<HTMLIFrameElement>();
+  const iframeRef = React.useRef<HTMLIFrameElement | null>(null);
   const { html, css, height, scripts } = props;
 
   React.useLayoutEffect(() => {
@@ -60,10 +61,10 @@ export function IsolatedHtml(props: IsolatedHtmlProps) {
         ref={iframeRef}
       />
       <Buttons>
-        <Button small onClick={() => setIsHTMLVisible(true)}>
+        <Button type="secondary" onClick={() => setIsHTMLVisible(true)}>
           Show HTML
         </Button>
-        <Button small onClick={() => setIsCSSVisible(true)}>
+        <Button type="secondary" onClick={() => setIsCSSVisible(true)}>
           Show CSS
         </Button>
       </Buttons>

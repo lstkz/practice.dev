@@ -22,4 +22,6 @@ const _VoidLink = (props: VoidLinkProps, ref: any) => {
   );
 };
 
-export const VoidLink = styled(React.forwardRef(_VoidLink))``;
+export const VoidLink = styled(React.forwardRef(_VoidLink))`
+  user-drag: none;
+`;

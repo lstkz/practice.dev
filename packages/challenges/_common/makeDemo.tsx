@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { GlobalStyle } from 'ui';
+import { GlobalStyle, Theme } from 'ui';
 import styled from 'styled-components';
 
 const MOUNT_NODE = document.getElementById('root')!;
@@ -13,13 +13,13 @@ const Outer = styled.div`
 const Wrapper = styled.div`
   background-color: #fff;
   background-clip: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.125);
-  border-radius: 4px;
+  border: 1px solid ${Theme.grayLight};
+  border-radius: 5px;
   margin-bottom: 15px;
-  padding: 20px;
+  padding: 40px 50px;
   position: relative;
   margin: 0 auto;
-  max-width: 850px;
+  max-width: 810px;
 `;
 
 export function render(Component: React.SFC) {

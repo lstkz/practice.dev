@@ -3,6 +3,8 @@ import util from 'util';
 import Path from 'path';
 import { handler } from './handler';
 import chokidar from 'chokidar';
+import { s3 } from './lib';
+import { S3_BUCKET_NAME } from './config';
 
 const watcher = chokidar.watch(__dirname);
 
@@ -38,15 +40,27 @@ function _getBody(req: http.IncomingMessage) {
 
 const server = http.createServer(async (req, res) => {
   try {
-    const exec = /\/rpc\/(.+)/.exec(req.url!);
-    if (!exec) {
-      throw new Error('Invalid url');
-    }
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', '*');
     if (req.method === 'OPTIONS') {
       res.end();
       return;
+    }
+    if (req.url!.startsWith('/bundle/')) {
+      const obj = await s3
+        .getObject({
+          Bucket: S3_BUCKET_NAME,
+          Key: req.url!.substr(1),
+        })
+        .promise();
+      res.setHeader('content-type', 'text/javascript');
+      res.write(obj.Body);
+      res.end();
+      return;
+    }
+    const exec = /\/rpc\/(.+)/.exec(req.url!);
+    if (!exec) {
+      throw new Error('Invalid url');
     }
     if (req.method !== 'POST') {
       throw new Error('Method must be POST');

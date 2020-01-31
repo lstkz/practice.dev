@@ -1,4 +1,4 @@
-import { ProjectsActions, ProjectsState, handle } from './interface';
+import { ProjectsState, handle } from './interface';
 
 // --- Epic ---
 handle.epic();
@@ -13,4 +13,4 @@ handle.reducer(initialState);
 // --- Module ---
 export function useProjectsModule() {
   handle();
-};
+}

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as PopperJS from 'popper.js';
+import ReactDOM from 'react-dom';
 import styled, { css, keyframes } from 'styled-components';
 import { Manager, Reference, Popper } from 'react-popper';
 import { Theme } from '../common/Theme';
@@ -19,6 +20,7 @@ export interface InputProps {
   state?: 'valid' | 'error';
   feedback?: string;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
+  autoFocus?: boolean;
 }
 
 const Label = styled.label`
@@ -92,7 +94,9 @@ const shakeAnimation = keyframes`
   100% { transform: translate(0px); }
 `;
 
-const ErrorPopup = styled.div``;
+const ErrorPopup = styled.div`
+  z-index: 100;
+`;
 
 const Error = styled.div<{ placement?: PopperJS.Placement }>`
   padding: 0 12px;
@@ -154,10 +158,10 @@ const _Input = (props: InputProps) => {
       placeholder={placeholder}
       type={type}
       onFocus={() => {
-        wrapperRef.current!.classList.add(INPUT_FOCUS_CLASS);
+        wrapperRef.current?.classList.add(INPUT_FOCUS_CLASS);
       }}
       onBlur={e => {
-        wrapperRef.current!.classList.remove(INPUT_FOCUS_CLASS);
+        wrapperRef.current?.classList.remove(INPUT_FOCUS_CLASS);
         if (onBlur) {
           onBlur(e);
         }
@@ -190,25 +194,34 @@ const _Input = (props: InputProps) => {
           </div>
         )}
       </Reference>
-      <Popper placement="right">
-        {({ ref, style, placement, arrowProps }) => {
-          console.log({ placement, arrowProps });
-          return (
-            props.state === 'error' && (
-              <ErrorPopup style={style}>
-                <Error
-                  role="alert"
-                  id={`${id}_error`}
-                  ref={ref as any}
-                  placement={placement}
-                >
-                  {props.feedback}
-                </Error>
-              </ErrorPopup>
-            )
-          );
-        }}
-      </Popper>
+      {ReactDOM.createPortal(
+        <Popper
+          placement="right"
+          modifiers={{
+            preventOverflow: {
+              boundariesElement: document.body,
+            },
+          }}
+        >
+          {({ ref, style, placement }) => {
+            return (
+              props.state === 'error' && (
+                <ErrorPopup style={style}>
+                  <Error
+                    role="alert"
+                    id={`${id}_error`}
+                    ref={ref as any}
+                    placement={placement}
+                  >
+                    {props.feedback}
+                  </Error>
+                </ErrorPopup>
+              )
+            );
+          }}
+        </Popper>,
+        document.querySelector('#portals')!
+      )}
     </Manager>
   );
 };

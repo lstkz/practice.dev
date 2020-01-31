@@ -86,6 +86,7 @@ export function mapDbSubmission(item: DbSubmission, user: DbUser): Submission {
     user: mapToPublicUser(user),
     status: item.status,
     createdAt: new Date(item.data_n).toISOString(),
+    result: item.result,
   };
 }
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Container } from 'src/components/Container';
 import { Theme } from 'src/common/Theme';
-import { Button } from 'src/components/Button';
+import { Button } from 'ui';
 import { ReadyToCodeSvg } from './ReadyToCodeSvg';
 import { createUrl } from 'src/common/url';
 

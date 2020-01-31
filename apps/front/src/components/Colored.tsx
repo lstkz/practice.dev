@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Theme } from 'src/common/Theme';
 
 export const Colored = styled.span<{
-  color: 'red' | 'green' | 'green2' | 'pink';
+  color: 'red' | 'green' | 'green2' | 'pink' | 'none';
 }>`
   color: ${props => {
     switch (props.color) {

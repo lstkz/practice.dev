@@ -4,8 +4,8 @@ import { map } from 'rxjs/operators';
 
 // IMPORTS
 import {
-  PagedResult,
   Challenge,
+  PagedResult,
   ChallengeSolved,
   Solution,
   SearchResult,
@@ -23,6 +23,9 @@ export class APIClient {
   ) {}
 
   // SIGNATURES
+  challenge_getChallengeById(id: number): Rx.Observable<Challenge> {
+    return this.call('challenge.getChallengeById', id);
+  }
   challenge_searchChallenges(criteria: {
     sortBy?: 'created' | 'likes' | undefined;
     sortOrder?: 'desc' | 'asc' | undefined;
@@ -47,8 +50,8 @@ export class APIClient {
     return this.call('challenge.searchSolved', criteria);
   }
   challenge_updateChallenge(values: {
-    tags: string[];
     id: number;
+    tags: string[];
     title: string;
     description: string;
     detailsBundleS3Key: string;

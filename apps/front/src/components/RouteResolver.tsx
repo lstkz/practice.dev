@@ -10,7 +10,6 @@ import { usePrevious } from '../hooks/usePrevious';
 import { Theme } from 'src/common/Theme';
 import { getOutputStream } from 'src/registry';
 import styled from 'styled-components';
-import { Subject } from 'rxjs';
 
 // load dynamically all routes from all interfaces
 const reqs = [require.context('../features', true, /interface.tsx?$/)];
@@ -64,7 +63,6 @@ export const RouteResolver = () => {
       ...R.pick(router, ['location', 'prevLocation']),
     })
   );
-  const [loadingBarProgress, setLoadingBarProgress] = React.useState(0);
   const { replace } = useActions(RouterActions);
   const { showAppError } = useActions(GlobalActions);
   const [component1, setComponent1] = useState<JSX.Element | null>(null);
@@ -174,7 +172,7 @@ export const RouteResolver = () => {
       <LoaderWrapper>
         <LoadingBar
           ref={loaderRef}
-          progress={loadingBarProgress}
+          progress={0}
           height={3}
           color={Theme.blue}
         />

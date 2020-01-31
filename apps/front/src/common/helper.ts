@@ -1,4 +1,4 @@
-import { S, getValidateResult, AnySchema } from 'schema';
+import { getValidateResult, AnySchema } from 'schema';
 import * as Rx from 'src/rx';
 import { GlobalActions } from 'src/features/global/interface';
 import { ActionLike } from 'typeless';

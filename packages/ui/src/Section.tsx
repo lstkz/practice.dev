@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Theme } from './Theme';
 
 interface SectionProps {
   title: string;
@@ -7,11 +8,18 @@ interface SectionProps {
 }
 
 const Wrapper = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  margin-top: 40px;
+  &:first-child {
+    margin-top: 0;
+  }
 `;
 
 const Title = styled.h2`
-  margin-bottom: 5px;
+  margin: 0 0 10px;
+  font-weight: 500;
+  font-size: 18px;
+  color: ${Theme.textDark};
 `;
 
 export function Section(props: SectionProps) {

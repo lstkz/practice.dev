@@ -152,6 +152,7 @@ export function Modal(props: ModalProps) {
         {isOpen && (
           <Wrapper
             data-modal-wrapper
+            data-focus-root
             onClick={e => {
               const target = e.target as HTMLDivElement;
               if (target.hasAttribute('data-modal-wrapper')) {

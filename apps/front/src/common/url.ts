@@ -45,13 +45,20 @@ export function createUrl(options: UrlOptions) {
 }
 
 export function getRouteParams(name: 'reset-password'): { code: string };
-export function getRouteParams(name: 'reset-password'): any {
+export function getRouteParams(name: 'challenge'): { id: number };
+export function getRouteParams(name: 'reset-password' | 'challenge'): any {
   const location = getRouterState().location!;
   switch (name) {
     case 'reset-password': {
       const split = location.pathname.split('/');
       return {
         code: R.last(split),
+      };
+    }
+    case 'challenge': {
+      const split = location.pathname.split('/');
+      return {
+        id: Number(R.last(split)),
       };
     }
   }

@@ -1,4 +1,4 @@
-import { ActionLike, AC } from 'typeless';
+import { AC } from 'typeless';
 
 export * from 'shared/src/types';
 

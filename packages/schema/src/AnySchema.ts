@@ -60,7 +60,7 @@ export class AnySchema<TReq = true, TNull = false> {
     this.validators.push({
       priority: -200,
       type: 'base.default',
-      validate: (value: any, path) => {
+      validate: (value: any) => {
         if (value == null) {
           return {
             stop: true,

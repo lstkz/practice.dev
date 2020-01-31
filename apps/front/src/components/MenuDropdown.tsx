@@ -57,7 +57,7 @@ export function MenuDropdown(props: MenuDropdownProps) {
       </Reference>
       <Transition
         items={isOpen}
-        config={(item, state) =>
+        config={(_, state) =>
           state === 'leave' ? { duration: 0 } : { duration: 200 }
         }
         from={{ opacity: 0 }}
@@ -68,7 +68,7 @@ export function MenuDropdown(props: MenuDropdownProps) {
           open &&
           (animatedStyle => (
             <Popper placement={placement || 'bottom-start'}>
-              {({ ref, style, placement: _placement, arrowProps }) => (
+              {({ ref, style, placement: _placement }) => (
                 <DropdownWrapper
                   ref={ref}
                   style={{ ...style, ...(open ? animatedStyle : {}) }}

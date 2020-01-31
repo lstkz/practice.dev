@@ -7,13 +7,12 @@ import { Link } from './Link';
 import { createUrl } from 'src/common/url';
 import { MenuDropdown } from './MenuDropdown';
 import { Dropdown, MenuItem, MenuSeparator } from './DropdownPopup';
-import { Colored } from './Colored';
 import { VoidLink } from './VoidLink';
 import { useActions } from 'typeless';
-import { GlobalActions, getGlobalState } from 'src/features/global/interface';
+import { GlobalActions } from 'src/features/global/interface';
 import { useUser } from 'src/hooks/useUser';
 import { getRouterState } from 'typeless-router';
-import { Button } from './Button';
+import { Button } from 'ui';
 
 interface HeaderProps {
   className?: string;
@@ -174,5 +173,6 @@ const _Header = (props: HeaderProps) => {
 
 export const Header = styled(_Header)`
   display: block;
-  background: ${Theme.textDark};
+  /* background: ${Theme.textDark}; */
+  background: ${Theme.text};
 `;
