@@ -17,8 +17,7 @@ interface WhatsPracticeProps {
 
 const Title = styled.h2`
   font-size: 24px;
-  margin-top: 70px;
-  margin-bottom: 0;
+  margin: 0;
   color: ${Theme.textDark};
   font-weight: normal;
 `;
@@ -85,5 +84,6 @@ const _WhatsPractice = (props: WhatsPracticeProps) => {
 export const WhatsPractice = styled(_WhatsPractice)`
   display: block;
   background: white;
+  padding-top: 70px;
   padding-bottom: 80px;
 `;

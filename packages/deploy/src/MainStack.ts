@@ -7,6 +7,8 @@ import iam = require('@aws-cdk/aws-iam');
 import s3 = require('@aws-cdk/aws-s3');
 import dynamodb = require('@aws-cdk/aws-dynamodb');
 import subs = require('@aws-cdk/aws-sns-subscriptions');
+import cf = require('@aws-cdk/aws-cloudfront');
+import s3deploy = require('@aws-cdk/aws-s3-deployment');
 import Path from 'path';
 import dotenv from 'dotenv';
 import fs from 'fs';
@@ -37,7 +39,8 @@ if (
 export class MainStack extends cdk.Stack {
   constructor(app: cdk.App, id: string) {
     super(app, id);
-
+  }
+  async create() {
     const topic = new sns.Topic(this, 'EventBus', {});
     const testerTopic = new sns.Topic(this, 'Tester', {});
     const bucket = new s3.Bucket(this, 'Bucket', {});
@@ -136,14 +139,119 @@ export class MainStack extends cdk.Stack {
 
     const api = new apigateway.RestApi(this, 'api', {
       restApiName: `api`,
+      minimumCompressionSize: 0,
     });
 
     const resource = api.root.addResource('{proxy+}');
 
     const apiLambdaIntegration = new apigateway.LambdaIntegration(apiLambda);
-    resource.addMethod('POST', apiLambdaIntegration);
+    resource.addMethod('ANY', apiLambdaIntegration);
 
     const socket = new Socket(this, 'socket', apiLambda);
+
+    const cfIdentity = new cf.OriginAccessIdentity(
+      this,
+      'CloudFrontOriginAccessIdentity',
+      {}
+    );
+
+    bucket.grantRead(cfIdentity);
+
+    const deployBucket = new s3.Bucket(this, 'DeployBucket', {
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      websiteIndexDocument: 'index.html',
+      websiteErrorDocument: 'index.html',
+      publicReadAccess: true,
+      cors: [
+        {
+          allowedOrigins: ['*'],
+          allowedMethods: [s3.HttpMethods.GET],
+        },
+      ],
+    });
+
+    const distribution = new cf.CloudFrontWebDistribution(this, 'WebSite', {
+      priceClass: cf.PriceClass.PRICE_CLASS_100,
+      httpVersion: cf.HttpVersion.HTTP2,
+      enableIpV6: true,
+      errorConfigurations: [
+        {
+          errorCode: 403,
+          errorCachingMinTtl: 1,
+          responsePagePath: '/index.html',
+          responseCode: 200,
+        },
+      ],
+      viewerProtocolPolicy: cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+      aliasConfiguration:
+        process.env.DOMAIN_CERT && process.env.DOMAIN
+          ? {
+              acmCertRef: process.env.DOMAIN_CERT,
+              names: [process.env.DOMAIN],
+            }
+          : undefined,
+      originConfigs: [
+        {
+          s3OriginSource: {
+            s3BucketSource: deployBucket,
+          },
+          behaviors: [
+            {
+              isDefaultBehavior: true,
+              forwardedValues: {
+                cookies: {
+                  forward: 'none',
+                },
+                queryString: false,
+              },
+              compress: true,
+              allowedMethods: cf.CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+              cachedMethods: cf.CloudFrontAllowedCachedMethods.GET_HEAD_OPTIONS,
+            },
+          ],
+        },
+        {
+          s3OriginSource: {
+            s3BucketSource: bucket,
+            originAccessIdentity: cfIdentity,
+          },
+          originPath: '',
+          behaviors: [
+            {
+              pathPattern: '/bundle/*',
+              forwardedValues: {
+                cookies: {
+                  forward: 'none',
+                },
+                queryString: false,
+              },
+
+              compress: true,
+              allowedMethods: cf.CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+              cachedMethods: cf.CloudFrontAllowedCachedMethods.GET_HEAD_OPTIONS,
+            },
+          ],
+        },
+      ],
+    });
+    const frontendDir = Path.join(__dirname, '../../../apps/front/build');
+
+    new s3deploy.BucketDeployment(this, 'DeployS3', {
+      memoryLimit: 512,
+      sources: [s3deploy.Source.asset(frontendDir)],
+      destinationBucket: deployBucket,
+      distribution,
+      distributionPaths: ['/index.html'],
+      contentEncoding: '',
+    });
+
+    new cdk.CfnOutput(this, 'deployBucket', {
+      value: deployBucket.bucketDomainName,
+    });
+
+    new cdk.CfnOutput(this, 'domainName', {
+      value: distribution.domainName,
+    });
 
     new cdk.CfnOutput(this, 'apiLambdaArn', {
       value: apiLambda.functionArn,
@@ -175,6 +283,10 @@ export class MainStack extends cdk.Stack {
   }
 }
 
-const app = new cdk.App();
-new MainStack(app, process.env.STACK_NAME || 'pd-test');
-app.synth();
+(async function() {
+  const app = new cdk.App();
+  const stack = new MainStack(app, process.env.STACK_NAME || 'pd-test');
+  await stack.create();
+
+  app.synth();
+})();

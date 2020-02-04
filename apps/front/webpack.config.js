@@ -14,7 +14,7 @@ const __DEV__ = process.env.NODE_ENV === 'development';
 const title = 'Practice.dev';
 
 dotenv.config({
-  path: '../../.env',
+  path: __DEV__ ? '../../.env' : '../../.env-prod',
 });
 
 const styledComponentsTransformer = createStyledComponentsTransformer({

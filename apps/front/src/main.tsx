@@ -1,11 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './global-exports';
+import { setGlobalExport } from './global-exports';
 import { Hmr, startHmr, TypelessContext } from 'typeless';
 import { registry } from './registry';
 import { GlobalStyle } from 'ui';
 
 const MOUNT_NODE = document.getElementById('root')!;
+
+setGlobalExport();
 
 (window as any)._registry = registry;
 const render = () => {

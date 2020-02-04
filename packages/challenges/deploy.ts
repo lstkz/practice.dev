@@ -86,12 +86,14 @@ async function uploadFile(file: string, prefix: string) {
     );
 
   if (!exists) {
+    const content = await fs.readFile(file);
     await s3
       .upload({
         Bucket: S3_BUCKET_NAME,
         Key: s3Key,
-        Body: await fs.readFile(file),
+        Body: content,
         ContentType: 'text/javascript',
+        ContentLength: content.length,
       })
       .promise();
   }

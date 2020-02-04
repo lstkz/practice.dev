@@ -5,7 +5,9 @@ import * as ui from 'ui';
 
 const global = window as any;
 
-global.React = React;
-global.ReactDOM = ReactDOM;
-global.StyledComponents = StyledComponents;
-global.ui = ui;
+export function setGlobalExport() {
+  global.React = React;
+  global.ReactDOM = ReactDOM;
+  global.StyledComponents = StyledComponents;
+  global.ui = ui;
+}

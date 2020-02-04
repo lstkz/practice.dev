@@ -3,8 +3,9 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "deploy": "yarn run api:build && yarn run cdk:deploy",
+    "deploy": "yarn run api:build && yarn run front:build && yarn run cdk:deploy",
     "api:build": "cd apps/api && yarn run build",
+    "front:build": "cd apps/front && yarn run build",
     "cdk:deploy": "cd packages/deploy && cdk deploy",
     "deploy-challenges": "cd packages/challenges && yarn run deploy",
     "deploy-challenges:local": "ENV_FILE=.env yarn run deploy-challenges",
