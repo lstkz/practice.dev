@@ -151,7 +151,7 @@ export const RouteResolver = () => {
       load(match);
       return;
     }
-    if (!prevUser && user) {
+    if (!prevUser && user && prevLocation) {
       // user is logging in
       // keep rendering current route if not found
       match = getMatch(location, !user);
