@@ -1,6 +1,4 @@
 import cdk = require('@aws-cdk/core');
-import Path from 'path';
-import dotenv from 'dotenv';
 import { Socket } from './resources/Socket';
 import { MainTable } from './resources/MainTable';
 import { WebSiteDist } from './resources/WebSiteDist';
@@ -11,34 +9,28 @@ import { TesterTopic } from './resources/TesterTopic';
 import { MainBucket } from './resources/MainBucket';
 import { GatewayApi } from './resources/GatewayApi';
 
-if (!process.env.PD_ENV) {
-  throw new Error('PD_ENV is not set');
-}
-
 if (!process.env.STACK_NAME) {
   throw new Error('STACK_NAME is not set');
 }
-
-dotenv.config({
-  path: Path.join(__dirname, `../../../.${process.env.PD_ENV}`),
-});
 
 export class MainStack extends cdk.Stack {
   constructor(app: cdk.App, id: string) {
     super(app, id);
   }
   async create() {
+    const initOnly = process.env.INIT_STACK === '1';
+
     const mainTopic = new MainTopic(this);
     const testerTopic = new TesterTopic(this);
     const mainBucket = new MainBucket(this);
     const mainTable = new MainTable(this);
-    const apiLambda = new ApiLambda(this, {
+    const apiLambda = new ApiLambda(this, initOnly, {
       mainTopic,
       testerTopic,
       mainBucket,
       mainTable,
     });
-    new TesterLambda(this, {
+    new TesterLambda(this, initOnly, {
       mainTopic,
       testerTopic,
       mainBucket,
@@ -46,7 +38,7 @@ export class MainStack extends cdk.Stack {
     });
     new GatewayApi(this, { apiLambda });
     new Socket(this, { apiLambda });
-    new WebSiteDist(this, {
+    new WebSiteDist(this, initOnly, {
       mainBucket,
     });
   }
@@ -58,4 +50,7 @@ export class MainStack extends cdk.Stack {
   await stack.create();
 
   app.synth();
-})();
+})().catch(e => {
+  console.error(e);
+  process.exit(1);
+});

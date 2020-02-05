@@ -14,6 +14,7 @@ export class Socket {
     const id = 'socket';
     const lambdaFn = deps.apiLambda.getLambdaFunction();
     const api = new apigateway.CfnApiV2(stack, id, {
+      name: `${process.env.STACK_NAME}_${id}`,
       routeSelectionExpression: 'none',
       protocolType: 'WEBSOCKET',
     });

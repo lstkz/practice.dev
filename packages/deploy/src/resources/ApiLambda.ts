@@ -8,6 +8,7 @@ import { getLambdaSharedEnv } from '../getLambdaSharedEnv';
 import { TesterTopic } from './TesterTopic';
 import { MainTopic } from './MainTopic';
 import { MainBucket } from './MainBucket';
+import { appsDir } from '../helper';
 
 interface ApiLambdaDeps {
   mainBucket: MainBucket;
@@ -18,14 +19,14 @@ interface ApiLambdaDeps {
 
 export class ApiLambda {
   private apiLambda: lambda.Function;
-  constructor(scope: cdk.Construct, deps: ApiLambdaDeps) {
+  constructor(scope: cdk.Construct, initOnly: boolean, deps: ApiLambdaDeps) {
     this.apiLambda = new lambda.Function(scope, `api-lambda`, {
-      code: new lambda.AssetCode(
-        Path.join(__dirname, '../../../apps/api/dist')
-      ),
+      code: initOnly
+        ? new lambda.InlineCode('//init placeholder')
+        : new lambda.AssetCode(Path.join(appsDir, 'api/dist')),
       handler: 'app-lambda.handler',
       runtime: lambda.Runtime.NODEJS_10_X,
-      environment: getLambdaSharedEnv(deps),
+      environment: initOnly ? {} : getLambdaSharedEnv(deps),
       timeout: cdk.Duration.seconds(7),
       memorySize: 512,
     });

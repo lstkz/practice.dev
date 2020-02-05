@@ -12,7 +12,9 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
+    "@types/tmp": "^0.1.0",
     "commander": "^4.1.1",
+    "tmp": "^0.1.0",
     "typescript": "3.8.0-dev.20200128"
   }
 }

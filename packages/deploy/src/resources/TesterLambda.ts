@@ -9,6 +9,7 @@ import { MainBucket } from './MainBucket';
 import { MainTopic } from './MainTopic';
 import { TesterTopic } from './TesterTopic';
 import { getLambdaSharedEnv } from '../getLambdaSharedEnv';
+import { appsDir, testerLayerDir } from '../helper';
 
 interface TesterLambdaDeps {
   mainBucket: MainBucket;
@@ -19,26 +20,22 @@ interface TesterLambdaDeps {
 
 export class TesterLambda {
   private testerLambda: lambda.Function;
-  constructor(scope: cdk.Construct, deps: TesterLambdaDeps) {
-    if (
-      !fs.existsSync(
-        Path.join(__dirname, '../tester-layer/nodejs/node_modules')
-      )
-    ) {
+  constructor(scope: cdk.Construct, initOnly: boolean, deps: TesterLambdaDeps) {
+    if (!fs.existsSync(Path.join(testerLayerDir, 'nodejs/node_modules'))) {
       throw new Error('node_modules for tester-layer are not installed!');
     }
     const layer = new lambda.LayerVersion(scope, 'TesterLayer', {
-      code: lambda.Code.fromAsset(Path.join(__dirname, '../tester-layer')),
+      code: lambda.Code.fromAsset(testerLayerDir),
       compatibleRuntimes: [lambda.Runtime.NODEJS_10_X],
       license: 'Apache-2.0',
     });
     this.testerLambda = new lambda.Function(scope, `tester-lambda`, {
-      code: new lambda.AssetCode(
-        Path.join(__dirname, '../../../apps/api/dist')
-      ),
+      code: initOnly
+        ? new lambda.InlineCode('//init placeholder')
+        : new lambda.AssetCode(Path.join(appsDir, 'api/dist')),
       handler: 'app-lambda.handler',
       runtime: lambda.Runtime.NODEJS_10_X,
-      environment: getLambdaSharedEnv(deps),
+      environment: initOnly ? {} : getLambdaSharedEnv(deps),
       timeout: cdk.Duration.seconds(90),
       memorySize: 1856,
       layers: [layer],

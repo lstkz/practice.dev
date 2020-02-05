@@ -8,8 +8,9 @@ interface GatewayApiDeps {
 
 export class GatewayApi {
   constructor(scope: cdk.Construct, deps: GatewayApiDeps) {
-    const api = new apigateway.RestApi(scope, 'api', {
-      restApiName: `api`,
+    const id = 'api';
+    const api = new apigateway.RestApi(scope, id, {
+      restApiName: `${process.env.STACK_NAME}_${id}`,
       minimumCompressionSize: 0,
     });
 

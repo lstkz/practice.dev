@@ -21,8 +21,8 @@ export function getLambdaSharedEnv(options: GetLambdaSharedEnvOptions) {
     throw new Error('GITHUB_CLIENT_SECRET is not set');
   }
 
-  if (!process.env.API_GATEWAY_ENDPOINT) {
-    throw new Error('API_GATEWAY_ENDPOINT is not set');
+  if (!process.env.SOCKET_ENDPOINT) {
+    throw new Error('SOCKET_ENDPOINT is not set');
   }
 
   return {
@@ -33,7 +33,7 @@ export function getLambdaSharedEnv(options: GetLambdaSharedEnvOptions) {
     TABLE: mainTable.getDynamoTable().tableName,
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
-    API_GATEWAY_ENDPOINT: process.env.API_GATEWAY_ENDPOINT,
+    SOCKET_ENDPOINT: process.env.SOCKET_ENDPOINT,
     S3_BUCKET_NAME: mainBucket.getS3Bucket().bucketName,
   };
 }

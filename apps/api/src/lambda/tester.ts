@@ -15,8 +15,8 @@ import { S3_BUCKET_NAME } from '../config';
 
 import('aws-sdk/clients/apigatewaymanagementapi');
 
-if (!process.env.API_GATEWAY_ENDPOINT) {
-  throw new Error('API_GATEWAY_ENDPOINT is not defined');
+if (!process.env.SOCKET_ENDPOINT) {
+  throw new Error('SOCKET_ENDPOINT is not defined');
 }
 
 export async function testerHandler(event: SNSEvent) {
@@ -31,7 +31,7 @@ export async function testerHandler(event: SNSEvent) {
   const api = new AWS.ApiGatewayManagementApi({
     region: 'eu-central-1',
     apiVersion: '2018-11-29',
-    endpoint: process.env.API_GATEWAY_ENDPOINT,
+    endpoint: process.env.SOCKET_ENDPOINT,
   });
 
   const s3Object = await s3
