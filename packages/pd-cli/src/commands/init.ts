@@ -48,6 +48,7 @@ export function init() {
         return output.OutputValue;
       };
       env.API_URL = getOutput('apiUrl');
+      env.SOCKET_URL = getOutput('socketUrl');
       env.S3_BUCKET_NAME = getOutput('bucketName');
       env.TESTER_TOPIC_ARN = getOutput('testerTopicArn');
       env.TOPIC_ARN = getOutput('topicArn');

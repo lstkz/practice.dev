@@ -20,7 +20,9 @@ export class APIClient {
     private baseUrl: string,
     private getToken: () => string | null,
     private createXHR?: any
-  ) {}
+  ) {
+    this.baseUrl = baseUrl.replace(/\/$/, '');
+  }
 
   // SIGNATURES
   challenge_getChallengeById(id: number): Rx.Observable<Challenge> {

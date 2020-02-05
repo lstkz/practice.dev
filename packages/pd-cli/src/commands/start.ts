@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 import program from 'commander';
-import { validateApp, getSpawnOptions } from '../helper';
+import { validateApp, getSpawnOptions, getEnvSettings } from '../helper';
 
 export function init() {
   program
@@ -9,9 +9,11 @@ export function init() {
     .option('-b, --build', 'build app before starting')
     .action(async (app, { prod, build }) => {
       validateApp(app);
+      const env = getEnvSettings({});
       spawn('yarn', ['run', prod ? 'start' : 'dev'], {
         env: {
           ...process.env,
+          ...env,
         },
         ...getSpawnOptions(app),
       });

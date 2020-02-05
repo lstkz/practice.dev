@@ -1,5 +1,3 @@
-#!/usr/bin/env ts-node -T
-
 import program from 'commander';
 import fs from 'fs';
 import path from 'path';
