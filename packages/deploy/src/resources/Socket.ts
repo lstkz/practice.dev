@@ -1,16 +1,20 @@
 import apigateway = require('@aws-cdk/aws-apigateway');
 import lambda = require('@aws-cdk/aws-lambda');
 import cdk = require('@aws-cdk/core');
+import { ApiLambda } from './ApiLambda';
+
+interface SocketDeps {
+  apiLambda: ApiLambda;
+}
 
 export class Socket {
   public url: string = '';
 
-  constructor(
-    private stack: cdk.Stack,
-    private id: string,
-    private apiLambda: lambda.Function
-  ) {
+  constructor(stack: cdk.Stack, deps: SocketDeps) {
+    const id = 'socket';
+    const lambdaFn = deps.apiLambda.getLambdaFunction();
     const api = new apigateway.CfnApiV2(stack, id, {
+      name: `${process.env.STACK_NAME}_${id}`,
       routeSelectionExpression: 'none',
       protocolType: 'WEBSOCKET',
     });
@@ -21,7 +25,7 @@ export class Socket {
       {
         apiId: api.ref,
         integrationType: apigateway.IntegrationType.AWS_PROXY,
-        integrationUri: `arn:${stack.partition}:apigateway:${stack.region}:lambda:path/2015-03-31/functions/${apiLambda.functionArn}/invocations`,
+        integrationUri: `arn:${stack.partition}:apigateway:${stack.region}:lambda:path/2015-03-31/functions/${lambdaFn.functionArn}/invocations`,
       }
     );
 
@@ -70,7 +74,7 @@ export class Socket {
 
     new lambda.CfnPermission(stack, 'socketInvoke', {
       action: 'lambda:InvokeFunction',
-      functionName: apiLambda.functionArn,
+      functionName: lambdaFn.functionArn,
       principal: 'apigateway.amazonaws.com',
       sourceArn: `arn:aws:execute-api:${stack.region}:${stack.account}:${api.ref}/*/*`,
     });
@@ -85,5 +89,9 @@ export class Socket {
     stage.addDependsOn(deployment);
 
     this.url = `wss://${api.ref}.execute-api.${stack.region}.amazonaws.com/${stage.stageName}`;
+
+    new cdk.CfnOutput(stack, 'socketUrl', {
+      value: this.url,
+    });
   }
 }

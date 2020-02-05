@@ -15,16 +15,13 @@ import { SocketMessage, updateTestResult, SubmissionStatus } from 'shared';
 import { api } from 'src/services/api';
 import { getChallengeState, ChallengeActions } from '../challenge/interface';
 import { ActionLike } from 'typeless';
-
-const SOCKET_URL = 'wss://14vxhhjrtl.execute-api.eu-central-1.amazonaws.com';
+import { SOCKET_URL } from 'src/config';
 
 handle
   .epic()
   .on(SubmitActions.connect, (_, { action$ }) => {
     return new Rx.Observable<ActionLike>(subscriber => {
-      const ws = new WebSocket(
-        `${SOCKET_URL}/socket?token=${getAccessToken()}`
-      );
+      const ws = new WebSocket(`${SOCKET_URL}?token=${getAccessToken()}`);
       ws.onerror = e => {
         console.error(e);
         subscriber.next(SubmitActions.setError('Cannot connect to server'));

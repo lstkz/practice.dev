@@ -1,15 +1,16 @@
 import util from 'util';
-import { APIGatewayProxyEvent } from '../types';
+import uuid from 'uuid';
+import { APIGatewayProxyEvent, ALBEvent } from '../types';
 import { handler as rpcHandler } from '../handler';
 
 const baseHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': '*',
+  'Content-Type': 'application/json',
 };
 
-export async function handler(event: APIGatewayProxyEvent) {
+export async function handler(event: APIGatewayProxyEvent | ALBEvent) {
   try {
-    console.log('processing RPC', event.path);
     const exec = /\/rpc\/(.+)/.exec(event.path);
     if (!exec) {
       throw new Error('Invalid url');
@@ -35,7 +36,8 @@ export async function handler(event: APIGatewayProxyEvent) {
     if (!Array.isArray(params)) {
       throw new Error('Request body must be an array');
     }
-    const ret = await rpcHandler(exec[1], params, event.headers['x-token']);
+    const headers = event.headers || {};
+    const ret = await rpcHandler(exec[1], params, headers['x-token']);
     return {
       statusCode: 200,
       body: JSON.stringify(ret),
@@ -43,13 +45,14 @@ export async function handler(event: APIGatewayProxyEvent) {
     };
   } catch (e) {
     const serialized = util.inspect(e, { depth: null });
-    console.error(event.requestContext.requestId, serialized);
+    const requestId = event.requestContext?.requestId || uuid();
+    console.error(requestId, serialized);
     return {
       statusCode: 400,
       headers: baseHeaders,
       body: JSON.stringify({
         error: e.message,
-        requestId: event.requestContext.requestId,
+        requestId,
       }),
     };
   }

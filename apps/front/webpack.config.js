@@ -2,7 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const dotenv = require('dotenv');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin;
 
@@ -13,16 +12,19 @@ const __DEV__ = process.env.NODE_ENV === 'development';
 
 const title = 'Practice.dev';
 
-dotenv.config({
-  path: __DEV__ ? '../../.env' : '../../.env-prod',
-});
-
 const styledComponentsTransformer = createStyledComponentsTransformer({
   getDisplayName: (filename, bindingName) => {
     const name = path.basename(filename).split('.')[0];
     return `${name}_${bindingName || ''}`;
   },
 });
+
+function getSetting(name) {
+  if (!process.env[name]) {
+    throw new Error(`${name} is not set`);
+  }
+  return process.env[name];
+}
 
 module.exports = {
   name: 'client',
@@ -47,7 +49,6 @@ module.exports = {
   },
   optimization: __DEV__
     ? {
-        // minimize: false,
         splitChunks: {
           cacheGroups: {
             commons: {
@@ -59,11 +60,6 @@ module.exports = {
         },
       }
     : undefined,
-  // optimization: {
-  //   namedModules: true,
-  //   namedChunks: true,
-  //   splitChunks: { cacheGroups: { default: false } },
-  // },
   output: {
     filename: '[name].[hash].js',
     chunkFilename: '[name].[hash].js',
@@ -87,14 +83,15 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-        GITHUB_CLIENT_ID: JSON.stringify(process.env.GITHUB_CLIENT_ID),
-        GOOGLE_CLIENT_ID: JSON.stringify(process.env.GOOGLE_CLIENT_ID),
+        NODE_ENV: JSON.stringify(getSetting('NODE_ENV')),
+        GITHUB_CLIENT_ID: JSON.stringify(getSetting('GITHUB_CLIENT_ID')),
+        GOOGLE_CLIENT_ID: JSON.stringify(getSetting('GOOGLE_CLIENT_ID')),
+        SOCKET_URL: JSON.stringify(getSetting('SOCKET_URL')),
         API_URL: JSON.stringify(
-          process.env.API_URL || 'http://localhost:3100/api'
+          __DEV__ ? 'http://localhost:3000/' : getSetting('API_URL')
         ),
         BUNDLE_BASE_URL: JSON.stringify(
-          process.env.BUNDLE_BASE_URL || 'http://localhost:3000/'
+          __DEV__ ? 'http://localhost:3000/' : getSetting('BUNDLE_BASE_URL')
         ),
       },
     }),
@@ -121,23 +118,6 @@ module.exports = {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
       },
-      // {
-      //   test: /\.m?js$/,
-      //   exclude: /(node_modules)/,
-      //   use: {
-      //     loader: 'babel-loader',
-      //     options: {
-      //       plugins: [
-      //         [
-      //           'babel-plugin-styled-components',
-      //           {
-      //             ssr: false,
-      //           },
-      //         ],
-      //       ],
-      //     },
-      //   },
-      // },
       {
         test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
         use: [
