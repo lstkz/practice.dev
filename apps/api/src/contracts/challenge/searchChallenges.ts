@@ -1,23 +1,18 @@
 import * as R from 'remeda';
 import { S } from 'schema';
-import {
-  createContract,
-  getLoggedInUserOrAnonymous,
-  createRpcBinding,
-} from '../../lib';
+import { createContract, createRpcBinding } from '../../lib';
 import { createKey, queryMainIndexAll, queryIndexAll } from '../../common/db';
 import { DbChallengeSolved, DbChallenge } from '../../types';
 import { PagedResult, Challenge } from 'shared';
 import { mapDbChallenge } from '../../common/mapping';
 
-async function _getSolvedChallenges() {
-  const user = getLoggedInUserOrAnonymous();
-  if (!user) {
+async function _getSolvedChallenges(userId: string | undefined) {
+  if (!userId) {
     return [];
   }
   const key = createKey({
     type: 'CHALLENGE_SOLVED',
-    userId: user.userId,
+    userId: userId,
     challengeId: -1,
   });
   const items = await queryMainIndexAll<DbChallengeSolved>({
@@ -35,8 +30,9 @@ async function _getAllChallenges() {
 }
 
 export const searchChallenges = createContract('challenge.searchChallenges')
-  .params('criteria')
+  .params('userId', 'criteria')
   .schema({
+    userId: S.string().optional(),
     criteria: S.object().keys({
       sortBy: S.enum()
         .literal('created', 'likes')
@@ -60,7 +56,7 @@ export const searchChallenges = createContract('challenge.searchChallenges')
         .optional(),
     }),
   })
-  .fn(async criteria => {
+  .fn(async (userId, criteria) => {
     const {
       sortBy,
       sortOrder,
@@ -74,7 +70,7 @@ export const searchChallenges = createContract('challenge.searchChallenges')
 
     const [items, solved] = await Promise.all([
       _getAllChallenges(),
-      _getSolvedChallenges(),
+      _getSolvedChallenges(userId),
     ]);
 
     const solvedMap = R.indexBy(solved, x => x);
@@ -142,6 +138,7 @@ export const searchChallenges = createContract('challenge.searchChallenges')
   });
 
 export const searchChallengesRpc = createRpcBinding({
+  injectUser: true,
   public: true,
   signature: 'challenge.searchChallenges',
   handler: searchChallenges,

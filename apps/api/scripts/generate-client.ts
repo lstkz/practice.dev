@@ -11,19 +11,19 @@ function getChildren(node: ts.Node) {
   return nodes;
 }
 
-function showTree(node: ts.Node, indent: string = '    '): void {
-  console.log(indent + ts.SyntaxKind[node.kind]);
+// function showTree(node: ts.Node, indent: string = '    '): void {
+//   console.log(indent + ts.SyntaxKind[node.kind]);
 
-  const children = getChildren(node);
+//   const children = getChildren(node);
 
-  if (children.length === 0) {
-    console.log(indent + '    Text: ' + node.getText());
-  }
+//   if (children.length === 0) {
+//     console.log(indent + '    Text: ' + node.getText());
+//   }
 
-  for (let child of children) {
-    showTree(child, indent + '    ');
-  }
-}
+//   for (let child of children) {
+//     showTree(child, indent + '    ');
+//   }
+// }
 
 const importTypes = {} as { [x: string]: string };
 const signatures = [] as string[];

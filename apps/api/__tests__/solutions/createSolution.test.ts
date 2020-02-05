@@ -1,17 +1,13 @@
 import { resetDb } from '../helper';
 import { registerSampleUsers, addSampleTasks } from '../seed-data';
-import { DbUser } from '../../src/types';
-import { getDbUserByToken } from '../../src/contracts/user/getDbUserByToken';
-import { runWithContext } from '../../src/lib';
 import { createSolution } from '../../src/contracts/solution/createSolution';
 import { markSolved } from '../../src/contracts/challenge/markSolved';
 
-let user: DbUser | null;
+const userId = '1';
 
 beforeEach(async () => {
   await resetDb();
   await Promise.all([registerSampleUsers(), addSampleTasks()]);
-  user = await getDbUserByToken('user1_token');
 });
 
 function getLongStr(n: number) {
@@ -111,115 +107,78 @@ describe('validation', () => {
   ])(
     '.createSolution(%p) should throw `%s`',
     async (input: any, errorMessage: any) => {
-      await runWithContext(
-        {
-          user,
-        },
-        async () => {
-          await expect(createSolution(input)).rejects.toThrow(errorMessage);
-        }
-      );
+      await expect(createSolution(userId, input)).rejects.toThrow(errorMessage);
     }
   );
 });
 
 it('throw an error if solution is not solved', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      await expect(
-        createSolution({
-          challengeId: validChallengeId,
-          url: validUrl,
-          title: validTitle,
-          slug: validSlug,
-          description: validDescription,
-          tags: validTags,
-        })
-      ).rejects.toThrow(
-        'Cannot create a solution if the challenge is not solved'
-      );
-    }
-  );
+  await expect(
+    createSolution(userId, {
+      challengeId: validChallengeId,
+      url: validUrl,
+      title: validTitle,
+      slug: validSlug,
+      description: validDescription,
+      tags: validTags,
+    })
+  ).rejects.toThrow('Cannot create a solution if the challenge is not solved');
 });
 
 it('should create a solution', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      await markSolved({
-        challengeId: 1,
-        solvedAt: 1,
-        userId: '1',
-      });
+  await markSolved({
+    challengeId: 1,
+    solvedAt: 1,
+    userId: '1',
+  });
 
-      const ret = await createSolution({
-        challengeId: validChallengeId,
-        url: validUrl,
-        title: validTitle,
-        slug: validSlug,
-        description: validDescription,
-        tags: validTags,
-      });
+  const ret = await createSolution(userId, {
+    challengeId: validChallengeId,
+    url: validUrl,
+    title: validTitle,
+    slug: validSlug,
+    description: validDescription,
+    tags: validTags,
+  });
 
-      expect(ret.slug).toEqual(validSlug);
-    }
-  );
+  expect(ret.slug).toEqual(validSlug);
 });
 
 it('throw an error if slug is duplicated', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      await markSolved({
-        challengeId: 1,
-        solvedAt: 1,
-        userId: '1',
-      });
-      const values = {
-        challengeId: validChallengeId,
-        url: validUrl,
-        title: validTitle,
-        slug: validSlug,
-        description: validDescription,
-        tags: validTags,
-      };
-      await createSolution(values);
+  await markSolved({
+    challengeId: 1,
+    solvedAt: 1,
+    userId: '1',
+  });
+  const values = {
+    challengeId: validChallengeId,
+    url: validUrl,
+    title: validTitle,
+    slug: validSlug,
+    description: validDescription,
+    tags: validTags,
+  };
+  await createSolution(userId, values);
 
-      await expect(createSolution(values)).rejects.toThrow(
-        'Duplicated slug for this challenge'
-      );
-    }
+  await expect(createSolution(userId, values)).rejects.toThrow(
+    'Duplicated slug for this challenge'
   );
 });
 
 it('should create two solutions with different slug', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      await markSolved({
-        challengeId: 1,
-        solvedAt: 1,
-        userId: '1',
-      });
-      const values = {
-        challengeId: validChallengeId,
-        url: validUrl,
-        title: validTitle,
-        slug: validSlug,
-        description: validDescription,
-        tags: validTags,
-      };
-      await createSolution(values);
-      await createSolution({ ...values, slug: 'another-slug' });
-    }
-  );
+  await markSolved({
+    challengeId: 1,
+    solvedAt: 1,
+    userId: '1',
+  });
+  const values = {
+    challengeId: validChallengeId,
+    url: validUrl,
+    title: validTitle,
+    slug: validSlug,
+    description: validDescription,
+    tags: validTags,
+  };
+  await createSolution(userId, values);
+  await createSolution(userId, { ...values, slug: 'another-slug' });
 });

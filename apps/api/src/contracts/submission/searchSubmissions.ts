@@ -1,8 +1,4 @@
-import {
-  createContract,
-  createRpcBinding,
-  getLoggedInUserOrAnonymous,
-} from '../../lib';
+import { createContract, createRpcBinding } from '../../lib';
 import { S, ValidationError } from 'schema';
 import { getDbUserByUsername } from '../user/getDbUserByUsername';
 import { createKey, queryIndex } from '../../common/db';
@@ -81,12 +77,6 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
     });
     const users = await getUsersByIds(items.map(x => x.userId));
     const submissions = mapDbSubmissionMany(items, users);
-    const current = getLoggedInUserOrAnonymous();
-    submissions.forEach(item => {
-      if (current?.userId !== item.user.id) {
-        delete item.result;
-      }
-    });
     return {
       items: submissions,
       cursor,
@@ -94,6 +84,7 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
   });
 
 export const searchSubmissionsRpc = createRpcBinding({
+  public: true,
   signature: 'submission.searchSubmissions',
   handler: searchSubmissions,
 });

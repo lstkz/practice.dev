@@ -1,5 +1,4 @@
 import { resetDb } from '../helper';
-import { login } from '../../src/contracts/user/login';
 import { registerSampleUsers } from '../seed-data';
 import { getDbUserByToken } from '../../src/contracts/user/getDbUserByToken';
 

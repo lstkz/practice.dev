@@ -1,5 +1,5 @@
 import { SocketNotifier } from '../../src/tester/SocketNotifier';
-import { DynamoDB, ApiGatewayManagementApi } from 'aws-sdk';
+import { ApiGatewayManagementApi } from 'aws-sdk';
 import { SocketMessage } from 'shared';
 import { DbSocketConnection } from '../../src/types';
 
@@ -24,7 +24,7 @@ function getConnection(id: string) {
 beforeEach(() => {
   connections = [getConnection('c1')];
   api = {
-    postToConnection: jest.fn(params => ({
+    postToConnection: jest.fn(_ => ({
       promise: () => Promise.resolve(),
     })),
   };

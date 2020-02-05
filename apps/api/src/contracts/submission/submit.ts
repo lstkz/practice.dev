@@ -1,9 +1,4 @@
-import {
-  createContract,
-  createRpcBinding,
-  sns,
-  getLoggedInUser,
-} from '../../lib';
+import { createContract, createRpcBinding, sns } from '../../lib';
 import { rateLimit } from '../misc/rateLimit';
 import { getDuration } from '../../common/helper';
 import { S } from 'schema';
@@ -18,8 +13,9 @@ const RATE_LIMIT_PER_DAY = 1000;
 const RATE_LIMIT_PER_HOUR = 100;
 
 export const submit = createContract('submission.submit')
-  .params('values')
+  .params('userId', 'values')
   .schema({
+    userId: S.string(),
     values: S.object().keys({
       challengeId: S.number(),
       testUrl: S.string().regex(
@@ -27,9 +23,7 @@ export const submit = createContract('submission.submit')
       ),
     }),
   })
-  .fn(async values => {
-    const user = getLoggedInUser();
-    const userId = user.userId;
+  .fn(async (userId, values) => {
     const challenge = await getDbChallengeById(values.challengeId);
     await Promise.all([
       rateLimit(
@@ -81,6 +75,7 @@ export const submit = createContract('submission.submit')
   });
 
 export const submitRpc = createRpcBinding({
+  injectUser: true,
   signature: 'challenge.submit',
   handler: submit,
 });

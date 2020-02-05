@@ -1,6 +1,5 @@
 import http from 'http';
 import util from 'util';
-import Path from 'path';
 import { handler } from './handler';
 import chokidar from 'chokidar';
 import { s3 } from './lib';

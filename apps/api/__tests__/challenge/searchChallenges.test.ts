@@ -4,16 +4,12 @@ import { registerSampleUsers } from '../seed-data';
 import { searchChallenges } from '../../src/contracts/challenge/searchChallenges';
 import { PagedResult, Challenge } from 'shared';
 import { markSolved } from '../../src/contracts/challenge/markSolved';
-import { DbUser } from '../../src/types';
-import { getDbUserByToken } from '../../src/contracts/user/getDbUserByToken';
-import { runWithContext } from '../../src/lib';
 
-let user: DbUser | null;
+const userId = '1';
 
 beforeEach(async () => {
   await resetDb();
   await Promise.all([registerSampleUsers(), insertSampleData()]);
-  user = await getDbUserByToken('user1_token');
 });
 
 async function insertSampleData() {
@@ -87,202 +83,132 @@ function fixResponse(result: PagedResult<Challenge>) {
 }
 
 it('should return all challenges', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      const result = await searchChallenges({});
-      expect(fixResponse(result)).toEqual({
-        items: [1, 2, 3, 4],
-        pageNumber: 0,
-        pageSize: 30,
-        total: 4,
-        totalPages: 1,
-      });
-    }
-  );
+  const result = await searchChallenges(userId, {});
+  expect(fixResponse(result)).toEqual({
+    items: [1, 2, 3, 4],
+    pageNumber: 0,
+    pageSize: 30,
+    total: 4,
+    totalPages: 1,
+  });
 });
 
 it('should return all challenges DESC', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      const result = await searchChallenges({
-        sortOrder: 'desc',
-      });
-      expect(fixResponse(result)).toEqual({
-        items: [4, 3, 2, 1],
-        pageNumber: 0,
-        pageSize: 30,
-        total: 4,
-        totalPages: 1,
-      });
-    }
-  );
+  const result = await searchChallenges(userId, {
+    sortOrder: 'desc',
+  });
+  expect(fixResponse(result)).toEqual({
+    items: [4, 3, 2, 1],
+    pageNumber: 0,
+    pageSize: 30,
+    total: 4,
+    totalPages: 1,
+  });
 });
 
 it('sort by likes', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      const result = await searchChallenges({
-        sortBy: 'likes',
-        sortOrder: 'desc',
-      });
-      expect(fixResponse(result)).toEqual({
-        items: [2, 1, 3, 4],
-        pageNumber: 0,
-        pageSize: 30,
-        total: 4,
-        totalPages: 1,
-      });
-    }
-  );
+  const result = await searchChallenges(userId, {
+    sortBy: 'likes',
+    sortOrder: 'desc',
+  });
+  expect(fixResponse(result)).toEqual({
+    items: [2, 1, 3, 4],
+    pageNumber: 0,
+    pageSize: 30,
+    total: 4,
+    totalPages: 1,
+  });
 });
 
 it('should return all challenges with pagination', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      const result = await searchChallenges({
-        pageSize: 1,
-        pageNumber: 1,
-      });
-      expect(fixResponse(result)).toEqual({
-        items: [2],
-        pageNumber: 1,
-        pageSize: 1,
-        total: 4,
-        totalPages: 4,
-      });
-    }
-  );
+  const result = await searchChallenges(userId, {
+    pageSize: 1,
+    pageNumber: 1,
+  });
+  expect(fixResponse(result)).toEqual({
+    items: [2],
+    pageNumber: 1,
+    pageSize: 1,
+    total: 4,
+    totalPages: 4,
+  });
 });
 
 it('filter by solved', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      const result = await searchChallenges({
-        statuses: ['solved'],
-      });
-      expect(fixResponse(result)).toEqual({
-        items: [2],
-        pageNumber: 0,
-        pageSize: 30,
-        total: 1,
-        totalPages: 1,
-      });
-      expect(result.items[0].isSolved).toEqual(true);
-    }
-  );
+  const result = await searchChallenges(userId, {
+    statuses: ['solved'],
+  });
+  expect(fixResponse(result)).toEqual({
+    items: [2],
+    pageNumber: 0,
+    pageSize: 30,
+    total: 1,
+    totalPages: 1,
+  });
+  expect(result.items[0].isSolved).toEqual(true);
 });
 
 it('filter by unsolved', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      const result = await searchChallenges({
-        statuses: ['unsolved'],
-      });
-      expect(fixResponse(result)).toEqual({
-        items: [1, 3, 4],
-        pageNumber: 0,
-        pageSize: 30,
-        total: 3,
-        totalPages: 1,
-      });
-    }
-  );
+  const result = await searchChallenges(userId, {
+    statuses: ['unsolved'],
+  });
+  expect(fixResponse(result)).toEqual({
+    items: [1, 3, 4],
+    pageNumber: 0,
+    pageSize: 30,
+    total: 3,
+    totalPages: 1,
+  });
 });
 
 it('filter by domain', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      const result = await searchChallenges({
-        domains: ['frontend'],
-      });
-      expect(fixResponse(result)).toEqual({
-        items: [1, 2, 3],
-        pageNumber: 0,
-        pageSize: 30,
-        total: 3,
-        totalPages: 1,
-      });
-    }
-  );
+  const result = await searchChallenges(userId, {
+    domains: ['frontend'],
+  });
+  expect(fixResponse(result)).toEqual({
+    items: [1, 2, 3],
+    pageNumber: 0,
+    pageSize: 30,
+    total: 3,
+    totalPages: 1,
+  });
 });
 
 it('filter by difficulty', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      const result = await searchChallenges({
-        difficulties: ['easy'],
-      });
-      expect(fixResponse(result)).toEqual({
-        items: [1, 2, 4],
-        pageNumber: 0,
-        pageSize: 30,
-        total: 3,
-        totalPages: 1,
-      });
-    }
-  );
+  const result = await searchChallenges(userId, {
+    difficulties: ['easy'],
+  });
+  expect(fixResponse(result)).toEqual({
+    items: [1, 2, 4],
+    pageNumber: 0,
+    pageSize: 30,
+    total: 3,
+    totalPages: 1,
+  });
 });
 
 it('filter by one tag', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      const result = await searchChallenges({
-        tags: ['foo'],
-      });
-      expect(fixResponse(result)).toEqual({
-        items: [1, 3, 4],
-        pageNumber: 0,
-        pageSize: 30,
-        total: 3,
-        totalPages: 1,
-      });
-    }
-  );
+  const result = await searchChallenges(userId, {
+    tags: ['foo'],
+  });
+  expect(fixResponse(result)).toEqual({
+    items: [1, 3, 4],
+    pageNumber: 0,
+    pageSize: 30,
+    total: 3,
+    totalPages: 1,
+  });
 });
 
 it('filter by two tags', async () => {
-  await runWithContext(
-    {
-      user,
-    },
-    async () => {
-      const result = await searchChallenges({
-        tags: ['foo', 'bar'],
-      });
-      expect(fixResponse(result)).toEqual({
-        items: [3],
-        pageNumber: 0,
-        pageSize: 30,
-        total: 1,
-        totalPages: 1,
-      });
-    }
-  );
+  const result = await searchChallenges(userId, {
+    tags: ['foo', 'bar'],
+  });
+  expect(fixResponse(result)).toEqual({
+    items: [3],
+    pageNumber: 0,
+    pageSize: 30,
+    total: 1,
+    totalPages: 1,
+  });
 });

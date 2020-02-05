@@ -1,7 +1,6 @@
 import { apiMapping } from './generated/api-mapping';
 import { getDbUserByToken } from './contracts/user/getDbUserByToken';
 import { AppError } from './common/errors';
-import { runWithContext } from './lib';
 
 export async function handler(
   rpcMethod: string,
@@ -32,5 +31,9 @@ export async function handler(
     return user;
   };
   const user = await getUser();
-  return runWithContext({ user: user! }, () => options.handler(...rpcParams));
+  const params = [...rpcParams];
+  if (options.injectUser) {
+    params.unshift(user?.userId);
+  }
+  return options.handler(...params);
 }

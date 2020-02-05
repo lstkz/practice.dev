@@ -12,7 +12,7 @@ export const sendConfirmEmail = createContract('notification.sendConfirmEmail')
     userId: S.string(),
     registeredAt: S.date(),
   })
-  .fn(async (userId, registeredAt) => {
+  .fn(async (userId, _) => {
     const code = randomUniqString();
     const dbUser = await getDbUserById(userId);
     const confirmKey = createKey({ type: 'CONFIRM_CODE', code });

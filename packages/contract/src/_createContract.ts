@@ -7,11 +7,10 @@ import {
 } from './types';
 import { wrapValidate } from './wrapValidate';
 import { wrapLog } from './wrapLog';
-import { ContractHook } from './ContractHook';
 import { ContractError } from './ContractError';
 import { _serializeInput } from './_serializeInput';
 
-export const _createContract = (config: ContractConfig, hook: ContractHook) => (
+export const _createContract = (config: ContractConfig) => (
   signature: string
 ) => {
   const contract = {} as any;
@@ -60,14 +59,8 @@ export const _createContract = (config: ContractConfig, hook: ContractHook) => (
         config,
         removeOutput: options.removeOutput,
       });
-      const isNewScope = hook.isNewScope();
       try {
-        if (isNewScope) {
-          const a = await hook.runInNewScope(() => withLogging(...args));
-          return a;
-        } else {
-          return await withLogging(...args);
-        }
+        return await withLogging(...args);
       } catch (e) {
         const input = _serializeInput(config, params, args);
         if (e instanceof ContractError) {

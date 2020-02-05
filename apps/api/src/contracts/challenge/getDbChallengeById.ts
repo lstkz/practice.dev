@@ -1,4 +1,4 @@
-import { createContract, getLoggedInUserOrAnonymous } from '../../lib';
+import { createContract } from '../../lib';
 import { S } from 'schema';
 import { AppError } from '../../common/errors';
 import { createKey, getItem } from '../../common/db';

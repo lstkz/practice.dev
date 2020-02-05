@@ -3,7 +3,6 @@ import { AppError } from '../../common/errors';
 import { createKey, transactWriteItems } from '../../common/db';
 import { DbSolution } from '../../types';
 import { createStatsUpdate } from '../challenge/createStatsUpdate';
-import { mapDbSolution } from '../../common/mapping';
 
 interface CreateSolutionValues {
   createdAt: number;

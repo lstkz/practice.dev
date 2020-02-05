@@ -3,8 +3,8 @@ import { TESTER_TOPIC_ARN } from '../config';
 
 export function handler(
   event: SNSEvent | APIGatewayProxyEvent,
-  context: any,
-  callback: any
+  _: any,
+  __: any
 ) {
   if ('Records' in event) {
     if (event.Records[0]?.Sns.TopicArn === TESTER_TOPIC_ARN) {

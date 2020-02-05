@@ -1,4 +1,3 @@
-import { ContractHook } from './ContractHook';
 import { ContractConfig } from './types';
 import { _createContract } from './_createContract';
 
@@ -17,26 +16,11 @@ const defaultConfig: ContractConfig = {
   },
 };
 
-export function initialize<T>(config: Partial<ContractConfig> = {}) {
-  const hook = new ContractHook();
-  hook.enable();
+export function initialize(config: Partial<ContractConfig> = {}) {
   return {
-    createContract: _createContract(
-      {
-        ...defaultConfig,
-        ...config,
-      },
-      hook
-    ),
-    runWithContext: async <R>(context: T, fn: () => R): Promise<R> => {
-      return await hook.runInNewScope(() => {
-        hook.setContext(context);
-        return fn();
-      });
-    },
-    getContext: () => hook.getContext<T>(),
-    disable: () => {
-      hook.disable();
-    },
+    createContract: _createContract({
+      ...defaultConfig,
+      ...config,
+    }),
   };
 }
