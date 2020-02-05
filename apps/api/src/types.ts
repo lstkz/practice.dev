@@ -221,4 +221,22 @@ export interface SNSEvent {
   Records: SNSEventRecord[];
 }
 
+export interface ALBEventRequestContext {
+  elb: {
+    targetGroupArn: string;
+  };
+  requestId: undefined;
+}
+export interface ALBEvent {
+  requestContext: ALBEventRequestContext;
+  httpMethod: string;
+  path: string;
+  queryStringParameters?: { [parameter: string]: string }; // URL encoded
+  headers?: { [header: string]: string };
+  multiValueQueryStringParameters?: { [parameter: string]: string[] }; // URL encoded
+  multiValueHeaders?: { [header: string]: string[] };
+  body: string | null;
+  isBase64Encoded: boolean;
+}
+
 /* END LAMBDA TYPES */
