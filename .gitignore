@@ -10,6 +10,7 @@ build/
 cdk.out
 .cache
 .env-prod
+.env-stage
 apps/front copy
 
 # Runtime data
