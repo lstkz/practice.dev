@@ -21,8 +21,8 @@ import { TabContent } from './TabContent';
 import { useActions } from 'typeless';
 import { TestSuite } from './TestSuite';
 import { SubmitModal } from '../../submit/components/SubmitModal';
-import { useSubmitModule } from 'src/features/submit/module';
 import { MyRecentSubmissions } from './MyRecentSubmissions';
+import { SolutionModal } from 'src/features/solution/components/SolutionModal';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
@@ -33,7 +33,6 @@ const Wrapper = styled.div`
 
 export function ChallengeView() {
   useChallengeModule();
-  useSubmitModule();
   const {
     challenge,
     isLoading,
@@ -45,6 +44,7 @@ export function ChallengeView() {
   return (
     <Dashboard>
       <SubmitModal />
+      <SolutionModal />
       <ConfirmEmailWarning />
       <Container>
         <Breadcrumb

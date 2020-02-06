@@ -1,7 +1,7 @@
 import { createForm } from 'typeless-form';
 import { S } from 'schema';
-import { SubmitFormSymbol } from '../challenge/symbol';
 import { validate } from '../../common/helper';
+import { SubmitFormSymbol } from './symbol';
 
 export interface SubmitFormValues {
   url: string;

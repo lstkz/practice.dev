@@ -60,7 +60,6 @@ export function getRouteParams(
       };
     }
     case 'challenge': {
-      const split = location.pathname.split('/');
       return {
         id: Number(getLast()),
       };

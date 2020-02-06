@@ -1,9 +1,8 @@
 import * as React from 'react';
-import * as PopperJS from 'popper.js';
-import ReactDOM from 'react-dom';
-import styled, { css, keyframes } from 'styled-components';
-import { Manager, Reference, Popper } from 'react-popper';
+import styled, { css } from 'styled-components';
 import { Theme } from '../common/Theme';
+import { ErrorTooltip } from './ErrorTooltip';
+import { FormLabel } from './FormLabel';
 
 const INPUT_FOCUS_CLASS = 'input-focus';
 
@@ -21,20 +20,9 @@ export interface InputProps {
   feedback?: string;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
   autoFocus?: boolean;
+  maxLength?: number;
+  multiline?: boolean;
 }
-
-const Label = styled.label`
-  font-weight: 500;
-  line-height: 19px;
-  color: ${Theme.textDark};
-`;
-
-const LabelsWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 11px;
-`;
 
 const Prepend = styled.div`
   margin-right: -1px;
@@ -85,51 +73,6 @@ const InputGroup = styled.div`
   }
 `;
 
-const shakeAnimation = keyframes`
-  0% { transform: translate(30px); }
-  20% { transform: translate(-30px); }
-  40% { transform: translate(15px); }
-  60% { transform: translate(-15px); }
-  80% { transform: translate(8px); }
-  100% { transform: translate(0px); }
-`;
-
-const ErrorPopup = styled.div`
-  z-index: 100;
-`;
-
-const Error = styled.div<{ placement?: PopperJS.Placement }>`
-  padding: 0 12px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  background: ${Theme.red};
-  box-shadow: 0px 3px 6px #00000029;
-  border-radius: 4px;
-  color: white;
-  position: relative;
-  animation: ${shakeAnimation} 0.4s 1 linear;
-  ${props =>
-    props.placement === 'right' &&
-    css`
-      margin-left: 15px;
-      &:after {
-        right: 100%;
-        top: 50%;
-        border: solid transparent;
-        content: ' ';
-        height: 0;
-        width: 0;
-        position: absolute;
-        pointer-events: none;
-        border-color: transparent;
-        border-right-color: ${Theme.red};
-        border-width: 5px;
-        margin-top: -5px;
-      }
-    `}
-`;
-
 const _Input = (props: InputProps) => {
   const {
     className,
@@ -144,85 +87,65 @@ const _Input = (props: InputProps) => {
     state,
     onBlur,
     id,
+    maxLength,
+    multiline,
     ...rest
   } = props;
 
   const wrapperRef = React.useRef<HTMLDivElement | null>(null);
 
-  const getInput = (ref: any) => (
-    <input
-      ref={ref}
-      id={id}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      type={type}
-      onFocus={() => {
+  const getInput = (ref: any) => {
+    const inputProps = {
+      ref: ref,
+      id: id,
+      value: value,
+      onChange: onChange,
+      placeholder: placeholder,
+      type: type,
+      onFocus: () => {
         wrapperRef.current?.classList.add(INPUT_FOCUS_CLASS);
-      }}
-      onBlur={e => {
+      },
+      onBlur: (e: any) => {
         wrapperRef.current?.classList.remove(INPUT_FOCUS_CLASS);
         if (onBlur) {
           onBlur(e);
         }
-      }}
-      aria-describedby={`${id}_error`}
-      {...rest}
-    />
-  );
+      },
+      maxLength: maxLength,
+      'aria-describedby': `${id}_error`,
+      ...rest,
+    };
+    if (multiline) {
+      return <textarea {...inputProps} />;
+    } else {
+      return <input {...inputProps} />;
+    }
+  };
 
   return (
-    <Manager>
-      <Reference>
-        {({ ref }) => (
-          <div className={className} ref={wrapperRef}>
-            {(label || rightLabel) && (
-              <LabelsWrapper>
-                <Label htmlFor={id}>{label}</Label> <div>{rightLabel}</div>
-              </LabelsWrapper>
-            )}
-            {icon ? (
-              <InputGroup ref={ref}>
-                <Prepend>
-                  <InputGroupText>{icon}</InputGroupText>
-                </Prepend>
-                {getInput(null)}
-              </InputGroup>
-            ) : (
-              getInput(ref)
-            )}
-          </div>
-        )}
-      </Reference>
-      {ReactDOM.createPortal(
-        <Popper
-          placement="right"
-          modifiers={{
-            preventOverflow: {
-              boundariesElement: document.body,
-            },
-          }}
-        >
-          {({ ref, style, placement }) => {
-            return (
-              props.state === 'error' && (
-                <ErrorPopup style={style}>
-                  <Error
-                    role="alert"
-                    id={`${id}_error`}
-                    ref={ref as any}
-                    placement={placement}
-                  >
-                    {props.feedback}
-                  </Error>
-                </ErrorPopup>
-              )
-            );
-          }}
-        </Popper>,
-        document.querySelector('#portals')!
+    <ErrorTooltip
+      id={`${id}_error`}
+      error={props.feedback}
+      isVisible={props.state === 'error'}
+    >
+      {({ ref }) => (
+        <div className={className} ref={wrapperRef}>
+          {(label || rightLabel) && (
+            <FormLabel id={id} label={label} rightLabel={rightLabel} />
+          )}
+          {icon ? (
+            <InputGroup ref={ref}>
+              <Prepend>
+                <InputGroupText>{icon}</InputGroupText>
+              </Prepend>
+              {getInput(null)}
+            </InputGroup>
+          ) : (
+            getInput(ref)
+          )}
+        </div>
       )}
-    </Manager>
+    </ErrorTooltip>
   );
 };
 
@@ -233,6 +156,7 @@ export const Input = styled(_Input)`
   display: block;
   margin-bottom: 20px;
 
+  textarea,
   input {
     font-size: 14px;
     font-weight: 400;
@@ -255,7 +179,13 @@ export const Input = styled(_Input)`
     }
   }
 
+  textarea {
+    height: auto;
+    min-height: 80px;
+  }
+
   &.${INPUT_FOCUS_CLASS} {
+    textarea,
     input {
       border-color: ${Theme.blue};
       background-color: #fff;
@@ -277,9 +207,12 @@ export const Input = styled(_Input)`
     ${props =>
       props.state === 'error' &&
       css`
-        ${InputGroupText}, input {
+        ${InputGroupText},
+        textarea,
+        input {
           border-color: ${Theme.red};
         }
+        textarea,
         input {
           padding-right: 32px;
         background-image: url("data:image/svg+xml,${encodeURIComponent(
@@ -294,9 +227,12 @@ export const Input = styled(_Input)`
     ${props =>
       props.state === 'valid' &&
       css`
-        ${InputGroupText}, input {
+        ${InputGroupText},
+        textarea,
+        input {
           border-color: ${Theme.green2};
         }
+        textarea,
         input {
           padding-right: 32px;
           background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%232DCA8C' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");

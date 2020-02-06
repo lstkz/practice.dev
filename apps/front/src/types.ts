@@ -11,3 +11,8 @@ export interface RouteConfig {
   noLoader?: boolean;
   waitForAction?: AC;
 }
+
+export interface SelectOption<T = any> {
+  label: string;
+  value: T;
+}
