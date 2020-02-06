@@ -94,6 +94,14 @@ export const RouteResolver = () => {
     setCurrentComponent(1);
   };
 
+  const getCurrentComponent = () => {
+    if (currentComponent === 1) {
+      return component1;
+    } else {
+      return component2;
+    }
+  };
+
   const loaderRef = React.useRef(null as any);
 
   const prevUser = usePrevious(user);
@@ -116,7 +124,13 @@ export const RouteResolver = () => {
     routeConfig
       .component()
       .then(Component => {
-        if (routeConfig.waitForAction && prevLocation && !getIsHmr()) {
+        const isSame = getCurrentComponent()?.type === Component;
+        if (
+          !isSame &&
+          routeConfig.waitForAction &&
+          prevLocation &&
+          !getIsHmr()
+        ) {
           const comp = <Component />;
           setNextComponent(comp);
           return getOutputStream()
@@ -135,7 +149,7 @@ export const RouteResolver = () => {
             .toPromise();
         } else {
           tryCompleteLoader();
-          setComponent(<Component />);
+          setComponent(<Component key={Date.now()} />);
           return null;
         }
       })
@@ -162,7 +176,7 @@ export const RouteResolver = () => {
     }
     // not found route
     // you can display 404 or redirect to default routes
-    replace(user ? '/' : '/login');
+    replace(user ? '/challenges' : '/login');
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, user]);

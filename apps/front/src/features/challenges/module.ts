@@ -5,25 +5,16 @@ import {
   handle,
   getChallengesState,
 } from './interface';
-import { RouterActions } from 'typeless-router';
 import { api } from 'src/services/api';
-import { isRoute } from 'src/common/url';
 import { handleAppError } from 'src/common/helper';
 
 // --- Epic ---
 handle
   .epic()
   .on(ChallengesActions.$mounted, () => ChallengesActions.load())
-  .on(RouterActions.locationChange, () => {
-    if (!isRoute('challenges')) {
-      return Rx.empty();
-    }
-    return ChallengesActions.load();
-  })
   .on(ChallengesActions.updateFilter, () => ChallengesActions.load())
   .on(ChallengesActions.load, () => {
     const { filter } = getChallengesState();
-
     return api
       .challenge_searchChallenges({
         statuses: Object.values(filter.statuses) as any,

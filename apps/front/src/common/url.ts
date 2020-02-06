@@ -40,25 +40,29 @@ export function createUrl(options: UrlOptions) {
     case 'projects':
       return '/projects';
     case 'home':
-      return '/';
+      return '/challenges';
   }
 }
 
 export function getRouteParams(name: 'reset-password'): { code: string };
 export function getRouteParams(name: 'challenge'): { id: number };
-export function getRouteParams(name: 'reset-password' | 'challenge'): any {
+export function getRouteParams(name: 'confirm'): { code: string };
+export function getRouteParams(
+  name: 'reset-password' | 'challenge' | 'confirm'
+): any {
   const location = getRouterState().location!;
+  const getLast = () => R.last(location.pathname.split('/'));
   switch (name) {
+    case 'confirm':
     case 'reset-password': {
-      const split = location.pathname.split('/');
       return {
-        code: R.last(split),
+        code: getLast(),
       };
     }
     case 'challenge': {
       const split = location.pathname.split('/');
       return {
-        id: Number(R.last(split)),
+        id: Number(getLast()),
       };
     }
   }

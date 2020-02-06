@@ -10,6 +10,7 @@ export const [handle, ChallengesActions, getChallengesState] = createModule(
   .withActions({
     $init: null,
     $mounted: null,
+    $unmounted: null,
     load: null,
     loaded: (result: PagedResult<Challenge>) => ({ payload: { result } }),
     updateFilter: (name: keyof ChallengesState['filter'], value: any) => ({
@@ -25,18 +26,10 @@ const component = () =>
     /* webpackChunkName: 'challenges' */ './components/ChallengesView'
   ).then(x => x.ChallengesView);
 
-export const anonymousRouteConfig: RouteConfig = {
-  type: 'route',
-  auth: false,
-  path: '/challenges',
-  component,
-  waitForAction: ChallengesActions.loaded,
-};
-
 export const routeConfig: RouteConfig = {
   type: 'route',
-  auth: true,
-  path: '/',
+  auth: 'any',
+  path: '/challenges',
   component,
   waitForAction: ChallengesActions.loaded,
 };
