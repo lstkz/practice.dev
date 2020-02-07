@@ -1,11 +1,15 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Solution } from 'shared';
-import ReactTooltip from 'react-tooltip';
 import { VoidLink } from 'src/components/VoidLink';
 import { Tag } from 'src/components/Tag';
 import { Theme } from 'ui';
-import { LikeIcon } from 'src/icons/LikeIcon';
+import { useActions } from 'typeless';
+import { ChallengeActions } from '../interface';
+import { SolutionLike } from 'src/components/SolutionLike';
+import { SolutionActions } from 'src/features/solution/interface';
+import { Link } from 'src/components/Link';
+import { createUrl } from 'src/common/url';
 
 interface SolutionInfoProps {
   className?: string;
@@ -14,12 +18,12 @@ interface SolutionInfoProps {
 
 const Left = styled.div`
   flex: 1 0 auto;
-  width: calc(100% - 60%);
+  width: calc(100% - 60px);
 `;
 const Right = styled.div`
   flex: 0 0 60px;
 `;
-const Title = styled(VoidLink)`
+const Title = styled(Link)`
   color: ${Theme.text};
 `;
 
@@ -42,46 +46,30 @@ const Top = styled.div`
   display: flex;
 `;
 
-const Like = styled(VoidLink)`
-  display: inline-flex;
-  align-items: center;
-  color: ${Theme.pink};
-  margin-right: 5px;
-  && {
-    text-decoration: none;
-  }
-  &:hover {
-    path {
-      fill: ${Theme.pink};
-    }
-  }
-`;
-
-const Center = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
 const _SolutionInfo = (props: SolutionInfoProps) => {
   const { className, solution } = props;
+  const { voteSolution } = useActions(ChallengeActions);
+  const { show } = useActions(SolutionActions);
   return (
     <div className={className}>
       <Top>
         <Left>
-          <Title>{solution.title}</Title>
+          <Title
+            href={createUrl({
+              name: 'challenge',
+              id: solution.challengeId,
+              solutionSlug: solution.slug,
+            })}
+            onClick={() => show('view', solution)}
+          >
+            {solution.title}
+          </Title>
           <By>
             By <VoidLink>@{solution.user.username}</VoidLink>
           </By>
         </Left>
         <Right>
-          <Center>
-            <Like data-tip="Like">
-              <LikeIcon size="16px" empty />
-            </Like>
-            {solution.likes}
-            <ReactTooltip place="top" type="dark" effect="solid" />
-          </Center>
+          <SolutionLike solution={solution} voteSolution={voteSolution} />
         </Right>
       </Top>
       <Tags>

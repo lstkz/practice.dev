@@ -55,9 +55,11 @@ export function mapDbSolution(
 ): Solution {
   return {
     id: item.solutionId,
+    challengeId: item.challengeId,
     title: item.title,
     description: item.description,
     slug: item.slug,
+    url: item.url,
     createdAt: new Date(item.data_n).toISOString(),
     likes: item.data2_n,
     tags: item.tags,

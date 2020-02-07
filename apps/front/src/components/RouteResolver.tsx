@@ -125,6 +125,10 @@ export const RouteResolver = () => {
       .component()
       .then(Component => {
         const isSame = getCurrentComponent()?.type === Component;
+        if (isSame && !getIsHmr()) {
+          clearTimeout(startTimeout);
+          return;
+        }
         if (
           !isSame &&
           routeConfig.waitForAction &&
@@ -149,7 +153,7 @@ export const RouteResolver = () => {
             .toPromise();
         } else {
           tryCompleteLoader();
-          setComponent(<Component key={Date.now()} />);
+          setComponent(<Component />);
           return null;
         }
       })

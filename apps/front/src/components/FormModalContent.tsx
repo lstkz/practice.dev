@@ -4,7 +4,7 @@ import { Theme } from 'ui';
 
 interface FormModalContentProps {
   className?: string;
-  title: React.ReactNode;
+  title?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -21,7 +21,7 @@ const _FormModalContent = (props: FormModalContentProps) => {
   const { className, title, children } = props;
   return (
     <div className={className}>
-      <Title>{title}</Title>
+      {title && <Title>{title}</Title>}
       {children}
     </div>
   );

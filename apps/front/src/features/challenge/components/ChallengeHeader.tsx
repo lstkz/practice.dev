@@ -87,7 +87,11 @@ const _ChallengeHeader = (props: ChallengeHeaderProps) => {
             SUBMIT
           </Button>
           {challenge.isSolved && (
-            <Button block type="primary" onClick={showSolution}>
+            <Button
+              block
+              type="primary"
+              onClick={() => showSolution('edit', null)}
+            >
               CREATE SOLUTION
             </Button>
           )}

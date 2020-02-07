@@ -18,58 +18,75 @@ function removeBundle() {
 }
 
 // --- Epic ---
-handle.epic().on(ChallengeActions.$mounted, (_, { action$ }) => {
-  const { id } = getRouteParams('challenge');
-  return Rx.forkJoin([
-    api.challenge_getChallengeById(id),
-    Rx.defer(() => {
-      const { user } = getGlobalState();
-      if (!user) {
-        return Rx.of([]);
-      }
-      return api
-        .submission_searchSubmissions({
-          challengeId: id,
-          username: user.username,
-          limit: 10,
-        })
-        .pipe(Rx.map(ret => ret.items));
-    }),
-    api.solution_searchSolutions({
-      challengeId: id,
-      sortBy: 'likes',
-      sortDesc: true,
-      limit: 5,
-    }),
-  ]).pipe(
-    Rx.mergeMap(([challenge, recentSubmissions, solutions]) => {
-      return new Rx.Observable<ActionLike>(subscriber => {
-        removeBundle();
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = BUNDLE_BASE_URL + challenge.detailsBundleS3Key;
-        document.body.appendChild(script);
-        (window as any).ChallengeJSONP = (module: any) => {
-          subscriber.next(
-            ChallengeActions.loaded(
-              challenge,
-              recentSubmissions,
-              solutions.items,
-              module.Details
-            )
-          );
-          subscriber.complete();
-        };
-        return () => {
+handle
+  .epic()
+  .on(ChallengeActions.$mounted, (_, { action$ }) => {
+    const { id } = getRouteParams('challenge');
+    return Rx.forkJoin([
+      api.challenge_getChallengeById(id),
+      Rx.defer(() => {
+        const { user } = getGlobalState();
+        if (!user) {
+          return Rx.of([]);
+        }
+        return api
+          .submission_searchSubmissions({
+            challengeId: id,
+            username: user.username,
+            limit: 10,
+          })
+          .pipe(Rx.map(ret => ret.items));
+      }),
+      api.solution_searchSolutions({
+        challengeId: id,
+        sortBy: 'likes',
+        sortDesc: true,
+        limit: 5,
+      }),
+    ]).pipe(
+      Rx.mergeMap(([challenge, recentSubmissions, solutions]) => {
+        return new Rx.Observable<ActionLike>(subscriber => {
           removeBundle();
-        };
-      }).pipe(
-        Rx.takeUntil(action$.pipe(Rx.waitForType(ChallengeActions.$unmounted)))
+          const script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = BUNDLE_BASE_URL + challenge.detailsBundleS3Key;
+          document.body.appendChild(script);
+          (window as any).ChallengeJSONP = (module: any) => {
+            subscriber.next(
+              ChallengeActions.loaded(
+                challenge,
+                recentSubmissions,
+                solutions.items,
+                module.Details
+              )
+            );
+            subscriber.complete();
+          };
+          return () => {
+            removeBundle();
+          };
+        }).pipe(
+          Rx.takeUntil(
+            action$.pipe(Rx.waitForType(ChallengeActions.$unmounted))
+          )
+        );
+      }),
+      handleAppError()
+    );
+  })
+  .on(ChallengeActions.voteSolution, ({ id, like }) => {
+    return api
+      .solution_voteSolution({
+        like,
+        solutionId: id,
+      })
+      .pipe(
+        Rx.ignoreElements(),
+        Rx.catchLog(() => {
+          return Rx.empty();
+        })
       );
-    }),
-    handleAppError()
-  );
-});
+  });
 
 // --- Reducer ---
 const initialState: ChallengeState = {
@@ -104,6 +121,19 @@ handle
   .on(ChallengeActions.addRecentSubmission, (state, { submission }) => {
     state.recentSubmissions.unshift(submission);
     state.recentSubmissions = state.recentSubmissions.slice(0, 10);
+  })
+  .on(ChallengeActions.voteSolution, (state, { id, like }) => {
+    state.favoriteSolutions.forEach(item => {
+      if (item.id === id) {
+        if (like) {
+          item.likes++;
+          item.isLiked = true;
+        } else {
+          item.likes--;
+          item.isLiked = false;
+        }
+      }
+    });
   })
   .on(SubmitActions.testingDone, (state, { success }) => {
     if (success) {

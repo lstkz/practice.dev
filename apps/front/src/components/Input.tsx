@@ -23,7 +23,7 @@ export interface InputProps {
   autoFocus?: boolean;
   maxLength?: number;
   multiline?: boolean;
-  description?: string;
+  description?: React.ReactNode;
 }
 
 const Prepend = styled.div`

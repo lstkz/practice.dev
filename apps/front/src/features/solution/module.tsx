@@ -61,6 +61,8 @@ const initialState: SolutionState = {
   isOpened: false,
   error: '',
   isSubmitting: false,
+  solution: null,
+  mode: 'edit',
 };
 
 handle
@@ -71,7 +73,9 @@ handle
   .on(SolutionActions.setError, (state, { error }) => {
     state.error = error;
   })
-  .on(SolutionActions.show, state => {
+  .on(SolutionActions.show, (state, { solution, mode }) => {
+    state.mode = mode;
+    state.solution = solution;
     state.isOpened = true;
     state.isSubmitting = false;
     state.error = null;

@@ -24,6 +24,9 @@ export const [handle, ChallengeActions, getChallengeState] = createModule(
     addRecentSubmission: (submission: Submission) => ({
       payload: { submission },
     }),
+    voteSolution: (id: string, like: boolean) => ({
+      payload: { id, like },
+    }),
   })
   .withState<ChallengeState>();
 

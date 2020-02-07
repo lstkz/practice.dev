@@ -46,8 +46,10 @@ export type ChallengeDifficulty = 'easy' | 'medium' | 'hard';
 
 export interface Solution {
   id: string;
+  challengeId: number;
   title: string;
   slug: string;
+  url: string;
   description?: string;
   createdAt: string;
   likes: number;
