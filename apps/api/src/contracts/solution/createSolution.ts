@@ -1,5 +1,4 @@
 import { createContract, createRpcBinding } from '../../lib';
-import * as R from 'remeda';
 import { S } from 'schema';
 import { getChallengeById } from '../challenge/getChallengeById';
 import { createKey, getItem } from '../../common/db';
@@ -9,8 +8,8 @@ import uuid from 'uuid';
 import { _createSolution } from './_createSolution';
 import { mapDbSolution } from '../../common/mapping';
 import { getDbUserById } from '../user/getDbUserById';
-
-const urlReg = /^https\:\/\/((codesandbox\.io)|(github\.com))/;
+import { solutionUserInput } from './_solutionSchema';
+import { normalizeTags } from '../../common/helper';
 
 export const createSolution = createContract('solution.createSolution')
   .params('userId', 'values')
@@ -18,25 +17,7 @@ export const createSolution = createContract('solution.createSolution')
     userId: S.string(),
     values: S.object().keys({
       challengeId: S.number(),
-      url: S.string()
-        .max(300)
-        .regex(urlReg),
-      title: S.string().max(50),
-      slug: S.string()
-        .max(30)
-        .regex(/^[a-z0-9\-]+$/),
-      description: S.string()
-        .max(500)
-        .optional(),
-      tags: S.array()
-        .items(
-          S.string()
-            .trim()
-            .min(1)
-            .max(20)
-        )
-        .min(1)
-        .max(5),
+      ...solutionUserInput,
     }),
   })
   .fn(async (userId, values) => {
@@ -56,7 +37,7 @@ export const createSolution = createContract('solution.createSolution')
       );
     }
     const id = uuid();
-    values.tags = R.uniq(values.tags.map(x => x.toLowerCase()));
+    values.tags = normalizeTags(values.tags);
     const dbSolution = await _createSolution({
       id,
       userId: userId,

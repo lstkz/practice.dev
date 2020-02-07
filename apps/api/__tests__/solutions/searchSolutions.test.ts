@@ -1,7 +1,6 @@
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
-import { resetDb } from '../helper';
+import { resetDb, mapToTimestamps } from '../helper';
 import { _createSolution } from '../../src/contracts/solution/_createSolution';
-import { Solution } from 'shared';
 import { searchSolutions } from '../../src/contracts/solution/searchSolutions';
 import { voteSolution } from '../../src/contracts/solution/voteSolution';
 
@@ -61,9 +60,6 @@ beforeEach(async () => {
   ]);
 });
 
-function mapToTimestamps(items: Solution[]) {
-  return items.map(item => new Date(item.createdAt).getTime());
-}
 it('search by challengeId sort by DATE ASC', async () => {
   const { items } = await searchSolutions(undefined, {
     challengeId: 1,

@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { Response } from 'node-fetch';
 import { DynamoDB } from 'aws-sdk';
+import * as R from 'remeda';
 import { AppError } from './errors';
 
 const SECURITY = {
@@ -150,4 +151,18 @@ export function decLastKey(key: string | undefined) {
     return new AppError('Invalid lastKey');
   }
   return JSON.parse(Buffer.from(data, 'base64').toString('utf8'));
+}
+
+export function normalizeTags(tags: string[]) {
+  return R.uniq(tags.map(x => x.toLowerCase().trim()));
+}
+
+export function rethrowTransactionCanceled(msg: string) {
+  return (e: any) => {
+    if (e.code === 'TransactionCanceledException') {
+      throw new AppError(msg);
+    }
+
+    throw e;
+  };
 }

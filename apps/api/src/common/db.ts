@@ -368,21 +368,22 @@ export async function updateItem<T extends DbKey>(
     .promise();
 }
 
-interface TransactWriteItems {
-  deleteItems?: Array<{ pk: string; sk: string }>;
-  updateItems?: Array<Omit<AWS.DynamoDB.Update, 'TableName'>>;
-  putItems?: Array<{ pk: string; sk: string }>;
-  conditionalPutItems?: Array<{
+export interface TransactWriteItems {
+  deleteItems: Array<{ pk: string; sk: string }>;
+  updateItems: Array<Omit<AWS.DynamoDB.Update, 'TableName'>>;
+  putItems: Array<{ pk: string; sk: string }>;
+  conditionalPutItems: Array<{
     expression: string;
+    values?: { [x: string]: any };
     item: { pk: string; sk: string };
   }>;
-  conditionalDeleteItems?: Array<{
+  conditionalDeleteItems: Array<{
     expression: string;
     key: { pk: string; sk: string };
   }>;
 }
 
-export async function transactWriteItems(options: TransactWriteItems) {
+export async function transactWriteItems(options: Partial<TransactWriteItems>) {
   const deleteItems = (options.deleteItems || []).map(item => ({
     Delete: {
       TableName: TABLE_NAME,
@@ -408,6 +409,7 @@ export async function transactWriteItems(options: TransactWriteItems) {
     Put: {
       TableName: TABLE_NAME,
       ConditionExpression: item.expression,
+      ExpressionAttributeValues: item.values && Converter.marshall(item.values),
       Item: Converter.marshall(item.item),
     },
   }));
@@ -475,6 +477,7 @@ interface BaseQueryOptions {
   descending?: boolean;
   limit?: number;
   filter?: QueryFilter;
+  consistentRead?: boolean;
 }
 
 interface QueryFilter {
@@ -575,6 +578,7 @@ async function _query<T>(
         ScanIndexForward: !options.descending,
         FilterExpression: options.filter?.expression,
         ExpressionAttributeNames: options.filter?.names,
+        ConsistentRead: options.consistentRead,
       },
       undefined
     )

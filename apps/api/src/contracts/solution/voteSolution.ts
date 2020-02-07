@@ -1,13 +1,10 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { S } from 'schema';
-import {
-  createKey,
-  transactWriteItems,
-  queryMainIndexAll,
-} from '../../common/db';
+import { createKey, transactWriteItems } from '../../common/db';
 import { DbSolution, DbSolutionVote } from '../../types';
 import { AppError } from '../../common/errors';
+import { getDbSolutionById } from './getDbSolutionById';
 
 function _getAllSolutionKeys(dbSolution: DbSolution) {
   const solutionKey = createKey({
@@ -35,21 +32,6 @@ function _getAllSolutionKeys(dbSolution: DbSolution) {
   return [solutionKey, solutionUserKey, solutionChallengeUserKey, ...tagKeys];
 }
 
-async function _getSolutionById(id: string) {
-  const solutionKey = createKey({
-    type: 'SOLUTION',
-    solutionId: id,
-    challengeId: -1,
-  });
-  const [dbSolution] = await queryMainIndexAll<DbSolution>({
-    pk: solutionKey.pk,
-  });
-  if (!dbSolution) {
-    throw new AppError('Solution not found');
-  }
-  return dbSolution;
-}
-
 export const voteSolution = createContract('solution.voteSolution')
   .params('userId', 'values')
   .schema({
@@ -60,7 +42,7 @@ export const voteSolution = createContract('solution.voteSolution')
     }),
   })
   .fn(async (userId, values) => {
-    const dbSolution = await _getSolutionById(values.solutionId);
+    const dbSolution = await getDbSolutionById(values.solutionId, false);
 
     if (!dbSolution) {
       throw new AppError('Solution not found');
@@ -69,9 +51,10 @@ export const voteSolution = createContract('solution.voteSolution')
     const keys = _getAllSolutionKeys(dbSolution);
 
     const updates = {
-      UpdateExpression: 'SET data2_n = data2_n + :add',
+      UpdateExpression: 'SET data2_n = data2_n + :add, v = v + :inc',
       ExpressionAttributeValues: Converter.marshall({
         ':add': values.like ? 1 : -1,
+        ':inc': 1,
       }),
     };
 
@@ -125,7 +108,7 @@ export const voteSolution = createContract('solution.voteSolution')
       }
       throw e;
     });
-    const latest = await _getSolutionById(values.solutionId);
+    const latest = await getDbSolutionById(values.solutionId, false);
     return latest!.data2_n;
   });
 

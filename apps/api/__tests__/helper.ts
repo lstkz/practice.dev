@@ -46,3 +46,7 @@ export async function setChallengeStats(id: number, stats: ChallengeStats) {
     })
     .promise();
 }
+
+export function mapToTimestamps<T extends { createdAt: string }>(items: T[]) {
+  return items.map(item => new Date(item.createdAt).getTime());
+}
