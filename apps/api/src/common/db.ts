@@ -47,12 +47,21 @@ type CreateKeyOptions =
     }
   | {
       type: 'SOLUTION';
-      challengeId: number;
       solutionId: string;
+      challengeId: number;
+    }
+  | {
+      type: 'SOLUTION_SLUG';
+      challengeId: number;
       slug: string;
     }
   | {
       type: 'SOLUTION_USER';
+      solutionId: string;
+      userId: string;
+    }
+  | {
+      type: 'SOLUTION_CHALLENGE_USER';
       challengeId: number;
       solutionId: string;
       userId: string;
@@ -95,6 +104,11 @@ type CreateKeyOptions =
       userId: string;
       challengeId: number;
       submissionId: string;
+    }
+  | {
+      type: 'SOLUTION_VOTE';
+      userId: string;
+      solutionId: string;
     };
 
 export function createKey(
@@ -164,14 +178,27 @@ export function createKey(
     }
     case 'SOLUTION': {
       return {
-        pk: `SOLUTION:${options.challengeId}:${options.slug}`,
+        pk: `SOLUTION:${options.solutionId}`,
         sk: `SOLUTION:${options.challengeId}`,
+      };
+    }
+    case 'SOLUTION_SLUG': {
+      const pk = `SOLUTION:${options.challengeId}:${options.slug}`;
+      return {
+        pk,
+        sk: pk,
       };
     }
     case 'SOLUTION_USER': {
       return {
         pk: `SOLUTION_USER:${options.solutionId}`,
         sk: `SOLUTION_USER:${options.userId}`,
+      };
+    }
+    case 'SOLUTION_CHALLENGE_USER': {
+      return {
+        pk: `SOLUTION_CHALLENGE_USER:${options.solutionId}`,
+        sk: `SOLUTION_CHALLENGE_USER:${options.userId}:${options.challengeId}`,
       };
     }
     case 'SOLUTION_TAG': {
@@ -223,6 +250,12 @@ export function createKey(
       return {
         pk: `SUBMISSION_USER_CHALLENGE:${options.submissionId}`,
         sk: `SUBMISSION_USER_CHALLENGE:${options.challengeId}:${options.userId}`,
+      };
+    }
+    case 'SOLUTION_VOTE': {
+      return {
+        pk: `SOLUTION_VOTE:${options.solutionId}:${options.userId}`,
+        sk: `SOLUTION_VOTE:${options.userId}`,
       };
     }
     default:
@@ -343,6 +376,10 @@ interface TransactWriteItems {
     expression: string;
     item: { pk: string; sk: string };
   }>;
+  conditionalDeleteItems?: Array<{
+    expression: string;
+    key: { pk: string; sk: string };
+  }>;
 }
 
 export async function transactWriteItems(options: TransactWriteItems) {
@@ -367,12 +404,20 @@ export async function transactWriteItems(options: TransactWriteItems) {
     },
   }));
 
-  const conditionalPutItemsPutItems = (options.conditionalPutItems || []).map(
+  const conditionalPutItems = (options.conditionalPutItems || []).map(item => ({
+    Put: {
+      TableName: TABLE_NAME,
+      ConditionExpression: item.expression,
+      Item: Converter.marshall(item.item),
+    },
+  }));
+
+  const conditionalDeleteItems = (options.conditionalDeleteItems || []).map(
     item => ({
-      Put: {
+      Delete: {
         TableName: TABLE_NAME,
         ConditionExpression: item.expression,
-        Item: Converter.marshall(item.item),
+        Key: Converter.marshall(item.key),
       },
     })
   );
@@ -384,7 +429,8 @@ export async function transactWriteItems(options: TransactWriteItems) {
           ...deleteItems,
           ...updateItems,
           ...putItems,
-          ...conditionalPutItemsPutItems,
+          ...conditionalPutItems,
+          ...conditionalDeleteItems,
         ],
       },
       undefined
@@ -428,6 +474,13 @@ interface BaseQueryOptions {
   cursor?: string | null;
   descending?: boolean;
   limit?: number;
+  filter?: QueryFilter;
+}
+
+interface QueryFilter {
+  expression: string;
+  names?: { [key: string]: string };
+  values: { [key: string]: DynamoDB.AttributeValue };
 }
 
 interface QueryIndexOptions extends BaseQueryOptions {
@@ -511,12 +564,17 @@ async function _query<T>(
         TableName: TABLE_NAME,
         IndexName: index,
         KeyConditionExpression: keyConditionExpression,
-        ExpressionAttributeValues: expressionValues,
+        ExpressionAttributeValues: {
+          ...expressionValues,
+          ...(options.filter?.values || {}),
+        },
         Limit: options.limit,
         ExclusiveStartKey: options.cursor
           ? decLastKey(options.cursor)
           : undefined,
         ScanIndexForward: !options.descending,
+        FilterExpression: options.filter?.expression,
+        ExpressionAttributeNames: options.filter?.names,
       },
       undefined
     )

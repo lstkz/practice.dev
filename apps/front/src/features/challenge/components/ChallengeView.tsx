@@ -23,6 +23,8 @@ import { TestSuite } from './TestSuite';
 import { SubmitModal } from '../../submit/components/SubmitModal';
 import { MyRecentSubmissions } from './MyRecentSubmissions';
 import { SolutionModal } from 'src/features/solution/components/SolutionModal';
+import { FavoriteSolutions } from './FavoriteSolutions';
+import { SidebarStack } from './SidebarStack';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
@@ -64,7 +66,15 @@ export function ChallengeView() {
                 onIndexChange={(value: ChallengeTab) => changeTab(value)}
               >
                 <Tab title="Details" name="details">
-                  <TabContent left={<Component />} right={<Stats />} />
+                  <TabContent
+                    left={<Component />}
+                    right={
+                      <SidebarStack>
+                        <Stats />
+                        <FavoriteSolutions />
+                      </SidebarStack>
+                    }
+                  />
                 </Tab>
                 <Tab title="Test Suite" name="testSuite">
                   <TabContent

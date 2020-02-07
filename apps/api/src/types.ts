@@ -100,6 +100,13 @@ export interface DbSolution extends DbKey {
   tags: string[];
 }
 
+export interface DbSolutionVote extends DbKey {
+  // createdAt
+  data_n: number;
+  solutionId: string;
+  userId: string;
+}
+
 export interface DbRateLimit extends DbKey {
   count: number;
   expireAt: number;

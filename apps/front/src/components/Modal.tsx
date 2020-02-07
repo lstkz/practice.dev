@@ -114,14 +114,11 @@ export function Modal(props: ModalProps) {
     };
   }, [isOpen]);
 
-  // React.useLayoutEffect(() => {
-  //   if (isOpen) {
-  //     console.log(modalRef.current);
-  //     // setTimeout(() => {
-  //     modalRef.current?.focus();
-  //     // }, 10);
-  //   }
-  // }, [isOpen]);
+  React.useLayoutEffect(() => {
+    if (isOpen) {
+      modalRef.current?.focus();
+    }
+  }, [isOpen]);
 
   return (
     <>

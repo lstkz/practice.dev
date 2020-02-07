@@ -53,6 +53,7 @@ export interface Solution {
   likes: number;
   tags: string[];
   user: PublicUser;
+  isLiked: boolean;
 }
 
 export interface ChallengeSolved {

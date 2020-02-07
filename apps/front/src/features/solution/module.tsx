@@ -20,9 +20,9 @@ handle
       api
         .solution_createSolution({
           challengeId: getChallengeState().challenge.id,
-          tags: [],
+          tags: values.tags.map(x => x.value),
           title: values.title,
-          slug: values.title,
+          slug: values.slug,
           description: values.description,
           url: values.url,
         })
@@ -36,7 +36,25 @@ handle
   .on(SolutionActions.show, () => [
     SolutionFormActions.reset(),
     SolutionActions.setError(null),
-  ]);
+  ])
+  .on(SolutionFormActions.change, ({ field, value }) => {
+    if (field === 'title') {
+      const slug = (value as string)
+        .toLowerCase()
+        .trim()
+        .split('')
+        .map(c => {
+          if (/[a-z0-9\-]/.test(c)) {
+            return c;
+          } else {
+            return '-';
+          }
+        })
+        .join('');
+      return SolutionFormActions.change('slug', slug);
+    }
+    return Rx.empty();
+  });
 
 // --- Reducer ---
 const initialState: SolutionState = {

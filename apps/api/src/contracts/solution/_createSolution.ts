@@ -20,13 +20,24 @@ interface CreateSolutionValues {
 export async function _createSolution(values: CreateSolutionValues) {
   const solutionKey = createKey({
     type: 'SOLUTION',
+    challengeId: values.challengeId,
     solutionId: values.id,
+  });
+
+  const solutionSlugKey = createKey({
+    type: 'SOLUTION_SLUG',
     challengeId: values.challengeId,
     slug: values.slug,
   });
 
   const solutionUserKey = createKey({
     type: 'SOLUTION_USER',
+    solutionId: values.id,
+    userId: values.userId,
+  });
+
+  const solutionChallengeUserKey = createKey({
+    type: 'SOLUTION_CHALLENGE_USER',
     solutionId: values.id,
     challengeId: values.challengeId,
     userId: values.userId,
@@ -45,13 +56,18 @@ export async function _createSolution(values: CreateSolutionValues) {
       conditionalPutItems: [
         {
           expression: 'attribute_not_exists(pk)',
-          item: dbSolution,
+          item: solutionSlugKey,
         },
       ],
       putItems: [
+        dbSolution,
         {
           ...dbSolution,
           ...solutionUserKey,
+        },
+        {
+          ...dbSolution,
+          ...solutionChallengeUserKey,
         },
         ...values.tags.map(tag => ({
           ...dbSolution,

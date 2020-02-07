@@ -97,9 +97,13 @@ function checkNode(node: ts.Node, checker: ts.TypeChecker) {
   let signature = '';
   let params = [] as string[];
   let paramNames = [] as string[];
-
+  let injectUser = false;
   props.forEach(prop => {
     const name = (prop.name as ts.Identifier).escapedText?.toString();
+
+    if (name === 'injectUser') {
+      injectUser = true;
+    }
     if (name === 'signature') {
       signature = ((prop.initializer as any) as ts.LiteralLikeNode).text;
     }
@@ -136,6 +140,11 @@ function checkNode(node: ts.Node, checker: ts.TypeChecker) {
       });
     }
   });
+
+  if (injectUser) {
+    paramNames.shift();
+    params.shift();
+  }
 
   signatures.push(
     `${signature.replace('.', '_')}(

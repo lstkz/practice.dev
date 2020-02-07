@@ -28,6 +28,7 @@ export const [
       S.object().keys({
         url: S.string().regex(urlReg),
         title: S.string(),
+        description: S.string().optional(),
         slug: S.string().regex(/^[a-z0-9\-]+$/),
         tags: S.array()
           .min(1)

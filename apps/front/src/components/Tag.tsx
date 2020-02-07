@@ -6,7 +6,14 @@ import { VoidLink } from './VoidLink';
 
 interface TagProps {
   className?: string;
-  type: ChallengeDomain | 'difficulty' | 'custom' | 'pass' | 'fail' | 'pending';
+  type:
+    | ChallengeDomain
+    | 'difficulty'
+    | 'custom'
+    | 'pass'
+    | 'fail'
+    | 'pending'
+    | 'solution';
   onClick?: () => void;
   children: React.ReactChild;
 }
@@ -64,10 +71,11 @@ export const Tag = styled(_Tag)`
           background: ${Theme.orangeTagBg};
         `;
       case 'difficulty':
+      case 'solution':
         return css`
           color: white;
-          border-color: ${Theme.text};
-          background: ${Theme.text};
+          border-color: ${Theme.textLight};
+          background: ${Theme.textLight};
         `;
       case 'custom':
         return css`

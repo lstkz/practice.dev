@@ -1,11 +1,11 @@
 import { resetDb } from '../helper';
-import { registerSampleUsers, addSampleTasks } from '../seed-data';
+import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { searchSolved } from '../../src/contracts/challenge/searchSolved';
 import { markSolved } from '../../src/contracts/challenge/markSolved';
 
 beforeEach(async () => {
   await resetDb();
-  await Promise.all([registerSampleUsers(), addSampleTasks()]);
+  await Promise.all([registerSampleUsers(), addSampleChallenges()]);
 });
 
 it('mark as solved and ignore additional solved', async () => {

@@ -6,6 +6,7 @@ import { handleAppError } from 'src/common/helper';
 import { BUNDLE_BASE_URL } from 'src/config';
 import { ActionLike } from 'typeless';
 import { getGlobalState } from '../global/interface';
+import { SubmitActions } from '../submit/interface';
 
 const BUNDLE_ID = 'CHALLENGE_BUNDLE_SCRIPT';
 
@@ -34,8 +35,14 @@ handle.epic().on(ChallengeActions.$mounted, (_, { action$ }) => {
         })
         .pipe(Rx.map(ret => ret.items));
     }),
+    api.solution_searchSolutions({
+      challengeId: id,
+      sortBy: 'likes',
+      sortDesc: true,
+      limit: 5,
+    }),
   ]).pipe(
-    Rx.mergeMap(([challenge, recentSubmissions]) => {
+    Rx.mergeMap(([challenge, recentSubmissions, solutions]) => {
       return new Rx.Observable<ActionLike>(subscriber => {
         removeBundle();
         const script = document.createElement('script');
@@ -47,6 +54,7 @@ handle.epic().on(ChallengeActions.$mounted, (_, { action$ }) => {
             ChallengeActions.loaded(
               challenge,
               recentSubmissions,
+              solutions.items,
               module.Details
             )
           );
@@ -71,6 +79,7 @@ const initialState: ChallengeState = {
   tab: 'details',
   testCase: [],
   recentSubmissions: [],
+  favoriteSolutions: [],
 };
 
 handle
@@ -80,9 +89,10 @@ handle
   })
   .on(
     ChallengeActions.loaded,
-    (state, { challenge, recentSubmissions, component }) => {
+    (state, { challenge, recentSubmissions, favoriteSolutions, component }) => {
       state.challenge = challenge;
       state.recentSubmissions = recentSubmissions;
+      state.favoriteSolutions = favoriteSolutions;
       state.testCase = JSON.parse(challenge.testCase);
       state.component = component;
       state.isLoading = false;
@@ -94,6 +104,11 @@ handle
   .on(ChallengeActions.addRecentSubmission, (state, { submission }) => {
     state.recentSubmissions.unshift(submission);
     state.recentSubmissions = state.recentSubmissions.slice(0, 10);
+  })
+  .on(SubmitActions.testingDone, (state, { success }) => {
+    if (success) {
+      state.challenge.isSolved = success;
+    }
   });
 
 // --- Module ---

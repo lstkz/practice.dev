@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { Theme } from '../common/Theme';
 import { ErrorTooltip } from './ErrorTooltip';
 import { FormLabel } from './FormLabel';
+import { FormDescription } from './FormDescription';
 
 const INPUT_FOCUS_CLASS = 'input-focus';
 
@@ -22,6 +23,7 @@ export interface InputProps {
   autoFocus?: boolean;
   maxLength?: number;
   multiline?: boolean;
+  description?: string;
 }
 
 const Prepend = styled.div`
@@ -89,6 +91,7 @@ const _Input = (props: InputProps) => {
     id,
     maxLength,
     multiline,
+    description,
     ...rest
   } = props;
 
@@ -143,6 +146,7 @@ const _Input = (props: InputProps) => {
           ) : (
             getInput(ref)
           )}
+          {description && <FormDescription>{description}</FormDescription>}
         </div>
       )}
     </ErrorTooltip>

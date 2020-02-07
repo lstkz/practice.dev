@@ -1,5 +1,5 @@
 import { resetDb } from '../helper';
-import { registerSampleUsers, addSampleTasks } from '../seed-data';
+import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { createSolution } from '../../src/contracts/solution/createSolution';
 import { markSolved } from '../../src/contracts/challenge/markSolved';
 
@@ -7,7 +7,7 @@ const userId = '1';
 
 beforeEach(async () => {
   await resetDb();
-  await Promise.all([registerSampleUsers(), addSampleTasks()]);
+  await Promise.all([registerSampleUsers(), addSampleChallenges()]);
 });
 
 function getLongStr(n: number) {

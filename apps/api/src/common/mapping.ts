@@ -5,6 +5,7 @@ import {
   DbSolution,
   DbChallengeSolved,
   DbSubmission,
+  DbSolutionVote,
 } from '../types';
 import {
   User,
@@ -47,7 +48,11 @@ export function mapDbChallenge(item: DbChallenge, isSolved = false): Challenge {
   };
 }
 
-export function mapDbSolution(item: DbSolution, user: DbUser): Solution {
+export function mapDbSolution(
+  item: DbSolution,
+  user: DbUser,
+  vote?: DbSolutionVote | null | undefined
+): Solution {
   return {
     id: item.solutionId,
     title: item.title,
@@ -57,7 +62,20 @@ export function mapDbSolution(item: DbSolution, user: DbUser): Solution {
     likes: item.data2_n,
     tags: item.tags,
     user: mapToPublicUser(user),
+    isLiked: !!vote,
   };
+}
+
+export function mapDbSolutionSolvedMany(
+  items: DbSolution[],
+  users: DbUser[],
+  votes: DbSolutionVote[]
+): Solution[] {
+  const userMap = R.indexBy(users, x => x.userId);
+  const voteMap = R.indexBy(votes, x => x.solutionId);
+  return items.map(item =>
+    mapDbSolution(item, userMap[item.userId], voteMap[item.solutionId])
+  );
 }
 
 export function mapDbChallengeSolved(

@@ -34,6 +34,18 @@ export class MainTable {
       },
       projectionType: dynamodb.ProjectionType.ALL,
     });
+    this.table.addGlobalSecondaryIndex({
+      indexName: 'sk-data2_n-index',
+      partitionKey: {
+        name: 'sk',
+        type: dynamodb.AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'data2_n',
+        type: dynamodb.AttributeType.NUMBER,
+      },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
 
     new cdk.CfnOutput(scope, 'table', {
       value: this.table.tableName,

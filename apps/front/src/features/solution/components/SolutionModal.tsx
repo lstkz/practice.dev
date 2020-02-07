@@ -1,20 +1,31 @@
 import React from 'react';
 import { Modal } from 'src/components/Modal';
 import { Button } from 'ui';
-import { useActions } from 'typeless';
+import { useActions, useMappedState } from 'typeless';
 import { FormInput } from 'src/components/FormInput';
-import { SolutionFormActions, SolutionFormProvider } from '../solution-form';
+import {
+  SolutionFormActions,
+  SolutionFormProvider,
+  getSolutionFormState,
+} from '../solution-form';
 import { Alert } from 'src/components/Alert';
 import { SolutionActions, getSolutionState } from '../interface';
 import { useSolutionModule } from '../module';
 import { FormModalContent } from 'src/components/FormModalContent';
 import { CreatableFormSelect } from 'src/components/FormSelect';
+import { getChallengeState } from 'src/features/challenge/interface';
 
 export function SolutionModal() {
   useSolutionModule();
   const { close } = useActions(SolutionActions);
+  const { challenge } = getChallengeState.useState();
   const { isOpened, error, isSubmitting } = getSolutionState.useState();
   const { submit } = useActions(SolutionFormActions);
+  const slug = useMappedState([getSolutionFormState], x => x.values.slug || '');
+  const shareUrl = slug
+    ? `${document.location.origin}/challenges/${challenge.id}?s=${slug}`
+    : '-';
+
   return (
     <Modal size="sm" isOpen={isOpened} close={close}>
       <FormModalContent title="Create Solution">
@@ -27,7 +38,6 @@ export function SolutionModal() {
           >
             {error && <Alert type="error">{error}</Alert>}
             <FormInput
-              autoFocus
               id="url"
               name="url"
               label="Provide Github or Codesandbox URL"
@@ -47,8 +57,15 @@ export function SolutionModal() {
               label="Solution slug"
               maxLength={30}
               placeholder="pure-vanilla-javascript"
+              description={`Share url: ${shareUrl}`}
             />
-            <CreatableFormSelect id="tags" name="tags" label="Tags" isMulti />
+            <CreatableFormSelect
+              id="tags"
+              name="tags"
+              label="Tags"
+              isMulti
+              description="Type and press Enter to create a new tag."
+            />
             <FormInput
               multiline
               maxLength={500}

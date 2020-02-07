@@ -33,7 +33,6 @@ export function SubmitModal() {
           >
             {error && <Alert type="error">{error}</Alert>}
             <FormInput
-              autoFocus
               id="url"
               name="url"
               label="Enter URL address"

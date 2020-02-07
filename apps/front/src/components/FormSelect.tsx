@@ -9,12 +9,14 @@ import {
 import styled from 'styled-components';
 import { ErrorTooltip } from './ErrorTooltip';
 import { FormLabel } from './FormLabel';
+import { FormDescription } from './FormDescription';
 
 interface BaseFormSelectProps {
   id?: string;
   name: string;
   label?: string;
   readOnlyText?: boolean;
+  description?: string;
 }
 
 interface FormSelectProps<OptionType>
@@ -44,7 +46,15 @@ const SelectWrapper = styled.div`
 function BaseSelect(
   props: BaseFormSelectProps & { Component: React.SFC<SelectProps<any>> }
 ) {
-  const { name, readOnlyText, Component, id, label, ...rest } = props;
+  const {
+    name,
+    readOnlyText,
+    Component,
+    id,
+    label,
+    description,
+    ...rest
+  } = props;
   const targetId = id || 'select';
   const data = useContext(FormContext);
   if (!data) {
@@ -87,6 +97,7 @@ function BaseSelect(
               {...rest}
             />
           </SelectWrapper>
+          {description && <FormDescription>{description}</FormDescription>}
         </Wrapper>
       )}
     </ErrorTooltip>

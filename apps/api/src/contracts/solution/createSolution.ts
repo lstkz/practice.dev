@@ -1,4 +1,5 @@
 import { createContract, createRpcBinding } from '../../lib';
+import * as R from 'remeda';
 import { S } from 'schema';
 import { getChallengeById } from '../challenge/getChallengeById';
 import { createKey, getItem } from '../../common/db';
@@ -28,7 +29,12 @@ export const createSolution = createContract('solution.createSolution')
         .max(500)
         .optional(),
       tags: S.array()
-        .items(S.string().max(20))
+        .items(
+          S.string()
+            .trim()
+            .min(1)
+            .max(20)
+        )
         .min(1)
         .max(5),
     }),
@@ -50,6 +56,7 @@ export const createSolution = createContract('solution.createSolution')
       );
     }
     const id = uuid();
+    values.tags = R.uniq(values.tags.map(x => x.toLowerCase()));
     const dbSolution = await _createSolution({
       id,
       userId: userId,

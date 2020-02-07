@@ -26,6 +26,14 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "solution.createSolution"*/ '../contracts/solution/createSolution'
     ).then(x => x['createSolutionRpc']),
+  'solution.searchSolutions': () =>
+    import(
+      /* webpackChunkName: "solution.searchSolutions"*/ '../contracts/solution/searchSolutions'
+    ).then(x => x['searchSolutionsRpc']),
+  'solution.voteSolution': () =>
+    import(
+      /* webpackChunkName: "solution.voteSolution"*/ '../contracts/solution/voteSolution'
+    ).then(x => x['voteSolutionRpc']),
   'submission.searchSubmissions': () =>
     import(
       /* webpackChunkName: "submission.searchSubmissions"*/ '../contracts/submission/searchSubmissions'

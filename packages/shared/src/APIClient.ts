@@ -74,6 +74,25 @@ export class APIClient {
   }): Rx.Observable<Solution> {
     return this.call('solution.createSolution', values);
   }
+  solution_searchSolutions(criteria: {
+    sortBy: 'date' | 'likes';
+    sortDesc: boolean;
+    tags?: string[] | undefined;
+    challengeId?: number | undefined;
+    username?: string | undefined;
+    limit?: number | undefined;
+    cursor?: string | null | undefined;
+  }): Rx.Observable<
+    SearchResult<Solution> | { items: Solution[]; cursor: string | undefined }
+  > {
+    return this.call('solution.searchSolutions', criteria);
+  }
+  solution_voteSolution(values: {
+    like: boolean;
+    solutionId: string;
+  }): Rx.Observable<number> {
+    return this.call('solution.voteSolution', values);
+  }
   submission_searchSubmissions(criteria: {
     challengeId?: number | undefined;
     username?: string | undefined;
