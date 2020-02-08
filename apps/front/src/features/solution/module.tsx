@@ -1,5 +1,10 @@
 import * as Rx from 'src/rx';
-import { handle, SolutionActions, SolutionState } from './interface';
+import {
+  handle,
+  SolutionActions,
+  SolutionState,
+  getSolutionState,
+} from './interface';
 import {
   useSolutionForm,
   SolutionFormActions,
@@ -15,32 +20,59 @@ handle
   .epic()
   .on(SolutionFormActions.setSubmitSucceeded, () => {
     const { values } = getSolutionFormState();
+    const { solutionId } = getSolutionState();
 
     return Rx.concatObs(
       Rx.of(SolutionActions.setError(null)),
       Rx.of(SolutionActions.setIsSubmitting(true)),
-      api
-        .solution_createSolution({
+      Rx.defer(() => {
+        const updateValues = {
           challengeId: getChallengeState().challenge.id,
           tags: values.tags.map(x => x.value),
           title: values.title,
           slug: values.slug,
           description: values.description,
           url: values.url,
-        })
-        .pipe(
-          Rx.mergeMap(solution => {
-            return [SolutionActions.show('view', solution)];
-          }),
-          Rx.catchLog(e => Rx.of(SolutionActions.setError(getErrorMessage(e))))
-        ),
+        };
+        if (solutionId) {
+          delete updateValues.challengeId;
+          return api.solution_updateSolution(solutionId, updateValues);
+        } else {
+          return api.solution_createSolution(updateValues);
+        }
+      }).pipe(
+        Rx.mergeMap(solution => {
+          return [
+            GlobalSolutionsActions.addSolutions([solution]),
+            SolutionActions.show('view', solution),
+          ];
+        }),
+        Rx.catchLog(e => Rx.of(SolutionActions.setError(getErrorMessage(e))))
+      ),
       Rx.of(SolutionActions.setIsSubmitting(false))
     );
   })
-  .on(SolutionActions.show, () => [
-    SolutionFormActions.reset(),
-    SolutionActions.setError(null),
-  ])
+  .on(SolutionActions.show, ({ mode, solution }) => {
+    const actions = [
+      SolutionFormActions.reset(),
+      SolutionActions.setError(null),
+    ];
+    if (mode === 'edit' && solution) {
+      actions.push(
+        SolutionFormActions.changeMany({
+          description: solution.description,
+          slug: solution.slug,
+          tags: solution.tags.map(tag => ({
+            label: tag,
+            value: tag,
+          })),
+          title: solution.title,
+          url: solution.url,
+        })
+      );
+    }
+    return actions;
+  })
   .on(SolutionFormActions.change, ({ field, value }) => {
     if (field === 'title') {
       const slug = (value as string)

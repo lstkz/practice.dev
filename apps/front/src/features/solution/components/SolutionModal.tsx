@@ -22,7 +22,12 @@ export function SolutionModal() {
   const { isOpened, mode, solutionId, isLoading } = getSolutionState.useState();
 
   return (
-    <Modal size="md" isOpen={isOpened} close={close}>
+    <Modal
+      size="md"
+      isOpen={isOpened}
+      close={close}
+      noBackgroundClose={mode === 'edit'}
+    >
       {isLoading ? (
         <SpinnerWrapper>
           <Spinner blue size="40px" />

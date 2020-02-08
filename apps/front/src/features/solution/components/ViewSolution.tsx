@@ -1,10 +1,11 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { SolutionDetails } from 'src/components/SolutionDetails';
-import { getSolutionState } from '../interface';
+import { getSolutionState, SolutionActions } from '../interface';
 import { useActions } from 'typeless';
 import { GlobalSolutionsActions } from 'src/features/globalSolutions/interface';
 import { useSolution } from 'src/features/globalSolutions/useSolutions';
+import { useUser } from 'src/hooks/useUser';
 
 interface ViewSolutionProps {
   className?: string;
@@ -14,14 +15,20 @@ const _ViewSolution = (props: ViewSolutionProps) => {
   const { className } = props;
   const { solutionId } = getSolutionState.useState();
   const { voteSolution } = useActions(GlobalSolutionsActions);
+  const { show } = useActions(SolutionActions);
   const solution = useSolution(solutionId!);
-  console.log({ solution });
+  const user = useUser();
 
   return (
     <div className={className}>
       <SolutionDetails
+        canEdit={user && solution.user.id === user.id}
         solution={solution!}
-        onMenu={() => {}}
+        onMenu={action => {
+          if (action === 'edit') {
+            show('edit', solution);
+          }
+        }}
         voteSolution={voteSolution}
       />
     </div>

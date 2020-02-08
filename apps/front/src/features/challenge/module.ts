@@ -1,7 +1,7 @@
 import * as Rx from 'src/rx';
 import { ChallengeActions, ChallengeState, handle } from './interface';
 import { api } from 'src/services/api';
-import { getRouteParams, parseQueryString } from 'src/common/url';
+import { getRouteParams, parseQueryString, createUrl } from 'src/common/url';
 import { handleAppError } from 'src/common/helper';
 import { BUNDLE_BASE_URL } from 'src/config';
 import { ActionLike } from 'typeless';
@@ -12,7 +12,7 @@ import {
   GlobalSolutionsActions,
   getGlobalSolutionsState,
 } from '../globalSolutions/interface';
-import { SolutionActions } from '../solution/interface';
+import { SolutionActions, getSolutionState } from '../solution/interface';
 
 const BUNDLE_ID = 'CHALLENGE_BUNDLE_SCRIPT';
 
@@ -39,6 +39,10 @@ function checkSolutionModal() {
       return SolutionActions.show('view', solution);
     } else {
       return SolutionActions.loadSolutionBySlug(id, query.s);
+    }
+  } else {
+    if (getSolutionState().isOpened) {
+      return SolutionActions.close();
     }
   }
   return Rx.empty();
@@ -109,6 +113,19 @@ handle
       }),
       handleAppError()
     );
+  })
+  .on(SolutionActions.close, () => {
+    const query = parseQueryString(location.search);
+    if (query.s) {
+      return RouterActions.push(
+        createUrl({
+          name: 'challenge',
+          id: getRouteParams('challenge').id,
+        })
+      );
+    } else {
+      return Rx.empty();
+    }
   });
 
 // --- Reducer ---

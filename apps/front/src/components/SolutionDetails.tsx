@@ -14,6 +14,7 @@ interface SolutionDetailsProps {
   onMenu: (action: 'edit' | 'delete') => void;
   voteSolution(id: string, like: boolean): any;
   solution: Solution;
+  canEdit: boolean;
 }
 
 const Left = styled.div`
@@ -78,7 +79,7 @@ const Menu = styled.div`
 `;
 
 const _SolutionDetails = (props: SolutionDetailsProps) => {
-  const { className, solution, voteSolution } = props;
+  const { className, solution, voteSolution, canEdit, onMenu } = props;
   return (
     <div className={className}>
       <Left>
@@ -100,25 +101,27 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
       </Left>
       <Right>
         <SolutionLike solution={solution} voteSolution={voteSolution} />
-        <Menu>
-          <MenuDropdown
-            dropdown={
-              <Dropdown style={{ minWidth: 100 }}>
-                <MenuItem>
-                  <VoidLink>Edit</VoidLink>
-                </MenuItem>
-                <MenuSeparator />
-                <MenuItem red>
-                  <VoidLink>Remove</VoidLink>
-                </MenuItem>
-              </Dropdown>
-            }
-          >
-            <MenuButton>
-              <DotsIcon />
-            </MenuButton>
-          </MenuDropdown>
-        </Menu>
+        {canEdit && (
+          <Menu>
+            <MenuDropdown
+              dropdown={
+                <Dropdown style={{ minWidth: 100 }}>
+                  <MenuItem>
+                    <VoidLink onClick={() => onMenu('edit')}>Edit</VoidLink>
+                  </MenuItem>
+                  <MenuSeparator />
+                  <MenuItem red>
+                    <VoidLink onClick={() => onMenu('delete')}>Remove</VoidLink>
+                  </MenuItem>
+                </Dropdown>
+              }
+            >
+              <MenuButton>
+                <DotsIcon />
+              </MenuButton>
+            </MenuDropdown>
+          </Menu>
+        )}
       </Right>
     </div>
   );

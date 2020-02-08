@@ -14,6 +14,7 @@ interface ModalProps {
   children: React.ReactNode;
   size?: 'lg' | 'md' | 'sm';
   maxHeight?: string;
+  noBackgroundClose?: boolean;
 }
 
 const GlobalStyle = createGlobalStyle`
@@ -90,7 +91,15 @@ const Wrapper = styled.div`
 `;
 
 export function Modal(props: ModalProps) {
-  const { isOpen, close, children, transparent, size, maxHeight } = props;
+  const {
+    isOpen,
+    close,
+    children,
+    transparent,
+    size,
+    maxHeight,
+    noBackgroundClose,
+  } = props;
 
   const modalRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -133,7 +142,10 @@ export function Modal(props: ModalProps) {
             data-modal-wrapper
             onClick={e => {
               const target = e.target as HTMLDivElement;
-              if (target.hasAttribute('data-modal-wrapper')) {
+              if (
+                target.hasAttribute('data-modal-wrapper') &&
+                !noBackgroundClose
+              ) {
                 close();
               }
             }}
