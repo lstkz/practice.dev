@@ -1,5 +1,5 @@
 import { resetDb } from '../helper';
-import { registerSampleUsers, addSampleTasks } from '../seed-data';
+import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { _putSubmission } from '../../src/contracts/submission/_putSubmission';
 import { SubmissionStatus, Submission } from 'shared';
 import { createKey } from '../../src/common/db';
@@ -7,7 +7,7 @@ import { searchSubmissions } from '../../src/contracts/submission/searchSubmissi
 
 beforeEach(async () => {
   await resetDb();
-  await Promise.all([registerSampleUsers(), addSampleTasks()]);
+  await Promise.all([registerSampleUsers(), addSampleChallenges()]);
 
   await Promise.all([
     _putSubmission(

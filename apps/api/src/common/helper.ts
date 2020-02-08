@@ -1,7 +1,9 @@
 import crypto from 'crypto';
 import { Response } from 'node-fetch';
 import { DynamoDB } from 'aws-sdk';
+import * as R from 'remeda';
 import { AppError } from './errors';
+import { DbUser } from '../types';
 
 const SECURITY = {
   SALT_LENGTH: 64,
@@ -150,4 +152,27 @@ export function decLastKey(key: string | undefined) {
     return new AppError('Invalid lastKey');
   }
   return JSON.parse(Buffer.from(data, 'base64').toString('utf8'));
+}
+
+export function normalizeTags(tags: string[]) {
+  return R.uniq(tags.map(x => x.toLowerCase().trim()));
+}
+
+export function rethrowTransactionCanceled(msg: string) {
+  return (e: any) => {
+    if (e.code === 'TransactionCanceledException') {
+      throw new AppError(msg);
+    }
+
+    throw e;
+  };
+}
+
+export function assertAuthorOrAdmin<T extends { userId: string }>(
+  item: T,
+  user: DbUser
+) {
+  if (item.userId !== user.userId && !user.isAdmin) {
+    throw new AppError('No Permissions');
+  }
 }

@@ -1,5 +1,5 @@
 import { resetDb } from '../helper';
-import { registerSampleUsers, addSampleTasks } from '../seed-data';
+import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { submit } from '../../src/contracts/submission/submit';
 import { sns } from '../../src/lib';
 
@@ -7,7 +7,7 @@ const userId = '1';
 
 beforeEach(async () => {
   await resetDb();
-  await Promise.all([registerSampleUsers(), addSampleTasks()]);
+  await Promise.all([registerSampleUsers(), addSampleChallenges()]);
 });
 
 describe('validation', () => {

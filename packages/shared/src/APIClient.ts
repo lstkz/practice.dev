@@ -74,6 +74,49 @@ export class APIClient {
   }): Rx.Observable<Solution> {
     return this.call('solution.createSolution', values);
   }
+  solution_getSolutionById(id: string): Rx.Observable<Solution> {
+    return this.call('solution.getSolutionById', id);
+  }
+  solution_getSolutionBySlug(
+    challengeId: number,
+    slug: string
+  ): Rx.Observable<Solution> {
+    return this.call('solution.getSolutionBySlug', challengeId, slug);
+  }
+  solution_removeSolution(solutionId: string): Rx.Observable<void> {
+    return this.call('solution.removeSolution', solutionId);
+  }
+  solution_searchSolutions(criteria: {
+    sortBy: 'date' | 'likes';
+    sortDesc: boolean;
+    tags?: string[] | undefined;
+    challengeId?: number | undefined;
+    username?: string | undefined;
+    limit?: number | undefined;
+    cursor?: string | null | undefined;
+  }): Rx.Observable<
+    SearchResult<Solution> | { items: Solution[]; cursor: string | undefined }
+  > {
+    return this.call('solution.searchSolutions', criteria);
+  }
+  solution_updateSolution(
+    solutionId: string,
+    values: {
+      tags: string[];
+      title: string;
+      url: string;
+      slug: string;
+      description?: string | undefined;
+    }
+  ): Rx.Observable<Solution> {
+    return this.call('solution.updateSolution', solutionId, values);
+  }
+  solution_voteSolution(values: {
+    solutionId: string;
+    like: boolean;
+  }): Rx.Observable<number> {
+    return this.call('solution.voteSolution', values);
+  }
   submission_searchSubmissions(criteria: {
     challengeId?: number | undefined;
     username?: string | undefined;

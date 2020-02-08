@@ -14,9 +14,10 @@ export const [handle, ChallengeActions, getChallengeState] = createModule(
     loaded: (
       challenge: Challenge,
       recentSubmissions: Submission[],
+      favoriteSolutions: string[],
       component: React.SFC
     ) => ({
-      payload: { challenge, recentSubmissions, component },
+      payload: { challenge, recentSubmissions, favoriteSolutions, component },
     }),
     challengeLoaded: (challenge: Challenge) => ({ payload: { challenge } }),
     changeTab: (tab: ChallengeTab) => ({ payload: { tab } }),
@@ -45,6 +46,7 @@ export interface ChallengeState {
   tab: ChallengeTab;
   testCase: TestInfo[];
   recentSubmissions: Submission[];
+  favoriteSolutions: string[];
 }
 
 export type ChallengeTab = 'details' | 'testSuite' | 'solutions' | 'discussion';

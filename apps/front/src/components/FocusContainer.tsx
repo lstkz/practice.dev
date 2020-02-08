@@ -27,7 +27,7 @@ export function FocusContainer(props: FocusContainerProps) {
         }
         const allFocusableElements = [
           ...pane.querySelectorAll(
-            'button:not([disabled]),[role="button"]:not([disabled],input:not([disabled])'
+            'button:not([disabled]),[role="button"]:not([disabled]),input:not([disabled])'
           ),
         ];
         const idx = allFocusableElements.findIndex(

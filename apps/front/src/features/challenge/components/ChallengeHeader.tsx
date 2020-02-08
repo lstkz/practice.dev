@@ -8,6 +8,7 @@ import { DomainTag } from 'src/components/DomainTag';
 import { Button } from 'ui';
 import { useActions } from 'typeless';
 import { SubmitActions, getSubmitState } from 'src/features/submit/interface';
+import { SolutionActions } from 'src/features/solution/interface';
 
 interface ChallengeHeaderProps {
   className?: string;
@@ -22,11 +23,11 @@ const Col2 = styled.div`
   flex-grow: 1;
   margin-left: 25px;
 `;
-const Col3 = styled.div`
+const Col3 = styled.div<{ double?: boolean }>`
   width: 240px;
   flex-shrink: 0;
   display: flex;
-  padding-top: 40px;
+  padding-top: ${props => (props.double ? 20 : 40)}px;
 `;
 
 const Title = styled.h3`
@@ -45,10 +46,18 @@ const Tags = styled.div`
   } 
 `;
 
+const Buttons = styled.div`
+  width: 100%;
+  ${Button} + ${Button} {
+    margin-top: 10px;
+  }
+`;
+
 const _ChallengeHeader = (props: ChallengeHeaderProps) => {
   const { challenge } = getChallengeState.useState();
   const { status } = getSubmitState.useState();
   const { show: showSubmit } = useActions(SubmitActions);
+  const { show: showSolution } = useActions(SolutionActions);
   const { className } = props;
   return (
     <div className={className}>
@@ -67,15 +76,26 @@ const _ChallengeHeader = (props: ChallengeHeaderProps) => {
           ))}
         </Tags>
       </Col2>
-      <Col3>
-        <Button
-          block
-          type="primary"
-          onClick={showSubmit}
-          disabled={status === 'testing'}
-        >
-          SUBMIT
-        </Button>
+      <Col3 double={challenge.isSolved}>
+        <Buttons>
+          <Button
+            block
+            type={challenge.isSolved ? 'secondary' : 'primary'}
+            onClick={showSubmit}
+            disabled={status === 'testing'}
+          >
+            SUBMIT
+          </Button>
+          {challenge.isSolved && (
+            <Button
+              block
+              type="primary"
+              onClick={() => showSolution('edit', null)}
+            >
+              CREATE SOLUTION
+            </Button>
+          )}
+        </Buttons>
       </Col3>
     </div>
   );

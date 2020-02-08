@@ -26,6 +26,30 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "solution.createSolution"*/ '../contracts/solution/createSolution'
     ).then(x => x['createSolutionRpc']),
+  'solution.getSolutionById': () =>
+    import(
+      /* webpackChunkName: "solution.getSolutionById"*/ '../contracts/solution/getSolutionById'
+    ).then(x => x['getSolutionByIdRpc']),
+  'solution.getSolutionBySlug': () =>
+    import(
+      /* webpackChunkName: "solution.getSolutionBySlug"*/ '../contracts/solution/getSolutionBySlug'
+    ).then(x => x['getSolutionBySlugRpc']),
+  'solution.removeSolution': () =>
+    import(
+      /* webpackChunkName: "solution.removeSolution"*/ '../contracts/solution/removeSolution'
+    ).then(x => x['removeSolutionRpc']),
+  'solution.searchSolutions': () =>
+    import(
+      /* webpackChunkName: "solution.searchSolutions"*/ '../contracts/solution/searchSolutions'
+    ).then(x => x['searchSolutionsRpc']),
+  'solution.updateSolution': () =>
+    import(
+      /* webpackChunkName: "solution.updateSolution"*/ '../contracts/solution/updateSolution'
+    ).then(x => x['updateSolutionRpc']),
+  'solution.voteSolution': () =>
+    import(
+      /* webpackChunkName: "solution.voteSolution"*/ '../contracts/solution/voteSolution'
+    ).then(x => x['voteSolutionRpc']),
   'submission.searchSubmissions': () =>
     import(
       /* webpackChunkName: "submission.searchSubmissions"*/ '../contracts/submission/searchSubmissions'

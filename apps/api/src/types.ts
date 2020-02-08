@@ -90,6 +90,7 @@ export interface DbSolution extends DbKey {
   data_n: number;
   // likes
   data2_n: number;
+  v: number;
   solutionId: string;
   description?: string;
   challengeId: number;
@@ -98,6 +99,13 @@ export interface DbSolution extends DbKey {
   slug: string;
   url: string;
   tags: string[];
+}
+
+export interface DbSolutionVote extends DbKey {
+  // createdAt
+  data_n: number;
+  solutionId: string;
+  userId: string;
 }
 
 export interface DbRateLimit extends DbKey {

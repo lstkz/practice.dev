@@ -21,7 +21,7 @@ export async function registerSampleUsers() {
   ]);
 }
 
-export async function addSampleTasks() {
+export async function addSampleChallenges() {
   await Promise.all([
     updateChallenge({
       id: 1,

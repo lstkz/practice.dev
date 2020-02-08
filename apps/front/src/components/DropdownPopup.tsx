@@ -4,6 +4,9 @@ import { Theme } from 'src/common/Theme';
 export const MenuItem = styled.div<{ red?: boolean }>`
   a {
     color: ${props => (props.red ? Theme.red2 : Theme.text)};
+    width: 100%;
+    height: 100%;
+    display: block;
   }
 `;
 

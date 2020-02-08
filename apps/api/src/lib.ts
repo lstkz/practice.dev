@@ -14,6 +14,7 @@ export const ses = new AWS.SES({
 });
 
 export interface CreateRpcBindingOptions {
+  verified?: true;
   injectUser?: boolean;
   public?: true;
   admin?: true;

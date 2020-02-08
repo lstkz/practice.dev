@@ -16,6 +16,7 @@ import { api } from 'src/services/api';
 import { getChallengeState, ChallengeActions } from '../challenge/interface';
 import { ActionLike } from 'typeless';
 import { SOCKET_URL } from 'src/config';
+import { getErrorMessage } from 'src/common/helper';
 
 handle
   .epic()
@@ -102,7 +103,7 @@ handle
           })
           .pipe(
             Rx.map(({ id }) => SubmitActions.setSubmissionId(id)),
-            Rx.catchLog(e => Rx.of(SubmitActions.setError(e.message)))
+            Rx.catchLog(e => Rx.of(SubmitActions.setError(getErrorMessage(e))))
           ),
         action$.pipe(
           Rx.waitForType(SubmitActions.started),
@@ -147,6 +148,8 @@ handle
   })
   .on(SubmitActions.show, state => {
     state.isOpened = true;
+    state.isSubmitting = false;
+    state.error = null;
   })
   .on(SubmitActions.close, state => {
     state.isOpened = false;

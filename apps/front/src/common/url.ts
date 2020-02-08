@@ -17,6 +17,7 @@ export type UrlOptions =
   | {
       name: 'challenge';
       id: number;
+      solutionSlug?: string;
     }
   | {
       name: 'projects';
@@ -35,8 +36,13 @@ export function createUrl(options: UrlOptions) {
       return '/reset-password';
     case 'challenges':
       return '/challenges';
-    case 'challenge':
-      return '/challenges/' + options.id;
+    case 'challenge': {
+      let url = '/challenges/' + options.id;
+      if (options.solutionSlug) {
+        url += '?s=' + options.solutionSlug;
+      }
+      return url;
+    }
     case 'projects':
       return '/projects';
     case 'home':
@@ -60,7 +66,6 @@ export function getRouteParams(
       };
     }
     case 'challenge': {
-      const split = location.pathname.split('/');
       return {
         id: Number(getLast()),
       };
@@ -77,4 +82,17 @@ export function isRoute(name: 'challenges'): boolean {
     }
   }
   return false;
+}
+
+export function parseQueryString(qs: string | null | undefined) {
+  return (qs || '')
+    .replace(/^\?/, '')
+    .split('&')
+    .reduce((params, param) => {
+      const [key, value] = param.split('=');
+      if (key) {
+        params[key] = value ? decodeURIComponent(value) : '';
+      }
+      return params;
+    }, {} as Record<string, string>);
 }
