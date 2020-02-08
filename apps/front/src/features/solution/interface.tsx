@@ -11,6 +11,12 @@ export const [handle, SolutionActions, getSolutionState] = createModule(
     show: (mode: Mode, solution: Solution | null) => ({
       payload: { mode, solution },
     }),
+    loadSolutionBySlug: (challengeId: number, slug: string) => ({
+      payload: {
+        challengeId,
+        slug,
+      },
+    }),
     close: null,
     setIsSubmitting: (isSubmitting: boolean) => ({ payload: { isSubmitting } }),
     setError: (error: string | null) => ({ payload: { error } }),
@@ -21,7 +27,8 @@ export interface SolutionState {
   error: string | null;
   isSubmitting: boolean;
   isOpened: boolean;
-  solution: Solution | null;
+  isLoading: boolean;
+  solutionId: string | null;
   mode: Mode;
 }
 

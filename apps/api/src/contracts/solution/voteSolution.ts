@@ -11,6 +11,10 @@ function _getAllSolutionKeys(dbSolution: DbSolution) {
     type: 'SOLUTION',
     ...dbSolution,
   });
+  const solutionSlugKey = createKey({
+    type: 'SOLUTION_SLUG',
+    ...dbSolution,
+  });
   const solutionUserKey = createKey({
     type: 'SOLUTION_USER',
     ...dbSolution,
@@ -29,7 +33,13 @@ function _getAllSolutionKeys(dbSolution: DbSolution) {
     })
   );
 
-  return [solutionKey, solutionUserKey, solutionChallengeUserKey, ...tagKeys];
+  return [
+    solutionKey,
+    solutionSlugKey,
+    solutionUserKey,
+    solutionChallengeUserKey,
+    ...tagKeys,
+  ];
 }
 
 export const voteSolution = createContract('solution.voteSolution')

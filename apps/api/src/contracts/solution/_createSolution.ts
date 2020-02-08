@@ -56,7 +56,10 @@ export async function _createSolution(values: CreateSolutionValues) {
     conditionalPutItems: [
       {
         expression: 'attribute_not_exists(pk)',
-        item: solutionSlugKey,
+        item: {
+          ...dbSolution,
+          ...solutionSlugKey,
+        },
       },
     ],
     putItems: [

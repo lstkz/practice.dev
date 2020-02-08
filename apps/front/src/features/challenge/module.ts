@@ -1,12 +1,18 @@
 import * as Rx from 'src/rx';
 import { ChallengeActions, ChallengeState, handle } from './interface';
 import { api } from 'src/services/api';
-import { getRouteParams } from 'src/common/url';
+import { getRouteParams, parseQueryString } from 'src/common/url';
 import { handleAppError } from 'src/common/helper';
 import { BUNDLE_BASE_URL } from 'src/config';
 import { ActionLike } from 'typeless';
 import { getGlobalState } from '../global/interface';
 import { SubmitActions } from '../submit/interface';
+import { RouterActions, getRouterState } from 'typeless-router';
+import {
+  GlobalSolutionsActions,
+  getGlobalSolutionsState,
+} from '../globalSolutions/interface';
+import { SolutionActions } from '../solution/interface';
 
 const BUNDLE_ID = 'CHALLENGE_BUNDLE_SCRIPT';
 
@@ -17,9 +23,36 @@ function removeBundle() {
   }
 }
 
+function checkSolutionModal() {
+  const { location, prevLocation } = getRouterState();
+  if (!location) {
+    return Rx.empty();
+  }
+  const query = parseQueryString(location.search);
+  if (query.s) {
+    const { id } = getRouteParams('challenge');
+    const solutions = Object.values(getGlobalSolutionsState().solutionMap);
+    const solution = solutions.find(
+      x => x.challengeId === id && x.slug === query.s
+    );
+    if (solution) {
+      return SolutionActions.show('view', solution);
+    } else {
+      return SolutionActions.loadSolutionBySlug(id, query.s);
+    }
+  }
+  return Rx.empty();
+}
+
 // --- Epic ---
 handle
   .epic()
+  .on(RouterActions.locationChange, () => {
+    return checkSolutionModal();
+  })
+  .on(ChallengeActions.$mounted, () => {
+    return checkSolutionModal();
+  })
   .on(ChallengeActions.$mounted, (_, { action$ }) => {
     const { id } = getRouteParams('challenge');
     return Rx.forkJoin([
@@ -53,10 +86,13 @@ handle
           document.body.appendChild(script);
           (window as any).ChallengeJSONP = (module: any) => {
             subscriber.next(
+              GlobalSolutionsActions.addSolutions(solutions.items)
+            );
+            subscriber.next(
               ChallengeActions.loaded(
                 challenge,
                 recentSubmissions,
-                solutions.items,
+                solutions.items.map(x => x.id),
                 module.Details
               )
             );
@@ -73,19 +109,6 @@ handle
       }),
       handleAppError()
     );
-  })
-  .on(ChallengeActions.voteSolution, ({ id, like }) => {
-    return api
-      .solution_voteSolution({
-        like,
-        solutionId: id,
-      })
-      .pipe(
-        Rx.ignoreElements(),
-        Rx.catchLog(() => {
-          return Rx.empty();
-        })
-      );
   });
 
 // --- Reducer ---
@@ -121,19 +144,6 @@ handle
   .on(ChallengeActions.addRecentSubmission, (state, { submission }) => {
     state.recentSubmissions.unshift(submission);
     state.recentSubmissions = state.recentSubmissions.slice(0, 10);
-  })
-  .on(ChallengeActions.voteSolution, (state, { id, like }) => {
-    state.favoriteSolutions.forEach(item => {
-      if (item.id === id) {
-        if (like) {
-          item.likes++;
-          item.isLiked = true;
-        } else {
-          item.likes--;
-          item.isLiked = false;
-        }
-      }
-    });
   })
   .on(SubmitActions.testingDone, (state, { success }) => {
     if (success) {

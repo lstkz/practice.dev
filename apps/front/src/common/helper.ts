@@ -32,6 +32,5 @@ export function getErrorMessage(e: any) {
 
 export const handleAppError = () =>
   Rx.catchLog<ActionLike, Rx.Observable<ActionLike>>((e: any) => {
-    console.error(e);
     return Rx.of(GlobalActions.showAppError(getErrorMessage(e)));
   });

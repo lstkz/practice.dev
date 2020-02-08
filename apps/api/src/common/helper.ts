@@ -3,6 +3,7 @@ import { Response } from 'node-fetch';
 import { DynamoDB } from 'aws-sdk';
 import * as R from 'remeda';
 import { AppError } from './errors';
+import { DbUser } from '../types';
 
 const SECURITY = {
   SALT_LENGTH: 64,
@@ -165,4 +166,13 @@ export function rethrowTransactionCanceled(msg: string) {
 
     throw e;
   };
+}
+
+export function assertAuthorOrAdmin<T extends { userId: string }>(
+  item: T,
+  user: DbUser
+) {
+  if (item.userId !== user.userId && !user.isAdmin) {
+    throw new AppError('No Permissions');
+  }
 }

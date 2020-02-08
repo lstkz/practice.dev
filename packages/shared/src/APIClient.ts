@@ -74,6 +74,18 @@ export class APIClient {
   }): Rx.Observable<Solution> {
     return this.call('solution.createSolution', values);
   }
+  solution_getSolutionById(id: string): Rx.Observable<Solution> {
+    return this.call('solution.getSolutionById', id);
+  }
+  solution_getSolutionBySlug(
+    challengeId: number,
+    slug: string
+  ): Rx.Observable<Solution> {
+    return this.call('solution.getSolutionBySlug', challengeId, slug);
+  }
+  solution_removeSolution(solutionId: string): Rx.Observable<void> {
+    return this.call('solution.removeSolution', solutionId);
+  }
   solution_searchSolutions(criteria: {
     sortBy: 'date' | 'likes';
     sortDesc: boolean;
@@ -87,9 +99,21 @@ export class APIClient {
   > {
     return this.call('solution.searchSolutions', criteria);
   }
+  solution_updateSolution(
+    solutionId: string,
+    values: {
+      tags: string[];
+      title: string;
+      url: string;
+      slug: string;
+      description?: string | undefined;
+    }
+  ): Rx.Observable<Solution> {
+    return this.call('solution.updateSolution', solutionId, values);
+  }
   solution_voteSolution(values: {
-    like: boolean;
     solutionId: string;
+    like: boolean;
   }): Rx.Observable<number> {
     return this.call('solution.voteSolution', values);
   }

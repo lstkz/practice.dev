@@ -1,21 +1,21 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { getDbSolutionById } from './getDbSolutionById';
-import { getDbUserById } from '../user/getDbUserById';
-import { mapDbSolution } from '../../common/mapping';
+import { _populateSolution } from './_populateSolution';
 
 export const getSolutionById = createContract('solution.getSolutionById')
-  .params('id')
+  .params('userId', 'id')
   .schema({
+    userId: S.string().optional(),
     id: S.string(),
   })
-  .fn(async id => {
-    const solution = await getDbSolutionById(id, false);
-    const user = await getDbUserById(solution.userId);
-    return mapDbSolution(solution, user);
+  .fn(async (userId, id) => {
+    const dbSolution = await getDbSolutionById(id, false);
+    return _populateSolution(dbSolution, userId);
   });
 
 export const getSolutionByIdRpc = createRpcBinding({
+  injectUser: true,
   public: true,
   signature: 'solution.getSolutionById',
   handler: getSolutionById,

@@ -5,9 +5,11 @@ import { useGlobalModule } from '../features/global/module';
 import { useRouterModule } from '../features/router';
 import { getGlobalState } from 'src/features/global/interface';
 import { useMappedState } from 'typeless';
+import { useGlobalSolutionsModule } from 'src/features/globalSolutions/module';
 
 export function App() {
   useGlobalModule();
+  useGlobalSolutionsModule();
   useRouterModule();
 
   const { isLoaded } = useMappedState([getGlobalState], R.pick(['isLoaded']));

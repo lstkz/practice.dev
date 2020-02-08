@@ -5,8 +5,11 @@ import { _createSolution } from './_createSolution';
 import { solutionUserInput } from './_solutionSchema';
 import { getDbUserById } from '../user/getDbUserById';
 import { getDbSolutionById } from './getDbSolutionById';
-import { AppError } from '../../common/errors';
-import { normalizeTags, rethrowTransactionCanceled } from '../../common/helper';
+import {
+  normalizeTags,
+  rethrowTransactionCanceled,
+  assertAuthorOrAdmin,
+} from '../../common/helper';
 import {
   transactWriteItems,
   createKey,
@@ -27,13 +30,16 @@ export const updateSolution = createContract('solution.updateSolution')
       getDbUserById(userId),
       getDbSolutionById(solutionId, true),
     ]);
-    if (dbSolution.userId !== userId && !user.isAdmin) {
-      throw new AppError('You are not allowed to update this solution');
-    }
+    assertAuthorOrAdmin(dbSolution, user);
     values.tags = normalizeTags(values.tags);
 
     const newTags = R.difference(values.tags, dbSolution.tags);
     const removedTags = R.difference(dbSolution.tags, values.tags);
+    const updated: DbSolution = {
+      ...dbSolution,
+      ...values,
+    };
+    updated.v++;
 
     const transactOptions: TransactWriteItems = {
       deleteItems: [],
@@ -51,20 +57,16 @@ export const updateSolution = createContract('solution.updateSolution')
           slug: dbSolution.slug,
         })
       );
+      const solutionSlugKey = createKey({
+        type: 'SOLUTION_SLUG',
+        challengeId: dbSolution.challengeId,
+        slug: values.slug,
+      });
       transactOptions.conditionalPutItems.push({
         expression: 'attribute_not_exists(pk)',
-        item: createKey({
-          type: 'SOLUTION_SLUG',
-          challengeId: dbSolution.challengeId,
-          slug: values.slug,
-        }),
+        item: { ...updated, ...solutionSlugKey },
       });
     }
-    const updated: DbSolution = {
-      ...dbSolution,
-      ...values,
-    };
-    updated.v++;
     transactOptions.conditionalPutItems.push({
       expression: 'v = :v',
       values: {

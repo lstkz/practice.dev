@@ -5,11 +5,10 @@ import { VoidLink } from 'src/components/VoidLink';
 import { Tag } from 'src/components/Tag';
 import { Theme } from 'ui';
 import { useActions } from 'typeless';
-import { ChallengeActions } from '../interface';
 import { SolutionLike } from 'src/components/SolutionLike';
-import { SolutionActions } from 'src/features/solution/interface';
 import { Link } from 'src/components/Link';
 import { createUrl } from 'src/common/url';
+import { GlobalSolutionsActions } from 'src/features/globalSolutions/interface';
 
 interface SolutionInfoProps {
   className?: string;
@@ -24,7 +23,8 @@ const Right = styled.div`
   flex: 0 0 60px;
 `;
 const Title = styled(Link)`
-  color: ${Theme.text};
+  color: ${Theme.textDark};
+  font-weight: 500;
 `;
 
 const By = styled.div`
@@ -48,8 +48,7 @@ const Top = styled.div`
 
 const _SolutionInfo = (props: SolutionInfoProps) => {
   const { className, solution } = props;
-  const { voteSolution } = useActions(ChallengeActions);
-  const { show } = useActions(SolutionActions);
+  const { voteSolution } = useActions(GlobalSolutionsActions);
   return (
     <div className={className}>
       <Top>
@@ -60,7 +59,6 @@ const _SolutionInfo = (props: SolutionInfoProps) => {
               id: solution.challengeId,
               solutionSlug: solution.slug,
             })}
-            onClick={() => show('view', solution)}
           >
             {solution.title}
           </Title>

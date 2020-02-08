@@ -30,6 +30,14 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "solution.getSolutionById"*/ '../contracts/solution/getSolutionById'
     ).then(x => x['getSolutionByIdRpc']),
+  'solution.getSolutionBySlug': () =>
+    import(
+      /* webpackChunkName: "solution.getSolutionBySlug"*/ '../contracts/solution/getSolutionBySlug'
+    ).then(x => x['getSolutionBySlugRpc']),
+  'solution.removeSolution': () =>
+    import(
+      /* webpackChunkName: "solution.removeSolution"*/ '../contracts/solution/removeSolution'
+    ).then(x => x['removeSolutionRpc']),
   'solution.searchSolutions': () =>
     import(
       /* webpackChunkName: "solution.searchSolutions"*/ '../contracts/solution/searchSolutions'

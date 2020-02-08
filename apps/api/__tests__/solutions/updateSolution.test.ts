@@ -53,7 +53,7 @@ it('throw error if not author', async () => {
       url: 'https://github.com/repo-edited',
     })
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"ContractError: You are not allowed to update this solution"`
+    `"ContractError: No Permissions"`
   );
 });
 
@@ -69,7 +69,7 @@ it('update basic props', async () => {
   expect(ret.title).toEqual('solution-edited');
   expect(ret.description).toEqual('desc-edited');
   expect(ret.url).toEqual('https://github.com/repo-edited');
-  const latest = await getSolutionById('1');
+  const latest = await getSolutionById(userId, '1');
   expect(latest.slug).toEqual('s1');
   expect(latest.title).toEqual('solution-edited');
   expect(latest.description).toEqual('desc-edited');
