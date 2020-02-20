@@ -153,6 +153,9 @@ export const Button = styled(React.forwardRef(_Button))`
             background: ${Theme.primaryGradientActive};
             box-shadow: 0 0 0 3px rgb(35, 122, 210, 0.5);
           }
+          &:disabled {
+            background: ${Theme.primaryGradient};
+          }
         `;
       case 'secondary':
         return css`
@@ -165,6 +168,21 @@ export const Button = styled(React.forwardRef(_Button))`
           &:focus {
             background: ${Theme.bgLightGray3};
             box-shadow: 0 0 0 3px rgba(216, 217, 219, 0.5);
+          }
+        `;
+      case 'danger':
+        return css`
+          color: white;
+          background: ${Theme.dangerGradient};
+          &:hover {
+            background: ${Theme.dangerGradientHover};
+          }
+          &:focus {
+            background: ${Theme.dangerGradientActive};
+            box-shadow: 0 0 0 3px rgb(210, 35, 35, 0.5);
+          }
+          &:disabled {
+            background: ${Theme.dangerGradient};
           }
         `;
     }

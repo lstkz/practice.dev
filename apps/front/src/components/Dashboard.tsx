@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { AppErrorBanner } from './AppErrorBanner';
+import { ConfirmModalView } from 'src/features/confirmModal/components/ConfirmModal';
 
 interface DashboardProps {
   className?: string;
@@ -16,14 +17,17 @@ const Content = styled.div`
 const _Dashboard = (props: DashboardProps) => {
   const { className, children } = props;
   return (
-    <div className={className}>
-      <Header />
-      <Content>
-        <AppErrorBanner />
-        {children}
-      </Content>
-      <Footer />
-    </div>
+    <>
+      <div className={className}>
+        <Header />
+        <Content>
+          <AppErrorBanner />
+          {children}
+        </Content>
+        <Footer />
+      </div>
+      <ConfirmModalView />
+    </>
   );
 };
 

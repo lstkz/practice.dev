@@ -18,14 +18,20 @@ const SpinnerWrapper = styled.div`
 
 export function SolutionModal() {
   useSolutionModule();
-  const { close } = useActions(SolutionActions);
+  const { close, showViewMode } = useActions(SolutionActions);
   const { isOpened, mode, solutionId, isLoading } = getSolutionState.useState();
 
   return (
     <Modal
       size="md"
       isOpen={isOpened}
-      close={close}
+      close={source => {
+        if (source === 'close-button' && solutionId && mode === 'edit') {
+          showViewMode();
+        } else {
+          close();
+        }
+      }}
       noBackgroundClose={mode === 'edit'}
     >
       {isLoading ? (

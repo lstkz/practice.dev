@@ -6,17 +6,18 @@ handle.epic();
 // --- Reducer ---
 const initialState: ConfirmModalState = {
   isOpened: false,
-  isLoading: false,
+  loadingButton: null,
   title: '',
   description: '',
   buttons: [],
+  error: null,
 };
 
 handle
   .reducer(initialState)
   .on(ConfirmModalActions.show, (state, { title, description, buttons }) => {
     state.isOpened = true;
-    state.isLoading = false;
+    state.loadingButton = null;
     state.title = title;
     state.description = description;
     state.buttons = buttons;
@@ -24,8 +25,8 @@ handle
   .on(ConfirmModalActions.close, state => {
     state.isOpened = false;
   })
-  .on(ConfirmModalActions.setIsLoading, (state, { isLoading }) => {
-    state.isLoading = isLoading;
+  .on(ConfirmModalActions.setIsLoading, (state, { loadingButton }) => {
+    state.loadingButton = loadingButton;
   });
 
 // --- Module ---

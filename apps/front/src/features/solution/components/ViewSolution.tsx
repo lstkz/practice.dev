@@ -15,7 +15,7 @@ const _ViewSolution = (props: ViewSolutionProps) => {
   const { className } = props;
   const { solutionId } = getSolutionState.useState();
   const { voteSolution } = useActions(GlobalSolutionsActions);
-  const { show } = useActions(SolutionActions);
+  const { show, remove } = useActions(SolutionActions);
   const solution = useSolution(solutionId!);
   const user = useUser();
 
@@ -27,6 +27,9 @@ const _ViewSolution = (props: ViewSolutionProps) => {
         onMenu={action => {
           if (action === 'edit') {
             show('edit', solution);
+          }
+          if (action === 'delete') {
+            remove();
           }
         }}
         voteSolution={voteSolution}

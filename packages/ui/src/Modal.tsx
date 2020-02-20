@@ -129,7 +129,10 @@ export function Modal(props: ModalProps) {
         //
       };
     }
-    document.body.classList.add('modal-open');
+    const alreadyOpen = document.body.classList.contains('modal-open');
+    if (!alreadyOpen) {
+      document.body.classList.add('modal-open');
+    }
     const onKeyPress = (ev: KeyboardEvent) => {
       if (ev.key === 'Escape') {
         close();
@@ -137,7 +140,10 @@ export function Modal(props: ModalProps) {
     };
     window.addEventListener('keyup', onKeyPress);
     return () => {
-      document.body.classList.remove('modal-open');
+      console.log({ alreadyOpen });
+      if (!alreadyOpen) {
+        document.body.classList.remove('modal-open');
+      }
       window.removeEventListener('keyup', onKeyPress);
     };
   }, [isOpen]);

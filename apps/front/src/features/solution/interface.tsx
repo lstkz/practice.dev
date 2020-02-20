@@ -11,6 +11,7 @@ export const [handle, SolutionActions, getSolutionState] = createModule(
     show: (mode: Mode, solution: Solution | null) => ({
       payload: { mode, solution },
     }),
+    showViewMode: null,
     loadSolutionBySlug: (challengeId: number, slug: string) => ({
       payload: {
         challengeId,
@@ -18,6 +19,7 @@ export const [handle, SolutionActions, getSolutionState] = createModule(
       },
     }),
     close: null,
+    remove: null,
     setIsSubmitting: (isSubmitting: boolean) => ({ payload: { isSubmitting } }),
     setError: (error: string | null) => ({ payload: { error } }),
   });

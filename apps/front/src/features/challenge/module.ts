@@ -24,7 +24,7 @@ function removeBundle() {
 }
 
 function checkSolutionModal() {
-  const { location, prevLocation } = getRouterState();
+  const { location } = getRouterState();
   if (!location) {
     return Rx.empty();
   }
@@ -166,6 +166,9 @@ handle
     if (success) {
       state.challenge.isSolved = success;
     }
+  })
+  .on(GlobalSolutionsActions.removeSolution, (state, { id }) => {
+    state.favoriteSolutions = state.favoriteSolutions.filter(x => x !== id);
   });
 
 // --- Module ---

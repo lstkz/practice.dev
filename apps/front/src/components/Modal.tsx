@@ -6,11 +6,12 @@ import { VoidLink } from './VoidLink';
 import { CloseIcon } from 'src/icons/CloseIcon';
 import { Theme } from 'ui';
 import { FocusContainer } from './FocusContainer';
+import { modalGlobalContext } from './ModalGlobalContext';
 
 interface ModalProps {
   transparent?: boolean;
   isOpen: boolean;
-  close: () => void;
+  close: (source: 'close-button' | 'background' | 'esc') => void;
   children: React.ReactNode;
   size?: 'lg' | 'md' | 'sm';
   maxHeight?: string;
@@ -110,16 +111,21 @@ export function Modal(props: ModalProps) {
       };
     }
 
-    document.body.classList.add('modal-open');
+    const alreadyOpen = document.body.classList.contains('modal-open');
+    if (!alreadyOpen) {
+      document.body.classList.add('modal-open');
+    }
     const onKeyPress = (ev: KeyboardEvent) => {
       if (ev.key === 'Escape') {
-        close();
+        close('esc');
       }
     };
-    window.addEventListener('keyup', onKeyPress);
+    modalGlobalContext.addListener(onKeyPress);
     return () => {
-      document.body.classList.remove('modal-open');
-      window.removeEventListener('keyup', onKeyPress);
+      if (!alreadyOpen) {
+        document.body.classList.remove('modal-open');
+      }
+      modalGlobalContext.removeListener(onKeyPress);
     };
   }, [isOpen]);
 
@@ -146,7 +152,7 @@ export function Modal(props: ModalProps) {
                 target.hasAttribute('data-modal-wrapper') &&
                 !noBackgroundClose
               ) {
-                close();
+                close('background');
               }
             }}
           >
@@ -161,7 +167,7 @@ export function Modal(props: ModalProps) {
                 tabIndex={-1}
                 role="modal"
               >
-                <Close onClick={close} aria-label="close">
+                <Close onClick={() => close('close-button')} aria-label="close">
                   <CloseIcon scale={1.3} color={Theme.text} />
                 </Close>
 

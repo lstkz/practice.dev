@@ -15,6 +15,7 @@ import { getChallengeState } from '../challenge/interface';
 import { getErrorMessage } from 'src/common/helper';
 import { GlobalSolutionsActions } from '../globalSolutions/interface';
 import { GlobalActions } from '../global/interface';
+import { ConfirmModalActions } from '../confirmModal/interface';
 
 handle
   .epic()
@@ -108,7 +109,48 @@ handle
         Rx.takeUntil(action$.pipe(Rx.waitForType(SolutionActions.close)))
       );
     }
-  );
+  )
+  .on(SolutionActions.remove, (_, { action$ }) => {
+    const solutionId = getSolutionState().solutionId!;
+    return Rx.concatObs(
+      Rx.of(
+        ConfirmModalActions.show(
+          'Confirm',
+          'Are you sure to delete this solution?',
+          [
+            { text: 'Delete', type: 'danger', value: 'delete' as DeleteType },
+            { text: 'Cancel', type: 'secondary', value: 'close' as DeleteType },
+          ]
+        )
+      ),
+      action$.pipe(
+        Rx.waitForType(ConfirmModalActions.onResult),
+        Rx.mergeMap(({ payload }) => {
+          const result = payload.result as DeleteType;
+          if (result !== 'delete') {
+            return Rx.of(ConfirmModalActions.close());
+          }
+
+          return Rx.concatObs(
+            Rx.of(ConfirmModalActions.setIsLoading('delete' as DeleteType)),
+            api.solution_removeSolution(solutionId).pipe(
+              Rx.mergeMap(() => [
+                ConfirmModalActions.close(),
+                SolutionActions.close(),
+                GlobalSolutionsActions.removeSolution(solutionId),
+              ]),
+              Rx.catchLog(e =>
+                Rx.of(ConfirmModalActions.setError(getErrorMessage(e)))
+              )
+            ),
+            Rx.of(ConfirmModalActions.setIsLoading(null))
+          );
+        })
+      )
+    );
+  });
+
+type DeleteType = 'delete' | 'close';
 
 // --- Reducer ---
 const initialState: SolutionState = {
@@ -144,6 +186,9 @@ handle
   })
   .on(SolutionActions.setIsSubmitting, (state, { isSubmitting }) => {
     state.isSubmitting = isSubmitting;
+  })
+  .on(SolutionActions.showViewMode, state => {
+    state.mode = 'view';
   });
 
 // --- Module ---

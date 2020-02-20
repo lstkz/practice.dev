@@ -11,17 +11,21 @@ export const [handle, ConfirmModalActions, getConfirmModalState] = createModule(
     }),
     close: null,
     onResult: (result: string) => ({ payload: { result } }),
-    setIsLoading: (isLoading: boolean) => ({ payload: { isLoading } }),
+    setIsLoading: (loadingButton: string | null) => ({
+      payload: { loadingButton },
+    }),
+    setError: (error: string | null) => ({ payload: { error } }),
   })
   .withState<ConfirmModalState>();
 
 // --- Types ---
 export interface ConfirmModalState {
   isOpened: boolean;
-  isLoading: boolean;
+  loadingButton: string | null;
   title: string;
   description: string;
   buttons: ButtonType[];
+  error: string | null;
 }
 
 type ButtonType = {

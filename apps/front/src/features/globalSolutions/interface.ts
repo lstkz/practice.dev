@@ -13,6 +13,9 @@ export const [
     voteSolution: (id: string, like: boolean) => ({
       payload: { id, like },
     }),
+    removeSolution: (id: string) => ({
+      payload: { id },
+    }),
   })
   .withState<GlobalSolutionsState>();
 

@@ -2,16 +2,22 @@ import React from 'react';
 import { useConfirmModalModule } from '../module';
 import { useActions } from 'typeless';
 import { ConfirmModalActions, getConfirmModalState } from '../interface';
-import { Modal, Button } from 'ui';
+import { Button } from 'ui';
+import { Modal } from 'src/components/Modal';
 import styled from 'styled-components';
+import { FormModalContent } from 'src/components/FormModalContent';
+import { Alert } from 'src/components/Alert';
 
-const Title = styled.div``;
-const Desc = styled.div``;
-
-const Content = styled.div``;
+const Desc = styled.div`
+  font-size: 14px;
+  margin-bottom: 30px;
+  text-align: center;
+`;
 
 const Buttons = styled.div`
+width: 100%;
 display: flex;
+justify-content: center;
 ${Button} + ${Button} {
   margin-left: 10px;
 }
@@ -19,18 +25,20 @@ ${Button} + ${Button} {
 
 export function ConfirmModalView() {
   useConfirmModalModule();
-  const { close, onResult } = useActions(ConfirmModalActions);
+  const { onResult } = useActions(ConfirmModalActions);
   const {
     isOpened,
     title,
     description,
     buttons,
+    loadingButton,
+    error,
   } = getConfirmModalState.useState();
 
   return (
-    <Modal isOpen={isOpened} close={close}>
-      <Content>
-        <Title>{title}</Title>
+    <Modal size="sm" isOpen={isOpened} close={() => onResult('close')}>
+      <FormModalContent title={title}>
+        {error && <Alert type="error">{error}</Alert>}
         <Desc>{description}</Desc>
         <Buttons>
           {buttons.map(item => (
@@ -38,12 +46,13 @@ export function ConfirmModalView() {
               key={item.value}
               type={item.type}
               onClick={() => onResult(item.value)}
+              loading={loadingButton === item.value}
             >
               {item.text}
             </Button>
           ))}
         </Buttons>
-      </Content>
+      </FormModalContent>
     </Modal>
   );
 }
