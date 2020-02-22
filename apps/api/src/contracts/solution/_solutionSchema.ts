@@ -12,7 +12,9 @@ export const solutionUserInput = {
     .regex(/^[a-z0-9\-]+$/),
   description: S.string()
     .max(500)
-    .optional(),
+    .optional()
+    .nullable()
+    .nullEmpty(),
   tags: S.array()
     .items(
       S.string()

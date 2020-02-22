@@ -133,7 +133,35 @@ export class StringSchema<TReq = true, TNull = false> extends AnySchema<
   }
 
   optional() {
-    return (super.optional() as any) as StringSchema<false, TNull>;
+    this.validators.push({
+      priority: -2,
+      type: 'string.optional',
+      validate: value => {
+        if (value === undefined || value === '') {
+          return {
+            stop: true,
+          };
+        }
+        return null;
+      },
+    });
+    return (this as any) as StringSchema<false, TNull>;
+  }
+
+  nullEmpty() {
+    this.validators.push({
+      priority: -4,
+      type: 'string.nullEmpty',
+      validate: value => {
+        if (value === '') {
+          return {
+            value: null,
+          };
+        }
+        return null;
+      },
+    });
+    return this;
   }
 
   nullable() {
