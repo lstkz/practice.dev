@@ -1,6 +1,7 @@
 import { createModule } from 'typeless';
 import { SolutionSymbol } from './symbol';
-import { Solution } from 'shared';
+import { Solution, ChallengeTag } from 'shared';
+import { AsyncResult } from 'react-select-async-paginate';
 
 export const [handle, SolutionActions, getSolutionState] = createModule(
   SolutionSymbol
@@ -22,6 +23,22 @@ export const [handle, SolutionActions, getSolutionState] = createModule(
     remove: null,
     setIsSubmitting: (isSubmitting: boolean) => ({ payload: { isSubmitting } }),
     setError: (error: string | null) => ({ payload: { error } }),
+    searchTags: (
+      keyword: string,
+      cursor: string | null,
+      resolve: (
+        result: AsyncResult<{
+          label: string;
+          value: string;
+        }>
+      ) => void
+    ) => ({
+      payload: {
+        keyword,
+        cursor,
+        resolve,
+      },
+    }),
   });
 
 // --- Types ---
@@ -32,6 +49,12 @@ export interface SolutionState {
   isLoading: boolean;
   solutionId: string | null;
   mode: Mode;
+  tags: {
+    cursor: string | null;
+    items: ChallengeTag[];
+    isLoaded: boolean;
+    keyword: string;
+  };
 }
 
 type Mode = 'view' | 'edit';

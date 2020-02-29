@@ -148,6 +148,31 @@ handle
         })
       )
     );
+  })
+  .on(SolutionActions.searchTags, ({ keyword, resolve, cursor }) => {
+    return api
+      .challengeTags_searchChallengeTags({
+        challengeId: getChallengeState().challenge.id,
+        cursor,
+        keyword,
+      })
+      .pipe(
+        Rx.mergeMap(ret => {
+          const options = ret.items.map(x => ({
+            label: `${x.name} (${x.count})`,
+            value: x.name,
+          }));
+          resolve({
+            options,
+            hasMore: !!ret.cursor,
+            additional: ret.cursor,
+          });
+          return Rx.empty();
+        }),
+        Rx.catchLog(() => {
+          return Rx.empty();
+        })
+      );
   });
 
 type DeleteType = 'delete' | 'close';
@@ -160,6 +185,12 @@ const initialState: SolutionState = {
   solutionId: null,
   mode: 'edit',
   isLoading: false,
+  tags: {
+    cursor: null,
+    items: [],
+    isLoaded: false,
+    keyword: '',
+  },
 };
 
 handle

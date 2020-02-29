@@ -6,6 +6,7 @@ import {
   DbChallengeSolved,
   DbSubmission,
   DbSolutionVote,
+  DbChallengeTag,
 } from '../types';
 import {
   User,
@@ -14,6 +15,7 @@ import {
   ChallengeSolved,
   Submission,
   PublicUser,
+  ChallengeTag,
 } from 'shared';
 
 export function mapDbUser(item: DbUser): User {
@@ -115,4 +117,15 @@ export function mapDbSubmissionMany(
 ): Submission[] {
   const userMap = R.indexBy(users, x => x.userId);
   return items.map(item => mapDbSubmission(item, userMap[item.userId]));
+}
+
+export function mapDbChallengeTag(item: DbChallengeTag): ChallengeTag {
+  return {
+    name: item.data,
+    count: item.count,
+  };
+}
+
+export function mapDbChallengeTagMany(items: DbChallengeTag[]): ChallengeTag[] {
+  return items.map(mapDbChallengeTag);
 }

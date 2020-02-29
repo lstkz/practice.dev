@@ -161,7 +161,7 @@ export class StringSchema<TReq = true, TNull = false> extends AnySchema<
         return null;
       },
     });
-    return this;
+    return (this as any) as StringSchema<TReq, false>;
   }
 
   nullable() {

@@ -167,6 +167,15 @@ export function rethrowTransactionCanceled(msg: string) {
     throw e;
   };
 }
+export function ignoreTransactionCanceled() {
+  return (e: any) => {
+    if (e.code === 'TransactionCanceledException') {
+      return;
+    }
+
+    throw e;
+  };
+}
 
 export function assertAuthorOrAdmin<T extends { userId: string }>(
   item: T,

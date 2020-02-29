@@ -5,6 +5,7 @@ import { getDbUserById } from '../user/getDbUserById';
 import { getDbSolutionById } from './getDbSolutionById';
 import { assertAuthorOrAdmin } from '../../common/helper';
 import { transactWriteItems, createKey } from '../../common/db';
+import { createChallengeTagUpdate } from '../challengeTag/createChallengeTagUpdate';
 
 export const removeSolution = createContract('solution.removeSolution')
   .params('userId', 'solutionId')
@@ -48,6 +49,13 @@ export const removeSolution = createContract('solution.removeSolution')
 
     await transactWriteItems({
       deleteItems: keys,
+      updateItems: dbSolution.tags.map(tag =>
+        createChallengeTagUpdate({
+          tag,
+          challengeId: dbSolution.challengeId,
+          inc: -1,
+        })
+      ),
     });
   });
 

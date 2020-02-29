@@ -3,6 +3,7 @@ import { createKey, transactWriteItems } from '../../common/db';
 import { DbSolution } from '../../types';
 import { createStatsUpdate } from '../challenge/createStatsUpdate';
 import { rethrowTransactionCanceled } from '../../common/helper';
+import { createChallengeTagUpdate } from '../challengeTag/createChallengeTagUpdate';
 
 interface CreateSolutionValues {
   createdAt: number;
@@ -82,7 +83,16 @@ export async function _createSolution(values: CreateSolutionValues) {
         }),
       })),
     ],
-    updateItems: [createStatsUpdate(values.challengeId, 'solutions', 1)],
+    updateItems: [
+      createStatsUpdate(values.challengeId, 'solutions', 1),
+      ...values.tags.map(tag =>
+        createChallengeTagUpdate({
+          tag,
+          challengeId: values.challengeId,
+          inc: 1,
+        })
+      ),
+    ],
   }).catch(rethrowTransactionCanceled('Duplicated slug for this challenge'));
 
   return dbSolution;

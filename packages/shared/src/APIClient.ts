@@ -7,6 +7,7 @@ import {
   Challenge,
   PagedResult,
   ChallengeSolved,
+  ChallengeTag,
   Solution,
   SearchResult,
   Submission,
@@ -63,6 +64,14 @@ export class APIClient {
     difficulty: 'easy' | 'medium' | 'hard';
   }): Rx.Observable<number> {
     return this.call('challenge.updateChallenge', values);
+  }
+  challengeTags_searchChallengeTags(criteria: {
+    challengeId: number;
+    limit?: number | undefined;
+    keyword?: string | undefined;
+    cursor?: string | null | undefined;
+  }): Rx.Observable<{ items: ChallengeTag[]; cursor: string | undefined }> {
+    return this.call('challengeTags.searchChallengeTags', criteria);
   }
   solution_createSolution(values: {
     tags: string[];

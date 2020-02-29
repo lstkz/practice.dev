@@ -4,6 +4,9 @@ import { Theme as SelectTheme } from 'react-select/src/types';
 import ReactSelectCreatable, {
   Props as CreatableProps,
 } from 'react-select/creatable';
+import ReactAsyncSelectCreatable, {
+  Props as AsyncCreatableProps,
+} from 'react-select/async-creatable';
 import { Props } from 'react-select/src/Select';
 import { Theme } from 'ui';
 import { createGlobalStyle } from 'styled-components';
@@ -11,6 +14,8 @@ import { createGlobalStyle } from 'styled-components';
 export interface SelectProps<OptionType> extends Props<OptionType> {}
 export interface CreatableSelectProps<OptionType>
   extends CreatableProps<OptionType> {}
+export interface AsyncCreatableSelectProps<OptionType>
+  extends AsyncCreatableProps<OptionType> {}
 
 const SelectStyles = createGlobalStyle`
   .react-select__control {
@@ -68,6 +73,20 @@ export function CreatableSelect<T>(props: CreatableSelectProps<T>) {
     <>
       <SelectStyles />
       <ReactSelectCreatable<T>
+        {...props}
+        placeholder={props.placeholder || 'Select...'}
+        theme={themeProp}
+        classNamePrefix="react-select"
+      />
+    </>
+  );
+}
+
+export function AsyncCreatableSelect<T>(props: AsyncCreatableSelectProps<T>) {
+  return (
+    <>
+      <SelectStyles />
+      <ReactAsyncSelectCreatable<T>
         {...props}
         placeholder={props.placeholder || 'Select...'}
         theme={themeProp}

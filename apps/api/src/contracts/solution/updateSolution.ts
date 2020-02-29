@@ -17,6 +17,7 @@ import {
 } from '../../common/db';
 import { DbSolution } from '../../types';
 import { mapDbSolution } from '../../common/mapping';
+import { createChallengeTagUpdate } from '../challengeTag/createChallengeTagUpdate';
 
 export const updateSolution = createContract('solution.updateSolution')
   .params('userId', 'solutionId', 'values')
@@ -114,6 +115,23 @@ export const updateSolution = createContract('solution.updateSolution')
           challengeId: dbSolution.challengeId,
           solutionId: dbSolution.solutionId,
           tag,
+        })
+      )
+    );
+
+    transactOptions.updateItems.push(
+      ...newTags.map(tag =>
+        createChallengeTagUpdate({
+          tag,
+          challengeId: dbSolution.challengeId,
+          inc: 1,
+        })
+      ),
+      ...removedTags.map(tag =>
+        createChallengeTagUpdate({
+          tag,
+          challengeId: dbSolution.challengeId,
+          inc: -1,
         })
       )
     );

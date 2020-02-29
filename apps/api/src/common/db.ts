@@ -2,7 +2,7 @@ import * as R from 'remeda';
 import { dynamodb } from '../lib';
 import { AppError, UnreachableCaseError } from './errors';
 import { Converter } from 'aws-sdk/clients/dynamodb';
-import { DbKey } from '../types';
+import { DbKey, StreamRecord, DynamoDBRecord, EntityType } from '../types';
 import DynamoDB = require('aws-sdk/clients/dynamodb');
 import { decLastKey, encLastKey } from './helper';
 import { TABLE_NAME } from '../config';
@@ -109,6 +109,15 @@ type CreateKeyOptions =
       type: 'SOLUTION_VOTE';
       userId: string;
       solutionId: string;
+    }
+  | {
+      type: 'CHALLENGE_TAG';
+      tag: string;
+      challengeId: number;
+    }
+  | {
+      type: 'EVENT';
+      eventId: string;
     };
 
 export function createKey(
@@ -256,6 +265,19 @@ export function createKey(
       return {
         pk: `SOLUTION_VOTE:${options.solutionId}:${options.userId}`,
         sk: `SOLUTION_VOTE:${options.userId}`,
+      };
+    }
+    case 'CHALLENGE_TAG': {
+      return {
+        pk: `CHALLENGE_TAG:${options.challengeId}:${options.tag.toLowerCase()}`,
+        sk: `CHALLENGE_TAG:${options.challengeId}`,
+      };
+    }
+    case 'EVENT': {
+      const pk = `EVENT:${options.eventId}`;
+      return {
+        pk: pk,
+        sk: pk,
       };
     }
     default:
@@ -424,20 +446,33 @@ export async function transactWriteItems(options: Partial<TransactWriteItems>) {
     })
   );
 
-  await dynamodb
-    .transactWriteItems(
-      {
-        TransactItems: [
-          ...deleteItems,
-          ...updateItems,
-          ...putItems,
-          ...conditionalPutItems,
-          ...conditionalDeleteItems,
-        ],
-      },
-      undefined
-    )
-    .promise();
+  const writeItems = [
+    ...updateItems,
+    ...deleteItems,
+    ...putItems,
+    ...conditionalPutItems,
+    ...conditionalDeleteItems,
+  ];
+  if (process.env.MOCK_DB && writeItems.length > 10) {
+    await Promise.all([
+      dynamodb
+        .transactWriteItems({
+          TransactItems: updateItems,
+        })
+        .promise(),
+      dynamodb
+        .transactWriteItems({
+          TransactItems: writeItems.slice(updateItems.length),
+        })
+        .promise(),
+    ]);
+  } else {
+    await dynamodb
+      .transactWriteItems({
+        TransactItems: writeItems,
+      })
+      .promise();
+  }
 }
 
 export async function batchRawWriteItemWithRetry(
@@ -481,19 +516,21 @@ interface BaseQueryOptions {
 }
 
 interface QueryFilter {
-  expression: string;
+  expression?: string;
   names?: { [key: string]: string };
   values: { [key: string]: DynamoDB.AttributeValue };
 }
 
+type DbIndex = 'sk-data_n-index' | 'sk-data2_n-index' | 'sk-data-index';
+
 interface QueryIndexOptions extends BaseQueryOptions {
-  index: 'sk-data_n-index' | 'sk-data2_n-index';
+  index: DbIndex;
   sk: string;
 }
 
 export async function queryIndex<T>(options: QueryIndexOptions) {
   const { index, sk, ...base } = options;
-  return _query<T>(
+  return queryRaw<T>(
     index,
     'sk = :sk',
     {
@@ -527,7 +564,7 @@ interface QueryMainIndexOptions extends BaseQueryOptions {
 
 export async function queryMainIndex<T>(options: QueryMainIndexOptions) {
   const { pk, ...base } = options;
-  return _query<T>(
+  return queryRaw<T>(
     undefined,
     'pk = :pk',
     {
@@ -555,8 +592,8 @@ export async function queryMainIndexAll<T>(options: QueryMainIndexOptions) {
   return result;
 }
 
-async function _query<T>(
-  index: string | undefined,
+export async function queryRaw<T>(
+  index: DbIndex | undefined,
   keyConditionExpression: string,
   expressionValues: DynamoDB.ExpressionAttributeValueMap,
   options: BaseQueryOptions
@@ -587,4 +624,51 @@ async function _query<T>(
     items: (result.Items || []).map(item => Converter.unmarshall(item) as T),
     cursor: encLastKey(result.LastEvaluatedKey),
   };
+}
+
+export function decodeStreamEntity<T extends DbKey = any>(
+  record: DynamoDBRecord
+): {
+  type: EntityType;
+  oldItem: T | null;
+  newItem: T | null;
+} | null {
+  if (!record.eventName) {
+    throw new Error('eventName required');
+  }
+  const newItem = record.dynamodb?.NewImage
+    ? (Converter.unmarshall(record.dynamodb.NewImage) as T)
+    : null;
+  const oldItem = record.dynamodb?.OldImage
+    ? (Converter.unmarshall(record.dynamodb.OldImage) as T)
+    : null;
+  const item = newItem || oldItem;
+  if (!item) {
+    return null;
+  }
+
+  if (item.pk.startsWith('SOLUTION:')) {
+    return {
+      type: 'Solution',
+      newItem,
+      oldItem,
+    };
+  }
+  if (item.pk.startsWith('SUBMISSION:')) {
+    return {
+      type: 'Submission',
+      newItem,
+      oldItem,
+    };
+  }
+
+  if (item.pk.startsWith('CHALLENGE_SOLVED:')) {
+    return {
+      type: 'ChallengeSolved',
+      newItem,
+      oldItem,
+    };
+  }
+
+  return null;
 }
