@@ -3,9 +3,13 @@ import { resetDb, mapToTimestamps } from '../helper';
 import { _createSolution } from '../../src/contracts/solution/_createSolution';
 import { searchSolutions } from '../../src/contracts/solution/searchSolutions';
 import { voteSolution } from '../../src/contracts/solution/voteSolution';
+import { MockStream } from '../MockStream';
+
+const mockStream = new MockStream();
 
 beforeEach(async () => {
   await resetDb();
+  await mockStream.init();
   await Promise.all([registerSampleUsers(), addSampleChallenges()]);
   const getBaseProps = (id: number) => ({
     id: String(id),
@@ -58,6 +62,7 @@ beforeEach(async () => {
       challengeId: 1,
     }),
   ]);
+  await mockStream.process();
 });
 
 it('search by challengeId sort by DATE ASC', async () => {
@@ -229,6 +234,7 @@ it('should populate isLiked', async () => {
     like: true,
     solutionId: '2',
   });
+  await mockStream.process();
   const { items } = await searchSolutions('1', {
     challengeId: 1,
     limit: 10,

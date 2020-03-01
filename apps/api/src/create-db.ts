@@ -26,6 +26,10 @@ async function _create(id: number) {
     .createTable({
       TableName: name,
       BillingMode: 'PAY_PER_REQUEST',
+      StreamSpecification: {
+        StreamEnabled: true,
+        StreamViewType: 'NEW_AND_OLD_IMAGES',
+      },
       KeySchema: [
         {
           AttributeName: 'pk',

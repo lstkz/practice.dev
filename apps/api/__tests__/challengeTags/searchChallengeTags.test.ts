@@ -4,8 +4,12 @@ import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { searchChallengeTags } from '../../src/contracts/challengeTag/searchChallengeTags';
 import { removeSolution } from '../../src/contracts/solution/removeSolution';
 import { updateSolution } from '../../src/contracts/solution/updateSolution';
+import { MockStream } from '../MockStream';
 
 const userId = '1';
+
+const mockStream = new MockStream();
+
 const getBaseProps = (id: number) => ({
   id: String(id),
   createdAt: id,
@@ -14,10 +18,14 @@ const getBaseProps = (id: number) => ({
   url: 'https://github.com/foo/a',
 });
 
+beforeAll(async () => {
+  await mockStream.prepare();
+});
+
 beforeEach(async () => {
   await resetDb();
+  await mockStream.init();
   await Promise.all([registerSampleUsers(), addSampleChallenges()]);
-
   await Promise.all([
     _createSolution({
       ...getBaseProps(1),
@@ -41,6 +49,7 @@ beforeEach(async () => {
       challengeId: 2,
     }),
   ]);
+  await mockStream.process();
 });
 
 it('return tags for challenge 1', async () => {
@@ -155,6 +164,7 @@ it('return tags for challenge 2', async () => {
 
 it('remove solution', async () => {
   await removeSolution(userId, '1');
+  await mockStream.process();
   const { items } = await searchChallengeTags({
     challengeId: 1,
   });
@@ -180,6 +190,7 @@ it('update solution', async () => {
     url: 'https://github.com/foo/a',
     tags: ['a', 'e', 'f'],
   });
+  await mockStream.process();
   const { items } = await searchChallengeTags({
     challengeId: 1,
   });

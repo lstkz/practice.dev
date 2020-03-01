@@ -1,7 +1,7 @@
 import { createContract, createDynamoStreamBinding } from '../../lib';
 import { S } from 'schema';
 import { Converter } from 'aws-sdk/clients/dynamodb';
-import { DbSolution, DbChallengeSolved, StreamAction } from '../../types';
+import { DbSolution, DbChallengeSolved } from '../../types';
 import { transactWriteItems, createKey } from '../../common/db';
 import { ignoreTransactionCanceled } from '../../common/helper';
 
@@ -39,54 +39,34 @@ export const updateChallengeStats = createContract(
     }).catch(ignoreTransactionCanceled());
   });
 
-function _getAdd(type: StreamAction) {
-  if (type === 'INSERT') {
-    return 1;
-  }
-  if (type === 'REMOVE') {
-    return -1;
-  }
-  throw new Error('Not supported add: ' + type);
-}
-
-export const incSolutionStats = createDynamoStreamBinding<DbSolution>({
+export const handleSolution = createDynamoStreamBinding<DbSolution>({
   type: 'Solution',
-  insert: true,
-  remove: true,
-  handler(eventId, type, item) {
-    return updateChallengeStats(
-      eventId,
-      item.challengeId,
-      'solutions',
-      _getAdd(type)
-    );
+  insert(eventId, item) {
+    return updateChallengeStats(eventId, item.challengeId, 'solutions', 1);
+  },
+  remove(eventId, item) {
+    return updateChallengeStats(eventId, item.challengeId, 'solutions', -1);
   },
 });
 
-export const incSubmissionStats = createDynamoStreamBinding<DbSolution>({
+export const handleSubmission = createDynamoStreamBinding<DbSolution>({
   type: 'Submission',
-  insert: true,
-  remove: true,
-  handler(eventId, type, item) {
-    return updateChallengeStats(
-      eventId,
-      item.challengeId,
-      'submissions',
-      _getAdd(type)
-    );
+  insert(eventId, item) {
+    return updateChallengeStats(eventId, item.challengeId, 'submissions', 1);
+  },
+  remove(eventId, item) {
+    return updateChallengeStats(eventId, item.challengeId, 'submissions', -1);
   },
 });
 
-export const incSolvedStats = createDynamoStreamBinding<DbChallengeSolved>({
+export const handleChallengeSolved = createDynamoStreamBinding<
+  DbChallengeSolved
+>({
   type: 'ChallengeSolved',
-  insert: true,
-  remove: true,
-  handler(eventId, type, item) {
-    return updateChallengeStats(
-      eventId,
-      item.challengeId,
-      'solved',
-      _getAdd(type)
-    );
+  insert(eventId, item) {
+    return updateChallengeStats(eventId, item.challengeId, 'solved', 1);
+  },
+  remove(eventId, item) {
+    return updateChallengeStats(eventId, item.challengeId, 'solved', -1);
   },
 });

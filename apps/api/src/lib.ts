@@ -36,10 +36,9 @@ export function createRpcBinding(options: CreateRpcBindingOptions) {
 
 export type CreateDynamoStreamBindingOptions<T> = {
   type: EntityType;
-  insert?: true;
-  modify?: true;
-  remove?: true;
-  handler(eventId: string, type: StreamAction, newItem: T, oldItem: T): any;
+  insert?(eventId: string, item: T): any;
+  modify?(eventId: string, newItem: T, oldItem: T): any;
+  remove?(eventId: string, item: T): any;
 };
 
 export function createDynamoStreamBinding<T>(

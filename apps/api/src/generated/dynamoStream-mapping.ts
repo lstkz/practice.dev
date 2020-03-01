@@ -9,21 +9,29 @@ interface DynamoStreamMapping {
 }
 export const dynamoStreamMapping: DynamoStreamMapping = {
   Solution: {
-    incSolutionStats: () =>
+    challenge_updateSolutionStats_handleSolution: () =>
       import(
         /* webpackChunkName: "challenge_updateSolutionStats"*/ '../contracts/challenge/updateSolutionStats'
-      ).then(x => x['incSolutionStats']),
+      ).then(x => x['handleSolution']),
+    challengeTag_updateChallengeTagCount_handleSolution: () =>
+      import(
+        /* webpackChunkName: "challengeTag_updateChallengeTagCount"*/ '../contracts/challengeTag/updateChallengeTagCount'
+      ).then(x => x['handleSolution']),
+    solution_indexSolution_handleSolution: () =>
+      import(
+        /* webpackChunkName: "solution_indexSolution"*/ '../contracts/solution/indexSolution'
+      ).then(x => x['handleSolution']),
   },
   Submission: {
-    incSubmissionStats: () =>
+    challenge_updateSolutionStats_handleSubmission: () =>
       import(
         /* webpackChunkName: "challenge_updateSolutionStats"*/ '../contracts/challenge/updateSolutionStats'
-      ).then(x => x['incSubmissionStats']),
+      ).then(x => x['handleSubmission']),
   },
   ChallengeSolved: {
-    incSolvedStats: () =>
+    challenge_updateSolutionStats_handleChallengeSolved: () =>
       import(
         /* webpackChunkName: "challenge_updateSolutionStats"*/ '../contracts/challenge/updateSolutionStats'
-      ).then(x => x['incSolvedStats']),
+      ).then(x => x['handleChallengeSolved']),
   },
 };

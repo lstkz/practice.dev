@@ -21,14 +21,11 @@ export const updateSubmissionStatus = createContract(
   .fn(async (submissionId, values) => {
     const submission = await getDbSubmissionById(submissionId);
 
-    await _putSubmission(
-      {
-        ...submission,
-        status: values.status,
-        result: values.result,
-      },
-      false
-    );
+    await _putSubmission({
+      ...submission,
+      status: values.status,
+      result: values.result,
+    });
 
     if (values.status === SubmissionStatus.Pass) {
       await markSolved({

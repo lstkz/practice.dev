@@ -1,12 +1,29 @@
-import { APIGatewayProxyEvent, SNSEvent } from '../types';
+import { APIGatewayProxyEvent, SNSEvent, DynamoDBStreamEvent } from '../types';
 import { TESTER_TOPIC_ARN } from '../config';
 
-export function handler(
-  event: SNSEvent | APIGatewayProxyEvent,
-  _: any,
-  __: any
-) {
-  if ('Records' in event) {
+type AWSEvent = SNSEvent | APIGatewayProxyEvent | DynamoDBStreamEvent;
+
+function isSnsEvent(event: AWSEvent): event is SNSEvent {
+  return (
+    'Records' in event && event.Records.length > 0 && 'Sns' in event.Records[0]
+  );
+}
+
+function isDynamoStreamEvent(event: AWSEvent): event is DynamoDBStreamEvent {
+  return (
+    'Records' in event &&
+    event.Records.length > 0 &&
+    'dynamodb' in event.Records[0]
+  );
+}
+
+export function handler(event: AWSEvent, _: any, __: any) {
+  if (isDynamoStreamEvent(event)) {
+    return import(
+      /* webpackChunkName: "dynamoStream" */
+      './dynamoStream'
+    ).then(module => module.handler(event));
+  } else if (isSnsEvent(event)) {
     if (event.Records[0]?.Sns.TopicArn === TESTER_TOPIC_ARN) {
       return import(
         /* webpackChunkName: "tester" */

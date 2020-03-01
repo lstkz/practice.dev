@@ -168,7 +168,7 @@ function createDynamoStreamBinding() {
       dynamoStreamMap[type] = [];
     }
     dynamoStreamMap[type].push(
-      `'${key}':() => import(/* webpackChunkName: "${chunkName}"*/ '../${relativePath}').then(x => x['${key}']),`
+      `'${chunkName}_${key}':() => import(/* webpackChunkName: "${chunkName}"*/ '../${relativePath}').then(x => x['${key}']),`
     );
   });
   Object.keys(dynamoStreamMap).forEach(type => {

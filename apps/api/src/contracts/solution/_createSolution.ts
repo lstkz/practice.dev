@@ -1,9 +1,7 @@
 import * as R from 'remeda';
 import { createKey, transactWriteItems } from '../../common/db';
 import { DbSolution } from '../../types';
-import { createStatsUpdate } from '../challenge/createStatsUpdate';
 import { rethrowTransactionCanceled } from '../../common/helper';
-import { createChallengeTagUpdate } from '../challengeTag/createChallengeTagUpdate';
 
 interface CreateSolutionValues {
   createdAt: number;
@@ -31,19 +29,6 @@ export async function _createSolution(values: CreateSolutionValues) {
     slug: values.slug,
   });
 
-  const solutionUserKey = createKey({
-    type: 'SOLUTION_USER',
-    solutionId: values.id,
-    userId: values.userId,
-  });
-
-  const solutionChallengeUserKey = createKey({
-    type: 'SOLUTION_CHALLENGE_USER',
-    solutionId: values.id,
-    challengeId: values.challengeId,
-    userId: values.userId,
-  });
-
   const dbSolution: DbSolution = {
     ...solutionKey,
     ...R.omit(values, ['createdAt', 'likes', 'id']),
@@ -63,36 +48,7 @@ export async function _createSolution(values: CreateSolutionValues) {
         },
       },
     ],
-    putItems: [
-      dbSolution,
-      {
-        ...dbSolution,
-        ...solutionUserKey,
-      },
-      {
-        ...dbSolution,
-        ...solutionChallengeUserKey,
-      },
-      ...values.tags.map(tag => ({
-        ...dbSolution,
-        ...createKey({
-          type: 'SOLUTION_TAG',
-          challengeId: values.challengeId,
-          solutionId: values.id,
-          tag,
-        }),
-      })),
-    ],
-    updateItems: [
-      createStatsUpdate(values.challengeId, 'solutions', 1),
-      ...values.tags.map(tag =>
-        createChallengeTagUpdate({
-          tag,
-          challengeId: values.challengeId,
-          inc: 1,
-        })
-      ),
-    ],
+    putItems: [dbSolution],
   }).catch(rethrowTransactionCanceled('Duplicated slug for this challenge'));
 
   return dbSolution;

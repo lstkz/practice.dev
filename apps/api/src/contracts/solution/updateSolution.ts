@@ -1,5 +1,4 @@
 import { createContract, createRpcBinding } from '../../lib';
-import * as R from 'remeda';
 import { S } from 'schema';
 import { _createSolution } from './_createSolution';
 import { solutionUserInput } from './_solutionSchema';
@@ -9,15 +8,16 @@ import {
   normalizeTags,
   rethrowTransactionCanceled,
   assertAuthorOrAdmin,
+  safeKeys,
 } from '../../common/helper';
 import {
   transactWriteItems,
   createKey,
   TransactWriteItems,
+  prepareUpdate,
 } from '../../common/db';
 import { DbSolution } from '../../types';
 import { mapDbSolution } from '../../common/mapping';
-import { createChallengeTagUpdate } from '../challengeTag/createChallengeTagUpdate';
 
 export const updateSolution = createContract('solution.updateSolution')
   .params('userId', 'solutionId', 'values')
@@ -34,17 +34,14 @@ export const updateSolution = createContract('solution.updateSolution')
     assertAuthorOrAdmin(dbSolution, user);
     values.tags = normalizeTags(values.tags);
 
-    const newTags = R.difference(values.tags, dbSolution.tags);
-    const removedTags = R.difference(dbSolution.tags, values.tags);
     const updated: DbSolution = {
       ...dbSolution,
       ...values,
     };
-    updated.v++;
 
     const transactOptions: TransactWriteItems = {
       deleteItems: [],
-      updateItems: [],
+      updateItems: [prepareUpdate(updated, safeKeys(solutionUserInput))],
       putItems: [],
       conditionalPutItems: [],
       conditionalDeleteItems: [],
@@ -68,73 +65,6 @@ export const updateSolution = createContract('solution.updateSolution')
         item: { ...updated, ...solutionSlugKey },
       });
     }
-    transactOptions.conditionalPutItems.push({
-      expression: 'v = :v',
-      values: {
-        ':v': dbSolution.v,
-      },
-      item: updated,
-    });
-
-    const solutionUserKey = createKey({
-      type: 'SOLUTION_USER',
-      solutionId: dbSolution.solutionId,
-      userId: dbSolution.userId,
-    });
-
-    const solutionChallengeUserKey = createKey({
-      type: 'SOLUTION_CHALLENGE_USER',
-      solutionId: dbSolution.solutionId,
-      challengeId: dbSolution.challengeId,
-      userId: dbSolution.userId,
-    });
-
-    transactOptions.putItems.push(
-      {
-        ...updated,
-        ...solutionUserKey,
-      },
-      {
-        ...updated,
-        ...solutionChallengeUserKey,
-      },
-      ...newTags.map(tag => ({
-        ...dbSolution,
-        ...createKey({
-          type: 'SOLUTION_TAG',
-          challengeId: dbSolution.challengeId,
-          solutionId: dbSolution.solutionId,
-          tag,
-        }),
-      }))
-    );
-    transactOptions.deleteItems.push(
-      ...removedTags.map(tag =>
-        createKey({
-          type: 'SOLUTION_TAG',
-          challengeId: dbSolution.challengeId,
-          solutionId: dbSolution.solutionId,
-          tag,
-        })
-      )
-    );
-
-    transactOptions.updateItems.push(
-      ...newTags.map(tag =>
-        createChallengeTagUpdate({
-          tag,
-          challengeId: dbSolution.challengeId,
-          inc: 1,
-        })
-      ),
-      ...removedTags.map(tag =>
-        createChallengeTagUpdate({
-          tag,
-          challengeId: dbSolution.challengeId,
-          inc: -1,
-        })
-      )
-    );
 
     const [solutionAuthor] = await Promise.all([
       getDbUserById(updated.userId),

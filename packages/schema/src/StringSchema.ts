@@ -90,6 +90,23 @@ export class StringSchema<TReq = true, TNull = false> extends AnySchema<
     return this;
   }
 
+  lowercase() {
+    this.validators.push({
+      priority: 1,
+      type: 'string.lowercase',
+      validate: (value: string) => {
+        const lowercase = value.trim();
+        if (lowercase !== value) {
+          return {
+            value: lowercase,
+          };
+        }
+        return null;
+      },
+    });
+    return this;
+  }
+
   regex(reg: RegExp) {
     this.validators.push({
       type: 'string.regex',

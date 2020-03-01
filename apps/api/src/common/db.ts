@@ -2,7 +2,7 @@ import * as R from 'remeda';
 import { dynamodb } from '../lib';
 import { AppError, UnreachableCaseError } from './errors';
 import { Converter } from 'aws-sdk/clients/dynamodb';
-import { DbKey, StreamRecord, DynamoDBRecord, EntityType } from '../types';
+import { DbKey, DynamoDBRecord, EntityType } from '../types';
 import DynamoDB = require('aws-sdk/clients/dynamodb');
 import { decLastKey, encLastKey } from './helper';
 import { TABLE_NAME } from '../config';
@@ -192,7 +192,7 @@ export function createKey(
       };
     }
     case 'SOLUTION_SLUG': {
-      const pk = `SOLUTION:${options.challengeId}:${options.slug}`;
+      const pk = `SOLUTION_SLUG:${options.challengeId}:${options.slug}`;
       return {
         pk,
         sk: pk,
@@ -331,6 +331,15 @@ export async function getItem<T>(
   return item ? (Converter.unmarshall(item) as any) : undefined;
 }
 
+export async function deleteItem<T extends DbKey>(item: T) {
+  await dynamodb
+    .deleteItem({
+      TableName: TABLE_NAME,
+      Key: Converter.marshall(R.pick(item, ['sk', 'pk'])),
+    })
+    .promise();
+}
+
 export async function getItemEnsure<T>(key: {
   pk: string;
   sk: string;
@@ -356,7 +365,7 @@ export async function ensureNotExists(values: any, errorMsg: string) {
 
 export function prepareUpdate<T extends DbKey>(item: T, keys: Array<keyof T>) {
   const values = keys.reduce((ret, key) => {
-    ret[`:${key}`] = item[key];
+    ret[`:${key}`] = item[key] === undefined ? null : item[key];
     return ret;
   }, {} as { [x: string]: any });
   const names = keys.reduce((ret, key) => {
@@ -671,4 +680,14 @@ export function decodeStreamEntity<T extends DbKey = any>(
   }
 
   return null;
+}
+
+export function getEventConditionItem(eventId: string) {
+  return {
+    expression: 'attribute_not_exists(pk)',
+    item: createKey({
+      type: 'EVENT',
+      eventId,
+    }),
+  };
 }

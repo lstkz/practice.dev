@@ -19,19 +19,16 @@ export async function handler(event: DynamoDBStreamEvent) {
         await Promise.all(
           keys.map(async key => {
             const handler = await handlerMap[key]();
-            const isAllowed =
-              (record.eventName === 'INSERT' && handler.options.insert) ||
-              (record.eventName === 'MODIFY' && handler.options.modify) ||
-              (record.eventName === 'REMOVE' && handler.options.remove);
-            if (!isAllowed) {
-              return;
+            const eventId = `${type}:${key}:${record.eventID}`;
+            if (record.eventName === 'INSERT' && handler.options.insert) {
+              await handler.options.insert(eventId, newItem);
             }
-            await handler.options.handler(
-              `${type}:${key}:${record.eventID}`,
-              record.eventName!,
-              newItem,
-              oldItem
-            );
+            if (record.eventName === 'MODIFY' && handler.options.modify) {
+              await handler.options.modify(eventId, newItem, oldItem);
+            }
+            if (record.eventName === 'REMOVE' && handler.options.remove) {
+              await handler.options.remove(eventId, oldItem);
+            }
           })
         );
       } catch (e) {

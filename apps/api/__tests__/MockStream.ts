@@ -1,11 +1,14 @@
 import { dynamodb, dynamoStream } from '../src/lib';
 import { TABLE_NAME } from '../src/config';
 import { handler } from '../src/lambda/dynamoStream';
+import { DynamoDBStreams } from 'aws-sdk';
 
 export class MockStream {
   private shardIterators: string[] | null = null;
+  private shards?: DynamoDBStreams.ShardDescriptionList | null = null;
+  private arn: string | null = null;
 
-  async init() {
+  async prepare() {
     const table = await dynamodb
       .describeTable({
         TableName: TABLE_NAME,
@@ -13,20 +16,28 @@ export class MockStream {
       .promise()
       .then(x => x.Table!);
 
-    const arn = table.LatestStreamArn!;
+    this.arn = table.LatestStreamArn!;
     const ret = await dynamoStream
       .describeStream({
-        StreamArn: arn,
+        StreamArn: this.arn,
       })
       .promise();
+    this.shards = ret.StreamDescription!.Shards;
+  }
+
+  async init() {
+    if (!this.shards) {
+      await this.prepare();
+    }
+
     this.shardIterators = [];
 
     await Promise.all(
-      ret.StreamDescription!.Shards!.map(async shard => {
+      this.shards!.map(async shard => {
         const iterator = await dynamoStream
           .getShardIterator({
             ShardId: shard.ShardId!,
-            StreamArn: arn,
+            StreamArn: this.arn!,
             ShardIteratorType: 'LATEST',
           })
           .promise();
