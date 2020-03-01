@@ -12,7 +12,7 @@ import {
 } from './solution-form';
 import { api } from 'src/services/api';
 import { getChallengeState } from '../challenge/interface';
-import { getErrorMessage } from 'src/common/helper';
+import { getErrorMessage, searchChallengeTags } from 'src/common/helper';
 import { GlobalSolutionsActions } from '../globalSolutions/interface';
 import { GlobalActions } from '../global/interface';
 import { ConfirmModalActions } from '../confirmModal/interface';
@@ -150,29 +150,12 @@ handle
     );
   })
   .on(SolutionActions.searchTags, ({ keyword, resolve, cursor }) => {
-    return api
-      .challengeTags_searchChallengeTags({
-        challengeId: getChallengeState().challenge.id,
-        cursor,
-        keyword,
-      })
-      .pipe(
-        Rx.mergeMap(ret => {
-          const options = ret.items.map(x => ({
-            label: `${x.name} (${x.count})`,
-            value: x.name,
-          }));
-          resolve({
-            options,
-            hasMore: !!ret.cursor,
-            additional: ret.cursor,
-          });
-          return Rx.empty();
-        }),
-        Rx.catchLog(() => {
-          return Rx.empty();
-        })
-      );
+    return searchChallengeTags(
+      getChallengeState().challenge.id,
+      keyword,
+      cursor,
+      resolve
+    );
   });
 
 type DeleteType = 'delete' | 'close';

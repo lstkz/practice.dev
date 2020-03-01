@@ -13,6 +13,7 @@ import { GlobalSolutionsActions } from 'src/features/globalSolutions/interface';
 interface SolutionInfoProps {
   className?: string;
   solution: Solution;
+  full?: boolean;
 }
 
 const Left = styled.div`

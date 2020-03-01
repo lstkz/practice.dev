@@ -5,7 +5,6 @@ import {
   Select,
   CreatableSelectProps,
   CreatableSelect,
-  AsyncCreatableSelectProps,
 } from './Select';
 
 import AsyncPaginate, {

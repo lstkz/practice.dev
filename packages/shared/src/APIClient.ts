@@ -46,10 +46,7 @@ export class APIClient {
     username?: string | undefined;
     limit?: number | undefined;
     lastKey?: string | undefined;
-  }): Rx.Observable<
-    | { items: never[]; lastKey: null }
-    | { items: ChallengeSolved[]; lastKey: string | undefined }
-  > {
+  }): Rx.Observable<{ items: ChallengeSolved[]; lastKey: string | null }> {
     return this.call('challenge.searchSolved', criteria);
   }
   challenge_updateChallenge(values: {
@@ -70,7 +67,7 @@ export class APIClient {
     limit?: number | undefined;
     keyword?: string | undefined;
     cursor?: string | null | undefined;
-  }): Rx.Observable<{ items: ChallengeTag[]; cursor: string | undefined }> {
+  }): Rx.Observable<{ items: ChallengeTag[]; cursor: string | null }> {
     return this.call('challengeTags.searchChallengeTags', criteria);
   }
   solution_createSolution(values: {
@@ -103,9 +100,7 @@ export class APIClient {
     username?: string | undefined;
     limit?: number | undefined;
     cursor?: string | null | undefined;
-  }): Rx.Observable<
-    SearchResult<Solution> | { items: Solution[]; cursor: string | undefined }
-  > {
+  }): Rx.Observable<SearchResult<Solution>> {
     return this.call('solution.searchSolutions', criteria);
   }
   solution_updateSolution(
@@ -131,10 +126,7 @@ export class APIClient {
     username?: string | undefined;
     limit?: number | undefined;
     cursor?: string | null | undefined;
-  }): Rx.Observable<
-    | SearchResult<Submission>
-    | { items: Submission[]; cursor: string | undefined }
-  > {
+  }): Rx.Observable<SearchResult<Submission>> {
     return this.call('submission.searchSubmissions', criteria);
   }
   challenge_submit(values: {
