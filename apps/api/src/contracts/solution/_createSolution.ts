@@ -32,7 +32,6 @@ export async function _createSolution(values: CreateSolutionValues) {
   const dbSolution: DbSolution = {
     ...solutionKey,
     ...R.omit(values, ['createdAt', 'likes', 'id']),
-    v: 1,
     data_n: values.createdAt,
     data2_n: values.likes,
     solutionId: values.id,

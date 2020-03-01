@@ -69,10 +69,9 @@ export const voteSolution = createContract('solution.voteSolution')
       updateItems: [
         {
           Key: Converter.marshall(solutionKey),
-          UpdateExpression: 'SET data2_n = data2_n + :add, v = v + :inc',
+          UpdateExpression: 'SET data2_n = data2_n + :add',
           ExpressionAttributeValues: Converter.marshall({
             ':add': values.like ? 1 : -1,
-            ':inc': 1,
           }),
         },
       ],

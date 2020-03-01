@@ -1,7 +1,7 @@
 import './config';
 import { initialize } from 'contract';
 import AWS from 'aws-sdk';
-import { AppEvent, EntityType, StreamAction } from './types';
+import { AppEvent, EntityType } from './types';
 
 export const sns = new AWS.SNS({});
 export const s3 = new AWS.S3({});
