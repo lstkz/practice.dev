@@ -114,7 +114,7 @@ export const RouteResolver = () => {
       if (!routeConfig.noLoader) {
         loaderRef.current?.continuousStart();
       }
-    }, 5);
+    }, 500);
     const tryCompleteLoader = () => {
       clearTimeout(startTimeout);
       if (!routeConfig.noLoader && isStarted) {
@@ -146,7 +146,7 @@ export const RouteResolver = () => {
               Rx.tap(() => {
                 if (loadIdRef.current === id) {
                   showNextComponent();
-                  loaderRef.current?.complete();
+                  tryCompleteLoader();
                 }
               })
             )
