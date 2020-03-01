@@ -39,6 +39,7 @@ export const [handle, SolutionActions, getSolutionState] = createModule(
         resolve,
       },
     }),
+    created: null,
   });
 
 // --- Types ---

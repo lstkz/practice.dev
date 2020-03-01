@@ -45,6 +45,7 @@ handle
         Rx.mergeMap(solution => {
           return [
             GlobalSolutionsActions.addSolutions([solution]),
+            SolutionActions.created(),
             SolutionActions.show('view', solution),
           ];
         }),

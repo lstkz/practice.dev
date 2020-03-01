@@ -44,13 +44,16 @@ export const [handle, SolutionsTabActions, getSolutionsTabState] = createModule(
       },
     }),
     load: (loadMore: boolean) => ({ payload: { loadMore } }),
-    loaded: (result: SearchResult<Solution>) => ({ payload: { result } }),
+    loaded: (loadMore: boolean, result: SearchResult<Solution>) => ({
+      payload: { loadMore, result },
+    }),
     setIsLoading: (isLoading: boolean) => ({ payload: { isLoading } }),
   })
   .withState<SolutionsTabState>();
 
 handle
   .epic()
+  .on(SolutionActions.created, () => SolutionsTabActions.load(false))
   .on(SolutionsTabActions.searchTags, ({ keyword, resolve, cursor }) => {
     return searchChallengeTags(
       getChallengeState().challenge.id,
@@ -87,7 +90,7 @@ handle
           ...sortCriteria,
         })
         .pipe(
-          Rx.map(ret => SolutionsTabActions.loaded(ret)),
+          Rx.map(ret => SolutionsTabActions.loaded(loadMore, ret)),
           handleAppError(),
           Rx.takeUntil(action$.pipe(Rx.waitForType(SolutionsTabActions.load)))
         );
@@ -141,10 +144,18 @@ handle
   .on(SolutionsTabActions.updateFilter, (state, { name, value }) => {
     state.filter[name] = value;
   })
-  .on(SolutionsTabActions.loaded, (state, { result }) => {
+  .on(SolutionsTabActions.setIsLoading, (state, { isLoading }) => {
+    state.isLoading = isLoading;
+  })
+  .on(SolutionsTabActions.loaded, (state, { result, loadMore }) => {
     state.isLoaded = true;
     state.cursor = result.cursor;
-    state.items = result.items.map(x => x.id);
+    const ids = result.items.map(x => x.id);
+    if (loadMore) {
+      state.items.push(...ids);
+    } else {
+      state.items = ids;
+    }
   });
 
 const NoData = styled.div`
@@ -152,10 +163,21 @@ const NoData = styled.div`
   margin-top: 40px;
 `;
 
+const LoadMore = styled.div`
+  margin-top: 20px;
+  text-align: center;
+`;
+
 export function SolutionList() {
-  const { isLoaded, cursor, items } = getSolutionsTabState.useState();
+  const { load } = useActions(SolutionsTabActions);
+  const {
+    isLoaded,
+    cursor,
+    items,
+    isLoading,
+  } = getSolutionsTabState.useState();
   const user = useUser();
-  const { show, remove } = useActions(SolutionActions);
+  const { show } = useActions(SolutionActions);
   const { voteSolution } = useActions(GlobalSolutionsActions);
   const solutions = useSolutions(items);
   if (!isLoaded) {
@@ -178,13 +200,22 @@ export function SolutionList() {
               show('edit', solution);
             }
             if (action === 'delete') {
-              remove();
+              // remove();
+              // TODO
             }
           }}
           voteSolution={voteSolution}
         />
       ))}
-      {cursor && <VoidLink>Load More</VoidLink>}
+      {cursor && (
+        <LoadMore>
+          {isLoading ? (
+            <VoidLink>Loading...</VoidLink>
+          ) : (
+            <VoidLink onClick={() => load(true)}>Load More</VoidLink>
+          )}
+        </LoadMore>
+      )}
     </div>
   );
 }
