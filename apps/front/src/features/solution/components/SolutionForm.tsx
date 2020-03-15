@@ -36,7 +36,7 @@ const ShareWrapper = styled.div`
 
 export function SolutionForm() {
   const { challenge } = getChallengeState.useState();
-  const { error, isSubmitting, tags } = getSolutionState.useState();
+  const { error, isSubmitting } = getSolutionState.useState();
   const { submit } = useActions(SolutionFormActions);
   const { searchTags } = useActions(SolutionActions);
   const slug = useMappedState([getSolutionFormState], x => x.values.slug || '');
