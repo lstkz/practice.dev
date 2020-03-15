@@ -6,8 +6,8 @@ import { DbSolution } from '../../types';
 import { transactWriteItems, createKey } from '../../common/db';
 import { ignoreTransactionCanceled } from '../../common/helper';
 
-export const updateChallengeTagCount = createContract(
-  'challengeTag.updateChallengeTagCount'
+export const updateSolutionTagCount = createContract(
+  'solutionTag.updateSolutionTagCount'
 )
   .params('eventId', 'challengeId', 'addTags', 'removeTags')
   .schema({
@@ -42,7 +42,7 @@ export const updateChallengeTagCount = createContract(
       updateItems: tags.map(({ tag, add }) => ({
         Key: Converter.marshall(
           createKey({
-            type: 'CHALLENGE_TAG',
+            type: 'GLOBAL_SOLUTION_TAG',
             challengeId: challengeId,
             tag: tag,
           })
@@ -69,15 +69,15 @@ export const updateChallengeTagCount = createContract(
 export const handleSolution = createDynamoStreamBinding<DbSolution>({
   type: 'Solution',
   insert(eventId, item) {
-    return updateChallengeTagCount(eventId, item.challengeId, item.tags, []);
+    return updateSolutionTagCount(eventId, item.challengeId, item.tags, []);
   },
   remove(eventId, item) {
-    return updateChallengeTagCount(eventId, item.challengeId, [], item.tags);
+    return updateSolutionTagCount(eventId, item.challengeId, [], item.tags);
   },
   modify(eventId, newItem, oldItem) {
     const newTags = R.difference(newItem.tags, oldItem.tags);
     const removedTags = R.difference(oldItem.tags, newItem.tags);
-    return updateChallengeTagCount(
+    return updateSolutionTagCount(
       eventId,
       newItem.challengeId,
       newTags,

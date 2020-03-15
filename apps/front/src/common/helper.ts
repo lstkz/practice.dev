@@ -37,7 +37,7 @@ export const handleAppError = () =>
     return Rx.of(GlobalActions.showAppError(getErrorMessage(e)));
   });
 
-export function searchChallengeTags(
+export function searchSolutionTags(
   challengeId: number,
   keyword: string,
   cursor: string | null,
@@ -49,7 +49,7 @@ export function searchChallengeTags(
   ) => void
 ) {
   return api
-    .challengeTags_searchChallengeTags({
+    .solutionTags_searchSolutionTags({
       challengeId,
       cursor,
       keyword,

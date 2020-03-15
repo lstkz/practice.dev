@@ -12,7 +12,7 @@ import {
 } from './solution-form';
 import { api } from 'src/services/api';
 import { getChallengeState } from '../challenge/interface';
-import { getErrorMessage, searchChallengeTags } from 'src/common/helper';
+import { getErrorMessage, searchSolutionTags } from 'src/common/helper';
 import { GlobalSolutionsActions } from '../globalSolutions/interface';
 import { GlobalActions } from '../global/interface';
 import { confirmDeleteSolution } from 'src/common/solution';
@@ -120,7 +120,7 @@ handle
     });
   })
   .on(SolutionActions.searchTags, ({ keyword, resolve, cursor }) => {
-    return searchChallengeTags(
+    return searchSolutionTags(
       getChallengeState().challenge.id,
       keyword,
       cursor,

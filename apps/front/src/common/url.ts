@@ -96,3 +96,64 @@ export function parseQueryString(qs: string | null | undefined) {
       return params;
     }, {} as Record<string, string>);
 }
+
+export function stringifyQueryString(
+  params: Record<string, string | number>,
+  noEncode = false
+) {
+  if (!params) {
+    return '';
+  }
+  const keys = Object.keys(params).filter(key => key.length > 0);
+  if (!keys.length) {
+    return '';
+  }
+  return (
+    '?' +
+    keys
+      .map(key => {
+        if (params[key] == null) {
+          return key;
+        }
+        const value = params[key].toString();
+        return `${key}=${noEncode ? value : encodeURIComponent(value)}`;
+      })
+      .join('&')
+  );
+}
+
+interface ChallengesUrlParams {
+  statuses?: string[];
+  difficulties?: string[];
+  domains?: string[];
+  tags?: string[];
+  sortOrder?: string;
+}
+
+export function createChallengesUrl(params: ChallengesUrlParams) {
+  const query: any = {};
+  if (params.statuses?.length) {
+    query.status = params.statuses.join(',');
+  }
+  if (params.difficulties?.length) {
+    query.difficulty = params.difficulties.join(',');
+  }
+  if (params.domains?.length) {
+    query.domain = params.domains.join(',');
+  }
+  if (params.tags?.length) {
+    query.tags = params.tags.join(',');
+  }
+  if (params.sortOrder && params.sortOrder !== 'oldest') {
+    query.sortOrder = params.sortOrder;
+  }
+  return {
+    pathname: createUrl({ name: 'challenges' }),
+    search: stringifyQueryString(query, true),
+  };
+}
+
+export function createFullChallengesUrl(params: ChallengesUrlParams) {
+  const { pathname, search } = createChallengesUrl(params);
+  return pathname + search;
+}

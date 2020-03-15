@@ -37,6 +37,11 @@ const Wrapper = styled.div`
   margin-top: 20px;
 `;
 
+const NoData = styled.div`
+  text-align: center;
+  margin-top: 40px;
+`;
+
 export function ChallengesView() {
   useChallengesModule();
   const { items, isLoading } = getChallengesState.useState();
@@ -58,6 +63,8 @@ export function ChallengesView() {
                 <ChallengePlaceholder />
                 <ChallengePlaceholder />
               </>
+            ) : items.length === 0 ? (
+              <NoData>No Challenges</NoData>
             ) : (
               items.map(item => (
                 <ChallengeInfo key={item.id} challenge={item} />

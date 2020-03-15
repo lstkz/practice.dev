@@ -35,7 +35,7 @@ export const searchChallenges = createContract('challenge.searchChallenges')
     userId: S.string().optional(),
     criteria: S.object().keys({
       sortBy: S.enum()
-        .literal('created', 'likes')
+        .literal('created', 'likes', 'solved', 'submissions')
         .optional(),
       sortOrder: S.enum()
         .literal('desc', 'asc')
@@ -112,8 +112,8 @@ export const searchChallenges = createContract('challenge.searchChallenges')
       }),
       R.sort((a, b) => {
         const mul = sortOrder === 'desc' ? -1 : 1;
-        if (sortBy === 'likes') {
-          const diff = mul * (a.stats.likes - b.stats.likes);
+        if (sortBy && sortBy !== 'created') {
+          const diff = mul * (a.stats[sortBy] - b.stats[sortBy]);
           if (diff === 0) {
             return a.id - b.id;
           }

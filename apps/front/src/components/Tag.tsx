@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { ChallengeDomain } from 'shared';
 import { Theme } from 'src/common/Theme';
 import { VoidLink } from './VoidLink';
+import { Link } from './Link';
 
 interface TagProps {
   className?: string;
@@ -16,10 +17,18 @@ interface TagProps {
     | 'solution';
   onClick?: () => void;
   children: React.ReactChild;
+  url?: string;
 }
 
 const _Tag = (props: TagProps) => {
-  const { className, children, onClick } = props;
+  const { className, children, onClick, url } = props;
+  if (url) {
+    return (
+      <Link className={className} onClick={onClick} href={url}>
+        {children}
+      </Link>
+    );
+  }
   if (onClick) {
     return (
       <VoidLink className={className} onClick={onClick}>
@@ -42,7 +51,7 @@ export const Tag = styled(_Tag)`
     border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
   ${props =>
-    props.onClick &&
+    (props.onClick || props.url) &&
     css`
       &:hover {
         opacity: 0.8;

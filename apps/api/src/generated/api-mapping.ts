@@ -10,6 +10,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "challenge.getChallengeById"*/ '../contracts/challenge/getChallengeById'
     ).then(x => x['getChallengeByIdRpc']),
+  'challenge.getChallengeTags': () =>
+    import(
+      /* webpackChunkName: "challenge.getChallengeTags"*/ '../contracts/challenge/getChallengeTags'
+    ).then(x => x['getChallengeTagsRpc']),
   'challenge.searchChallenges': () =>
     import(
       /* webpackChunkName: "challenge.searchChallenges"*/ '../contracts/challenge/searchChallenges'
@@ -22,10 +26,6 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "challenge.updateChallenge"*/ '../contracts/challenge/updateChallenge'
     ).then(x => x['updateChallengeRpc']),
-  'challengeTags.searchChallengeTags': () =>
-    import(
-      /* webpackChunkName: "challengeTags.searchChallengeTags"*/ '../contracts/challengeTag/searchChallengeTags'
-    ).then(x => x['searchSolutionsRpc']),
   'solution.createSolution': () =>
     import(
       /* webpackChunkName: "solution.createSolution"*/ '../contracts/solution/createSolution'
@@ -54,6 +54,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "solution.voteSolution"*/ '../contracts/solution/voteSolution'
     ).then(x => x['voteSolutionRpc']),
+  'solutionTags.searchSolutionTags': () =>
+    import(
+      /* webpackChunkName: "solutionTags.searchSolutionTags"*/ '../contracts/solutionTag/searchSolutionTags'
+    ).then(x => x['searchSolutionsRpc']),
   'submission.searchSubmissions': () =>
     import(
       /* webpackChunkName: "submission.searchSubmissions"*/ '../contracts/submission/searchSubmissions'

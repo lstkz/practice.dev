@@ -5,11 +5,12 @@ import { map } from 'rxjs/operators';
 // IMPORTS
 import {
   Challenge,
+  ChallengeTag,
   PagedResult,
   ChallengeSolved,
-  ChallengeTag,
   Solution,
   SearchResult,
+  SolutionTag,
   Submission,
   AuthData,
   User,
@@ -29,8 +30,11 @@ export class APIClient {
   challenge_getChallengeById(id: number): Rx.Observable<Challenge> {
     return this.call('challenge.getChallengeById', id);
   }
+  challenge_getChallengeTags(): Rx.Observable<ChallengeTag[]> {
+    return this.call('challenge.getChallengeTags');
+  }
   challenge_searchChallenges(criteria: {
-    sortBy?: 'created' | 'likes' | undefined;
+    sortBy?: 'created' | 'likes' | 'solved' | 'submissions' | undefined;
     sortOrder?: 'desc' | 'asc' | undefined;
     pageSize?: number | undefined;
     pageNumber?: number | undefined;
@@ -61,14 +65,6 @@ export class APIClient {
     difficulty: 'easy' | 'medium' | 'hard';
   }): Rx.Observable<number> {
     return this.call('challenge.updateChallenge', values);
-  }
-  challengeTags_searchChallengeTags(criteria: {
-    challengeId: number;
-    limit?: number | undefined;
-    keyword?: string | undefined;
-    cursor?: string | null | undefined;
-  }): Rx.Observable<{ items: ChallengeTag[]; cursor: string | null }> {
-    return this.call('challengeTags.searchChallengeTags', criteria);
   }
   solution_createSolution(values: {
     tags: string[];
@@ -120,6 +116,14 @@ export class APIClient {
     like: boolean;
   }): Rx.Observable<number> {
     return this.call('solution.voteSolution', values);
+  }
+  solutionTags_searchSolutionTags(criteria: {
+    challengeId: number;
+    limit?: number | undefined;
+    cursor?: string | null | undefined;
+    keyword?: string | undefined;
+  }): Rx.Observable<{ items: SolutionTag[]; cursor: string | null }> {
+    return this.call('solutionTags.searchSolutionTags', criteria);
   }
   submission_searchSubmissions(criteria: {
     challengeId?: number | undefined;

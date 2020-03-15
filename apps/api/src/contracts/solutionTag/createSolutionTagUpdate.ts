@@ -1,18 +1,18 @@
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { createKey } from '../../common/db';
 
-export interface CreateChallengeTagUpdate {
+export interface CreateSolutionTagUpdate {
   tag: string;
   challengeId: number;
   inc: number;
 }
 
-export function createChallengeTagUpdate(options: CreateChallengeTagUpdate) {
+export function createSolutionTagUpdate(options: CreateSolutionTagUpdate) {
   const tag = options.tag.toLowerCase();
   return {
     Key: Converter.marshall(
       createKey({
-        type: 'CHALLENGE_TAG',
+        type: 'GLOBAL_SOLUTION_TAG',
         challengeId: options.challengeId,
         tag,
       })

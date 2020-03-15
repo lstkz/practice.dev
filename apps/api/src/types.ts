@@ -134,7 +134,7 @@ export interface DbSubmission extends DbKey {
   testUrl: string;
 }
 
-export interface DbChallengeTag extends DbKey {
+export interface DbSolutionTag extends DbKey {
   // tag
   data: string;
   challengeId: number;

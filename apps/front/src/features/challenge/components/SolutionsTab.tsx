@@ -9,7 +9,7 @@ import { FilterSection } from 'src/components/FilterSection';
 import { AsyncSelect, Select } from 'src/components/Select';
 import { AsyncResult } from 'react-select-async-paginate';
 import { getChallengeState } from '../interface';
-import { searchChallengeTags, handleAppError } from 'src/common/helper';
+import { searchSolutionTags, handleAppError } from 'src/common/helper';
 import { api } from 'src/services/api';
 import styled from 'styled-components';
 import { VoidLink } from 'src/components/VoidLink';
@@ -63,7 +63,7 @@ handle
   .epic()
   .on(SolutionActions.created, () => SolutionsTabActions.load(false))
   .on(SolutionsTabActions.searchTags, ({ keyword, resolve, cursor }) => {
-    return searchChallengeTags(
+    return searchSolutionTags(
       getChallengeState().challenge.id,
       keyword,
       cursor,

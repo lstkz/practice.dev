@@ -2,14 +2,19 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Checkbox } from 'src/components/Checkbox';
 import { useUser } from 'src/hooks/useUser';
-import {
-  getChallengesState,
-  ChallengesActions,
-  SolveStatus,
-} from '../interface';
+import { getChallengesState, ChallengesActions } from '../interface';
 import { useActions } from 'typeless';
-import { ChallengeDifficulty, ChallengeDomain } from 'shared';
+import { Select } from 'src/components/Select';
 import { FilterSection } from 'src/components/FilterSection';
+import { SelectOption } from 'src/types';
+import {
+  difficulties,
+  domains,
+  statuses,
+  sortOptions,
+  getFilter,
+} from '../module';
+import { getRouterState } from 'typeless-router';
 
 interface ChallengeFilterProps {
   className?: string;
@@ -22,11 +27,12 @@ function capitalize(str: string) {
 const _ChallengeFilter = (props: ChallengeFilterProps) => {
   const { className } = props;
   const user = useUser();
-  const { filter } = getChallengesState.useState();
+  const { location } = getRouterState.useState();
+  const { tags } = getChallengesState.useState();
   const { updateFilter } = useActions(ChallengesActions);
-  const statuses: SolveStatus[] = ['solved', 'unsolved'];
-  const difficulties: ChallengeDifficulty[] = ['easy', 'medium', 'hard'];
-  const domains: ChallengeDomain[] = ['frontend', 'backend', 'fullstack'];
+  const filter = React.useMemo(() => {
+    return getFilter(location!);
+  }, [location]);
 
   return (
     <div className={className}>
@@ -95,10 +101,42 @@ const _ChallengeFilter = (props: ChallengeFilterProps) => {
           );
         })}
       </FilterSection>
+      <FilterSection label="Tags">
+        <Select
+          id="tags"
+          name="tags"
+          isMulti
+          value={filter.tags}
+          isLoading={tags === null}
+          options={(tags || []).map(item => ({
+            label: `${item.name} (${item.count})`,
+            value: item.name,
+          }))}
+          onChange={options => {
+            updateFilter(
+              'tags',
+              ((options as SelectOption[]) || []).map(x => ({
+                label: x.value,
+                value: x.value,
+              }))
+            );
+          }}
+        />
+      </FilterSection>
+      <FilterSection label="Sort by">
+        <Select
+          id="sortBy"
+          name="sortBy"
+          value={filter.sortOrder}
+          options={sortOptions}
+          onChange={option => updateFilter('sortOrder', option)}
+        />
+      </FilterSection>
     </div>
   );
 };
 
 export const ChallengeFilter = styled(_ChallengeFilter)`
   display: block;
+  width: 100%;
 `;

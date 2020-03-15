@@ -1,13 +1,11 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
-import { DbChallengeTag } from '../../types';
+import { DbSolutionTag } from '../../types';
 import { createKey, queryRaw } from '../../common/db';
-import { mapDbChallengeTagMany } from '../../common/mapping';
+import { mapDbSolutionTagMany } from '../../common/mapping';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 
-export const searchChallengeTags = createContract(
-  'challengeTags.searchSolutions'
-)
+export const searchSolutionTags = createContract('solutionTags.searchSolutions')
   .params('criteria')
   .schema({
     criteria: S.object().keys({
@@ -23,12 +21,12 @@ export const searchChallengeTags = createContract(
   })
   .fn(async criteria => {
     const { sk } = createKey({
-      type: 'CHALLENGE_TAG',
+      type: 'GLOBAL_SOLUTION_TAG',
       challengeId: criteria.challengeId,
       tag: '',
     });
 
-    const { items, cursor } = await queryRaw<DbChallengeTag>(
+    const { items, cursor } = await queryRaw<DbSolutionTag>(
       'sk-data-index',
       criteria.keyword ? 'sk = :sk AND begins_with(#data, :name)' : 'sk = :sk',
       Converter.marshall({
@@ -54,13 +52,13 @@ export const searchChallengeTags = createContract(
     );
 
     return {
-      items: mapDbChallengeTagMany(items),
+      items: mapDbSolutionTagMany(items),
       cursor,
     };
   });
 
 export const searchSolutionsRpc = createRpcBinding({
   public: true,
-  signature: 'challengeTags.searchChallengeTags',
-  handler: searchChallengeTags,
+  signature: 'solutionTags.searchSolutionTags',
+  handler: searchSolutionTags,
 });

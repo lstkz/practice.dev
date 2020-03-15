@@ -1,7 +1,7 @@
 import { _createSolution } from '../../src/contracts/solution/_createSolution';
 import { resetDb } from '../helper';
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
-import { searchChallengeTags } from '../../src/contracts/challengeTag/searchChallengeTags';
+import { searchSolutionTags } from '../../src/contracts/solutionTag/searchSolutionTags';
 import { removeSolution } from '../../src/contracts/solution/removeSolution';
 import { updateSolution } from '../../src/contracts/solution/updateSolution';
 import { MockStream } from '../MockStream';
@@ -53,7 +53,7 @@ beforeEach(async () => {
 });
 
 it('return tags for challenge 1', async () => {
-  const { items } = await searchChallengeTags({
+  const { items } = await searchSolutionTags({
     challengeId: 1,
   });
   expect(items).toMatchInlineSnapshot(`
@@ -79,7 +79,7 @@ it('return tags for challenge 1', async () => {
 });
 
 it('return tags for challenge 1 with pagination', async () => {
-  const { items, cursor } = await searchChallengeTags({
+  const { items, cursor } = await searchSolutionTags({
     challengeId: 1,
     limit: 2,
   });
@@ -95,7 +95,7 @@ it('return tags for challenge 1 with pagination', async () => {
       },
     ]
   `);
-  const { items: items2 } = await searchChallengeTags({
+  const { items: items2 } = await searchSolutionTags({
     challengeId: 1,
     cursor,
     limit: 2,
@@ -115,7 +115,7 @@ it('return tags for challenge 1 with pagination', async () => {
 });
 
 it('return tags for challenge 1 with "a" keyword', async () => {
-  const { items } = await searchChallengeTags({
+  const { items } = await searchSolutionTags({
     challengeId: 1,
     keyword: 'a',
   });
@@ -134,7 +134,7 @@ it('return tags for challenge 1 with "a" keyword', async () => {
 });
 
 it('return tags for challenge 1 with "ab" keyword', async () => {
-  const { items } = await searchChallengeTags({
+  const { items } = await searchSolutionTags({
     challengeId: 1,
     keyword: 'ab',
   });
@@ -149,7 +149,7 @@ it('return tags for challenge 1 with "ab" keyword', async () => {
 });
 
 it('return tags for challenge 2', async () => {
-  const { items } = await searchChallengeTags({
+  const { items } = await searchSolutionTags({
     challengeId: 2,
   });
   expect(items).toMatchInlineSnapshot(`
@@ -165,7 +165,7 @@ it('return tags for challenge 2', async () => {
 it('remove solution', async () => {
   await removeSolution(userId, '1');
   await mockStream.process();
-  const { items } = await searchChallengeTags({
+  const { items } = await searchSolutionTags({
     challengeId: 1,
   });
   expect(items).toMatchInlineSnapshot(`
@@ -191,7 +191,7 @@ it('update solution', async () => {
     tags: ['a', 'e', 'f'],
   });
   await mockStream.process();
-  const { items } = await searchChallengeTags({
+  const { items } = await searchSolutionTags({
     challengeId: 1,
   });
   expect(items).toMatchInlineSnapshot(`

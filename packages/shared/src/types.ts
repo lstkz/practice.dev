@@ -78,6 +78,11 @@ export interface Submission {
   createdAt: string;
 }
 
+export interface SolutionTag {
+  name: string;
+  count: number;
+}
+
 export interface ChallengeTag {
   name: string;
   count: number;

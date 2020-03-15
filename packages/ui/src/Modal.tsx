@@ -140,7 +140,6 @@ export function Modal(props: ModalProps) {
     };
     window.addEventListener('keyup', onKeyPress);
     return () => {
-      console.log({ alreadyOpen });
       if (!alreadyOpen) {
         document.body.classList.remove('modal-open');
       }

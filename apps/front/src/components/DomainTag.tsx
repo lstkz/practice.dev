@@ -5,13 +5,14 @@ import { Tag } from './Tag';
 interface DomainTagProps {
   domain: ChallengeDomain;
   onClick?: () => void;
+  url?: string;
 }
 
 export function DomainTag(props: DomainTagProps) {
-  const { domain, onClick } = props;
+  const { domain, onClick, url } = props;
 
   return (
-    <Tag type={domain} onClick={onClick}>
+    <Tag type={domain} onClick={onClick} url={url}>
       {domain}
     </Tag>
   );

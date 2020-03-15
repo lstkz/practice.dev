@@ -9,11 +9,11 @@ import { FrontendIcon } from 'src/icons/FrontendIcon';
 import { UserIcon } from 'src/icons/UserIcon';
 import { FileIcon } from 'src/icons/FileIcon';
 import { createUrl } from 'src/common/url';
-import { DomainTag } from 'src/components/DomainTag';
 import { Tag } from 'src/components/Tag';
 import { ChallengeCard } from './ChallengeCard';
 import { BackendIcon } from 'src/icons/BackendIcon';
 import { SolvedTag } from 'src/components/SolvedTag';
+import { ChallengeTags } from 'src/components/ChallengeTags';
 
 const Title = styled.h3`
   display: flex;
@@ -108,13 +108,7 @@ export function ChallengeInfo(props: ChallengeInfoProps) {
         </Title>
         <Desc>{challenge.description}</Desc>
         <Tags>
-          <DomainTag domain={challenge.domain} />
-          <Tag type="difficulty">{challenge.difficulty}</Tag>
-          {challenge.tags.map((tag, i) => (
-            <Tag key={i} type="custom">
-              {tag}
-            </Tag>
-          ))}
+          <ChallengeTags challenge={challenge} />
         </Tags>
       </Col2>
       <Col3>
@@ -126,7 +120,10 @@ export function ChallengeInfo(props: ChallengeInfoProps) {
           <UserIcon /> {challenge.stats.solved}
         </IconCounter>
         <ReactTooltip place="top" type="dark" effect="solid" />
-        <Button type="primary" href={`/challenges/${challenge.id}`}>
+        <Button
+          type="primary"
+          href={createUrl({ name: 'challenge', id: challenge.id })}
+        >
           SOLVE
         </Button>
       </Col3>

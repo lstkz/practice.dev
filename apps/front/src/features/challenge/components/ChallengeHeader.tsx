@@ -4,11 +4,11 @@ import { FrontendIcon } from 'src/icons/FrontendIcon';
 import { Theme } from 'src/common/Theme';
 import { Tag } from 'src/components/Tag';
 import { getChallengeState } from '../interface';
-import { DomainTag } from 'src/components/DomainTag';
 import { Button } from 'ui';
 import { useActions } from 'typeless';
 import { SubmitActions, getSubmitState } from 'src/features/submit/interface';
 import { SolutionActions } from 'src/features/solution/interface';
+import { ChallengeTags } from 'src/components/ChallengeTags';
 
 interface ChallengeHeaderProps {
   className?: string;
@@ -67,13 +67,7 @@ const _ChallengeHeader = (props: ChallengeHeaderProps) => {
       <Col2>
         <Title>{challenge.title}</Title>
         <Tags>
-          <DomainTag domain={challenge.domain} />
-          <Tag type="difficulty">{challenge.difficulty}</Tag>
-          {challenge.tags.map((tag, i) => (
-            <Tag key={i} type="custom">
-              {tag}
-            </Tag>
-          ))}
+          <ChallengeTags challenge={challenge} />
         </Tags>
       </Col2>
       <Col3 double={challenge.isSolved}>

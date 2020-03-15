@@ -1,7 +1,7 @@
-import { RouteConfig, Challenge, PagedResult } from 'src/types';
+import { RouteConfig, Challenge, PagedResult, SelectOption } from 'src/types';
 import { createModule } from 'typeless';
 import { ChallengesSymbol } from './symbol';
-import { ChallengeDifficulty, ChallengeDomain } from 'shared';
+import { ChallengeDifficulty, ChallengeDomain, ChallengeTag } from 'shared';
 
 // --- Actions ---
 export const [handle, ChallengesActions, getChallengesState] = createModule(
@@ -13,9 +13,10 @@ export const [handle, ChallengesActions, getChallengesState] = createModule(
     $unmounted: null,
     load: null,
     loaded: (result: PagedResult<Challenge>) => ({ payload: { result } }),
-    updateFilter: (name: keyof ChallengesState['filter'], value: any) => ({
+    updateFilter: (name: keyof ChallengesFilter, value: any) => ({
       payload: { name, value },
     }),
+    tagsLoaded: (tags: ChallengeTag[]) => ({ payload: { tags } }),
   })
   .withState<ChallengesState>();
 
@@ -35,6 +36,21 @@ export const routeConfig: RouteConfig = {
 };
 
 // --- Types ---
+
+export interface ChallengesFilter {
+  statuses: {
+    [x in SolveStatus]?: SolveStatus;
+  };
+  difficulties: {
+    [x in ChallengeDifficulty]?: ChallengeDifficulty;
+  };
+  domains: {
+    [x in ChallengeDomain]?: ChallengeDomain;
+  };
+  tags: SelectOption<string>[];
+  sortOrder: SelectOption<ChallengesSortOrder>;
+}
+
 export interface ChallengesState {
   isLoading: boolean;
   total: number;
@@ -42,17 +58,13 @@ export interface ChallengesState {
   pageNumber: number;
   totalPages: number;
   items: Challenge[];
-  filter: {
-    statuses: {
-      [x in SolveStatus]?: SolveStatus;
-    };
-    difficulties: {
-      [x in ChallengeDifficulty]?: ChallengeDifficulty;
-    };
-    domains: {
-      [x in ChallengeDomain]?: ChallengeDomain;
-    };
-  };
+  tags: ChallengeTag[] | null;
 }
+
+export type ChallengesSortOrder =
+  | 'submissions'
+  | 'oldest'
+  | 'newest'
+  | 'solved';
 
 export type SolveStatus = 'solved' | 'unsolved';

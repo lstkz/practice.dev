@@ -1,6 +1,6 @@
 import { createModule } from 'typeless';
 import { SolutionSymbol } from './symbol';
-import { Solution, ChallengeTag } from 'shared';
+import { Solution, SolutionTag } from 'shared';
 import { AsyncResult } from 'react-select-async-paginate';
 
 export const [handle, SolutionActions, getSolutionState] = createModule(
@@ -52,7 +52,7 @@ export interface SolutionState {
   mode: Mode;
   tags: {
     cursor: string | null;
-    items: ChallengeTag[];
+    items: SolutionTag[];
     isLoaded: boolean;
     keyword: string;
   };

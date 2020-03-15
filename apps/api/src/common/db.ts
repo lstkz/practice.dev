@@ -111,7 +111,7 @@ type CreateKeyOptions =
       solutionId: string;
     }
   | {
-      type: 'CHALLENGE_TAG';
+      type: 'GLOBAL_SOLUTION_TAG';
       tag: string;
       challengeId: number;
     }
@@ -267,10 +267,10 @@ export function createKey(
         sk: `SOLUTION_VOTE:${options.userId}`,
       };
     }
-    case 'CHALLENGE_TAG': {
+    case 'GLOBAL_SOLUTION_TAG': {
       return {
-        pk: `CHALLENGE_TAG:${options.challengeId}:${options.tag.toLowerCase()}`,
-        sk: `CHALLENGE_TAG:${options.challengeId}`,
+        pk: `SOLUTION_TAG:${options.challengeId}:${options.tag.toLowerCase()}`,
+        sk: `SOLUTION_TAG:${options.challengeId}`,
       };
     }
     case 'EVENT': {
