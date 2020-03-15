@@ -13,6 +13,7 @@ import {
   getGlobalSolutionsState,
 } from '../globalSolutions/interface';
 import { SolutionActions, getSolutionState } from '../solution/interface';
+import { SolutionsTabActions } from './components/SolutionsTab';
 
 const BUNDLE_ID = 'CHALLENGE_BUNDLE_SCRIPT';
 
@@ -126,6 +127,12 @@ handle
     } else {
       return Rx.empty();
     }
+  })
+  .on(ChallengeActions.showSolutionsWithTag, ({ tag }) => {
+    return [
+      SolutionsTabActions.showByTag(tag),
+      ChallengeActions.changeTab('solutions'),
+    ];
   });
 
 // --- Reducer ---

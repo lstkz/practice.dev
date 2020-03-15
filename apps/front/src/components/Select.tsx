@@ -7,6 +7,9 @@ import ReactSelectCreatable, {
 import { Props } from 'react-select/src/Select';
 import { Theme } from 'ui';
 import { createGlobalStyle } from 'styled-components';
+import AsyncPaginate, {
+  Props as AsyncPaginateProps,
+} from 'react-select-async-paginate';
 
 export interface SelectProps<OptionType> extends Props<OptionType> {}
 export interface CreatableSelectProps<OptionType>
@@ -68,6 +71,21 @@ export function CreatableSelect<T>(props: CreatableSelectProps<T>) {
     <>
       <SelectStyles />
       <ReactSelectCreatable<T>
+        {...props}
+        placeholder={props.placeholder || 'Select...'}
+        theme={themeProp}
+        classNamePrefix="react-select"
+      />
+    </>
+  );
+}
+
+export function AsyncSelect<T>(props: AsyncPaginateProps<T>) {
+  return (
+    <>
+      <SelectStyles />
+      <AsyncPaginate<T>
+        SelectComponent={Select as any}
         {...props}
         placeholder={props.placeholder || 'Select...'}
         theme={themeProp}

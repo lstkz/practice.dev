@@ -1,8 +1,7 @@
 import { DbSubmission } from '../../types';
 import { createKey, transactWriteItems } from '../../common/db';
-import { createStatsUpdate } from '../challenge/createStatsUpdate';
 
-export async function _putSubmission(submission: DbSubmission, isNew: boolean) {
+export async function _putSubmission(submission: DbSubmission) {
   const items: DbSubmission[] = [
     submission,
     {
@@ -34,8 +33,5 @@ export async function _putSubmission(submission: DbSubmission, isNew: boolean) {
 
   await transactWriteItems({
     putItems: items,
-    updateItems: isNew
-      ? [createStatsUpdate(submission.challengeId, 'submissions', 1)]
-      : [],
   });
 }

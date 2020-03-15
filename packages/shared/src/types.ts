@@ -77,6 +77,12 @@ export interface Submission {
   status: SubmissionStatus;
   createdAt: string;
 }
+
+export interface ChallengeTag {
+  name: string;
+  count: number;
+}
+
 export interface TesterMessage {
   id: string;
   challengeId: number;

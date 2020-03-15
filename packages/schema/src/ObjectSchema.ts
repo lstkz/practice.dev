@@ -112,4 +112,8 @@ export class ObjectSchema<
       TKeys & { [key: string]: any }
     >;
   }
+
+  as<T>() {
+    return (this as any) as ObjectSchema<TReq, TNull, T>;
+  }
 }

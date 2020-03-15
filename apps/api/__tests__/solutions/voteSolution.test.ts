@@ -2,9 +2,13 @@ import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { resetDb } from '../helper';
 import { _createSolution } from '../../src/contracts/solution/_createSolution';
 import { voteSolution } from '../../src/contracts/solution/voteSolution';
+import { MockStream } from '../MockStream';
+
+const mockStream = new MockStream();
 
 beforeEach(async () => {
   await resetDb();
+  await mockStream.init();
   await Promise.all([registerSampleUsers(), addSampleChallenges()]);
 
   await _createSolution({
@@ -18,6 +22,7 @@ beforeEach(async () => {
     userId: '1',
     challengeId: 1,
   });
+  await mockStream.process();
 });
 
 it('throw error if solution not found', async () => {

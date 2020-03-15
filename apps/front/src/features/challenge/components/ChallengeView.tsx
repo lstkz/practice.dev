@@ -25,6 +25,7 @@ import { MyRecentSubmissions } from './MyRecentSubmissions';
 import { SolutionModal } from 'src/features/solution/components/SolutionModal';
 import { FavoriteSolutions } from './FavoriteSolutions';
 import { SidebarStack } from './SidebarStack';
+import { useSolutionsModule, SolutionsTab } from './SolutionsTab';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
@@ -35,18 +36,20 @@ const Wrapper = styled.div`
 
 export function ChallengeView() {
   useChallengeModule();
+  useSolutionsModule();
+
   const {
     challenge,
     isLoading,
     component: Component,
     tab,
   } = getChallengeState.useState();
-  const { changeTab } = useActions(ChallengeActions);
+  const { changeTab, showSolutionsWithTag } = useActions(ChallengeActions);
 
   return (
     <Dashboard>
       <SubmitModal />
-      <SolutionModal />
+      <SolutionModal onTagClick={showSolutionsWithTag} />
       <ConfirmEmailWarning />
       <Container>
         <Breadcrumb
@@ -83,7 +86,7 @@ export function ChallengeView() {
                   />
                 </Tab>
                 <Tab title="Solutions" name="solutions">
-                  Solutions content
+                  <SolutionsTab />
                 </Tab>
                 <Tab title="Discussion" name="discussion">
                   Discussion content

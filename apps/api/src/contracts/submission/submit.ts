@@ -40,18 +40,15 @@ export const submit = createContract('submission.submit')
 
     const id = uuid();
 
-    await _putSubmission(
-      {
-        ...createKey({ type: 'SUBMISSION', submissionId: id }),
-        submissionId: id,
-        challengeId: values.challengeId,
-        userId,
-        status: SubmissionStatus.Queued,
-        data_n: Date.now(),
-        testUrl: values.testUrl,
-      },
-      true
-    );
+    await _putSubmission({
+      ...createKey({ type: 'SUBMISSION', submissionId: id }),
+      submissionId: id,
+      challengeId: values.challengeId,
+      userId,
+      status: SubmissionStatus.Queued,
+      data_n: Date.now(),
+      testUrl: values.testUrl,
+    });
 
     const testerMessage: TesterMessage = {
       id,

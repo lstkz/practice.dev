@@ -1,6 +1,5 @@
 import { createContract } from '../../lib';
 import { S } from 'schema';
-import { createStatsUpdate } from './createStatsUpdate';
 import { transactWriteItems, createKey } from '../../common/db';
 import { DbChallengeSolved } from '../../types';
 
@@ -33,7 +32,6 @@ export const markSolved = createContract('challenge.markSolved')
           item: dbSolved,
         },
       ],
-      updateItems: [createStatsUpdate(values.challengeId, 'solved', 1)],
     }).catch(e => {
       // ignore if already solved
       if (e.code === 'TransactionCanceledException') {

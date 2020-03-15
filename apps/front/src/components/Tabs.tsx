@@ -15,6 +15,7 @@ interface TabsProps {
 interface TabProps {
   title: string;
   name?: string;
+  className?: string;
   children: React.ReactNode;
   active?: boolean;
 }
@@ -65,7 +66,9 @@ export const Tabs = styled(_Tabs)`
   }
 `;
 
-export const Tab = styled.div<TabProps>`
+export const Tab = styled((props: TabProps) => (
+  <div className={props.className}>{props.children}</div>
+))`
   background: white;
 `;
 

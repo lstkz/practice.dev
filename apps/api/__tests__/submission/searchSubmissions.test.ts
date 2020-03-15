@@ -10,54 +10,42 @@ beforeEach(async () => {
   await Promise.all([registerSampleUsers(), addSampleChallenges()]);
 
   await Promise.all([
-    _putSubmission(
-      {
-        ...createKey({ type: 'SUBMISSION', submissionId: 's1' }),
-        submissionId: 's1',
-        userId: '1',
-        data_n: 1,
-        challengeId: 1,
-        testUrl: 'https://example.org',
-        status: SubmissionStatus.Queued,
-      },
-      true
-    ),
-    _putSubmission(
-      {
-        ...createKey({ type: 'SUBMISSION', submissionId: 's2' }),
-        submissionId: 's2',
-        userId: '1',
-        data_n: 3,
-        challengeId: 1,
-        testUrl: 'https://example.org',
-        status: SubmissionStatus.Queued,
-      },
-      true
-    ),
-    _putSubmission(
-      {
-        ...createKey({ type: 'SUBMISSION', submissionId: 's3' }),
-        submissionId: 's3',
-        userId: '2',
-        data_n: 2,
-        challengeId: 2,
-        testUrl: 'https://example.org',
-        status: SubmissionStatus.Queued,
-      },
-      true
-    ),
-    _putSubmission(
-      {
-        ...createKey({ type: 'SUBMISSION', submissionId: 's3' }),
-        submissionId: 's4',
-        userId: '1',
-        data_n: 4,
-        challengeId: 2,
-        testUrl: 'https://example.org',
-        status: SubmissionStatus.Queued,
-      },
-      true
-    ),
+    _putSubmission({
+      ...createKey({ type: 'SUBMISSION', submissionId: 's1' }),
+      submissionId: 's1',
+      userId: '1',
+      data_n: 1,
+      challengeId: 1,
+      testUrl: 'https://example.org',
+      status: SubmissionStatus.Queued,
+    }),
+    _putSubmission({
+      ...createKey({ type: 'SUBMISSION', submissionId: 's2' }),
+      submissionId: 's2',
+      userId: '1',
+      data_n: 3,
+      challengeId: 1,
+      testUrl: 'https://example.org',
+      status: SubmissionStatus.Queued,
+    }),
+    _putSubmission({
+      ...createKey({ type: 'SUBMISSION', submissionId: 's3' }),
+      submissionId: 's3',
+      userId: '2',
+      data_n: 2,
+      challengeId: 2,
+      testUrl: 'https://example.org',
+      status: SubmissionStatus.Queued,
+    }),
+    _putSubmission({
+      ...createKey({ type: 'SUBMISSION', submissionId: 's3' }),
+      submissionId: 's4',
+      userId: '1',
+      data_n: 4,
+      challengeId: 2,
+      testUrl: 'https://example.org',
+      status: SubmissionStatus.Queued,
+    }),
   ]);
 });
 

@@ -6,6 +6,11 @@ import {
   CreatableSelectProps,
   CreatableSelect,
 } from './Select';
+
+import AsyncPaginate, {
+  Props as AsyncPaginateProps,
+} from 'react-select-async-paginate';
+
 import styled from 'styled-components';
 import { ErrorTooltip } from './ErrorTooltip';
 import { FormLabel } from './FormLabel';
@@ -27,6 +32,12 @@ interface FormSelectProps<OptionType>
 
 interface CreatableFormSelectProps<OptionType>
   extends CreatableSelectProps<OptionType>,
+    BaseFormSelectProps {
+  name: string;
+}
+
+interface AsyncCreatableFormSelectProps<OptionType>
+  extends AsyncPaginateProps<OptionType>,
     BaseFormSelectProps {
   name: string;
 }
@@ -74,6 +85,7 @@ function BaseSelect(
     }
     return value ? value.label : null;
   }
+  console.log(rest);
 
   return (
     <ErrorTooltip
@@ -112,4 +124,14 @@ export function CreatableFormSelect<OptionType>(
   props: CreatableFormSelectProps<OptionType>
 ) {
   return <BaseSelect {...props} Component={CreatableSelect} />;
+}
+
+function CreatableAsyncPaginate(props: any) {
+  return <AsyncPaginate SelectComponent={CreatableSelect} {...props} />;
+}
+
+export function AsyncCreatableFormSelect<OptionType>(
+  props: AsyncCreatableFormSelectProps<OptionType>
+) {
+  return <BaseSelect {...props} Component={CreatableAsyncPaginate} />;
 }

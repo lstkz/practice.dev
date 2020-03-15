@@ -5,11 +5,11 @@ import {
   getSolutionFormState,
 } from '../solution-form';
 import { getChallengeState } from 'src/features/challenge/interface';
-import { getSolutionState } from '../interface';
+import { getSolutionState, SolutionActions } from '../interface';
 import { useActions, useMappedState } from 'typeless';
 import { Alert } from 'src/components/Alert';
 import { FormInput } from 'src/components/FormInput';
-import { CreatableFormSelect } from 'src/components/FormSelect';
+import { AsyncCreatableFormSelect } from 'src/components/FormSelect';
 import { Button } from 'ui';
 import styled from 'styled-components';
 
@@ -38,6 +38,7 @@ export function SolutionForm() {
   const { challenge } = getChallengeState.useState();
   const { error, isSubmitting } = getSolutionState.useState();
   const { submit } = useActions(SolutionFormActions);
+  const { searchTags } = useActions(SolutionActions);
   const slug = useMappedState([getSolutionFormState], x => x.values.slug || '');
 
   const shareUrl = slug
@@ -79,12 +80,18 @@ export function SolutionForm() {
             </ShareWrapper>
           }
         />
-        <CreatableFormSelect
+        <AsyncCreatableFormSelect
           id="tags"
           name="tags"
           label="Tags"
           isMulti
           description="Type and press Enter to create a new tag."
+          defaultOptions
+          loadOptions={(inputValue, _, additional) => {
+            return new Promise(resolve => {
+              searchTags(inputValue, additional, resolve);
+            });
+          }}
         />
         <FormInput
           multiline

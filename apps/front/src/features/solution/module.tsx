@@ -12,10 +12,10 @@ import {
 } from './solution-form';
 import { api } from 'src/services/api';
 import { getChallengeState } from '../challenge/interface';
-import { getErrorMessage } from 'src/common/helper';
+import { getErrorMessage, searchChallengeTags } from 'src/common/helper';
 import { GlobalSolutionsActions } from '../globalSolutions/interface';
 import { GlobalActions } from '../global/interface';
-import { ConfirmModalActions } from '../confirmModal/interface';
+import { confirmDeleteSolution } from 'src/common/solution';
 
 handle
   .epic()
@@ -45,6 +45,7 @@ handle
         Rx.mergeMap(solution => {
           return [
             GlobalSolutionsActions.addSolutions([solution]),
+            SolutionActions.created(),
             SolutionActions.show('view', solution),
           ];
         }),
@@ -112,45 +113,20 @@ handle
   )
   .on(SolutionActions.remove, (_, { action$ }) => {
     const solutionId = getSolutionState().solutionId!;
-    return Rx.concatObs(
-      Rx.of(
-        ConfirmModalActions.show(
-          'Confirm',
-          'Are you sure to delete this solution?',
-          [
-            { text: 'Delete', type: 'danger', value: 'delete' as DeleteType },
-            { text: 'Cancel', type: 'secondary', value: 'close' as DeleteType },
-          ]
-        )
-      ),
-      action$.pipe(
-        Rx.waitForType(ConfirmModalActions.onResult),
-        Rx.mergeMap(({ payload }) => {
-          const result = payload.result as DeleteType;
-          if (result !== 'delete') {
-            return Rx.of(ConfirmModalActions.close());
-          }
-
-          return Rx.concatObs(
-            Rx.of(ConfirmModalActions.setIsLoading('delete' as DeleteType)),
-            api.solution_removeSolution(solutionId).pipe(
-              Rx.mergeMap(() => [
-                ConfirmModalActions.close(),
-                SolutionActions.close(),
-                GlobalSolutionsActions.removeSolution(solutionId),
-              ]),
-              Rx.catchLog(e =>
-                Rx.of(ConfirmModalActions.setError(getErrorMessage(e)))
-              )
-            ),
-            Rx.of(ConfirmModalActions.setIsLoading(null))
-          );
-        })
-      )
+    return confirmDeleteSolution({
+      solutionId,
+      action$,
+      getOnCloseAction: () => SolutionActions.close(),
+    });
+  })
+  .on(SolutionActions.searchTags, ({ keyword, resolve, cursor }) => {
+    return searchChallengeTags(
+      getChallengeState().challenge.id,
+      keyword,
+      cursor,
+      resolve
     );
   });
-
-type DeleteType = 'delete' | 'close';
 
 // --- Reducer ---
 const initialState: SolutionState = {
@@ -160,6 +136,12 @@ const initialState: SolutionState = {
   solutionId: null,
   mode: 'edit',
   isLoading: false,
+  tags: {
+    cursor: null,
+    items: [],
+    isLoaded: false,
+    keyword: '',
+  },
 };
 
 handle

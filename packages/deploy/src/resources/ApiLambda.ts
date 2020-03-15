@@ -3,12 +3,14 @@ import lambda = require('@aws-cdk/aws-lambda');
 import iam = require('@aws-cdk/aws-iam');
 import Path from 'path';
 import subs = require('@aws-cdk/aws-sns-subscriptions');
+import { DynamoEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { MainTable } from './MainTable';
 import { getLambdaSharedEnv } from '../getLambdaSharedEnv';
 import { TesterTopic } from './TesterTopic';
 import { MainTopic } from './MainTopic';
 import { MainBucket } from './MainBucket';
 import { appsDir } from '../helper';
+import { StartingPosition } from '@aws-cdk/aws-lambda';
 
 interface ApiLambdaDeps {
   mainBucket: MainBucket;
@@ -44,6 +46,13 @@ export class ApiLambda {
     deps.mainTopic
       .getSNSTopic()
       .addSubscription(new subs.LambdaSubscription(this.apiLambda));
+
+    this.apiLambda.addEventSource(
+      new DynamoEventSource(deps.mainTable.getDynamoTable(), {
+        batchSize: 100,
+        startingPosition: StartingPosition.TRIM_HORIZON,
+      })
+    );
 
     new cdk.CfnOutput(scope, 'apiLambdaArn', {
       value: this.apiLambda.functionArn,

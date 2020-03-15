@@ -1,6 +1,7 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Theme } from 'ui';
+import { Link } from 'src/components/Link';
 import { VoidLink } from './VoidLink';
 import { Solution } from 'shared';
 import { SolutionLike } from './SolutionLike';
@@ -8,13 +9,18 @@ import { Tag } from './Tag';
 import { DotsIcon } from 'src/icons/DotsIcon';
 import { MenuDropdown } from './MenuDropdown';
 import { Dropdown, MenuItem, MenuSeparator } from './DropdownPopup';
+import { createUrl } from 'src/common/url';
+import * as DateFns from 'date-fns';
 
 interface SolutionDetailsProps {
   className?: string;
+  link?: boolean;
   onMenu: (action: 'edit' | 'delete') => void;
   voteSolution(id: string, like: boolean): any;
   solution: Solution;
   canEdit: boolean;
+  borderBottom?: boolean;
+  onTagClick?(tag: string): void;
 }
 
 const Left = styled.div`
@@ -47,7 +53,9 @@ const Url = styled.a`
   display: block;
 `;
 
-const Desc = styled.div``;
+const Desc = styled.div`
+  white-space: pre-line;
+`;
 
 const Tags = styled.div`
   margin-top: 12px;
@@ -78,12 +86,37 @@ const Menu = styled.div`
   right: -10px;
 `;
 
+const DateWrapper = styled.div`
+  color: ${Theme.textLight};
+`;
+
 const _SolutionDetails = (props: SolutionDetailsProps) => {
-  const { className, solution, voteSolution, canEdit, onMenu } = props;
+  const {
+    className,
+    solution,
+    voteSolution,
+    canEdit,
+    onMenu,
+    link,
+    onTagClick,
+  } = props;
   return (
     <div className={className}>
       <Left>
-        <Title>{solution.title}</Title>
+        {link ? (
+          <Title
+            as={Link}
+            href={createUrl({
+              name: 'challenge',
+              id: solution.challengeId,
+              solutionSlug: solution.slug,
+            })}
+          >
+            {solution.title}
+          </Title>
+        ) : (
+          <Title>{solution.title}</Title>
+        )}
         <By>
           By <VoidLink>@{solution.user.username}</VoidLink>
         </By>
@@ -93,7 +126,11 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
         <Desc>{solution.description}</Desc>
         <Tags>
           {solution.tags.map(tag => (
-            <Tag key={tag} type="difficulty">
+            <Tag
+              key={tag}
+              type="difficulty"
+              onClick={onTagClick ? () => onTagClick(tag) : undefined}
+            >
               {tag}
             </Tag>
           ))}
@@ -101,6 +138,9 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
       </Left>
       <Right>
         <SolutionLike solution={solution} voteSolution={voteSolution} />
+        <DateWrapper>
+          {DateFns.format(new Date(solution.createdAt), 'dd.MM.yyyy')}
+        </DateWrapper>
         {canEdit && (
           <Menu>
             <MenuDropdown
@@ -129,4 +169,15 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
 
 export const SolutionDetails = styled(_SolutionDetails)`
   display: flex;
+
+  ${props =>
+    props.borderBottom &&
+    css`
+      padding-bottom: 35px;
+      border-bottom: 1px solid ${Theme.bgLightGray8};
+      margin-top: 35px;
+      &:first-child {
+        margin-top: 0;
+      }
+    `}
 `;

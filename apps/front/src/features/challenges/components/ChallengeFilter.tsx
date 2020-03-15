@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'src/common/Theme';
 import { Checkbox } from 'src/components/Checkbox';
 import { useUser } from 'src/hooks/useUser';
 import {
@@ -10,24 +9,11 @@ import {
 } from '../interface';
 import { useActions } from 'typeless';
 import { ChallengeDifficulty, ChallengeDomain } from 'shared';
+import { FilterSection } from 'src/components/FilterSection';
 
 interface ChallengeFilterProps {
   className?: string;
 }
-
-const Label = styled.div`
-  color: ${Theme.textDark};
-  font-weight: 500;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-`;
-
-const Section = styled.div`
-  margin-bottom: 30px;
-  ${Checkbox} + ${Checkbox} {
-    margin-top: 10px;
-  }
-`;
 
 function capitalize(str: string) {
   return str[0].toUpperCase() + str.substr(1);
@@ -45,8 +31,7 @@ const _ChallengeFilter = (props: ChallengeFilterProps) => {
   return (
     <div className={className}>
       {user && (
-        <Section>
-          <Label>Challenges</Label>
+        <FilterSection label="Challenges">
           {statuses.map(item => {
             return (
               <Checkbox
@@ -66,10 +51,9 @@ const _ChallengeFilter = (props: ChallengeFilterProps) => {
               </Checkbox>
             );
           })}
-        </Section>
+        </FilterSection>
       )}
-      <Section>
-        <Label>Difficulty</Label>
+      <FilterSection label="Difficulty">
         {difficulties.map(item => {
           return (
             <Checkbox
@@ -89,9 +73,8 @@ const _ChallengeFilter = (props: ChallengeFilterProps) => {
             </Checkbox>
           );
         })}
-      </Section>
-      <Section>
-        <Label>Domain</Label>
+      </FilterSection>
+      <FilterSection label="Domain">
         {domains.map(item => {
           return (
             <Checkbox
@@ -111,7 +94,7 @@ const _ChallengeFilter = (props: ChallengeFilterProps) => {
             </Checkbox>
           );
         })}
-      </Section>
+      </FilterSection>
     </div>
   );
 };

@@ -133,7 +133,7 @@ function getEncHash(data: string) {
 
 export function encLastKey(key: DynamoDB.Key | undefined) {
   if (!key) {
-    return undefined;
+    return null;
   }
   const data = Buffer.from(JSON.stringify(key)).toString('base64');
   return data + '.' + getEncHash(data);
@@ -141,7 +141,7 @@ export function encLastKey(key: DynamoDB.Key | undefined) {
 
 export function decLastKey(key: string | undefined) {
   if (!key) {
-    return undefined;
+    return null;
   }
   const [data, hash] = key.split('.');
   if (!hash) {
@@ -162,6 +162,15 @@ export function rethrowTransactionCanceled(msg: string) {
   return (e: any) => {
     if (e.code === 'TransactionCanceledException') {
       throw new AppError(msg);
+    }
+
+    throw e;
+  };
+}
+export function ignoreTransactionCanceled() {
+  return (e: any) => {
+    if (e.code === 'TransactionCanceledException') {
+      return;
     }
 
     throw e;
