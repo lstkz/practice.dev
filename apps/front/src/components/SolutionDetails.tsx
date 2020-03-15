@@ -20,6 +20,7 @@ interface SolutionDetailsProps {
   solution: Solution;
   canEdit: boolean;
   borderBottom?: boolean;
+  onTagClick?(tag: string): void;
 }
 
 const Left = styled.div`
@@ -52,7 +53,9 @@ const Url = styled.a`
   display: block;
 `;
 
-const Desc = styled.div``;
+const Desc = styled.div`
+  white-space: pre-line;
+`;
 
 const Tags = styled.div`
   margin-top: 12px;
@@ -88,7 +91,15 @@ const DateWrapper = styled.div`
 `;
 
 const _SolutionDetails = (props: SolutionDetailsProps) => {
-  const { className, solution, voteSolution, canEdit, onMenu, link } = props;
+  const {
+    className,
+    solution,
+    voteSolution,
+    canEdit,
+    onMenu,
+    link,
+    onTagClick,
+  } = props;
   return (
     <div className={className}>
       <Left>
@@ -115,7 +126,11 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
         <Desc>{solution.description}</Desc>
         <Tags>
           {solution.tags.map(tag => (
-            <Tag key={tag} type="difficulty">
+            <Tag
+              key={tag}
+              type="difficulty"
+              onClick={onTagClick ? () => onTagClick(tag) : undefined}
+            >
               {tag}
             </Tag>
           ))}

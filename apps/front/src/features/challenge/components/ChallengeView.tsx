@@ -44,12 +44,12 @@ export function ChallengeView() {
     component: Component,
     tab,
   } = getChallengeState.useState();
-  const { changeTab } = useActions(ChallengeActions);
+  const { changeTab, showSolutionsWithTag } = useActions(ChallengeActions);
 
   return (
     <Dashboard>
       <SubmitModal />
-      <SolutionModal />
+      <SolutionModal onTagClick={showSolutionsWithTag} />
       <ConfirmEmailWarning />
       <Container>
         <Breadcrumb

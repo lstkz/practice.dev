@@ -14,6 +14,7 @@ interface SolutionInfoProps {
   className?: string;
   solution: Solution;
   full?: boolean;
+  onTagClick?(tag: string): void;
 }
 
 const Left = styled.div`
@@ -48,7 +49,7 @@ const Top = styled.div`
 `;
 
 const _SolutionInfo = (props: SolutionInfoProps) => {
-  const { className, solution } = props;
+  const { className, solution, onTagClick } = props;
   const { voteSolution } = useActions(GlobalSolutionsActions);
   return (
     <div className={className}>
@@ -73,7 +74,11 @@ const _SolutionInfo = (props: SolutionInfoProps) => {
       </Top>
       <Tags>
         {solution.tags.map(tag => (
-          <Tag key={tag} type="difficulty">
+          <Tag
+            key={tag}
+            type="difficulty"
+            onClick={onTagClick ? () => onTagClick(tag) : undefined}
+          >
             {tag}
           </Tag>
         ))}

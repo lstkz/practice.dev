@@ -9,10 +9,11 @@ import { useUser } from 'src/hooks/useUser';
 
 interface ViewSolutionProps {
   className?: string;
+  onTagClick(tag: string): void;
 }
 
 const _ViewSolution = (props: ViewSolutionProps) => {
-  const { className } = props;
+  const { className, onTagClick } = props;
   const { solutionId } = getSolutionState.useState();
   const { voteSolution } = useActions(GlobalSolutionsActions);
   const { show, remove } = useActions(SolutionActions);
@@ -33,6 +34,7 @@ const _ViewSolution = (props: ViewSolutionProps) => {
           }
         }}
         voteSolution={voteSolution}
+        onTagClick={onTagClick}
       />
     </div>
   );

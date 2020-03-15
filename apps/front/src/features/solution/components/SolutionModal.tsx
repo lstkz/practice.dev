@@ -16,7 +16,12 @@ const SpinnerWrapper = styled.div`
   height: 200px;
 `;
 
-export function SolutionModal() {
+interface SolutionModalProps {
+  onTagClick(tag: string): void;
+}
+
+export function SolutionModal(props: SolutionModalProps) {
+  const { onTagClick } = props;
   useSolutionModule();
   const { close, showViewMode } = useActions(SolutionActions);
   const { isOpened, mode, solutionId, isLoading } = getSolutionState.useState();
@@ -48,7 +53,16 @@ export function SolutionModal() {
               : 'Create Solution'
           }
         >
-          {mode === 'edit' ? <SolutionForm /> : <ViewSolution />}
+          {mode === 'edit' ? (
+            <SolutionForm />
+          ) : (
+            <ViewSolution
+              onTagClick={tag => {
+                close();
+                onTagClick(tag);
+              }}
+            />
+          )}
         </FormModalContent>
       )}
     </Modal>

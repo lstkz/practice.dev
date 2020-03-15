@@ -18,14 +18,21 @@ import { useUser } from 'src/hooks/useUser';
 import { SolutionActions } from 'src/features/solution/interface';
 import { GlobalSolutionsActions } from 'src/features/globalSolutions/interface';
 import { useSolutions } from 'src/features/globalSolutions/useSolutions';
+import { confirmDeleteSolution } from 'src/common/solution';
+import { SolutionLoader } from './SolutionLoader';
 
 export const [handle, SolutionsTabActions, getSolutionsTabState] = createModule(
   SolutionsTabSymbol
 )
   .withActions({
     $init: null,
-    updateFilter: (name: keyof SolutionsTabFilter, value: any) => ({
-      payload: { name, value },
+    showByTag: (tag: string) => ({ payload: { tag } }),
+    updateFilter: (
+      name: keyof SolutionsTabFilter,
+      value: any,
+      noSearch = false
+    ) => ({
+      payload: { name, value, noSearch },
     }),
     searchTags: (
       keyword: string,
@@ -48,6 +55,7 @@ export const [handle, SolutionsTabActions, getSolutionsTabState] = createModule(
       payload: { loadMore, result },
     }),
     setIsLoading: (isLoading: boolean) => ({ payload: { isLoading } }),
+    remove: (id: string) => ({ payload: { id } }),
   })
   .withState<SolutionsTabState>();
 
@@ -62,7 +70,9 @@ handle
       resolve
     );
   })
-  .on(SolutionsTabActions.updateFilter, () => SolutionsTabActions.load(false))
+  .on(SolutionsTabActions.updateFilter, ({ noSearch }) => {
+    return noSearch ? Rx.empty() : SolutionsTabActions.load(false);
+  })
   .on(SolutionsTabActions.load, ({ loadMore }, { action$ }) => {
     const { filter, cursor } = getSolutionsTabState();
     const sortCriteria =
@@ -105,7 +115,20 @@ handle
   })
   .on(SolutionsTabActions.loaded, ({ result }) =>
     GlobalSolutionsActions.addSolutions(result.items)
-  );
+  )
+  .on(SolutionsTabActions.remove, ({ id }, { action$ }) => {
+    return confirmDeleteSolution({
+      solutionId: id,
+      action$,
+    });
+  })
+  .on(SolutionsTabActions.showByTag, ({ tag }) => {
+    return SolutionsTabActions.updateFilter(
+      'tags',
+      [{ label: tag, value: tag }],
+      !getSolutionsTabState().isLoaded
+    );
+  });
 
 export interface SolutionsTabFilter {
   tags: SelectOption[];
@@ -156,6 +179,9 @@ handle
     } else {
       state.items = ids;
     }
+  })
+  .on(GlobalSolutionsActions.removeSolution, (state, { id }) => {
+    state.items = state.items.filter(x => x !== id);
   });
 
 const NoData = styled.div`
@@ -169,7 +195,7 @@ const LoadMore = styled.div`
 `;
 
 export function SolutionList() {
-  const { load } = useActions(SolutionsTabActions);
+  const { load, remove, updateFilter } = useActions(SolutionsTabActions);
   const {
     isLoaded,
     cursor,
@@ -181,7 +207,13 @@ export function SolutionList() {
   const { voteSolution } = useActions(GlobalSolutionsActions);
   const solutions = useSolutions(items);
   if (!isLoaded) {
-    return <>......</>;
+    return (
+      <>
+        <SolutionLoader />
+        <SolutionLoader />
+        <SolutionLoader />
+      </>
+    );
   }
   if (!items.length) {
     return <NoData>No Solutions</NoData>;
@@ -200,11 +232,13 @@ export function SolutionList() {
               show('edit', solution);
             }
             if (action === 'delete') {
-              // remove();
-              // TODO
+              remove(solution.id);
             }
           }}
           voteSolution={voteSolution}
+          onTagClick={tag => {
+            updateFilter('tags', [{ label: tag, value: tag }]);
+          }}
         />
       ))}
       {cursor && (
