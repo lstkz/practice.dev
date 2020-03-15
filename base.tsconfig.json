@@ -3,7 +3,6 @@
     "target": "es5",
     "module": "esnext",
     "moduleResolution": "node",
-    "composite": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

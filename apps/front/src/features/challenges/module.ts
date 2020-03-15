@@ -75,11 +75,6 @@ export function getFilter(location: RouterLocation) {
     ) as ChallengesSortOrder) || sortOptions[0].value;
 
   filter.sortOrder = sortOptions.find(x => x.value === sortOrder)!;
-  console.log({
-    filter,
-    params,
-    search: location.search,
-  });
   return filter;
 }
 
