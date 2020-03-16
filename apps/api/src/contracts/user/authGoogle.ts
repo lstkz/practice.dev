@@ -1,13 +1,12 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
 import { getEmail } from '../../common/google';
-import { createKey, getItem } from '../../common/db';
-import { DbUserEmail } from '../../types';
-import { getDbUserById } from './getDbUserById';
-import { _generateAuthData } from './_generateAuthData';
 import { _createUser } from './_createUser';
 import { _getNextUsername } from './_getNextUsername';
 import { randomUniqString } from '../../common/helper';
+import * as db from '../../common/db-next';
+import { _generateAuthData } from './_generateAuthDataNext';
+import { UserEmailEntity, UserEntity } from '../../entities';
 
 export const authGoogle = createContract('auth.authGoogle')
   .params('accessToken')
@@ -16,10 +15,13 @@ export const authGoogle = createContract('auth.authGoogle')
   })
   .fn(async accessToken => {
     const email = await getEmail(accessToken);
-    const emailKey = createKey({ type: 'USER_EMAIL', email });
-    const dbUserEmail = await getItem<DbUserEmail>(emailKey);
-    if (dbUserEmail) {
-      const user = await getDbUserById(dbUserEmail.userId);
+    const userEmail = await db.getOrNull(UserEmailEntity, {
+      email,
+    });
+    if (userEmail) {
+      const user = await db.get(UserEntity, {
+        userId: userEmail.userId,
+      });
       return _generateAuthData(user);
     }
     const createdUser = await _createUser({

@@ -1,4 +1,4 @@
-import { Converter, AttributeMap, Put } from 'aws-sdk/clients/dynamodb';
+import { Converter, AttributeMap, Put, Delete } from 'aws-sdk/clients/dynamodb';
 import { TABLE_NAME } from '../config';
 import { DbKey, PropsOnly } from '../types';
 
@@ -32,6 +32,13 @@ export abstract class BaseEntity {
   preparePut(): Put {
     return {
       Item: this.serialize(),
+      TableName: TABLE_NAME,
+    };
+  }
+
+  prepareDelete(): Delete {
+    return {
+      Key: Converter.marshall(this.key),
       TableName: TABLE_NAME,
     };
   }

@@ -1,10 +1,13 @@
 import { randomSalt, createPasswordHash } from '../../common/helper';
 import uuid from 'uuid';
-import { DbUser } from '../../models/DbUser';
-import { DbUserEmail } from '../../models/DbUserEmail';
-import { DbUserUsername } from '../../models/DbUserUsername';
-import { DbGithubUser } from '../../models/DbGithubUser';
-import { ensureNotExists, putItems, BaseEntity } from '../../common/db-next';
+import { BaseEntity } from '../../common/orm';
+import * as db from '../../common/db-next';
+import {
+  UserEmailEntity,
+  UserUsernameEntity,
+  UserEntity,
+  GithubUserEntity,
+} from '../../entities';
 
 interface CreateUserValues {
   userId?: string;
@@ -19,21 +22,21 @@ export async function _createUser(values: CreateUserValues) {
   const userId = values.userId || uuid();
   const salt = await randomSalt();
   const password = await createPasswordHash(values.password, salt);
-  const dbUserEmail = new DbUserEmail({
+  const userEmail = new UserEmailEntity({
     userId,
     email: values.email,
   });
-  const dbUserUsername = new DbUserUsername({
+  const userUsername = new UserUsernameEntity({
     userId,
     username: values.username,
   });
 
   await Promise.all([
-    ensureNotExists(dbUserEmail.key, 'Email is already registered'),
-    ensureNotExists(dbUserUsername.key, 'Username is already taken'),
+    db.ensureNotExists(userEmail.key, 'Email is already registered'),
+    db.ensureNotExists(userUsername.key, 'Username is already taken'),
   ]);
 
-  const dbUser = new DbUser({
+  const user = new UserEntity({
     userId: userId,
     email: values.email,
     username: values.username,
@@ -42,16 +45,16 @@ export async function _createUser(values: CreateUserValues) {
     isVerified: values.isVerified,
     githubId: values.githubId,
   });
-  const entities: BaseEntity[] = [dbUser, dbUserEmail, dbUserUsername];
+  const entities: BaseEntity[] = [user, userEmail, userUsername];
   if (values.githubId) {
     entities.push(
-      new DbGithubUser({
+      new GithubUserEntity({
         userId,
         githubId: values.githubId,
       })
     );
   }
 
-  await putItems(entities);
-  return dbUser;
+  await db.put(entities);
+  return user;
 }

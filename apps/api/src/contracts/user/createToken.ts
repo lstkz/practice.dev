@@ -1,8 +1,8 @@
 import { S } from 'schema';
 import uuid from 'uuid';
 import { createContract } from '../../lib';
-import { createKey, putItems } from '../../common/db';
-import { DbToken } from '../../types';
+import * as db from '../../common/db-next';
+import { TokenEntity } from '../../entities';
 
 export const createToken = createContract('user.createToken')
   .params('userId', 'fixedToken')
@@ -13,13 +13,11 @@ export const createToken = createContract('user.createToken')
       .optional(),
   })
   .fn(async (userId, fixedToken) => {
-    const token = fixedToken || uuid();
-    const tokenKey = createKey({ type: 'TOKEN', token });
-    const dbToken: DbToken = {
-      ...tokenKey,
+    const token = new TokenEntity({
       userId,
-    };
-    await putItems(dbToken);
+      token: fixedToken || uuid(),
+    });
+    await db.put(token);
 
-    return token;
+    return token.token;
   });

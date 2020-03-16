@@ -1,5 +1,5 @@
-import { createKey, getItem } from '../../common/db';
-import { DbUserUsername } from '../../types';
+import { UserUsernameEntity } from '../../entities';
+import * as db from '../../common/db-next';
 
 export async function _getNextUsername(
   username: string,
@@ -9,12 +9,9 @@ export async function _getNextUsername(
     throw new Error('Cannot generate username. Exceeded limit.');
   }
   const nextUsername = count > 1 ? `${username}-${count}` : username;
-
-  const usernameKey = createKey({
-    type: 'USER_USERNAME',
+  const item = await db.getOrNull(UserUsernameEntity, {
     username: nextUsername,
   });
-  const item = await getItem<DbUserUsername>(usernameKey);
   if (!item) {
     return nextUsername;
   }

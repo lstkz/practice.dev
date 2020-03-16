@@ -6,29 +6,27 @@ import { AppError } from '../../common/errors';
 import { _createUser } from './_createUser';
 import { randomUniqString } from '../../common/helper';
 import { _getNextUsername } from './_getNextUsername';
-import { DbUserEmail } from '../../models/DbUserEmail';
-import { DbGithubUser } from '../../models/DbGithubUser';
 import * as db from '../../common/db-next';
-import { DbUser } from '../../models/DbUser';
+import { UserEmailEntity, UserEntity, GithubUserEntity } from '../../entities';
 
 async function _connectByEmail(githubUser: GitHubUserData) {
-  const dbUserEmail = await db.getOrNull(DbUserEmail, {
+  const userEmail = await db.getOrNull(UserEmailEntity, {
     email: githubUser.email,
   });
-  if (!dbUserEmail) {
+  if (!userEmail) {
     return null;
   }
-  const dbUser = await db.get(DbUser, {
-    userId: dbUserEmail.userId,
+  const user = await db.get(UserEntity, {
+    userId: userEmail.userId,
   });
-  if (dbUser.githubId) {
+  if (user.githubId) {
     throw new AppError(
       `Cannot register a new user. Another user with email ${githubUser.email} is already connected with different GitHub account.`
     );
   }
-  dbUser.githubId = githubUser.id;
-  const dbGithubUser = new DbGithubUser({
-    userId: dbUser.userId,
+  user.githubId = githubUser.id;
+  const dbGithubUser = new GithubUserEntity({
+    userId: user.userId,
     githubId: githubUser.id,
   });
   await db.transactWriteItems([
@@ -36,10 +34,10 @@ async function _connectByEmail(githubUser: GitHubUserData) {
       Put: dbGithubUser.preparePut(),
     },
     {
-      Update: dbUser.prepareUpdate(['githubId']),
+      Update: user.prepareUpdate(['githubId']),
     },
   ]);
-  return dbUser;
+  return user;
 }
 
 export const authGithub = createContract('auth.authGithub')
@@ -50,13 +48,13 @@ export const authGithub = createContract('auth.authGithub')
   .fn(async code => {
     const accessToken = await exchangeCode(code);
     const githubUser = await getUserData(accessToken);
-    const existingGithubUser = await db.getOrNull(DbGithubUser, {
+    const existingGithubUser = await db.getOrNull(GithubUserEntity, {
       githubId: githubUser.id,
     });
 
     // already connected
     if (existingGithubUser) {
-      const user = await db.get(DbUser, {
+      const user = await db.get(UserEntity, {
         userId: existingGithubUser.userId,
       });
       return _generateAuthData(user);

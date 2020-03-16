@@ -8,6 +8,7 @@ export interface User {
   email: string;
   username: string;
   isVerified: boolean;
+  isAdmin?: boolean;
 }
 
 export interface PublicUser {

@@ -1,9 +1,7 @@
 import { createContract } from '../../lib';
 import { S } from 'schema';
-import { createKey, getItem } from '../../common/db';
-import { DbToken } from '../../types';
-import { getDbUserById } from './getDbUserById';
-import { mapDbUser } from '../../common/mapping';
+import { TokenEntity, UserEntity } from '../../entities';
+import * as db from '../../common/db-next';
 
 export const getUserByToken = createContract('user.getUserByToken')
   .params('token')
@@ -11,12 +9,14 @@ export const getUserByToken = createContract('user.getUserByToken')
     token: S.string(),
   })
   .fn(async token => {
-    const tokenKey = createKey({ type: 'TOKEN', token });
-    const dbToken = await getItem<DbToken>(tokenKey);
-    if (!dbToken) {
+    const tokenEntity = await db.getOrNull(TokenEntity, {
+      token,
+    });
+    if (!tokenEntity) {
       return null;
     }
-
-    const user = await getDbUserById(dbToken.userId);
-    return mapDbUser(user);
+    const user = await db.get(UserEntity, {
+      userId: tokenEntity.userId,
+    });
+    return user.toUser();
   });

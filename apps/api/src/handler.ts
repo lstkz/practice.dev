@@ -1,6 +1,6 @@
 import { apiMapping } from './generated/api-mapping';
-import { getDbUserByToken } from './contracts/user/getDbUserByToken';
 import { AppError } from './common/errors';
+import { getUserByToken } from './contracts/user/getUserByToken';
 
 export async function handler(
   rpcMethod: string,
@@ -21,7 +21,7 @@ export async function handler(
     if (!authToken) {
       return null;
     }
-    const user = await getDbUserByToken(authToken);
+    const user = await getUserByToken(authToken);
     if (!user) {
       throw new AppError('Invalid or expired token');
     }
@@ -33,7 +33,7 @@ export async function handler(
   const user = await getUser();
   const params = [...rpcParams];
   if (options.injectUser) {
-    params.unshift(user?.userId);
+    params.unshift(user?.id);
   }
   return options.handler(...params);
 }
