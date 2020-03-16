@@ -4,6 +4,7 @@ import {
   ChallengeStats,
   SubmissionStatus,
 } from 'shared';
+import DynamoDB = require('aws-sdk/clients/dynamodb');
 
 export interface UserRegisteredEvent {
   type: 'UserRegisteredEvent';
@@ -139,6 +140,17 @@ export interface DbSolutionTag extends DbKey {
   data: string;
   challengeId: number;
   count: number;
+}
+
+export type FunctionPropertyNames<T> = {
+  [K in keyof T]: T[K] extends Function ? K : never;
+}[keyof T];
+
+export type PropsOnly<T> = Omit<T, FunctionPropertyNames<T> | 'key'>;
+
+export interface BaseEntity {
+  serialize(): DynamoDB.AttributeMap;
+  getKey(): { pk: string; sk: string };
 }
 
 /* LAMBDA TYPES */
