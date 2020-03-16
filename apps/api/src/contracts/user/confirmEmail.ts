@@ -3,7 +3,7 @@ import { createContract, createRpcBinding } from '../../lib';
 import { AppError } from '../../common/errors';
 import * as db from '../../common/db-next';
 import { ConfirmCodeEntity, UserEntity } from '../../entities';
-import { _generateAuthData } from './_generateAuthDataNext';
+import { _generateAuthData } from './_generateAuthData';
 
 export const confirmEmail = createContract('user.confirmEmail')
   .params('code')

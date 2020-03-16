@@ -2,7 +2,7 @@ import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
 import { _createUser } from './_createUser';
 import { dispatch } from '../../dispatch';
-import { _generateAuthData } from './_generateAuthDataNext';
+import { _generateAuthData } from './_generateAuthData';
 
 export const register = createContract('user.register')
   .params('values')

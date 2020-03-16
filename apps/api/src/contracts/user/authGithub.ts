@@ -1,7 +1,7 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
 import { exchangeCode, getUserData, GitHubUserData } from '../../common/github';
-import { _generateAuthData } from './_generateAuthDataNext';
+import { _generateAuthData } from './_generateAuthData';
 import { AppError } from '../../common/errors';
 import { _createUser } from './_createUser';
 import { randomUniqString } from '../../common/helper';

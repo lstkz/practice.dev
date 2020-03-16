@@ -6,7 +6,7 @@ import { _getEmailOrUsernameEntity } from './_getEmailOrUsernameEntity';
 import { createPasswordHash } from '../../common/helper';
 import * as db from '../../common/db-next';
 import { ResetPasswordCodeEntity, UserEntity } from '../../entities';
-import { _generateAuthData } from './_generateAuthDataNext';
+import { _generateAuthData } from './_generateAuthData';
 
 export const confirmResetPassword = createContract('user.confirmResetPassword')
   .params('code', 'newPassword')

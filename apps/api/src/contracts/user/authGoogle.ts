@@ -5,7 +5,7 @@ import { _createUser } from './_createUser';
 import { _getNextUsername } from './_getNextUsername';
 import { randomUniqString } from '../../common/helper';
 import * as db from '../../common/db-next';
-import { _generateAuthData } from './_generateAuthDataNext';
+import { _generateAuthData } from './_generateAuthData';
 import { UserEmailEntity, UserEntity } from '../../entities';
 
 export const authGoogle = createContract('auth.authGoogle')

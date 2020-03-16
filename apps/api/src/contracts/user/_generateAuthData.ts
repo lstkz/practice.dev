@@ -1,11 +1,10 @@
 import { AuthData } from 'shared';
 import { createToken } from './createToken';
-import { DbUser } from '../../types';
-import { mapDbUser } from '../../common/mapping';
+import { UserEntity } from '../../entities/UserEntity';
 
-export async function _generateAuthData(dbUser: DbUser): Promise<AuthData> {
+export async function _generateAuthData(user: UserEntity): Promise<AuthData> {
   return {
-    user: mapDbUser(dbUser),
-    token: await createToken(dbUser.userId, null),
+    user: user.toUser(),
+    token: await createToken(user.userId, null),
   };
 }

@@ -2,11 +2,11 @@ import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
 import { _createUser } from './_createUser';
 import { _generateAuthData } from './_generateAuthData';
-import { createKey, getItemEnsure } from '../../common/db';
-import { DbUser } from '../../types';
 import { AppError } from '../../common/errors';
 import { createPasswordHash } from '../../common/helper';
 import { _getEmailOrUsernameEntity } from './_getEmailOrUsernameEntity';
+import * as db from '../../common/db-next';
+import { UserEntity } from '../../entities';
 
 const INVALID_CRED = 'Invalid credentials or user not found';
 
@@ -21,23 +21,20 @@ export const login = createContract('user.login')
 
   .fn(async values => {
     const { emailOrUsername } = values;
-
-    const dbUserEmailOrUsername = await _getEmailOrUsernameEntity(
+    const userEmailOrUsername = await _getEmailOrUsernameEntity(
       emailOrUsername
     );
-    if (!dbUserEmailOrUsername) {
+    if (!userEmailOrUsername) {
       throw new AppError(INVALID_CRED);
     }
-    const dbUser = await getItemEnsure<DbUser>(
-      createKey({ type: 'USER', userId: dbUserEmailOrUsername.userId })
-    );
-
-    const hash = await createPasswordHash(values.password, dbUser!.salt);
-    if (dbUser.password !== hash) {
+    const user = await db.get(UserEntity, {
+      userId: userEmailOrUsername.userId,
+    });
+    const hash = await createPasswordHash(values.password, user.salt);
+    if (user.password !== hash) {
       throw new AppError(INVALID_CRED);
     }
-
-    return _generateAuthData(dbUser);
+    return _generateAuthData(user);
   });
 
 export const loginRpc = createRpcBinding({
