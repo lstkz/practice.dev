@@ -93,5 +93,7 @@ export async function getByIds(ids: string[]) {
       Keys: keys,
     },
   });
-  return (items[TABLE_NAME] || []).map(item => new UserEntity(item as any));
+  return (items[TABLE_NAME] || []).map(
+    item => new UserEntity(Converter.unmarshall(item) as any)
+  );
 }

@@ -185,3 +185,7 @@ export function assertAuthorOrAdmin<T extends { userId: string }>(
     throw new AppError('No Permissions');
   }
 }
+
+export function doFn<T>(fn: () => T) {
+  return fn();
+}

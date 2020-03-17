@@ -7,7 +7,7 @@ import { AppError } from '../../common/errors';
 import uuid from 'uuid';
 import { _createSolution } from './_createSolution';
 import { mapDbSolution } from '../../common/mapping';
-import { getDbUserById } from '../user/getDbUserById';
+// import { getDbUserById } from '../user/getDbUserById';
 import { solutionUserInput } from './_solutionSchema';
 import { normalizeTags } from '../../common/helper';
 

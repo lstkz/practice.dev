@@ -18,7 +18,7 @@ export interface UserEmailConfirmedEvent {
 
 export type AppEvent = UserRegisteredEvent | UserEmailConfirmedEvent;
 
-export type EntityType = 'Solution' | 'Submission' | 'ChallengeSolved';
+export type EntityType = 'Solution' | 'SubmissionEntity' | 'ChallengeSolved';
 
 export type StreamAction = 'INSERT' | 'MODIFY' | 'REMOVE';
 

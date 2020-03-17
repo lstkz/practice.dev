@@ -3,11 +3,11 @@ import { S } from 'schema';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { createContract, createRpcBinding } from '../../lib';
 import { UnreachableCaseError, AppError } from '../../common/errors';
-import { getDbUserByUsername } from '../user/getDbUserByUsername';
+// import { getDbUserByUsername } from '../user/getDbUserByUsername';
 import { queryIndex, createKey, queryIndexAll } from '../../common/db';
 import { DbSolution, DbSolutionVote } from '../../types';
 import { mapDbSolutionSolvedMany } from '../../common/mapping';
-import { getUsersByIds } from '../user/getUsersByIds';
+// import { getUsersByIds } from '../user/getUsersByIds';
 import DynamoDB = require('aws-sdk/clients/dynamodb');
 
 function _createFilter(userId: string | undefined, tags: string[] | undefined) {

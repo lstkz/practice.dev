@@ -1,52 +1,54 @@
 import { resetDb } from '../helper';
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
-import { _putSubmission } from '../../src/contracts/submission/_putSubmission';
 import { SubmissionStatus, Submission } from 'shared';
-import { createKey } from '../../src/common/db';
+import * as db from '../../src/common/db-next';
 import { searchSubmissions } from '../../src/contracts/submission/searchSubmissions';
+import { SubmissionEntity } from '../../src/entities';
+import { MockStream } from '../MockStream';
+
+const mockStream = new MockStream();
 
 beforeEach(async () => {
   await resetDb();
+  await mockStream.init();
   await Promise.all([registerSampleUsers(), addSampleChallenges()]);
 
-  await Promise.all([
-    _putSubmission({
-      ...createKey({ type: 'SUBMISSION', submissionId: 's1' }),
+  const submissions = [
+    new SubmissionEntity({
       submissionId: 's1',
       userId: '1',
-      data_n: 1,
+      createdAt: 1,
       challengeId: 1,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
     }),
-    _putSubmission({
-      ...createKey({ type: 'SUBMISSION', submissionId: 's2' }),
+    new SubmissionEntity({
       submissionId: 's2',
       userId: '1',
-      data_n: 3,
+      createdAt: 3,
       challengeId: 1,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
     }),
-    _putSubmission({
-      ...createKey({ type: 'SUBMISSION', submissionId: 's3' }),
+    new SubmissionEntity({
       submissionId: 's3',
       userId: '2',
-      data_n: 2,
+      createdAt: 2,
       challengeId: 2,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
     }),
-    _putSubmission({
-      ...createKey({ type: 'SUBMISSION', submissionId: 's3' }),
+    new SubmissionEntity({
       submissionId: 's4',
       userId: '1',
-      data_n: 4,
+      createdAt: 4,
       challengeId: 2,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
     }),
-  ]);
+  ];
+  await db.put(submissions);
+  await mockStream.process();
 });
 
 function mapToTimestamps(items: Submission[]) {

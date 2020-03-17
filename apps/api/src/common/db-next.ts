@@ -6,7 +6,6 @@ import {
   Delete,
   AttributeValue,
   ExpressionAttributeValueMap,
-  BatchGetItemInput,
   BatchGetRequestMap,
   BatchGetResponseMap,
 } from 'aws-sdk/clients/dynamodb';

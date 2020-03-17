@@ -34,4 +34,10 @@ export const dynamoStreamMapping: DynamoStreamMapping = {
         /* webpackChunkName: "challenge_updateSolutionStats"*/ '../contracts/challenge/updateSolutionStats'
       ).then(x => x['handleChallengeSolved']),
   },
+  SubmissionEntity: {
+    submission_indexSubmission_handleSubmission: () =>
+      import(
+        /* webpackChunkName: "submission_indexSubmission"*/ '../contracts/submission/indexSubmission'
+      ).then(x => x['handleSubmission']),
+  },
 };

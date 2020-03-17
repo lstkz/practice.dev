@@ -37,7 +37,7 @@ export const indexSubmission = createContract('indexSubmission.indexSubmission')
   });
 
 export const handleSubmission = createDynamoStreamBinding<SubmissionEntity>({
-  type: 'Submission',
+  type: 'SubmissionEntity',
   remove(eventId, item) {
     indexSubmissionRemove(eventId, item);
   },

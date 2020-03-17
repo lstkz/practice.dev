@@ -1,7 +1,7 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { _createSolution } from './_createSolution';
-import { getDbUserById } from '../user/getDbUserById';
+// import { getDbUserById } from '../user/getDbUserById';
 import { getDbSolutionById } from './getDbSolutionById';
 import { assertAuthorOrAdmin } from '../../common/helper';
 import { deleteItem } from '../../common/db';

@@ -1,13 +1,11 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { S, ValidationError } from 'schema';
-import { createKey, queryIndex } from '../../common/db';
 import { UnreachableCaseError } from '../../common/errors';
-import { DbSubmission } from '../../types';
-import { mapDbSubmissionMany } from '../../common/mapping';
-import { getUsersByIds } from '../user/getUsersByIds';
-import { SearchResult, Submission } from 'shared';
-import * as db from '../../common/db-next';
-import { UserUsernameEntity, SubmissionEntity } from '../../entities';
+import * as userReader from '../../readers/userReader';
+import * as submissionReader from '../../readers/submissionReader';
+import { SearchResult } from 'shared';
+import { SubmissionEntity } from '../../entities';
+import { doFn } from '../../common/helper';
 
 export const searchSubmissions = createContract('submission.searchSubmissions')
   .params('criteria')
@@ -29,48 +27,47 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
         []
       );
     }
-    const getKey = async () => {
-      const user = await db.getOrNull(UserUsernameEntity, { username });
-      if (!user) {
-        return null;
+
+    const { cursor, items } = await doFn(async () => {
+      const userId = username
+        ? await userReader.getIdByUsernameOrNull(username)
+        : null;
+
+      if (username && !userId) {
+        return {
+          items: [],
+          cursor: null,
+        } as SearchResult<SubmissionEntity>;
       }
-      if (username && challengeId) {
-        return SubmissionEntity.createUserChallengeKey({
+      const baseCriteria = {
+        limit: criteria.limit,
+        descending: true,
+        cursor: criteria.cursor,
+      };
+      if (userId && challengeId) {
+        return submissionReader.searchByUserChallenge({
+          ...baseCriteria,
           challengeId,
-          userId: user!.userId,
-          submissionId: '-1',
+          userId,
         });
       }
-      if (username) {
-        return SubmissionEntity.createUserKey({
-          userId: user!.userId,
-          submissionId: '-1',
+      if (userId) {
+        return submissionReader.searchByUser({
+          ...baseCriteria,
+          userId,
         });
       }
       if (challengeId) {
-        return SubmissionEntity.createChallengeKey({
+        return submissionReader.searchByChallenge({
+          ...baseCriteria,
           challengeId,
-          submissionId: '-1',
         });
       }
       throw new UnreachableCaseError('' as never);
-    };
-    const key = await getKey();
-    if (!key) {
-      return {
-        items: [],
-        cursor: null,
-      } as SearchResult<Submission>;
-    }
-    const { items, cursor } = await queryIndex<DbSubmission>({
-      index: 'sk-data_n-index',
-      sk: key.sk,
-      cursor: criteria.cursor,
-      descending: true,
-      limit: criteria.limit,
     });
-    const users = await getUsersByIds(items.map(x => x.userId));
-    const submissions = mapDbSubmissionMany(items, users);
+
+    const users = await userReader.getByIds(items.map(x => x.userId));
+    const submissions = SubmissionEntity.toSubmissionMany(items, users);
     return {
       items: submissions,
       cursor,

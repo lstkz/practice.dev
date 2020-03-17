@@ -1,6 +1,6 @@
 import { PropsOnly } from '../types';
 import { BaseEntity } from '../common/orm';
-import { User } from 'shared';
+import { User, PublicUser } from 'shared';
 
 export type UserProps = PropsOnly<UserEntity>;
 
@@ -36,6 +36,13 @@ export class UserEntity extends BaseEntity {
       username: this.username,
       isVerified: this.isVerified,
       isAdmin: this.isAdmin,
+    };
+  }
+
+  toPublicUser(): PublicUser {
+    return {
+      id: this.userId,
+      username: this.username,
     };
   }
 

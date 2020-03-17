@@ -1,6 +1,6 @@
 import { DbSolution, DbSolutionVote } from '../../types';
 import { createKey, getItem } from '../../common/db';
-import { getDbUserById } from '../user/getDbUserById';
+// import { getDbUserById } from '../user/getDbUserById';
 import { mapDbSolution } from '../../common/mapping';
 
 export async function _populateSolution(

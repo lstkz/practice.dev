@@ -2,7 +2,7 @@ import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { _createSolution } from './_createSolution';
 import { solutionUserInput } from './_solutionSchema';
-import { getDbUserById } from '../user/getDbUserById';
+// import { getDbUserById } from '../user/getDbUserById';
 import { getDbSolutionById } from './getDbSolutionById';
 import {
   normalizeTags,

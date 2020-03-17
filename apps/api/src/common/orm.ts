@@ -8,12 +8,10 @@ export interface EntityWithKey<TKey> {
 }
 
 export abstract class BaseEntity {
-  protected colMapping: any = {};
-
-  constructor(values: any) {
+  constructor(values: any, private colMapping: any = {}) {
     const reverseMap: any = {};
-    Object.keys(this.colMapping).forEach(key => {
-      reverseMap[this.colMapping[key]] = key;
+    Object.keys(colMapping).forEach(key => {
+      reverseMap[colMapping[key]] = key;
     });
     Object.keys(values)
       .filter(key => !['pk', 'sk'].includes(key))

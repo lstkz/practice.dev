@@ -1,6 +1,8 @@
+import * as R from 'remeda';
 import { PropsOnly, DbKey } from '../types';
 import { BaseEntity } from '../common/orm';
-import { SubmissionStatus } from 'shared';
+import { SubmissionStatus, Submission } from 'shared';
+import { UserEntity } from './UserEntity';
 
 export type SubmissionProps = PropsOnly<SubmissionEntity>;
 
@@ -38,12 +40,10 @@ export class SubmissionEntity extends BaseEntity {
   result?: string;
   testUrl!: string;
 
-  colMapping = {
-    createdAt: 'data_n',
-  };
-
   constructor(values: SubmissionProps, private indexType?: SubmissionIndex) {
-    super(values);
+    super(values, {
+      createdAt: 'data_n',
+    });
   }
 
   get key() {
@@ -68,6 +68,26 @@ export class SubmissionEntity extends BaseEntity {
       new SubmissionEntity(props, 'user'),
       new SubmissionEntity(props, 'user_challenge'),
     ];
+  }
+
+  asMainEntity() {
+    const props = this.getProps();
+    return new SubmissionEntity(props);
+  }
+
+  toSubmission(user: UserEntity): Submission {
+    return {
+      id: this.submissionId,
+      challengeId: this.challengeId,
+      user: user.toPublicUser(),
+      status: this.status,
+      createdAt: new Date(this.createdAt).toISOString(),
+    };
+  }
+
+  static toSubmissionMany(items: SubmissionEntity[], users: UserEntity[]) {
+    const userMap = R.indexBy(users, x => x.userId);
+    return items.map(item => item.toSubmission(userMap[item.userId]));
   }
 
   static createKey({ submissionId }: SubmissionKey) {
