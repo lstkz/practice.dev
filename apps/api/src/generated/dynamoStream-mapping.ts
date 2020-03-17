@@ -8,11 +8,29 @@ interface DynamoStreamMapping {
   };
 }
 export const dynamoStreamMapping: DynamoStreamMapping = {
-  Solution: {
+  SolutionEntity: {
     challenge_updateSolutionStats_handleSolution: () =>
       import(
         /* webpackChunkName: "challenge_updateSolutionStats"*/ '../contracts/challenge/updateSolutionStats'
       ).then(x => x['handleSolution']),
+  },
+  SubmissionEntity: {
+    challenge_updateSolutionStats_handleSubmission: () =>
+      import(
+        /* webpackChunkName: "challenge_updateSolutionStats"*/ '../contracts/challenge/updateSolutionStats'
+      ).then(x => x['handleSubmission']),
+    submission_indexSubmission_handleSubmission: () =>
+      import(
+        /* webpackChunkName: "submission_indexSubmission"*/ '../contracts/submission/indexSubmission'
+      ).then(x => x['handleSubmission']),
+  },
+  ChallengeSolvedEntity: {
+    challenge_updateSolutionStats_handleChallengeSolved: () =>
+      import(
+        /* webpackChunkName: "challenge_updateSolutionStats"*/ '../contracts/challenge/updateSolutionStats'
+      ).then(x => x['handleChallengeSolved']),
+  },
+  Solution: {
     solution_indexSolution_handleSolution: () =>
       import(
         /* webpackChunkName: "solution_indexSolution"*/ '../contracts/solution/indexSolution'
@@ -21,23 +39,5 @@ export const dynamoStreamMapping: DynamoStreamMapping = {
       import(
         /* webpackChunkName: "solutionTag_updateSolutionTagCount"*/ '../contracts/solutionTag/updateSolutionTagCount'
       ).then(x => x['handleSolution']),
-  },
-  Submission: {
-    challenge_updateSolutionStats_handleSubmission: () =>
-      import(
-        /* webpackChunkName: "challenge_updateSolutionStats"*/ '../contracts/challenge/updateSolutionStats'
-      ).then(x => x['handleSubmission']),
-  },
-  ChallengeSolved: {
-    challenge_updateSolutionStats_handleChallengeSolved: () =>
-      import(
-        /* webpackChunkName: "challenge_updateSolutionStats"*/ '../contracts/challenge/updateSolutionStats'
-      ).then(x => x['handleChallengeSolved']),
-  },
-  SubmissionEntity: {
-    submission_indexSubmission_handleSubmission: () =>
-      import(
-        /* webpackChunkName: "submission_indexSubmission"*/ '../contracts/submission/indexSubmission'
-      ).then(x => x['handleSubmission']),
   },
 };

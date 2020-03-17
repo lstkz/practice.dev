@@ -4,16 +4,22 @@ import {
   TransactWriteItemList,
   Update,
   Delete,
-  AttributeValue,
-  ExpressionAttributeValueMap,
   BatchGetRequestMap,
   BatchGetResponseMap,
+  QueryOutput,
+  QueryInput,
 } from 'aws-sdk/clients/dynamodb';
 import { TABLE_NAME } from '../config';
 import { AppError } from './errors';
 import { BaseEntity, EntityWithKey } from './orm';
 import { DbKey } from '../types';
 import { decLastKey, encLastKey } from './helper';
+
+type DbIndex = 'sk-data_n-index' | 'sk-data2_n-index' | 'sk-data-index';
+
+type EntityConstructor = {
+  new (values: any): any;
+};
 
 export async function put(items: BaseEntity[] | BaseEntity) {
   if (Array.isArray(items)) {
@@ -154,74 +160,6 @@ export async function get<T extends EntityWithKey<TKey>, TKey>(
   return item;
 }
 
-type DbIndex = 'sk-data_n-index' | 'sk-data2_n-index' | 'sk-data-index';
-
-interface BaseQueryOptions {
-  cursor?: string | null;
-  descending?: boolean;
-  limit?: number;
-  filter?: QueryFilter;
-  consistentRead?: boolean;
-}
-interface QueryFilter {
-  expression?: string;
-  names?: { [key: string]: string };
-  values: { [key: string]: AttributeValue };
-}
-
-interface QueryIndexOptions extends BaseQueryOptions {
-  index: DbIndex;
-  sk: string;
-}
-
-export async function queryIndex<T>(options: QueryIndexOptions) {
-  const { index, sk, ...base } = options;
-  return queryRaw<T>(
-    index,
-    'sk = :sk',
-    {
-      ':sk': {
-        S: sk,
-      },
-    },
-    base
-  );
-}
-
-export async function queryRaw<T>(
-  index: DbIndex | undefined,
-  keyConditionExpression: string,
-  expressionValues: ExpressionAttributeValueMap,
-  options: BaseQueryOptions
-) {
-  const result = await dynamodb
-    .query(
-      {
-        TableName: TABLE_NAME,
-        IndexName: index,
-        KeyConditionExpression: keyConditionExpression,
-        ExpressionAttributeValues: {
-          ...expressionValues,
-          ...(options.filter?.values || {}),
-        },
-        Limit: options.limit,
-        ExclusiveStartKey: options.cursor
-          ? decLastKey(options.cursor)
-          : undefined,
-        ScanIndexForward: !options.descending,
-        FilterExpression: options.filter?.expression,
-        ExpressionAttributeNames: options.filter?.names,
-        ConsistentRead: options.consistentRead,
-      },
-      undefined
-    )
-    .promise();
-  return {
-    items: (result.Items || []).map(item => Converter.unmarshall(item) as T),
-    cursor: encLastKey(result.LastEvaluatedKey),
-  };
-}
-
 export async function batchGetItemWithRetry(
   requestItems: BatchGetRequestMap,
   retry = 20
@@ -248,4 +186,84 @@ export async function batchGetItemWithRetry(
     });
   }
   return ret;
+}
+
+export interface BaseSearchCriteria {
+  limit?: number;
+  descending?: boolean;
+  cursor?: string | null;
+}
+
+export function getBaseQuery(criteria: BaseSearchCriteria, index?: DbIndex) {
+  return {
+    TableName: TABLE_NAME,
+    IndexName: index,
+    Limit: criteria.limit,
+    ExclusiveStartKey: criteria.cursor
+      ? decLastKey(criteria.cursor)
+      : undefined,
+    ScanIndexForward: !criteria.descending,
+  };
+}
+
+export function mapQueryResult<
+  T extends {
+    new (values: any): any;
+  }
+>(
+  Entity: T,
+  result: QueryOutput
+): { items: Array<InstanceType<T>>; cursor: string | null } {
+  return {
+    items: (result.Items || []).map(item => {
+      const values = Converter.unmarshall(item);
+      return new Entity(values);
+    }),
+    cursor: encLastKey(result.LastEvaluatedKey),
+  };
+}
+
+export function getSkQueryParams(sk: string) {
+  return {
+    KeyConditionExpression: 'sk = :sk',
+    ExpressionAttributeValues: Converter.marshall({
+      ':sk': sk,
+    }),
+  };
+}
+
+export function getPkQueryParams(pk: string) {
+  return {
+    KeyConditionExpression: 'pk = :pk',
+    ExpressionAttributeValues: Converter.marshall({
+      ':pk': pk,
+    }),
+  };
+}
+
+export async function query<T extends EntityConstructor>(
+  Entity: T,
+  params: QueryInput
+) {
+  const ret = await dynamodb.query(params).promise();
+  return mapQueryResult(Entity, ret);
+}
+
+export async function queryAll<T extends EntityConstructor>(
+  Entity: T,
+  params: QueryInput
+) {
+  const allItems: Array<InstanceType<T>> = [];
+  const fetch = async (cursor: string | null) => {
+    const result = await query(Entity, {
+      ...params,
+      ExclusiveStartKey: cursor ? decLastKey(cursor) : undefined,
+    });
+    allItems.push(...result.items);
+    if (result.cursor) {
+      await fetch(result.cursor);
+    }
+  };
+  await fetch(null);
+  return allItems;
 }

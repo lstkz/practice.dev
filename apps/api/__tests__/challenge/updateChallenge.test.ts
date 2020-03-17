@@ -3,16 +3,16 @@ import { resetDb, setChallengeStats } from '../helper';
 import { makeAdmin } from '../../src/contracts/user/makeAdmin';
 import { updateChallenge } from '../../src/contracts/challenge/updateChallenge';
 import { getChallengeById } from '../../src/contracts/challenge/getChallengeById';
-import { getDbUserByToken } from '../../src/contracts/user/getDbUserByToken';
 import { handler } from '../../src/handler';
+import { getUserByToken } from '../../src/contracts/user/getUserByToken';
 
 const userId = '1';
 
 beforeEach(async () => {
   await resetDb();
   await registerSampleUsers();
-  const user = await getDbUserByToken('user1_token');
-  await makeAdmin(user!.userId);
+  const user = await getUserByToken('user1_token');
+  await makeAdmin(user!.id);
 });
 
 it('create and update a challenge', async () => {

@@ -1,17 +1,12 @@
 import { createContract, createRpcBinding } from '../../lib';
-import { queryIndexAll } from '../../common/db';
-import { DbChallenge } from '../../types';
 import { ChallengeTag } from 'shared';
+import * as challengeReader from '../../readers/challengeReader';
 
 export const getChallengeTags = createContract('challenge.getChallengeTags')
   .params()
   .schema({})
   .fn(async () => {
-    const challenges = await queryIndexAll<DbChallenge>({
-      index: 'sk-data_n-index',
-      sk: 'CHALLENGE',
-    });
-
+    const challenges = await challengeReader.getChallengesAll();
     const tagMap: { [x: string]: number } = {};
     challenges.forEach(challenge => {
       challenge.tags.forEach(tag => {

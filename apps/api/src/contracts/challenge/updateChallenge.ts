@@ -1,9 +1,10 @@
 import { S } from 'schema';
 import * as R from 'remeda';
 import { createContract, createRpcBinding } from '../../lib';
-import { createKey, getItem, updateItem, putItems } from '../../common/db';
-import { DbChallenge } from '../../types';
+import * as db from '../../common/db-next';
 import { safeAssign, safeKeys } from '../../common/helper';
+import * as challengeReader from '../../readers/challengeReader';
+import { ChallengeEntity } from '../../entities';
 
 export const updateChallenge = createContract('challenge.updateChallenge')
   .params('values')
@@ -21,28 +22,26 @@ export const updateChallenge = createContract('challenge.updateChallenge')
     }),
   })
   .fn(async values => {
-    const challengeKey = createKey({ type: `CHALLENGE`, id: values.id });
-    let dbChallenge = await getItem<DbChallenge>(challengeKey);
+    const challenge = await challengeReader.getChallengeByIdOrNull(values.id);
     const exactValues = R.omit(values, ['id']);
-    if (dbChallenge) {
-      safeAssign(dbChallenge, exactValues);
-      await updateItem(dbChallenge, safeKeys(exactValues));
+    if (challenge) {
+      safeAssign(challenge, exactValues);
+      await db.update(challenge.prepareUpdate(safeKeys(exactValues)));
     } else {
-      dbChallenge = {
-        ...challengeKey,
-        data_n: values.id,
-        ...exactValues,
-        createdAt: Date.now(),
-        stats: {
-          likes: 0,
-          solutions: 0,
-          solved: 0,
-          submissions: 0,
-        },
-      };
-      await putItems(dbChallenge);
+      await db.put(
+        new ChallengeEntity({
+          ...exactValues,
+          challengeId: values.id,
+          createdAt: Date.now(),
+          stats: {
+            likes: 0,
+            solutions: 0,
+            solved: 0,
+            submissions: 0,
+          },
+        })
+      );
     }
-
     return values.id;
   });
 

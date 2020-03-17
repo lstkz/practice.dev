@@ -1,9 +1,13 @@
 import { DynamoDBStreamEvent, EntityType, DynamoDBRecord } from '../types';
 import { dynamoStreamMapping } from '../generated/dynamoStream-mapping';
-import { SubmissionEntity } from '../entities';
+import {
+  SubmissionEntity,
+  ChallengeSolvedEntity,
+  SolutionEntity,
+} from '../entities';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 
-const Entities = [SubmissionEntity];
+const Entities = [SolutionEntity, SubmissionEntity, ChallengeSolvedEntity];
 
 export function decodeStreamEntity(
   record: DynamoDBRecord

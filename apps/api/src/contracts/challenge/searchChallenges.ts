@@ -1,33 +1,8 @@
 import * as R from 'remeda';
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
-import { createKey, queryMainIndexAll, queryIndexAll } from '../../common/db';
-import { DbChallengeSolved, DbChallenge } from '../../types';
 import { PagedResult, Challenge } from 'shared';
-import { mapDbChallenge } from '../../common/mapping';
-
-async function _getSolvedChallenges(userId: string | undefined) {
-  if (!userId) {
-    return [];
-  }
-  const key = createKey({
-    type: 'CHALLENGE_SOLVED',
-    userId: userId,
-    challengeId: -1,
-  });
-  const items = await queryMainIndexAll<DbChallengeSolved>({
-    pk: key.pk,
-  });
-
-  return items.map(item => item.challengeId);
-}
-
-async function _getAllChallenges() {
-  return await queryIndexAll<DbChallenge>({
-    index: 'sk-data_n-index',
-    sk: 'CHALLENGE',
-  });
-}
+import * as challengeReader from '../../readers/challengeReader';
 
 export const searchChallenges = createContract('challenge.searchChallenges')
   .params('userId', 'criteria')
@@ -69,8 +44,8 @@ export const searchChallenges = createContract('challenge.searchChallenges')
     const pageNumber = criteria.pageNumber!;
 
     const [items, solved] = await Promise.all([
-      _getAllChallenges(),
-      _getSolvedChallenges(userId),
+      challengeReader.getChallengesAll(),
+      challengeReader.getSolvedChallengeIds(userId),
     ]);
 
     const solvedMap = R.indexBy(solved, x => x);
@@ -78,11 +53,7 @@ export const searchChallenges = createContract('challenge.searchChallenges')
     const allChallenges = R.pipe(
       items,
       R.map(item => {
-        const mapped = mapDbChallenge(item);
-        if (solvedMap[mapped.id]) {
-          mapped.isSolved = true;
-        }
-        return mapped;
+        return item.toChallenge(!!solvedMap[item.challengeId]);
       }),
       R.filter(item => {
         if (domains && domains.length) {

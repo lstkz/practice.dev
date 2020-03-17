@@ -6,3 +6,6 @@ export * from './ConfirmCodeEntity';
 export * from './TokenEntity';
 export * from './ResetPasswordCodeEntity';
 export * from './SubmissionEntity';
+export * from './ChallengeEntity';
+export * from './ChallengeSolvedEntity';
+export * from './SolutionEntity';
