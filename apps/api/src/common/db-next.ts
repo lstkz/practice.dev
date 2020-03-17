@@ -3,11 +3,18 @@ import {
   Converter,
   TransactWriteItemList,
   Update,
+  Delete,
+  AttributeValue,
+  ExpressionAttributeValueMap,
+  BatchGetItemInput,
+  BatchGetRequestMap,
+  BatchGetResponseMap,
 } from 'aws-sdk/clients/dynamodb';
 import { TABLE_NAME } from '../config';
 import { AppError } from './errors';
 import { BaseEntity, EntityWithKey } from './orm';
 import { DbKey } from '../types';
+import { decLastKey, encLastKey } from './helper';
 
 export async function put(items: BaseEntity[] | BaseEntity) {
   if (Array.isArray(items)) {
@@ -36,6 +43,7 @@ export async function put(items: BaseEntity[] | BaseEntity) {
       .promise();
   }
 }
+
 export async function update(items: Update[] | Update) {
   if (Array.isArray(items)) {
     if (!items.length) {
@@ -53,6 +61,26 @@ export async function update(items: Update[] | Update) {
       .promise();
   } else {
     await dynamodb.updateItem(items).promise();
+  }
+}
+
+export async function remove(items: Delete[] | Delete) {
+  if (Array.isArray(items)) {
+    if (!items.length) {
+      throw new Error('Items cannot be empty');
+    }
+    await dynamodb
+      .transactWriteItems(
+        {
+          TransactItems: items.map(item => ({
+            Delete: item,
+          })),
+        },
+        undefined
+      )
+      .promise();
+  } else {
+    await dynamodb.deleteItem(items).promise();
   }
 }
 
@@ -94,20 +122,6 @@ interface GetItemOptions {
   consistentRead?: boolean;
 }
 
-export async function getItem(
-  key: DbKey,
-  options: GetItemOptions = {}
-): Promise<any | undefined> {
-  const { Item: item } = await dynamodb
-    .getItem({
-      TableName: TABLE_NAME,
-      Key: Converter.marshall(key),
-      ConsistentRead: options.consistentRead,
-    })
-    .promise();
-  return item ? (Converter.unmarshall(item) as any) : undefined;
-}
-
 export async function getOrNull<T extends EntityWithKey<TKey>, TKey>(
   EntityClass: T,
   key: TKey,
@@ -123,9 +137,7 @@ export async function getOrNull<T extends EntityWithKey<TKey>, TKey>(
   if (!item) {
     return null;
   }
-  item ? (Converter.unmarshall(item) as any) : undefined;
-  const values = await getItem(EntityClass.createKey(key));
-  return values ? new EntityClass(values) : null;
+  return new EntityClass(Converter.unmarshall(item));
 }
 
 export async function get<T extends EntityWithKey<TKey>, TKey>(
@@ -141,4 +153,100 @@ export async function get<T extends EntityWithKey<TKey>, TKey>(
     );
   }
   return item;
+}
+
+type DbIndex = 'sk-data_n-index' | 'sk-data2_n-index' | 'sk-data-index';
+
+interface BaseQueryOptions {
+  cursor?: string | null;
+  descending?: boolean;
+  limit?: number;
+  filter?: QueryFilter;
+  consistentRead?: boolean;
+}
+interface QueryFilter {
+  expression?: string;
+  names?: { [key: string]: string };
+  values: { [key: string]: AttributeValue };
+}
+
+interface QueryIndexOptions extends BaseQueryOptions {
+  index: DbIndex;
+  sk: string;
+}
+
+export async function queryIndex<T>(options: QueryIndexOptions) {
+  const { index, sk, ...base } = options;
+  return queryRaw<T>(
+    index,
+    'sk = :sk',
+    {
+      ':sk': {
+        S: sk,
+      },
+    },
+    base
+  );
+}
+
+export async function queryRaw<T>(
+  index: DbIndex | undefined,
+  keyConditionExpression: string,
+  expressionValues: ExpressionAttributeValueMap,
+  options: BaseQueryOptions
+) {
+  const result = await dynamodb
+    .query(
+      {
+        TableName: TABLE_NAME,
+        IndexName: index,
+        KeyConditionExpression: keyConditionExpression,
+        ExpressionAttributeValues: {
+          ...expressionValues,
+          ...(options.filter?.values || {}),
+        },
+        Limit: options.limit,
+        ExclusiveStartKey: options.cursor
+          ? decLastKey(options.cursor)
+          : undefined,
+        ScanIndexForward: !options.descending,
+        FilterExpression: options.filter?.expression,
+        ExpressionAttributeNames: options.filter?.names,
+        ConsistentRead: options.consistentRead,
+      },
+      undefined
+    )
+    .promise();
+  return {
+    items: (result.Items || []).map(item => Converter.unmarshall(item) as T),
+    cursor: encLastKey(result.LastEvaluatedKey),
+  };
+}
+
+export async function batchGetItemWithRetry(
+  requestItems: BatchGetRequestMap,
+  retry = 20
+): Promise<BatchGetResponseMap> {
+  if (!retry) {
+    console.error('requestItems', requestItems);
+    throw new Error('Cannot process batchGetItemWithRetry. Retry = 0.');
+  }
+  const result = await dynamodb
+    .batchGetItem({
+      RequestItems: requestItems,
+    })
+    .promise();
+
+  const ret = result.Responses || {};
+
+  if (result.UnprocessedKeys && Object.keys(result.UnprocessedKeys).length) {
+    const extra = await batchGetItemWithRetry(result.UnprocessedKeys);
+    Object.keys(extra).forEach(table => {
+      if (!ret[table]) {
+        ret[table] = [];
+      }
+      ret[table].push(...extra[table]);
+    });
+  }
+  return ret;
 }

@@ -7,18 +7,15 @@ import { _createUser } from './_createUser';
 import { randomUniqString } from '../../common/helper';
 import { _getNextUsername } from './_getNextUsername';
 import * as db from '../../common/db-next';
-import { UserEmailEntity, UserEntity, GithubUserEntity } from '../../entities';
+import * as userReader from '../../readers/userReader';
+import { GithubUserEntity } from '../../entities';
 
 async function _connectByEmail(githubUser: GitHubUserData) {
-  const userEmail = await db.getOrNull(UserEmailEntity, {
-    email: githubUser.email,
-  });
-  if (!userEmail) {
+  const userId = await userReader.getIdByEmailOrNull(githubUser.email);
+  if (!userId) {
     return null;
   }
-  const user = await db.get(UserEntity, {
-    userId: userEmail.userId,
-  });
+  const user = await userReader.getById(userId);
   if (user.githubId) {
     throw new AppError(
       `Cannot register a new user. Another user with email ${githubUser.email} is already connected with different GitHub account.`
@@ -48,15 +45,13 @@ export const authGithub = createContract('auth.authGithub')
   .fn(async code => {
     const accessToken = await exchangeCode(code);
     const githubUser = await getUserData(accessToken);
-    const existingGithubUser = await db.getOrNull(GithubUserEntity, {
-      githubId: githubUser.id,
-    });
+    const userIdByGithub = await userReader.getIdByGithubIdOrNull(
+      githubUser.id
+    );
 
     // already connected
-    if (existingGithubUser) {
-      const user = await db.get(UserEntity, {
-        userId: existingGithubUser.userId,
-      });
+    if (userIdByGithub) {
+      const user = await userReader.getById(userIdByGithub);
       return _generateAuthData(user);
     }
 

@@ -3,11 +3,11 @@ import { createContract, createRpcBinding, ses } from '../../lib';
 import { _createUser } from './_createUser';
 import { _generateAuthData } from './_generateAuthData';
 import { AppError } from '../../common/errors';
-import { _getEmailOrUsernameEntity } from './_getEmailOrUsernameEntity';
 import { randomUniqString, getDuration } from '../../common/helper';
 import { BASE_URL, EMAIL_SENDER } from '../../config';
 import * as db from '../../common/db-next';
-import { UserEntity, ResetPasswordCodeEntity } from '../../entities';
+import * as userReader from '../../readers/userReader';
+import { ResetPasswordCodeEntity } from '../../entities';
 
 export const resetPassword = createContract('user.resetPassword')
   .params('emailOrUsername')
@@ -15,15 +15,13 @@ export const resetPassword = createContract('user.resetPassword')
     emailOrUsername: S.string().trim(),
   })
   .fn(async emailOrUsername => {
-    const userEmailOrUsername = await _getEmailOrUsernameEntity(
+    const userId = await userReader.getUserIdByEmailOrUsernameOrNull(
       emailOrUsername
     );
-    if (!userEmailOrUsername) {
+    if (!userId) {
       throw new AppError('User not found');
     }
-    const user = await db.get(UserEntity, {
-      userId: userEmailOrUsername.userId,
-    });
+    const user = await userReader.getById(userId);
     const code = randomUniqString();
     const resetPasswordCode = new ResetPasswordCodeEntity({
       code,

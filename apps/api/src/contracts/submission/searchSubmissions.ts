@@ -1,12 +1,13 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { S, ValidationError } from 'schema';
-import { getDbUserByUsername } from '../user/getDbUserByUsername';
 import { createKey, queryIndex } from '../../common/db';
 import { UnreachableCaseError } from '../../common/errors';
 import { DbSubmission } from '../../types';
 import { mapDbSubmissionMany } from '../../common/mapping';
 import { getUsersByIds } from '../user/getUsersByIds';
 import { SearchResult, Submission } from 'shared';
+import * as db from '../../common/db-next';
+import { UserUsernameEntity, SubmissionEntity } from '../../entities';
 
 export const searchSubmissions = createContract('submission.searchSubmissions')
   .params('criteria')
@@ -22,39 +23,32 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
   })
   .fn(async criteria => {
     const { challengeId, username } = criteria;
-
     if (!challengeId && !username) {
       throw new ValidationError(
         'challengeId or username must be both defined',
         []
       );
     }
-
     const getKey = async () => {
-      const user = username
-        ? await getDbUserByUsername(username).catch(() => -1 as const)
-        : null;
-      if (user === -1) {
+      const user = await db.getOrNull(UserUsernameEntity, { username });
+      if (!user) {
         return null;
       }
       if (username && challengeId) {
-        return createKey({
-          type: 'SUBMISSION_USER_CHALLENGE',
+        return SubmissionEntity.createUserChallengeKey({
           challengeId,
           userId: user!.userId,
           submissionId: '-1',
         });
       }
       if (username) {
-        return createKey({
-          type: 'SUBMISSION_USER',
+        return SubmissionEntity.createUserKey({
           userId: user!.userId,
           submissionId: '-1',
         });
       }
       if (challengeId) {
-        return createKey({
-          type: 'SUBMISSION_CHALLENGE',
+        return SubmissionEntity.createChallengeKey({
           challengeId,
           submissionId: '-1',
         });

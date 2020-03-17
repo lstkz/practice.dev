@@ -1,7 +1,6 @@
 import { createContract } from '../../lib';
 import { S } from 'schema';
-import { TokenEntity, UserEntity } from '../../entities';
-import * as db from '../../common/db-next';
+import * as userReader from '../../readers/userReader';
 
 export const getUserByToken = createContract('user.getUserByToken')
   .params('token')
@@ -9,14 +8,9 @@ export const getUserByToken = createContract('user.getUserByToken')
     token: S.string(),
   })
   .fn(async token => {
-    const tokenEntity = await db.getOrNull(TokenEntity, {
-      token,
-    });
-    if (!tokenEntity) {
+    const user = await userReader.getByTokenOrNull(token);
+    if (!user) {
       return null;
     }
-    const user = await db.get(UserEntity, {
-      userId: tokenEntity.userId,
-    });
     return user.toUser();
   });

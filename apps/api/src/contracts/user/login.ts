@@ -4,9 +4,7 @@ import { _createUser } from './_createUser';
 import { _generateAuthData } from './_generateAuthData';
 import { AppError } from '../../common/errors';
 import { createPasswordHash } from '../../common/helper';
-import { _getEmailOrUsernameEntity } from './_getEmailOrUsernameEntity';
-import * as db from '../../common/db-next';
-import { UserEntity } from '../../entities';
+import * as userReader from '../../readers/userReader';
 
 const INVALID_CRED = 'Invalid credentials or user not found';
 
@@ -21,15 +19,13 @@ export const login = createContract('user.login')
 
   .fn(async values => {
     const { emailOrUsername } = values;
-    const userEmailOrUsername = await _getEmailOrUsernameEntity(
+    const userId = await userReader.getUserIdByEmailOrUsernameOrNull(
       emailOrUsername
     );
-    if (!userEmailOrUsername) {
+    if (!userId) {
       throw new AppError(INVALID_CRED);
     }
-    const user = await db.get(UserEntity, {
-      userId: userEmailOrUsername.userId,
-    });
+    const user = await userReader.getById(userId);
     const hash = await createPasswordHash(values.password, user.salt);
     if (user.password !== hash) {
       throw new AppError(INVALID_CRED);

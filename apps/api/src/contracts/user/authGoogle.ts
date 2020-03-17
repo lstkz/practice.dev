@@ -4,9 +4,8 @@ import { getEmail } from '../../common/google';
 import { _createUser } from './_createUser';
 import { _getNextUsername } from './_getNextUsername';
 import { randomUniqString } from '../../common/helper';
-import * as db from '../../common/db-next';
+import * as userReader from '../../readers/userReader';
 import { _generateAuthData } from './_generateAuthData';
-import { UserEmailEntity, UserEntity } from '../../entities';
 
 export const authGoogle = createContract('auth.authGoogle')
   .params('accessToken')
@@ -15,13 +14,9 @@ export const authGoogle = createContract('auth.authGoogle')
   })
   .fn(async accessToken => {
     const email = await getEmail(accessToken);
-    const userEmail = await db.getOrNull(UserEmailEntity, {
-      email,
-    });
-    if (userEmail) {
-      const user = await db.get(UserEntity, {
-        userId: userEmail.userId,
-      });
+    const userId = await userReader.getIdByEmailOrNull(email);
+    if (userId) {
+      const user = await userReader.getById(userId);
       return _generateAuthData(user);
     }
     const createdUser = await _createUser({

@@ -146,7 +146,10 @@ export type FunctionPropertyNames<T> = {
   [K in keyof T]: T[K] extends Function ? K : never;
 }[keyof T];
 
-export type PropsOnly<T> = Omit<T, FunctionPropertyNames<T> | 'key'>;
+export type PropsOnly<T> = Omit<
+  T,
+  FunctionPropertyNames<T> | 'key' | 'colMapping'
+>;
 
 export interface BaseEntity {
   serialize(): DynamoDB.AttributeMap;

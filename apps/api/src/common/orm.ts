@@ -11,10 +11,29 @@ export abstract class BaseEntity {
   protected colMapping: any = {};
 
   constructor(values: any) {
-    Object.assign(this, values);
+    const reverseMap: any = {};
+    Object.keys(this.colMapping).forEach(key => {
+      reverseMap[this.colMapping[key]] = key;
+    });
+    Object.keys(values)
+      .filter(key => !['pk', 'sk'].includes(key))
+      .forEach(key => {
+        const classKey = reverseMap[key] || key;
+        (this as any)[classKey] = values[key];
+      });
   }
 
   abstract get key(): { pk: string; sk: string };
+
+  protected getProps() {
+    const values: any = {};
+    const names = this.getPropNames();
+    names.forEach(name => {
+      const mapped = this.colMapping[name] || name;
+      values[mapped] = (this as any)[name];
+    });
+    return values;
+  }
 
   serialize(): AttributeMap {
     const values: any = {

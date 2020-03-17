@@ -1,7 +1,6 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
-import * as db from '../../common/db-next';
-import { UserEntity } from '../../entities';
+import * as userReader from '../../readers/userReader';
 
 export const getMe = createContract('user.getMe')
   .params('userId')
@@ -9,9 +8,7 @@ export const getMe = createContract('user.getMe')
     userId: S.string(),
   })
   .fn(async userId => {
-    const user = await db.get(UserEntity, {
-      userId,
-    });
+    const user = await userReader.getById(userId);
     return user.toUser();
   });
 

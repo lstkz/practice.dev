@@ -1,9 +1,9 @@
 import { createContract } from '../../lib';
 import { S } from 'schema';
 import { SubmissionStatus } from 'shared';
-import { getDbSubmissionById } from './getDbSubmissionById';
-import { _putSubmission } from './_putSubmission';
 import { markSolved } from '../challenge/markSolved';
+import * as db from '../../common/db-next';
+import { SubmissionEntity } from '../../entities';
 
 export const updateSubmissionStatus = createContract(
   'submission.updateSubmissionStatus'
@@ -19,14 +19,12 @@ export const updateSubmissionStatus = createContract(
     }),
   })
   .fn(async (submissionId, values) => {
-    const submission = await getDbSubmissionById(submissionId);
-
-    await _putSubmission({
-      ...submission,
-      status: values.status,
-      result: values.result,
+    const submission = await db.get(SubmissionEntity, {
+      submissionId,
     });
-
+    submission.status = values.status;
+    submission.result = values.result;
+    await db.update(submission.prepareUpdate(['status', 'result']));
     if (values.status === SubmissionStatus.Pass) {
       await markSolved({
         challengeId: submission.challengeId,
