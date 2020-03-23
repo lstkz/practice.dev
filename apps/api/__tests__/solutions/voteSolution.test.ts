@@ -3,6 +3,7 @@ import { resetDb } from '../helper';
 import { _createSolution } from '../../src/contracts/solution/_createSolution';
 import { voteSolution } from '../../src/contracts/solution/voteSolution';
 import { MockStream } from '../MockStream';
+import { getSolutionById } from '../../src/contracts/solution/getSolutionById';
 
 const mockStream = new MockStream();
 
@@ -31,49 +32,48 @@ it('throw error if solution not found', async () => {
       like: true,
       solutionId: '123',
     })
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"ContractError: Solution not found"`
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"Solution not found"`);
 });
 
 it('should like and unlike solution', async () => {
-  let likes = 0;
+  const getLikes = async () => {
+    await mockStream.process();
+    const solution = await getSolutionById('1', '1');
+    return solution.likes;
+  };
 
-  // 0 -> 1 likes
-  expect(
-    await voteSolution('1', {
-      solutionId: '1',
-      like: true,
-    })
-  ).toEqual(1);
+  await voteSolution('1', {
+    solutionId: '1',
+    like: true,
+  });
+  expect(await getLikes()).toEqual(1);
 
   // double like, ignore
-  expect(
-    await voteSolution('1', {
-      solutionId: '1',
-      like: true,
-    })
-  ).toEqual(1);
+  await voteSolution('1', {
+    solutionId: '1',
+    like: true,
+  });
+  expect(await getLikes()).toEqual(1);
 
   // like as another user
-  expect(
-    await voteSolution('2', {
-      solutionId: '1',
-      like: true,
-    })
-  ).toEqual(2);
+
+  await voteSolution('2', {
+    solutionId: '1',
+    like: true,
+  });
+  expect(await getLikes()).toEqual(2);
 
   // unlike as user1
-  likes = await voteSolution('1', {
+  await voteSolution('1', {
     solutionId: '1',
     like: false,
   });
-  expect(likes).toEqual(1);
+  expect(await getLikes()).toEqual(1);
 
   // unlike again as user1, ignore
-  likes = await voteSolution('1', {
+  await voteSolution('1', {
     solutionId: '1',
     like: false,
   });
-  expect(likes).toEqual(1);
+  expect(await getLikes()).toEqual(1);
 });

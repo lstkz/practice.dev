@@ -1,15 +1,13 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { getChallengeById } from '../challenge/getChallengeById';
-import { createKey, getItem } from '../../common/db';
-import { DbChallengeSolved } from '../../types';
 import { AppError } from '../../common/errors';
 import uuid from 'uuid';
 import { _createSolution } from './_createSolution';
-import { mapDbSolution } from '../../common/mapping';
-// import { getDbUserById } from '../user/getDbUserById';
 import { solutionUserInput } from './_solutionSchema';
 import { normalizeTags } from '../../common/helper';
+import * as userReader from '../../readers/userReader';
+import * as challengeReader from '../../readers/challengeReader';
 
 export const createSolution = createContract('solution.createSolution')
   .params('userId', 'values')
@@ -22,16 +20,14 @@ export const createSolution = createContract('solution.createSolution')
   })
   .fn(async (userId, values) => {
     const [user] = await Promise.all([
-      getDbUserById(userId),
-      await getChallengeById(userId, values.challengeId),
+      userReader.getById(userId),
+      getChallengeById(userId, values.challengeId),
     ]);
-    const solvedKey = createKey({
-      type: 'CHALLENGE_SOLVED',
-      userId: userId,
-      challengeId: values.challengeId,
-    });
-    const dbSolved = await getItem<DbChallengeSolved>(solvedKey);
-    if (!dbSolved) {
+    const isSolved = await challengeReader.getIsSolved(
+      userId,
+      values.challengeId
+    );
+    if (!isSolved) {
       throw new AppError(
         'Cannot create a solution if the challenge is not solved'
       );
@@ -45,7 +41,7 @@ export const createSolution = createContract('solution.createSolution')
       likes: 0,
       ...values,
     });
-    return mapDbSolution(dbSolution, user);
+    return dbSolution.toSolution(user);
   });
 
 export const createSolutionRpc = createRpcBinding({

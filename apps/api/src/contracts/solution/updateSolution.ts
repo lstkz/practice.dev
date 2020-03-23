@@ -2,22 +2,17 @@ import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { _createSolution } from './_createSolution';
 import { solutionUserInput } from './_solutionSchema';
-// import { getDbUserById } from '../user/getDbUserById';
-import { getDbSolutionById } from './getDbSolutionById';
+import * as userReader from '../../readers/userReader';
 import {
   normalizeTags,
   rethrowTransactionCanceled,
-  assertAuthorOrAdmin,
   safeKeys,
+  safeAssign,
 } from '../../common/helper';
-import {
-  transactWriteItems,
-  createKey,
-  TransactWriteItems,
-  prepareUpdate,
-} from '../../common/db';
-import { DbSolution } from '../../types';
-import { mapDbSolution } from '../../common/mapping';
+import { Converter } from 'aws-sdk/clients/dynamodb';
+import { transactWriteItems } from '../../common/db-next';
+import { _getSolutionWithPermissionCheck } from './_getSolutionWithCheck';
+import { SolutionEntity } from '../../entities';
 
 export const updateSolution = createContract('solution.updateSolution')
   .params('userId', 'solutionId', 'values')
@@ -27,52 +22,33 @@ export const updateSolution = createContract('solution.updateSolution')
     values: S.object().keys(solutionUserInput),
   })
   .fn(async (userId, solutionId, values) => {
-    const [user, dbSolution] = await Promise.all([
-      getDbUserById(userId),
-      getDbSolutionById(solutionId, true),
-    ]);
-    assertAuthorOrAdmin(dbSolution, user);
+    const solution = await _getSolutionWithPermissionCheck(userId, solutionId);
+    safeAssign(solution, values);
     values.tags = normalizeTags(values.tags);
 
-    const updated: DbSolution = {
-      ...dbSolution,
-      ...values,
-    };
-
-    const transactOptions: TransactWriteItems = {
-      deleteItems: [],
-      updateItems: [prepareUpdate(updated, safeKeys(solutionUserInput))],
-      putItems: [],
-      conditionalPutItems: [],
-      conditionalDeleteItems: [],
-    };
-
-    if (dbSolution.slug !== values.slug) {
-      transactOptions.deleteItems.push(
-        createKey({
-          type: 'SOLUTION_SLUG',
-          challengeId: dbSolution.challengeId,
-          slug: dbSolution.slug,
-        })
-      );
-      const solutionSlugKey = createKey({
-        type: 'SOLUTION_SLUG',
-        challengeId: dbSolution.challengeId,
-        slug: values.slug,
-      });
-      transactOptions.conditionalPutItems.push({
-        expression: 'attribute_not_exists(pk)',
-        item: { ...updated, ...solutionSlugKey },
-      });
-    }
+    const slug = new SolutionEntity(solution);
 
     const [solutionAuthor] = await Promise.all([
-      getDbUserById(updated.userId),
-      transactWriteItems(transactOptions).catch(
+      userReader.getById(userId),
+      transactWriteItems([
+        {
+          Update: solution.prepareUpdate(safeKeys(solutionUserInput)),
+        },
+        {
+          Put: {
+            ...slug.preparePut(),
+            ConditionExpression:
+              'attribute_not_exists(pk) OR (attribute_exists(pk) AND solutionId = :solutionId)',
+            ExpressionAttributeValues: Converter.marshall({
+              ':solutionId': solutionId,
+            }),
+          },
+        },
+      ]).catch(
         rethrowTransactionCanceled('Duplicated slug for this challenge')
       ),
     ]);
-    return mapDbSolution(updated, solutionAuthor);
+    return solution.toSolution(solutionAuthor);
   });
 
 export const updateSolutionRpc = createRpcBinding({

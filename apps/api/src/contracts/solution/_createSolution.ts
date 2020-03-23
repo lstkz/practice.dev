@@ -1,7 +1,7 @@
 import * as R from 'remeda';
-import { createKey, transactWriteItems } from '../../common/db';
-import { DbSolution } from '../../types';
 import { rethrowTransactionCanceled } from '../../common/helper';
+import { SolutionEntity } from '../../entities';
+import { transactWriteItems } from '../../common/db-next';
 
 interface CreateSolutionValues {
   createdAt: number;
@@ -17,38 +17,24 @@ interface CreateSolutionValues {
 }
 
 export async function _createSolution(values: CreateSolutionValues) {
-  const solutionKey = createKey({
-    type: 'SOLUTION',
-    challengeId: values.challengeId,
-    solutionId: values.id,
-  });
-
-  const solutionSlugKey = createKey({
-    type: 'SOLUTION_SLUG',
-    challengeId: values.challengeId,
-    slug: values.slug,
-  });
-
-  const dbSolution: DbSolution = {
-    ...solutionKey,
-    ...R.omit(values, ['createdAt', 'likes', 'id']),
-    data_n: values.createdAt,
-    data2_n: values.likes,
+  const props = {
+    ...R.omit(values, ['id']),
     solutionId: values.id,
   };
+  const solution = new SolutionEntity(props);
+  const solutionSlug = new SolutionEntity(props, { type: 'slug' });
 
-  await transactWriteItems({
-    conditionalPutItems: [
-      {
-        expression: 'attribute_not_exists(pk)',
-        item: {
-          ...dbSolution,
-          ...solutionSlugKey,
-        },
+  await transactWriteItems([
+    {
+      Put: {
+        ...solutionSlug.preparePut(),
+        ConditionExpression: 'attribute_not_exists(pk)',
       },
-    ],
-    putItems: [dbSolution],
-  }).catch(rethrowTransactionCanceled('Duplicated slug for this challenge'));
+    },
+    {
+      Put: solution.preparePut(),
+    },
+  ]).catch(rethrowTransactionCanceled('Duplicated slug for this challenge'));
 
-  return dbSolution;
+  return solution;
 }

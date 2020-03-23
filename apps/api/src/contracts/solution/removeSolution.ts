@@ -1,10 +1,8 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { _createSolution } from './_createSolution';
-// import { getDbUserById } from '../user/getDbUserById';
-import { getDbSolutionById } from './getDbSolutionById';
-import { assertAuthorOrAdmin } from '../../common/helper';
-import { deleteItem } from '../../common/db';
+import { _getSolutionWithPermissionCheck } from './_getSolutionWithCheck';
+import * as db from '../../common/db-next';
 
 export const removeSolution = createContract('solution.removeSolution')
   .params('userId', 'solutionId')
@@ -13,13 +11,8 @@ export const removeSolution = createContract('solution.removeSolution')
     solutionId: S.string(),
   })
   .fn(async (userId, solutionId) => {
-    const [user, dbSolution] = await Promise.all([
-      getDbUserById(userId),
-      getDbSolutionById(solutionId, true),
-    ]);
-    assertAuthorOrAdmin(dbSolution, user);
-
-    await deleteItem(dbSolution);
+    const solution = await _getSolutionWithPermissionCheck(userId, solutionId);
+    await db.remove(solution.prepareDelete());
   });
 
 export const removeSolutionRpc = createRpcBinding({

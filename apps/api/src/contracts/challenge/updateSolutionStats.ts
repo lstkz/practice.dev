@@ -41,21 +41,21 @@ export const updateChallengeStats = createContract(
 
 export const handleSolution = createDynamoStreamBinding<SolutionEntity>({
   type: 'SolutionEntity',
-  insert(eventId, item) {
-    return updateChallengeStats(eventId, item.challengeId, 'solutions', 1);
+  async insert(eventId, item) {
+    await updateChallengeStats(eventId, item.challengeId, 'solutions', 1);
   },
-  remove(eventId, item) {
-    return updateChallengeStats(eventId, item.challengeId, 'solutions', -1);
+  async remove(eventId, item) {
+    await updateChallengeStats(eventId, item.challengeId, 'solutions', -1);
   },
 });
 
 export const handleSubmission = createDynamoStreamBinding<SolutionEntity>({
   type: 'SubmissionEntity',
-  insert(eventId, item) {
-    return updateChallengeStats(eventId, item.challengeId, 'submissions', 1);
+  async insert(eventId, item) {
+    await updateChallengeStats(eventId, item.challengeId, 'submissions', 1);
   },
-  remove(eventId, item) {
-    return updateChallengeStats(eventId, item.challengeId, 'submissions', -1);
+  async remove(eventId, item) {
+    await updateChallengeStats(eventId, item.challengeId, 'submissions', -1);
   },
 });
 
@@ -63,10 +63,10 @@ export const handleChallengeSolved = createDynamoStreamBinding<
   ChallengeSolvedEntity
 >({
   type: 'ChallengeSolvedEntity',
-  insert(eventId, item) {
-    return updateChallengeStats(eventId, item.challengeId, 'solved', 1);
+  async insert(eventId, item) {
+    await updateChallengeStats(eventId, item.challengeId, 'solved', 1);
   },
-  remove(eventId, item) {
-    return updateChallengeStats(eventId, item.challengeId, 'solved', -1);
+  async remove(eventId, item) {
+    await updateChallengeStats(eventId, item.challengeId, 'solved', -1);
   },
 });

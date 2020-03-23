@@ -4,6 +4,7 @@ import { DynamoDB } from 'aws-sdk';
 import * as R from 'remeda';
 import { AppError } from './errors';
 import { DbUser } from '../types';
+import { UserEntity } from '../entities';
 
 const SECURITY = {
   SALT_LENGTH: 64,
@@ -179,7 +180,7 @@ export function ignoreTransactionCanceled() {
 
 export function assertAuthorOrAdmin<T extends { userId: string }>(
   item: T,
-  user: DbUser
+  user: UserEntity
 ) {
   if (item.userId !== user.userId && !user.isAdmin) {
     throw new AppError('No Permissions');

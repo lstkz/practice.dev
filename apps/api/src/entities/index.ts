@@ -9,3 +9,4 @@ export * from './SubmissionEntity';
 export * from './ChallengeEntity';
 export * from './ChallengeSolvedEntity';
 export * from './SolutionEntity';
+export * from './SolutionVoteEntity';

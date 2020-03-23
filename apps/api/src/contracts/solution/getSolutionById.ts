@@ -1,7 +1,8 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
-import { getDbSolutionById } from './getDbSolutionById';
+import * as solutionReader from '../../readers/solutionReader';
 import { _populateSolution } from './_populateSolution';
+import { AppError } from '../../common/errors';
 
 export const getSolutionById = createContract('solution.getSolutionById')
   .params('userId', 'id')
@@ -10,8 +11,11 @@ export const getSolutionById = createContract('solution.getSolutionById')
     id: S.string(),
   })
   .fn(async (userId, id) => {
-    const dbSolution = await getDbSolutionById(id, false);
-    return _populateSolution(dbSolution, userId);
+    const solution = await solutionReader.getByIdOrNull(id);
+    if (!solution) {
+      throw new AppError('Solution not found');
+    }
+    return _populateSolution(solution, userId);
   });
 
 export const getSolutionByIdRpc = createRpcBinding({

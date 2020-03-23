@@ -5,7 +5,6 @@ import {
   getPkQueryParams,
   BaseSearchCriteria,
   query,
-  get,
   getOrNull,
 } from '../common/db-next';
 import { ChallengeSolvedEntity, ChallengeEntity } from '../entities';

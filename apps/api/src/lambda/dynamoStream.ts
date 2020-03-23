@@ -4,10 +4,16 @@ import {
   SubmissionEntity,
   ChallengeSolvedEntity,
   SolutionEntity,
+  SolutionVoteEntity,
 } from '../entities';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 
-const Entities = [SolutionEntity, SubmissionEntity, ChallengeSolvedEntity];
+const Entities = [
+  SolutionEntity,
+  SolutionVoteEntity,
+  SubmissionEntity,
+  ChallengeSolvedEntity,
+];
 
 export function decodeStreamEntity(
   record: DynamoDBRecord

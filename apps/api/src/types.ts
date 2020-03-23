@@ -20,6 +20,7 @@ export type AppEvent = UserRegisteredEvent | UserEmailConfirmedEvent;
 
 export type EntityType =
   | 'SolutionEntity'
+  | 'SolutionVoteEntity'
   | 'SubmissionEntity'
   | 'ChallengeSolvedEntity';
 

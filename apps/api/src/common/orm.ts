@@ -42,7 +42,6 @@ export abstract class BaseEntity {
       const mapped = this.colMapping[name] || name;
       values[mapped] = (this as any)[name];
     });
-
     return Converter.marshall(values);
   }
 
