@@ -11,3 +11,5 @@ export * from './ChallengeSolvedEntity';
 export * from './SolutionEntity';
 export * from './SolutionVoteEntity';
 export * from './SolutionTagStatsEntity';
+export * from './SequenceEntity';
+export * from './RateLimitEntity';

@@ -83,7 +83,11 @@ export abstract class BaseEntity {
 
   private getPropNames() {
     return Object.keys(this).filter(key => {
-      return typeof (this as any)[key] !== 'function' && key !== 'key';
+      return (
+        typeof (this as any)[key] !== 'function' &&
+        key !== 'key' &&
+        key !== 'colMapping'
+      );
     });
   }
 

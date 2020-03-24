@@ -1,693 +1,693 @@
-import * as R from 'remeda';
-import { dynamodb } from '../lib';
-import { AppError, UnreachableCaseError } from './errors';
-import { Converter } from 'aws-sdk/clients/dynamodb';
-import { DbKey, DynamoDBRecord, EntityType } from '../types';
-import DynamoDB = require('aws-sdk/clients/dynamodb');
-import { decLastKey, encLastKey } from './helper';
-import { TABLE_NAME } from '../config';
+// import * as R from 'remeda';
+// import { dynamodb } from '../lib';
+// import { AppError, UnreachableCaseError } from './errors';
+// import { Converter } from 'aws-sdk/clients/dynamodb';
+// import { DbKey, DynamoDBRecord, EntityType } from '../types';
+// import DynamoDB = require('aws-sdk/clients/dynamodb');
+// import { decLastKey, encLastKey } from './helper';
+// import { TABLE_NAME } from '../config';
 
-type CreateKeyOptions =
-  | {
-      type: 'TOKEN';
-      token: string;
-    }
-  | {
-      type: 'CONFIRM_CODE';
-      code: string;
-    }
-  | {
-      type: 'USER_EMAIL';
-      email: string;
-    }
-  | {
-      type: 'USER_USERNAME';
-      username: string;
-    }
-  | {
-      type: 'USER';
-      userId: string;
-    }
-  | {
-      type: 'GITHUB_USER';
-      id: number;
-    }
-  | {
-      type: 'RESET_PASSWORD_CODE';
-      code: string;
-    }
-  | {
-      type: 'CHALLENGE';
-      id: number;
-    }
-  | {
-      type: 'CHALLENGE_SOLVED';
-      challengeId: number;
-      userId: string;
-    }
-  | {
-      type: 'SOLUTION';
-      solutionId: string;
-      challengeId: number;
-    }
-  | {
-      type: 'SOLUTION_SLUG';
-      challengeId: number;
-      slug: string;
-    }
-  | {
-      type: 'SOLUTION_USER';
-      solutionId: string;
-      userId: string;
-    }
-  | {
-      type: 'SOLUTION_CHALLENGE_USER';
-      challengeId: number;
-      solutionId: string;
-      userId: string;
-    }
-  | {
-      type: 'SOLUTION_TAG';
-      challengeId: number;
-      solutionId: string;
-      tag: string;
-    }
-  | {
-      type: 'SEQUENCE';
-      key: string;
-    }
-  | {
-      type: 'RATE_LIMIT';
-      key: string;
-    }
-  | {
-      type: 'SOCKET_CONNECTION';
-      connectionId: string;
-      userId: string;
-    }
-  | {
-      type: 'SUBMISSION';
-      submissionId: string;
-    }
-  | {
-      type: 'SUBMISSION_USER';
-      userId: string;
-      submissionId: string;
-    }
-  | {
-      type: 'SUBMISSION_CHALLENGE';
-      challengeId: number;
-      submissionId: string;
-    }
-  | {
-      type: 'SUBMISSION_USER_CHALLENGE';
-      userId: string;
-      challengeId: number;
-      submissionId: string;
-    }
-  | {
-      type: 'SOLUTION_VOTE';
-      userId: string;
-      solutionId: string;
-    }
-  | {
-      type: 'GLOBAL_SOLUTION_TAG';
-      tag: string;
-      challengeId: number;
-    }
-  | {
-      type: 'EVENT';
-      eventId: string;
-    };
+// type CreateKeyOptions =
+//   | {
+//       type: 'TOKEN';
+//       token: string;
+//     }
+//   | {
+//       type: 'CONFIRM_CODE';
+//       code: string;
+//     }
+//   | {
+//       type: 'USER_EMAIL';
+//       email: string;
+//     }
+//   | {
+//       type: 'USER_USERNAME';
+//       username: string;
+//     }
+//   | {
+//       type: 'USER';
+//       userId: string;
+//     }
+//   | {
+//       type: 'GITHUB_USER';
+//       id: number;
+//     }
+//   | {
+//       type: 'RESET_PASSWORD_CODE';
+//       code: string;
+//     }
+//   | {
+//       type: 'CHALLENGE';
+//       id: number;
+//     }
+//   | {
+//       type: 'CHALLENGE_SOLVED';
+//       challengeId: number;
+//       userId: string;
+//     }
+//   | {
+//       type: 'SOLUTION';
+//       solutionId: string;
+//       challengeId: number;
+//     }
+//   | {
+//       type: 'SOLUTION_SLUG';
+//       challengeId: number;
+//       slug: string;
+//     }
+//   | {
+//       type: 'SOLUTION_USER';
+//       solutionId: string;
+//       userId: string;
+//     }
+//   | {
+//       type: 'SOLUTION_CHALLENGE_USER';
+//       challengeId: number;
+//       solutionId: string;
+//       userId: string;
+//     }
+//   | {
+//       type: 'SOLUTION_TAG';
+//       challengeId: number;
+//       solutionId: string;
+//       tag: string;
+//     }
+//   | {
+//       type: 'SEQUENCE';
+//       key: string;
+//     }
+//   | {
+//       type: 'RATE_LIMIT';
+//       key: string;
+//     }
+//   | {
+//       type: 'SOCKET_CONNECTION';
+//       connectionId: string;
+//       userId: string;
+//     }
+//   | {
+//       type: 'SUBMISSION';
+//       submissionId: string;
+//     }
+//   | {
+//       type: 'SUBMISSION_USER';
+//       userId: string;
+//       submissionId: string;
+//     }
+//   | {
+//       type: 'SUBMISSION_CHALLENGE';
+//       challengeId: number;
+//       submissionId: string;
+//     }
+//   | {
+//       type: 'SUBMISSION_USER_CHALLENGE';
+//       userId: string;
+//       challengeId: number;
+//       submissionId: string;
+//     }
+//   | {
+//       type: 'SOLUTION_VOTE';
+//       userId: string;
+//       solutionId: string;
+//     }
+//   | {
+//       type: 'GLOBAL_SOLUTION_TAG';
+//       tag: string;
+//       challengeId: number;
+//     }
+//   | {
+//       type: 'EVENT';
+//       eventId: string;
+//     };
 
-export function createKey(
-  options: CreateKeyOptions
-): { pk: string; sk: string } {
-  switch (options.type) {
-    case 'TOKEN': {
-      const pk = `TOKEN:${options.token}`;
-      return {
-        pk,
-        sk: pk,
-      };
-    }
-    case 'CONFIRM_CODE': {
-      const pk = `CONFIRM_CODE:${options.code}`;
-      return {
-        pk,
-        sk: pk,
-      };
-    }
-    case 'USER_EMAIL': {
-      const pk = `USER_EMAIL:${options.email.toLowerCase()}`;
-      return {
-        pk,
-        sk: pk,
-      };
-    }
-    case 'USER_USERNAME': {
-      const pk = `USER_USERNAME:${options.username.toLowerCase()}`;
-      return {
-        pk,
-        sk: pk,
-      };
-    }
-    case 'USER': {
-      const pk = `USER:${options.userId}`;
-      return {
-        pk,
-        sk: pk,
-      };
-    }
-    case 'GITHUB_USER': {
-      const pk = `GITHUB_USER:${options.id}`;
-      return {
-        pk,
-        sk: pk,
-      };
-    }
-    case 'RESET_PASSWORD_CODE': {
-      const pk = `RESET_PASSWORD_CODE:${options.code}`;
-      return {
-        pk,
-        sk: pk,
-      };
-    }
-    case 'CHALLENGE': {
-      return {
-        pk: `CHALLENGE:${options.id}`,
-        sk: 'CHALLENGE',
-      };
-    }
-    case 'CHALLENGE_SOLVED': {
-      return {
-        pk: `CHALLENGE_SOLVED:${options.userId}`,
-        sk: `CHALLENGE_SOLVED:${options.challengeId}`,
-      };
-    }
-    case 'SOLUTION': {
-      return {
-        pk: `SOLUTION:${options.solutionId}`,
-        sk: `SOLUTION:${options.challengeId}`,
-      };
-    }
-    case 'SOLUTION_SLUG': {
-      const pk = `SOLUTION_SLUG:${options.challengeId}:${options.slug}`;
-      return {
-        pk,
-        sk: pk,
-      };
-    }
-    case 'SOLUTION_USER': {
-      return {
-        pk: `SOLUTION_USER:${options.solutionId}`,
-        sk: `SOLUTION_USER:${options.userId}`,
-      };
-    }
-    case 'SOLUTION_CHALLENGE_USER': {
-      return {
-        pk: `SOLUTION_CHALLENGE_USER:${options.solutionId}`,
-        sk: `SOLUTION_CHALLENGE_USER:${options.userId}:${options.challengeId}`,
-      };
-    }
-    case 'SOLUTION_TAG': {
-      return {
-        pk: `SOLUTION_TAG:${options.solutionId}`,
-        sk: `SOLUTION_TAG:${options.challengeId}:${options.tag}`,
-      };
-    }
-    case 'SEQUENCE': {
-      const pk = `SEQUENCE:${options.key}`;
-      return {
-        pk,
-        sk: pk,
-      };
-    }
-    case 'RATE_LIMIT': {
-      const pk = `RATE_LIMIT:${options.key}`;
-      return {
-        pk,
-        sk: pk,
-      };
-    }
-    case 'SOCKET_CONNECTION': {
-      return {
-        pk: `SOCKET_CONNECTION:${options.connectionId}`,
-        sk: `SOCKET_CONNECTION:${options.userId}`,
-      };
-    }
-    case 'SUBMISSION': {
-      const pk = `SUBMISSION:${options.submissionId}`;
-      return {
-        pk,
-        sk: pk,
-      };
-    }
-    case 'SUBMISSION_USER': {
-      return {
-        pk: `SUBMISSION_USER:${options.submissionId}`,
-        sk: `SUBMISSION_USER:${options.userId}`,
-      };
-    }
-    case 'SUBMISSION_CHALLENGE': {
-      return {
-        pk: `SUBMISSION_CHALLENGE:${options.submissionId}`,
-        sk: `SUBMISSION_CHALLENGE:${options.challengeId}`,
-      };
-    }
-    case 'SUBMISSION_USER_CHALLENGE': {
-      return {
-        pk: `SUBMISSION_USER_CHALLENGE:${options.submissionId}`,
-        sk: `SUBMISSION_USER_CHALLENGE:${options.challengeId}:${options.userId}`,
-      };
-    }
-    case 'SOLUTION_VOTE': {
-      return {
-        pk: `SOLUTION_VOTE:${options.solutionId}:${options.userId}`,
-        sk: `SOLUTION_VOTE:${options.userId}`,
-      };
-    }
-    case 'GLOBAL_SOLUTION_TAG': {
-      return {
-        pk: `SOLUTION_TAG:${options.challengeId}:${options.tag.toLowerCase()}`,
-        sk: `SOLUTION_TAG:${options.challengeId}`,
-      };
-    }
-    case 'EVENT': {
-      const pk = `EVENT:${options.eventId}`;
-      return {
-        pk: pk,
-        sk: pk,
-      };
-    }
-    default:
-      throw new UnreachableCaseError(options);
-  }
-}
+// export function createKey(
+//   options: CreateKeyOptions
+// ): { pk: string; sk: string } {
+//   switch (options.type) {
+//     case 'TOKEN': {
+//       const pk = `TOKEN:${options.token}`;
+//       return {
+//         pk,
+//         sk: pk,
+//       };
+//     }
+//     case 'CONFIRM_CODE': {
+//       const pk = `CONFIRM_CODE:${options.code}`;
+//       return {
+//         pk,
+//         sk: pk,
+//       };
+//     }
+//     case 'USER_EMAIL': {
+//       const pk = `USER_EMAIL:${options.email.toLowerCase()}`;
+//       return {
+//         pk,
+//         sk: pk,
+//       };
+//     }
+//     case 'USER_USERNAME': {
+//       const pk = `USER_USERNAME:${options.username.toLowerCase()}`;
+//       return {
+//         pk,
+//         sk: pk,
+//       };
+//     }
+//     case 'USER': {
+//       const pk = `USER:${options.userId}`;
+//       return {
+//         pk,
+//         sk: pk,
+//       };
+//     }
+//     case 'GITHUB_USER': {
+//       const pk = `GITHUB_USER:${options.id}`;
+//       return {
+//         pk,
+//         sk: pk,
+//       };
+//     }
+//     case 'RESET_PASSWORD_CODE': {
+//       const pk = `RESET_PASSWORD_CODE:${options.code}`;
+//       return {
+//         pk,
+//         sk: pk,
+//       };
+//     }
+//     case 'CHALLENGE': {
+//       return {
+//         pk: `CHALLENGE:${options.id}`,
+//         sk: 'CHALLENGE',
+//       };
+//     }
+//     case 'CHALLENGE_SOLVED': {
+//       return {
+//         pk: `CHALLENGE_SOLVED:${options.userId}`,
+//         sk: `CHALLENGE_SOLVED:${options.challengeId}`,
+//       };
+//     }
+//     case 'SOLUTION': {
+//       return {
+//         pk: `SOLUTION:${options.solutionId}`,
+//         sk: `SOLUTION:${options.challengeId}`,
+//       };
+//     }
+//     case 'SOLUTION_SLUG': {
+//       const pk = `SOLUTION_SLUG:${options.challengeId}:${options.slug}`;
+//       return {
+//         pk,
+//         sk: pk,
+//       };
+//     }
+//     case 'SOLUTION_USER': {
+//       return {
+//         pk: `SOLUTION_USER:${options.solutionId}`,
+//         sk: `SOLUTION_USER:${options.userId}`,
+//       };
+//     }
+//     case 'SOLUTION_CHALLENGE_USER': {
+//       return {
+//         pk: `SOLUTION_CHALLENGE_USER:${options.solutionId}`,
+//         sk: `SOLUTION_CHALLENGE_USER:${options.userId}:${options.challengeId}`,
+//       };
+//     }
+//     case 'SOLUTION_TAG': {
+//       return {
+//         pk: `SOLUTION_TAG:${options.solutionId}`,
+//         sk: `SOLUTION_TAG:${options.challengeId}:${options.tag}`,
+//       };
+//     }
+//     case 'SEQUENCE': {
+//       const pk = `SEQUENCE:${options.key}`;
+//       return {
+//         pk,
+//         sk: pk,
+//       };
+//     }
+//     case 'RATE_LIMIT': {
+//       const pk = `RATE_LIMIT:${options.key}`;
+//       return {
+//         pk,
+//         sk: pk,
+//       };
+//     }
+//     case 'SOCKET_CONNECTION': {
+//       return {
+//         pk: `SOCKET_CONNECTION:${options.connectionId}`,
+//         sk: `SOCKET_CONNECTION:${options.userId}`,
+//       };
+//     }
+//     case 'SUBMISSION': {
+//       const pk = `SUBMISSION:${options.submissionId}`;
+//       return {
+//         pk,
+//         sk: pk,
+//       };
+//     }
+//     case 'SUBMISSION_USER': {
+//       return {
+//         pk: `SUBMISSION_USER:${options.submissionId}`,
+//         sk: `SUBMISSION_USER:${options.userId}`,
+//       };
+//     }
+//     case 'SUBMISSION_CHALLENGE': {
+//       return {
+//         pk: `SUBMISSION_CHALLENGE:${options.submissionId}`,
+//         sk: `SUBMISSION_CHALLENGE:${options.challengeId}`,
+//       };
+//     }
+//     case 'SUBMISSION_USER_CHALLENGE': {
+//       return {
+//         pk: `SUBMISSION_USER_CHALLENGE:${options.submissionId}`,
+//         sk: `SUBMISSION_USER_CHALLENGE:${options.challengeId}:${options.userId}`,
+//       };
+//     }
+//     case 'SOLUTION_VOTE': {
+//       return {
+//         pk: `SOLUTION_VOTE:${options.solutionId}:${options.userId}`,
+//         sk: `SOLUTION_VOTE:${options.userId}`,
+//       };
+//     }
+//     case 'GLOBAL_SOLUTION_TAG': {
+//       return {
+//         pk: `SOLUTION_TAG:${options.challengeId}:${options.tag.toLowerCase()}`,
+//         sk: `SOLUTION_TAG:${options.challengeId}`,
+//       };
+//     }
+//     case 'EVENT': {
+//       const pk = `EVENT:${options.eventId}`;
+//       return {
+//         pk: pk,
+//         sk: pk,
+//       };
+//     }
+//     default:
+//       throw new UnreachableCaseError(options);
+//   }
+// }
 
-export async function putItems(items: any[] | any) {
-  if (Array.isArray(items)) {
-    if (!items.length) {
-      throw new Error('Items cannot be empty');
-    }
-    await dynamodb
-      .transactWriteItems(
-        {
-          TransactItems: items.map(item => ({
-            Put: { TableName: TABLE_NAME, Item: Converter.marshall(item) },
-          })),
-        },
-        undefined
-      )
-      .promise();
-  } else {
-    await dynamodb
-      .putItem({
-        Item: Converter.marshall(items),
-        TableName: TABLE_NAME,
-      })
-      .promise();
-  }
-}
+// export async function putItems(items: any[] | any) {
+//   if (Array.isArray(items)) {
+//     if (!items.length) {
+//       throw new Error('Items cannot be empty');
+//     }
+//     await dynamodb
+//       .transactWriteItems(
+//         {
+//           TransactItems: items.map(item => ({
+//             Put: { TableName: TABLE_NAME, Item: Converter.marshall(item) },
+//           })),
+//         },
+//         undefined
+//       )
+//       .promise();
+//   } else {
+//     await dynamodb
+//       .putItem({
+//         Item: Converter.marshall(items),
+//         TableName: TABLE_NAME,
+//       })
+//       .promise();
+//   }
+// }
 
-interface GetItemOptions {
-  consistentRead?: boolean;
-}
+// interface GetItemOptions {
+//   consistentRead?: boolean;
+// }
 
-export async function getItem<T>(
-  key: {
-    pk: string;
-    sk: string;
-  },
-  options: GetItemOptions = {}
-): Promise<T | undefined> {
-  const { Item: item } = await dynamodb
-    .getItem({
-      TableName: TABLE_NAME,
-      Key: Converter.marshall(key),
-      ConsistentRead: options.consistentRead,
-    })
-    .promise();
-  return item ? (Converter.unmarshall(item) as any) : undefined;
-}
+// export async function getItem<T>(
+//   key: {
+//     pk: string;
+//     sk: string;
+//   },
+//   options: GetItemOptions = {}
+// ): Promise<T | undefined> {
+//   const { Item: item } = await dynamodb
+//     .getItem({
+//       TableName: TABLE_NAME,
+//       Key: Converter.marshall(key),
+//       ConsistentRead: options.consistentRead,
+//     })
+//     .promise();
+//   return item ? (Converter.unmarshall(item) as any) : undefined;
+// }
 
-export async function deleteItem<T extends DbKey>(item: T) {
-  await dynamodb
-    .deleteItem({
-      TableName: TABLE_NAME,
-      Key: Converter.marshall(R.pick(item, ['sk', 'pk'])),
-    })
-    .promise();
-}
+// export async function deleteItem<T extends DbKey>(item: T) {
+//   await dynamodb
+//     .deleteItem({
+//       TableName: TABLE_NAME,
+//       Key: Converter.marshall(R.pick(item, ['sk', 'pk'])),
+//     })
+//     .promise();
+// }
 
-export async function getItemEnsure<T>(key: {
-  pk: string;
-  sk: string;
-}): Promise<T> {
-  const item = await getItem<T>(key);
-  if (!item) {
-    throw new Error(`Expected object to exists pk = ${key.pk}, sk = ${key.sk}`);
-  }
-  return item;
-}
+// export async function getItemEnsure<T>(key: {
+//   pk: string;
+//   sk: string;
+// }): Promise<T> {
+//   const item = await getItem<T>(key);
+//   if (!item) {
+//     throw new Error(`Expected object to exists pk = ${key.pk}, sk = ${key.sk}`);
+//   }
+//   return item;
+// }
 
-export async function ensureNotExists(values: any, errorMsg: string) {
-  const { Item: item } = await dynamodb
-    .getItem({
-      TableName: TABLE_NAME,
-      Key: Converter.marshall(values),
-    })
-    .promise();
-  if (item) {
-    throw new AppError(errorMsg);
-  }
-}
+// export async function ensureNotExists(values: any, errorMsg: string) {
+//   const { Item: item } = await dynamodb
+//     .getItem({
+//       TableName: TABLE_NAME,
+//       Key: Converter.marshall(values),
+//     })
+//     .promise();
+//   if (item) {
+//     throw new AppError(errorMsg);
+//   }
+// }
 
-export function prepareUpdate<T extends DbKey>(item: T, keys: Array<keyof T>) {
-  const values = keys.reduce((ret, key) => {
-    ret[`:${key}`] = item[key] === undefined ? null : item[key];
-    return ret;
-  }, {} as { [x: string]: any });
-  const names = keys.reduce((ret, key) => {
-    ret[`#${key}`] = key;
-    return ret;
-  }, {} as { [x: string]: any });
+// export function prepareUpdate<T extends DbKey>(item: T, keys: Array<keyof T>) {
+//   const values = keys.reduce((ret, key) => {
+//     ret[`:${key}`] = item[key] === undefined ? null : item[key];
+//     return ret;
+//   }, {} as { [x: string]: any });
+//   const names = keys.reduce((ret, key) => {
+//     ret[`#${key}`] = key;
+//     return ret;
+//   }, {} as { [x: string]: any });
 
-  const mappedKeys = keys.map(key => `#${key} = :${key}`);
+//   const mappedKeys = keys.map(key => `#${key} = :${key}`);
 
-  return {
-    Key: {
-      pk: { S: item.pk },
-      sk: { S: item.sk },
-    },
-    UpdateExpression: `SET ${mappedKeys.join(', ')}`,
-    ExpressionAttributeValues: Converter.marshall(values),
-    ExpressionAttributeNames: names,
-  };
-}
+//   return {
+//     Key: {
+//       pk: { S: item.pk },
+//       sk: { S: item.sk },
+//     },
+//     UpdateExpression: `SET ${mappedKeys.join(', ')}`,
+//     ExpressionAttributeValues: Converter.marshall(values),
+//     ExpressionAttributeNames: names,
+//   };
+// }
 
-export async function updateItem<T extends DbKey>(
-  item: T,
-  keys: Array<keyof T>
-) {
-  const update = prepareUpdate(item, keys);
-  await dynamodb
-    .updateItem({
-      TableName: TABLE_NAME,
-      ...update,
-    })
-    .promise();
-}
+// export async function updateItem<T extends DbKey>(
+//   item: T,
+//   keys: Array<keyof T>
+// ) {
+//   const update = prepareUpdate(item, keys);
+//   await dynamodb
+//     .updateItem({
+//       TableName: TABLE_NAME,
+//       ...update,
+//     })
+//     .promise();
+// }
 
-export interface TransactWriteItems {
-  deleteItems: Array<{ pk: string; sk: string }>;
-  updateItems: Array<Omit<AWS.DynamoDB.Update, 'TableName'>>;
-  putItems: Array<{ pk: string; sk: string }>;
-  conditionalPutItems: Array<{
-    expression: string;
-    values?: { [x: string]: any };
-    item: { pk: string; sk: string };
-  }>;
-  conditionalDeleteItems: Array<{
-    expression: string;
-    key: { pk: string; sk: string };
-  }>;
-}
+// export interface TransactWriteItems {
+//   deleteItems: Array<{ pk: string; sk: string }>;
+//   updateItems: Array<Omit<AWS.DynamoDB.Update, 'TableName'>>;
+//   putItems: Array<{ pk: string; sk: string }>;
+//   conditionalPutItems: Array<{
+//     expression: string;
+//     values?: { [x: string]: any };
+//     item: { pk: string; sk: string };
+//   }>;
+//   conditionalDeleteItems: Array<{
+//     expression: string;
+//     key: { pk: string; sk: string };
+//   }>;
+// }
 
-export async function transactWriteItems(options: Partial<TransactWriteItems>) {
-  const deleteItems = (options.deleteItems || []).map(item => ({
-    Delete: {
-      TableName: TABLE_NAME,
-      Key: Converter.marshall(item),
-    },
-  }));
+// export async function transactWriteItems(options: Partial<TransactWriteItems>) {
+//   const deleteItems = (options.deleteItems || []).map(item => ({
+//     Delete: {
+//       TableName: TABLE_NAME,
+//       Key: Converter.marshall(item),
+//     },
+//   }));
 
-  const updateItems = (options.updateItems || []).map(item => ({
-    Update: {
-      TableName: TABLE_NAME,
-      ...item,
-    },
-  }));
+//   const updateItems = (options.updateItems || []).map(item => ({
+//     Update: {
+//       TableName: TABLE_NAME,
+//       ...item,
+//     },
+//   }));
 
-  const putItems = (options.putItems || []).map(item => ({
-    Put: {
-      TableName: TABLE_NAME,
-      Item: Converter.marshall(item),
-    },
-  }));
+//   const putItems = (options.putItems || []).map(item => ({
+//     Put: {
+//       TableName: TABLE_NAME,
+//       Item: Converter.marshall(item),
+//     },
+//   }));
 
-  const conditionalPutItems = (options.conditionalPutItems || []).map(item => ({
-    Put: {
-      TableName: TABLE_NAME,
-      ConditionExpression: item.expression,
-      ExpressionAttributeValues: item.values && Converter.marshall(item.values),
-      Item: Converter.marshall(item.item),
-    },
-  }));
+//   const conditionalPutItems = (options.conditionalPutItems || []).map(item => ({
+//     Put: {
+//       TableName: TABLE_NAME,
+//       ConditionExpression: item.expression,
+//       ExpressionAttributeValues: item.values && Converter.marshall(item.values),
+//       Item: Converter.marshall(item.item),
+//     },
+//   }));
 
-  const conditionalDeleteItems = (options.conditionalDeleteItems || []).map(
-    item => ({
-      Delete: {
-        TableName: TABLE_NAME,
-        ConditionExpression: item.expression,
-        Key: Converter.marshall(item.key),
-      },
-    })
-  );
+//   const conditionalDeleteItems = (options.conditionalDeleteItems || []).map(
+//     item => ({
+//       Delete: {
+//         TableName: TABLE_NAME,
+//         ConditionExpression: item.expression,
+//         Key: Converter.marshall(item.key),
+//       },
+//     })
+//   );
 
-  const writeItems = [
-    ...updateItems,
-    ...deleteItems,
-    ...putItems,
-    ...conditionalPutItems,
-    ...conditionalDeleteItems,
-  ];
-  if (process.env.MOCK_DB && writeItems.length > 10) {
-    await Promise.all([
-      dynamodb
-        .transactWriteItems({
-          TransactItems: updateItems,
-        })
-        .promise(),
-      dynamodb
-        .transactWriteItems({
-          TransactItems: writeItems.slice(updateItems.length),
-        })
-        .promise(),
-    ]);
-  } else {
-    await dynamodb
-      .transactWriteItems({
-        TransactItems: writeItems,
-      })
-      .promise();
-  }
-}
+//   const writeItems = [
+//     ...updateItems,
+//     ...deleteItems,
+//     ...putItems,
+//     ...conditionalPutItems,
+//     ...conditionalDeleteItems,
+//   ];
+//   if (process.env.MOCK_DB && writeItems.length > 10) {
+//     await Promise.all([
+//       dynamodb
+//         .transactWriteItems({
+//           TransactItems: updateItems,
+//         })
+//         .promise(),
+//       dynamodb
+//         .transactWriteItems({
+//           TransactItems: writeItems.slice(updateItems.length),
+//         })
+//         .promise(),
+//     ]);
+//   } else {
+//     await dynamodb
+//       .transactWriteItems({
+//         TransactItems: writeItems,
+//       })
+//       .promise();
+//   }
+// }
 
-export async function batchRawWriteItemWithRetry(
-  requestItems: DynamoDB.BatchWriteItemRequestMap,
-  retry = 20
-) {
-  if (!retry) {
-    console.error('requestItems', requestItems);
-    throw new Error('Cannot process batchWriteItemWithRetry. Retry = 0.');
-  }
-  const result = await dynamodb
-    .batchWriteItem({
-      RequestItems: requestItems,
-    })
-    .promise();
+// export async function batchRawWriteItemWithRetry(
+//   requestItems: DynamoDB.BatchWriteItemRequestMap,
+//   retry = 20
+// ) {
+//   if (!retry) {
+//     console.error('requestItems', requestItems);
+//     throw new Error('Cannot process batchWriteItemWithRetry. Retry = 0.');
+//   }
+//   const result = await dynamodb
+//     .batchWriteItem({
+//       RequestItems: requestItems,
+//     })
+//     .promise();
 
-  if (result.UnprocessedItems && Object.keys(result.UnprocessedItems).length) {
-    await batchRawWriteItemWithRetry(result.UnprocessedItems);
-  }
-}
+//   if (result.UnprocessedItems && Object.keys(result.UnprocessedItems).length) {
+//     await batchRawWriteItemWithRetry(result.UnprocessedItems);
+//   }
+// }
 
-export async function batchDelete<T extends DbKey>(items: T[]) {
-  if (!items.length) {
-    return;
-  }
-  await batchRawWriteItemWithRetry({
-    [TABLE_NAME]: items.map(item => ({
-      DeleteRequest: {
-        Key: Converter.marshall(R.pick(item, ['sk', 'pk'])),
-      },
-    })),
-  });
-}
+// export async function batchDelete<T extends DbKey>(items: T[]) {
+//   if (!items.length) {
+//     return;
+//   }
+//   await batchRawWriteItemWithRetry({
+//     [TABLE_NAME]: items.map(item => ({
+//       DeleteRequest: {
+//         Key: Converter.marshall(R.pick(item, ['sk', 'pk'])),
+//       },
+//     })),
+//   });
+// }
 
-interface BaseQueryOptions {
-  cursor?: string | null;
-  descending?: boolean;
-  limit?: number;
-  filter?: QueryFilter;
-  consistentRead?: boolean;
-}
+// interface BaseQueryOptions {
+//   cursor?: string | null;
+//   descending?: boolean;
+//   limit?: number;
+//   filter?: QueryFilter;
+//   consistentRead?: boolean;
+// }
 
-interface QueryFilter {
-  expression?: string;
-  names?: { [key: string]: string };
-  values: { [key: string]: DynamoDB.AttributeValue };
-}
+// interface QueryFilter {
+//   expression?: string;
+//   names?: { [key: string]: string };
+//   values: { [key: string]: DynamoDB.AttributeValue };
+// }
 
-type DbIndex = 'sk-data_n-index' | 'sk-data2_n-index' | 'sk-data-index';
+// type DbIndex = 'sk-data_n-index' | 'sk-data2_n-index' | 'sk-data-index';
 
-interface QueryIndexOptions extends BaseQueryOptions {
-  index: DbIndex;
-  sk: string;
-}
+// interface QueryIndexOptions extends BaseQueryOptions {
+//   index: DbIndex;
+//   sk: string;
+// }
 
-export async function queryIndex<T>(options: QueryIndexOptions) {
-  const { index, sk, ...base } = options;
-  return queryRaw<T>(
-    index,
-    'sk = :sk',
-    {
-      ':sk': {
-        S: sk,
-      },
-    },
-    base
-  );
-}
+// export async function queryIndex<T>(options: QueryIndexOptions) {
+//   const { index, sk, ...base } = options;
+//   return queryRaw<T>(
+//     index,
+//     'sk = :sk',
+//     {
+//       ':sk': {
+//         S: sk,
+//       },
+//     },
+//     base
+//   );
+// }
 
-export async function queryIndexAll<T>(options: QueryIndexOptions) {
-  const result: T[] = [];
-  const travel = async (cursor: null | string) => {
-    const ret = await queryIndex<T>({
-      ...options,
-      cursor,
-    });
-    result.push(...ret.items);
-    if (ret.cursor) {
-      await travel(ret.cursor);
-    }
-  };
-  await travel(null);
-  return result;
-}
+// export async function queryIndexAll<T>(options: QueryIndexOptions) {
+//   const result: T[] = [];
+//   const travel = async (cursor: null | string) => {
+//     const ret = await queryIndex<T>({
+//       ...options,
+//       cursor,
+//     });
+//     result.push(...ret.items);
+//     if (ret.cursor) {
+//       await travel(ret.cursor);
+//     }
+//   };
+//   await travel(null);
+//   return result;
+// }
 
-interface QueryMainIndexOptions extends BaseQueryOptions {
-  pk: string;
-}
+// interface QueryMainIndexOptions extends BaseQueryOptions {
+//   pk: string;
+// }
 
-export async function queryMainIndex<T>(options: QueryMainIndexOptions) {
-  const { pk, ...base } = options;
-  return queryRaw<T>(
-    undefined,
-    'pk = :pk',
-    {
-      ':pk': {
-        S: pk,
-      },
-    },
-    base
-  );
-}
+// export async function queryMainIndex<T>(options: QueryMainIndexOptions) {
+//   const { pk, ...base } = options;
+//   return queryRaw<T>(
+//     undefined,
+//     'pk = :pk',
+//     {
+//       ':pk': {
+//         S: pk,
+//       },
+//     },
+//     base
+//   );
+// }
 
-export async function queryMainIndexAll<T>(options: QueryMainIndexOptions) {
-  const result: T[] = [];
-  const travel = async (cursor: null | string) => {
-    const ret = await queryMainIndex<T>({
-      ...options,
-      cursor,
-    });
-    result.push(...ret.items);
-    if (ret.cursor) {
-      await travel(ret.cursor);
-    }
-  };
-  await travel(null);
-  return result;
-}
+// export async function queryMainIndexAll<T>(options: QueryMainIndexOptions) {
+//   const result: T[] = [];
+//   const travel = async (cursor: null | string) => {
+//     const ret = await queryMainIndex<T>({
+//       ...options,
+//       cursor,
+//     });
+//     result.push(...ret.items);
+//     if (ret.cursor) {
+//       await travel(ret.cursor);
+//     }
+//   };
+//   await travel(null);
+//   return result;
+// }
 
-export async function queryRaw<T>(
-  index: DbIndex | undefined,
-  keyConditionExpression: string,
-  expressionValues: DynamoDB.ExpressionAttributeValueMap,
-  options: BaseQueryOptions
-) {
-  const result = await dynamodb
-    .query(
-      {
-        TableName: TABLE_NAME,
-        IndexName: index,
-        KeyConditionExpression: keyConditionExpression,
-        ExpressionAttributeValues: {
-          ...expressionValues,
-          ...(options.filter?.values || {}),
-        },
-        Limit: options.limit,
-        ExclusiveStartKey: options.cursor
-          ? decLastKey(options.cursor)
-          : undefined,
-        ScanIndexForward: !options.descending,
-        FilterExpression: options.filter?.expression,
-        ExpressionAttributeNames: options.filter?.names,
-        ConsistentRead: options.consistentRead,
-      },
-      undefined
-    )
-    .promise();
-  return {
-    items: (result.Items || []).map(item => Converter.unmarshall(item) as T),
-    cursor: encLastKey(result.LastEvaluatedKey),
-  };
-}
+// export async function queryRaw<T>(
+//   index: DbIndex | undefined,
+//   keyConditionExpression: string,
+//   expressionValues: DynamoDB.ExpressionAttributeValueMap,
+//   options: BaseQueryOptions
+// ) {
+//   const result = await dynamodb
+//     .query(
+//       {
+//         TableName: TABLE_NAME,
+//         IndexName: index,
+//         KeyConditionExpression: keyConditionExpression,
+//         ExpressionAttributeValues: {
+//           ...expressionValues,
+//           ...(options.filter?.values || {}),
+//         },
+//         Limit: options.limit,
+//         ExclusiveStartKey: options.cursor
+//           ? decLastKey(options.cursor)
+//           : undefined,
+//         ScanIndexForward: !options.descending,
+//         FilterExpression: options.filter?.expression,
+//         ExpressionAttributeNames: options.filter?.names,
+//         ConsistentRead: options.consistentRead,
+//       },
+//       undefined
+//     )
+//     .promise();
+//   return {
+//     items: (result.Items || []).map(item => Converter.unmarshall(item) as T),
+//     cursor: encLastKey(result.LastEvaluatedKey),
+//   };
+// }
 
-export function decodeStreamEntity<T extends DbKey = any>(
-  record: DynamoDBRecord
-): {
-  type: EntityType;
-  oldItem: T | null;
-  newItem: T | null;
-} | null {
-  if (!record.eventName) {
-    throw new Error('eventName required');
-  }
-  const newItem = record.dynamodb?.NewImage
-    ? (Converter.unmarshall(record.dynamodb.NewImage) as T)
-    : null;
-  const oldItem = record.dynamodb?.OldImage
-    ? (Converter.unmarshall(record.dynamodb.OldImage) as T)
-    : null;
-  const item = newItem || oldItem;
-  if (!item) {
-    return null;
-  }
+// export function decodeStreamEntity<T extends DbKey = any>(
+//   record: DynamoDBRecord
+// ): {
+//   type: EntityType;
+//   oldItem: T | null;
+//   newItem: T | null;
+// } | null {
+//   if (!record.eventName) {
+//     throw new Error('eventName required');
+//   }
+//   const newItem = record.dynamodb?.NewImage
+//     ? (Converter.unmarshall(record.dynamodb.NewImage) as T)
+//     : null;
+//   const oldItem = record.dynamodb?.OldImage
+//     ? (Converter.unmarshall(record.dynamodb.OldImage) as T)
+//     : null;
+//   const item = newItem || oldItem;
+//   if (!item) {
+//     return null;
+//   }
 
-  if (item.pk.startsWith('SOLUTION:')) {
-    return {
-      type: 'Solution',
-      newItem,
-      oldItem,
-    };
-  }
-  if (item.pk.startsWith('SUBMISSION:')) {
-    return {
-      type: 'Submission',
-      newItem,
-      oldItem,
-    };
-  }
+//   if (item.pk.startsWith('SOLUTION:')) {
+//     return {
+//       type: 'Solution',
+//       newItem,
+//       oldItem,
+//     };
+//   }
+//   if (item.pk.startsWith('SUBMISSION:')) {
+//     return {
+//       type: 'Submission',
+//       newItem,
+//       oldItem,
+//     };
+//   }
 
-  if (item.pk.startsWith('CHALLENGE_SOLVED:')) {
-    return {
-      type: 'ChallengeSolved',
-      newItem,
-      oldItem,
-    };
-  }
+//   if (item.pk.startsWith('CHALLENGE_SOLVED:')) {
+//     return {
+//       type: 'ChallengeSolved',
+//       newItem,
+//       oldItem,
+//     };
+//   }
 
-  return null;
-}
+//   return null;
+// }
 
-export function getEventConditionItem(eventId: string) {
-  return {
-    expression: 'attribute_not_exists(pk)',
-    item: createKey({
-      type: 'EVENT',
-      eventId,
-    }),
-  };
-}
+// export function getEventConditionItem(eventId: string) {
+//   return {
+//     expression: 'attribute_not_exists(pk)',
+//     item: createKey({
+//       type: 'EVENT',
+//       eventId,
+//     }),
+//   };
+// }
