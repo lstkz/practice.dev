@@ -1,4 +1,8 @@
-import { SolutionEntity, SolutionVoteEntity } from '../entities';
+import {
+  SolutionEntity,
+  SolutionVoteEntity,
+  SolutionTagStatsEntity,
+} from '../entities';
 import {
   queryAll,
   getBaseQuery,
@@ -211,5 +215,33 @@ export async function getUserSolutionVotes(
         return ret;
       }, {} as Record<string, any>),
     }),
+  });
+}
+
+interface SearchSolutionTagsCriteria extends BaseSearchCriteria {
+  keyword?: string;
+  challengeId: number;
+}
+
+export function searchSolutionTags(criteria: SearchSolutionTagsCriteria) {
+  const { sk } = SolutionTagStatsEntity.createKey({
+    tag: '',
+    challengeId: criteria.challengeId,
+  });
+  return db.query(SolutionTagStatsEntity, {
+    ...db.getBaseQuery(criteria, 'sk-data-index'),
+    KeyConditionExpression: criteria.keyword
+      ? 'sk = :sk AND begins_with(#data, :name)'
+      : 'sk = :sk',
+    FilterExpression: '#count > :min',
+    ExpressionAttributeValues: Converter.marshall({
+      ':min': 0,
+      ':sk': sk,
+      ...(criteria.keyword ? { ':name': criteria.keyword } : {}),
+    }),
+    ExpressionAttributeNames: {
+      '#count': 'count',
+      ...(criteria.keyword ? { '#data': 'data' } : {}),
+    },
   });
 }

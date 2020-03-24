@@ -3,8 +3,11 @@ import { S } from 'schema';
 import * as R from 'remeda';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { DbSolution } from '../../types';
-import { transactWriteItems, createKey } from '../../common/db';
 import { ignoreTransactionCanceled } from '../../common/helper';
+import * as db from '../../common/db-next';
+import { EventEntity } from '../../entities/EventEntity';
+import { SolutionTagStatsEntity } from '../../entities';
+import { TABLE_NAME } from '../../config';
 
 export const updateSolutionTagCount = createContract(
   'solutionTag.updateSolutionTagCount'
@@ -29,45 +32,44 @@ export const updateSolutionTagCount = createContract(
       ...addTags.map(tag => ({ tag, add: 1 })),
       ...removeTags.map(tag => ({ tag, add: -1 })),
     ];
-    await transactWriteItems({
-      conditionalPutItems: [
+
+    await db
+      .transactWriteItems([
         {
-          expression: 'attribute_not_exists(pk)',
-          item: createKey({
-            type: 'EVENT',
-            eventId,
-          }),
+          Put: EventEntity.getEventConditionPutItem(eventId),
         },
-      ],
-      updateItems: tags.map(({ tag, add }) => ({
-        Key: Converter.marshall(
-          createKey({
-            type: 'GLOBAL_SOLUTION_TAG',
-            challengeId: challengeId,
-            tag: tag,
-          })
-        ),
-        UpdateExpression: [
-          'SET #count = if_not_exists(#count, :zero) + :incr',
-          'challengeId = :challengeId',
-          '#data = :tag',
-        ].join(', '),
-        ExpressionAttributeNames: {
-          '#count': 'count',
-          '#data': 'data',
-        },
-        ExpressionAttributeValues: Converter.marshall({
-          ':incr': add,
-          ':zero': 0,
-          ':challengeId': challengeId,
-          ':tag': tag,
-        }),
-      })),
-    }).catch(ignoreTransactionCanceled());
+        ...tags.map(({ tag, add }) => ({
+          Update: {
+            TableName: TABLE_NAME,
+            Key: Converter.marshall(
+              SolutionTagStatsEntity.createKey({
+                challengeId,
+                tag,
+              })
+            ),
+            UpdateExpression: [
+              'SET #count = if_not_exists(#count, :zero) + :incr',
+              'challengeId = :challengeId',
+              '#data = :tag',
+            ].join(', '),
+            ExpressionAttributeNames: {
+              '#count': 'count',
+              '#data': 'data',
+            },
+            ExpressionAttributeValues: Converter.marshall({
+              ':incr': add,
+              ':zero': 0,
+              ':challengeId': challengeId,
+              ':tag': tag,
+            }),
+          },
+        })),
+      ])
+      .catch(ignoreTransactionCanceled());
   });
 
 export const handleSolution = createDynamoStreamBinding<DbSolution>({
-  type: 'Solution',
+  type: 'SolutionEntity',
   insert(eventId, item) {
     return updateSolutionTagCount(eventId, item.challengeId, item.tags, []);
   },

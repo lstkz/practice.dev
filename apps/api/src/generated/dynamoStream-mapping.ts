@@ -17,6 +17,10 @@ export const dynamoStreamMapping: DynamoStreamMapping = {
       import(
         /* webpackChunkName: "solution_indexSolution"*/ '../contracts/solution/indexSolution'
       ).then(x => x['handleSolution']),
+    solutionTag_updateSolutionTagCount_handleSolution: () =>
+      import(
+        /* webpackChunkName: "solutionTag_updateSolutionTagCount"*/ '../contracts/solutionTag/updateSolutionTagCount'
+      ).then(x => x['handleSolution']),
   },
   SubmissionEntity: {
     challenge_updateSolutionStats_handleSubmission: () =>
@@ -39,11 +43,5 @@ export const dynamoStreamMapping: DynamoStreamMapping = {
       import(
         /* webpackChunkName: "solution_indexSolutionVote"*/ '../contracts/solution/indexSolutionVote'
       ).then(x => x['handleSolutionVote']),
-  },
-  Solution: {
-    solutionTag_updateSolutionTagCount_handleSolution: () =>
-      import(
-        /* webpackChunkName: "solutionTag_updateSolutionTagCount"*/ '../contracts/solutionTag/updateSolutionTagCount'
-      ).then(x => x['handleSolution']),
   },
 };

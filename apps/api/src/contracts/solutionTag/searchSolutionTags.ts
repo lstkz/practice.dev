@@ -1,9 +1,6 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
-import { DbSolutionTag } from '../../types';
-import { createKey, queryRaw } from '../../common/db';
-import { mapDbSolutionTagMany } from '../../common/mapping';
-import { Converter } from 'aws-sdk/clients/dynamodb';
+import * as solutionReader from '../../readers/solutionReader';
 
 export const searchSolutionTags = createContract('solutionTags.searchSolutions')
   .params('criteria')
@@ -20,39 +17,15 @@ export const searchSolutionTags = createContract('solutionTags.searchSolutions')
     }),
   })
   .fn(async criteria => {
-    const { sk } = createKey({
-      type: 'GLOBAL_SOLUTION_TAG',
+    const { items, cursor } = await solutionReader.searchSolutionTags({
       challengeId: criteria.challengeId,
-      tag: '',
+      keyword: criteria.keyword,
+      limit: criteria.limit,
+      cursor: criteria.cursor,
+      descending: false,
     });
-
-    const { items, cursor } = await queryRaw<DbSolutionTag>(
-      'sk-data-index',
-      criteria.keyword ? 'sk = :sk AND begins_with(#data, :name)' : 'sk = :sk',
-      Converter.marshall({
-        ':sk': sk,
-        ':min': 0,
-        ...(criteria.keyword ? { ':name': criteria.keyword } : {}),
-      }),
-      {
-        filter: {
-          expression: '#count > :min',
-          values: Converter.marshall({
-            ':min': 0,
-          }),
-          names: {
-            '#count': 'count',
-            ...(criteria.keyword ? { '#data': 'data' } : {}),
-          },
-        },
-        cursor: criteria.cursor,
-        descending: false,
-        limit: criteria.limit,
-      }
-    );
-
     return {
-      items: mapDbSolutionTagMany(items),
+      items: items.map(x => x.toSolutionTag()),
       cursor,
     };
   });
