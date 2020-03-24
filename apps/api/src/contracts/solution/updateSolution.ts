@@ -26,7 +26,7 @@ export const updateSolution = createContract('solution.updateSolution')
     safeAssign(solution, values);
     values.tags = normalizeTags(values.tags);
 
-    const slug = new SolutionEntity(solution);
+    const slug = new SolutionEntity(solution, { type: 'slug' });
 
     const [solutionAuthor] = await Promise.all([
       userReader.getById(userId),

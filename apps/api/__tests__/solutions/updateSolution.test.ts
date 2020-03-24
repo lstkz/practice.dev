@@ -86,6 +86,7 @@ it('change slug', async () => {
     url: 'https://github.com/repo-edited',
   });
   expect(ret.slug).toEqual('new-slug');
+  await mockStream.process();
 
   // new slug should be reserved
   await expect(

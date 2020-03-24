@@ -5,6 +5,7 @@ import { ignoreTransactionCanceled } from '../../common/helper';
 import { SolutionEntity } from '../../entities';
 import * as db from '../../common/db-next';
 import { EventEntity } from '../../entities/EventEntity';
+import { TransactWriteItemList } from 'aws-sdk/clients/dynamodb';
 
 export const indexSolutionRemove = createContract(
   'indexSolution.indexSolutionRemove'
@@ -49,20 +50,25 @@ export const indexSolutionUpdate = createContract(
     oldSolution: S.object().as<SolutionEntity>(),
   })
   .fn(async (eventId, newSolution, oldSolution) => {
-    const removedTags = R.difference(newSolution.tags, oldSolution.tags);
-    await db
-      .transactWriteItems([
-        {
-          Put: EventEntity.getEventConditionPutItem(eventId),
-        },
-        ...newSolution.getAllIndexes().map(item => ({
-          Put: item.preparePut(),
-        })),
-        ...removedTags.map(tag => ({
-          Delete: oldSolution.asTagEntity(tag).prepareDelete(),
-        })),
-      ])
-      .catch(ignoreTransactionCanceled());
+    const removedTags = R.difference(oldSolution.tags, newSolution.tags);
+    const items: TransactWriteItemList = [
+      {
+        Put: EventEntity.getEventConditionPutItem(eventId),
+      },
+      ...newSolution.getAllIndexes().map(item => ({
+        Put: item.preparePut(),
+      })),
+      ...removedTags.map(tag => ({
+        Delete: oldSolution.asTagEntity(tag).prepareDelete(),
+      })),
+    ];
+
+    if (newSolution.slug !== oldSolution.slug) {
+      items.push({
+        Delete: oldSolution.asSlugEntity().prepareDelete(),
+      });
+    }
+    await db.transactWriteItems(items).catch(ignoreTransactionCanceled());
   });
 
 export const handleSolution = createDynamoStreamBinding<SolutionEntity>({

@@ -1,3 +1,4 @@
+import * as R from 'remeda';
 import { PropsOnly, DbKey } from '../types';
 import { BaseEntity } from '../common/orm';
 import { UserEntity } from './UserEntity';
@@ -68,7 +69,7 @@ export class SolutionEntity extends BaseEntity {
       case 'user':
         return SolutionEntity.createUserKey(this);
       case 'user_challenge':
-        return SolutionEntity.createChallengeKey(this);
+        return SolutionEntity.createChallengeUserKey(this);
       case 'slug':
         return SolutionEntity.createSlugKey(this);
       case 'tag':
@@ -129,6 +130,26 @@ export class SolutionEntity extends BaseEntity {
     });
   }
 
+  asSlugEntity() {
+    const props = this.getProps();
+    return new SolutionEntity(props, { type: 'slug' });
+  }
+
+  static toSolutionMany(
+    solutions: SolutionEntity[],
+    users: UserEntity[],
+    votes: SolutionVoteEntity[]
+  ) {
+    const userMap = R.indexBy(users, x => x.userId);
+    const voteMap = R.indexBy(votes, x => x.solutionId);
+    return solutions.map(solution =>
+      solution.toSolution(
+        userMap[solution.userId],
+        voteMap[solution.solutionId]
+      )
+    );
+  }
+
   static createKey({ solutionId, challengeId }: SolutionKey) {
     return {
       pk: `SOLUTION:${solutionId}`,
@@ -149,7 +170,7 @@ export class SolutionEntity extends BaseEntity {
     };
   }
 
-  static createChallengeKey({
+  static createChallengeUserKey({
     solutionId,
     userId,
     challengeId,
