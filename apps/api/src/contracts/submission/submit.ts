@@ -4,10 +4,11 @@ import { getDuration } from '../../common/helper';
 import { S } from 'schema';
 import uuid from 'uuid';
 import { SubmissionStatus, TesterMessage } from 'shared';
-import { getDbChallengeById } from '../challenge/getDbChallengeById';
 import { TESTER_TOPIC_ARN } from '../../config';
 import { SubmissionEntity } from '../../entities';
 import * as db from '../../common/db-next';
+import * as challengeReader from '../../readers/challengeReader';
+import { AppError } from '../../common/errors';
 
 const RATE_LIMIT_PER_DAY = 1000;
 const RATE_LIMIT_PER_HOUR = 100;
@@ -24,7 +25,13 @@ export const submit = createContract('submission.submit')
     }),
   })
   .fn(async (userId, values) => {
-    const challenge = await getDbChallengeById(values.challengeId);
+    const challenge = await challengeReader.getChallengeByIdOrNull(
+      values.challengeId
+    );
+    if (!challenge) {
+      throw new AppError('Challenge not found');
+    }
+
     await Promise.all([
       rateLimit(
         `SUBMIT_days:${userId}`,
