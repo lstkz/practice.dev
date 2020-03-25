@@ -2,11 +2,10 @@ import { createContract, createDynamoStreamBinding } from '../../lib';
 import { S } from 'schema';
 import * as R from 'remeda';
 import { Converter } from 'aws-sdk/clients/dynamodb';
-import { DbSolution } from '../../types';
 import { ignoreTransactionCanceled } from '../../common/helper';
 import * as db from '../../common/db-next';
 import { EventEntity } from '../../entities/EventEntity';
-import { SolutionTagStatsEntity } from '../../entities';
+import { SolutionTagStatsEntity, SolutionEntity } from '../../entities';
 import { TABLE_NAME } from '../../config';
 
 export const updateSolutionTagCount = createContract(
@@ -68,7 +67,7 @@ export const updateSolutionTagCount = createContract(
       .catch(ignoreTransactionCanceled());
   });
 
-export const handleSolution = createDynamoStreamBinding<DbSolution>({
+export const handleSolution = createDynamoStreamBinding<SolutionEntity>({
   type: 'SolutionEntity',
   insert(eventId, item) {
     return updateSolutionTagCount(eventId, item.challengeId, item.tags, []);

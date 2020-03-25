@@ -3,7 +3,6 @@ import { Response } from 'node-fetch';
 import { DynamoDB } from 'aws-sdk';
 import * as R from 'remeda';
 import { AppError } from './errors';
-import { DbUser } from '../types';
 import { UserEntity } from '../entities';
 
 const SECURITY = {

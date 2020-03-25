@@ -1,9 +1,9 @@
 import { SocketNotifier } from '../../src/tester/SocketNotifier';
 import { ApiGatewayManagementApi } from 'aws-sdk';
 import { SocketMessage } from 'shared';
-import { DbSocketConnection } from '../../src/types';
+import { SocketConnectionEntity } from '../../src/entities';
 
-let connections: DbSocketConnection[] = [];
+let connections: SocketConnectionEntity[] = [];
 let api: {
   postToConnection: jest.Mock<
     {
@@ -18,7 +18,7 @@ let now: jest.SpyInstance<number, []> = null!;
 function getConnection(id: string) {
   return {
     connectionId: id,
-  } as DbSocketConnection;
+  } as SocketConnectionEntity;
 }
 
 beforeEach(() => {

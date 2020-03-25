@@ -1,11 +1,3 @@
-import {
-  ChallengeDomain,
-  ChallengeDifficulty,
-  ChallengeStats,
-  SubmissionStatus,
-} from 'shared';
-import DynamoDB = require('aws-sdk/clients/dynamodb');
-
 export interface UserRegisteredEvent {
   type: 'UserRegisteredEvent';
   payload: { userId: string; registeredAt: string };
@@ -31,121 +23,6 @@ export interface DbKey {
   sk: string;
 }
 
-export interface DbUser extends DbKey {
-  userId: string;
-  email: string;
-  username: string;
-  salt: string;
-  password: string;
-  isVerified: boolean;
-  githubId?: number;
-  isAdmin?: boolean;
-}
-
-export interface DbUserEmail extends DbKey {
-  userId: string;
-  email: string;
-}
-
-export interface DbUserUsername extends DbKey {
-  userId: string;
-  username: string;
-}
-
-export interface DbToken extends DbKey {
-  userId: string;
-}
-
-export interface DbConfirmCode extends DbKey {
-  userId: string;
-  code: string;
-}
-
-export interface DbGithubUser extends DbKey {
-  userId: string;
-  githubId: number;
-}
-
-export interface DbResetPasswordCode extends DbKey {
-  userId: string;
-  code: string;
-  expireAt: number;
-}
-
-export interface DbChallenge extends DbKey {
-  // challengeId
-  data_n: number;
-  title: string;
-  description: string;
-  domain: ChallengeDomain;
-  difficulty: ChallengeDifficulty;
-  detailsBundleS3Key: string;
-  testsBundleS3Key: string;
-  createdAt: number;
-  tags: string[];
-  stats: ChallengeStats;
-  testCase: string;
-}
-
-export interface DbChallengeSolved extends DbKey {
-  userId: string;
-  challengeId: number;
-  // solvedAt
-  data_n: number;
-}
-
-export interface DbSolution extends DbKey {
-  // createdAt
-  data_n: number;
-  // likes
-  data2_n: number;
-  solutionId: string;
-  description?: string;
-  challengeId: number;
-  userId: string;
-  title: string;
-  slug: string;
-  url: string;
-  tags: string[];
-}
-
-export interface DbSolutionVote extends DbKey {
-  // createdAt
-  data_n: number;
-  solutionId: string;
-  userId: string;
-}
-
-export interface DbRateLimit extends DbKey {
-  count: number;
-  expireAt: number;
-  version: number;
-}
-
-export interface DbSocketConnection extends DbKey {
-  // createdAt
-  data_n: number;
-  connectionId: string;
-}
-
-export interface DbSubmission extends DbKey {
-  submissionId: string;
-  // createdAt
-  data_n: number;
-  challengeId: number;
-  userId: string;
-  status: SubmissionStatus;
-  result?: string;
-  testUrl: string;
-}
-
-export interface DbSolutionTag extends DbKey {
-  // tag
-  data: string;
-  challengeId: number;
-  count: number;
-}
-
 export type FunctionPropertyNames<T> = {
   [K in keyof T]: T[K] extends Function ? K : never;
 }[keyof T];
@@ -154,11 +31,6 @@ export type PropsOnly<T> = Omit<
   T,
   FunctionPropertyNames<T> | 'key' | 'colMapping'
 >;
-
-export interface BaseEntity {
-  serialize(): DynamoDB.AttributeMap;
-  getKey(): { pk: string; sk: string };
-}
 
 /* LAMBDA TYPES */
 // from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/aws-lambda/index.d.ts
