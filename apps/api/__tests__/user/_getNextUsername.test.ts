@@ -1,18 +1,17 @@
 import { _getNextUsername } from '../../src/contracts/user/_getNextUsername';
 import { resetDb } from '../helper';
-import { createKey, putItems } from '../../src/common/db';
-import { DbUserUsername } from '../../src/types';
+import * as db from '../../src/common/db-next';
+import { UserUsernameEntity } from '../../src/entities';
 
 beforeEach(resetDb);
 
 async function addUsername(username: string) {
-  const key = createKey({ type: 'USER_USERNAME', username });
-  const dbUserName: DbUserUsername = {
-    ...key,
-    username,
-    userId: '123',
-  };
-  await putItems(dbUserName);
+  await db.put(
+    new UserUsernameEntity({
+      username,
+      userId: '123',
+    })
+  );
 }
 
 it('returns original username if it is not taken', async () => {

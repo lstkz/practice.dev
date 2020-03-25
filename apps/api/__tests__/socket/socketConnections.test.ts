@@ -9,8 +9,9 @@ beforeEach(async () => {
 
 async function getConnectionIds(userId: string) {
   const connections = await getUserSocketConnections(userId);
-  connections.sort((a, b) => a.sk.localeCompare(b.sk));
-  return connections.map(item => item.pk.split(':')[1]);
+  return connections
+    .map(item => item.connectionId)
+    .sort((a, b) => a.localeCompare(b));
 }
 
 it('create, get and delete connections', async () => {
