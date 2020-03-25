@@ -2,22 +2,22 @@ import * as R from 'remeda';
 import { getDuration } from '../../common/helper';
 import { getUserSocketConnections } from './getUserSocketConnections';
 import { S } from 'schema';
+import * as db from '../../common/db-next';
 import { createContract } from '../../lib';
-import { createKey, putItems, batchDelete } from '../../common/db';
-import { DbSocketConnection } from '../../types';
+import { SocketConnectionEntity } from '../../entities';
 
 const LIMIT = 5;
 const EXPIRATION = getDuration(1, 'h');
 
 export function _getInvalidOrExpiredConnection(
-  connections: DbSocketConnection[],
+  connections: SocketConnectionEntity[],
   limit: number
 ) {
-  const valid: Array<{ createdAt: number; item: DbSocketConnection }> = [];
-  const expired: DbSocketConnection[] = [];
+  const valid: Array<{ createdAt: number; item: SocketConnectionEntity }> = [];
+  const expired: SocketConnectionEntity[] = [];
 
   connections.forEach(item => {
-    const createdAt = item.data_n || 0;
+    const createdAt = item.createdAt || 0;
     if (createdAt + EXPIRATION < Date.now()) {
       expired.push(item);
     } else {
@@ -45,16 +45,13 @@ export const createSocketConnection = createContract(
       currentConnections,
       LIMIT - 1
     );
-    await batchDelete(expired);
-    const key = createKey({
-      type: 'SOCKET_CONNECTION',
+    if (expired.length) {
+      await db.remove(expired.map(x => x.prepareDelete()));
+    }
+    const connection = new SocketConnectionEntity({
+      createdAt: Date.now(),
       userId,
       connectionId,
     });
-    const dbSocketConnection: DbSocketConnection = {
-      ...key,
-      data_n: Date.now(),
-      connectionId,
-    };
-    await putItems(dbSocketConnection);
+    await db.put(connection);
   });

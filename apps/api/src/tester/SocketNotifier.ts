@@ -1,6 +1,6 @@
 import { Notifier } from 'tester';
-import { DbSocketConnection } from '../types';
 import { SocketMessage } from 'shared';
+import { SocketConnectionEntity } from '../entities';
 
 export class SocketNotifier implements Notifier {
   private lastNotify = 0;
@@ -8,7 +8,7 @@ export class SocketNotifier implements Notifier {
 
   constructor(
     private api: AWS.ApiGatewayManagementApi,
-    private connections: DbSocketConnection[]
+    private connections: SocketConnectionEntity[]
   ) {}
 
   private async notifySocket(data: object, force = false) {

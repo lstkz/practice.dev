@@ -38,9 +38,7 @@ beforeEach(async () => {
 it('throw error if solution not found', async () => {
   await expect(
     getSolutionBySlug(undefined, 234, '123')
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"ContractError: Solution not found"`
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"Solution not found"`);
 });
 
 it('get solution anonymous', async () => {

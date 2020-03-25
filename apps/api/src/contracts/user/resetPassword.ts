@@ -3,12 +3,11 @@ import { createContract, createRpcBinding, ses } from '../../lib';
 import { _createUser } from './_createUser';
 import { _generateAuthData } from './_generateAuthData';
 import { AppError } from '../../common/errors';
-import { _getDbUserByEmailOrUsername } from './_getDbUserByEmailOrUsername';
 import { randomUniqString, getDuration } from '../../common/helper';
-import { createKey, putItems } from '../../common/db';
-import { DbResetPasswordCode } from '../../types';
-import { getDbUserById } from './getDbUserById';
 import { BASE_URL, EMAIL_SENDER } from '../../config';
+import * as db from '../../common/db-next';
+import * as userReader from '../../readers/userReader';
+import { ResetPasswordCodeEntity } from '../../entities';
 
 export const resetPassword = createContract('user.resetPassword')
   .params('emailOrUsername')
@@ -16,29 +15,28 @@ export const resetPassword = createContract('user.resetPassword')
     emailOrUsername: S.string().trim(),
   })
   .fn(async emailOrUsername => {
-    const dbUserEmailOrUsername = await _getDbUserByEmailOrUsername(
+    const userId = await userReader.getUserIdByEmailOrUsernameOrNull(
       emailOrUsername
     );
-    if (!dbUserEmailOrUsername) {
+    if (!userId) {
       throw new AppError('User not found');
     }
-    const dbUser = await getDbUserById(dbUserEmailOrUsername.userId);
+    const user = await userReader.getById(userId);
     const code = randomUniqString();
-    const resetKey = createKey({ type: 'RESET_PASSWORD_CODE', code });
-    const dbResetPasswordCode: DbResetPasswordCode = {
-      ...resetKey,
+    const resetPasswordCode = new ResetPasswordCodeEntity({
       code,
-      userId: dbUser.userId,
+      userId: user.userId,
       expireAt: Date.now() + getDuration(1, 'd'),
-    };
-    await putItems(dbResetPasswordCode);
+    });
+
+    await db.put(resetPasswordCode);
     const url = `${BASE_URL}/reset-password/${code}`;
 
     await ses
       .sendEmail({
         Source: EMAIL_SENDER,
         Destination: {
-          ToAddresses: [dbUser.email],
+          ToAddresses: [user.email],
         },
         Message: {
           Subject: {
@@ -47,7 +45,7 @@ export const resetPassword = createContract('user.resetPassword')
           Body: {
             Html: {
               Data: `
-Hi ${dbUser.username},
+Hi ${user.username},
 <br/>
 <br/>
 Please open the following url to reset your password:

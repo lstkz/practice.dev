@@ -70,6 +70,9 @@ export const _createContract = (config: ContractConfig) => (
           });
           throw e;
         } else {
+          if (process.env.NODE_ENV === 'test') {
+            throw e;
+          }
           throw new ContractError(e, [
             {
               signature,

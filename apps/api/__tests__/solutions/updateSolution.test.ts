@@ -43,9 +43,7 @@ it('throw error if solution not found', async () => {
       description: 'desc-edited',
       url: 'https://github.com/repo-edited',
     })
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"ContractError: Solution not found"`
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"Solution not found"`);
 });
 
 it('throw error if not author', async () => {
@@ -57,9 +55,7 @@ it('throw error if not author', async () => {
       description: 'desc-edited',
       url: 'https://github.com/repo-edited',
     })
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"ContractError: No Permissions"`
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"No Permissions"`);
 });
 
 it('update basic props', async () => {
@@ -90,6 +86,7 @@ it('change slug', async () => {
     url: 'https://github.com/repo-edited',
   });
   expect(ret.slug).toEqual('new-slug');
+  await mockStream.process();
 
   // new slug should be reserved
   await expect(

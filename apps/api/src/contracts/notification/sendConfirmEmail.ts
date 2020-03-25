@@ -1,10 +1,10 @@
 import { S } from 'schema';
 import { createContract, createEventBinding, ses } from '../../lib';
 import { randomUniqString } from '../../common/helper';
-import { getDbUserById } from '../user/getDbUserById';
-import { putItems, createKey } from '../../common/db';
-import { DbConfirmCode } from '../../types';
 import { BASE_URL, EMAIL_SENDER } from '../../config';
+import * as userReader from '../../readers/userReader';
+import * as db from '../../common/db-next';
+import { ConfirmCodeEntity } from '../../entities';
 
 export const sendConfirmEmail = createContract('notification.sendConfirmEmail')
   .params('userId', 'registeredAt')
@@ -14,21 +14,19 @@ export const sendConfirmEmail = createContract('notification.sendConfirmEmail')
   })
   .fn(async (userId, _) => {
     const code = randomUniqString();
-    const dbUser = await getDbUserById(userId);
-    const confirmKey = createKey({ type: 'CONFIRM_CODE', code });
-    const dbConfirmCode: DbConfirmCode = {
-      ...confirmKey,
-      userId: dbUser.userId,
+    const user = await userReader.getById(userId);
+    const confirmCode = new ConfirmCodeEntity({
+      userId: user.userId,
       code,
-    };
-    await putItems(dbConfirmCode);
+    });
+    await db.put(confirmCode);
 
     const url = `${BASE_URL}/confirm/${code}`;
     await ses
       .sendEmail({
         Source: EMAIL_SENDER,
         Destination: {
-          ToAddresses: [dbUser.email],
+          ToAddresses: [user.email],
         },
         Message: {
           Subject: {
@@ -37,7 +35,7 @@ export const sendConfirmEmail = createContract('notification.sendConfirmEmail')
           Body: {
             Html: {
               Data: `
-Hi ${dbUser.username},
+Hi ${user.username},
 <br/>
 <br/>
 Please open the following url to confirm your account:

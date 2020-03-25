@@ -1,10 +1,9 @@
 import { createContract, createRpcBinding } from '../../lib';
-import { Converter } from 'aws-sdk/clients/dynamodb';
 import { S } from 'schema';
-import { createKey, transactWriteItems } from '../../common/db';
-import { DbSolutionVote } from '../../types';
 import { AppError } from '../../common/errors';
-import { getDbSolutionById } from './getDbSolutionById';
+import * as solutionReader from '../../readers/solutionReader';
+import { SolutionVoteEntity } from '../../entities';
+import { transactWriteItems } from '../../common/db-next';
 
 export const voteSolution = createContract('solution.voteSolution')
   .params('userId', 'values')
@@ -16,74 +15,44 @@ export const voteSolution = createContract('solution.voteSolution')
     }),
   })
   .fn(async (userId, values) => {
-    const dbSolution = await getDbSolutionById(values.solutionId, false);
-
-    if (!dbSolution) {
+    const solution = await solutionReader.getByIdOrNull(values.solutionId);
+    if (!solution) {
       throw new AppError('Solution not found');
     }
 
-    const solutionKey = createKey({
-      type: 'SOLUTION',
-      ...dbSolution,
-    });
-
-    const solutionVoteKey = createKey({
-      type: 'SOLUTION_VOTE',
-      solutionId: dbSolution.solutionId,
+    const vote = new SolutionVoteEntity({
+      createdAt: Date.now(),
+      solutionId: solution.solutionId,
+      challengeId: solution.challengeId,
       userId,
     });
-
-    const getNewDbSolutionVote = (): DbSolutionVote => {
-      return {
-        ...solutionVoteKey,
-        data_n: Date.now(),
-        solutionId: dbSolution.solutionId,
-        userId,
-      };
-    };
-
-    const getVoteLikeItem = () => {
-      if (values.like) {
-        return {
-          conditionalPutItems: [
-            {
-              expression: 'attribute_not_exists(pk)',
-              item: getNewDbSolutionVote(),
+    const changed = await transactWriteItems([
+      values.like
+        ? {
+            Put: {
+              ...vote.preparePut(),
+              ConditionExpression: 'attribute_not_exists(pk)',
             },
-          ],
-        };
-      } else {
-        return {
-          conditionalDeleteItems: [
-            {
-              expression: 'attribute_exists(pk)',
-              key: solutionVoteKey,
+          }
+        : {
+            Delete: {
+              ...vote.prepareDelete(),
+              ConditionExpression: 'attribute_exists(pk)',
             },
-          ],
-        };
-      }
-    };
-
-    await transactWriteItems({
-      ...getVoteLikeItem(),
-      updateItems: [
-        {
-          Key: Converter.marshall(solutionKey),
-          UpdateExpression: 'SET data2_n = data2_n + :add',
-          ExpressionAttributeValues: Converter.marshall({
-            ':add': values.like ? 1 : -1,
-          }),
-        },
-      ],
-    }).catch((e: any) => {
-      // ignore duplicate votes
-      if (e.code === 'TransactionCanceledException') {
-        return;
-      }
-      throw e;
-    });
-    const latest = await getDbSolutionById(values.solutionId, false);
-    return latest!.data2_n;
+          },
+    ])
+      .then(() => true)
+      .catch((e: any) => {
+        // ignore duplicate votes
+        if (e.code === 'TransactionCanceledException') {
+          return false;
+        }
+        throw e;
+      });
+    if (!changed) {
+      return solution.likes;
+    }
+    return solution.likes + (values.like ? 1 : -1);
   });
 
 export const voteSolutionRpc = createRpcBinding({

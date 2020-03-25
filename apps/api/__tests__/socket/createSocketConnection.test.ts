@@ -1,19 +1,17 @@
 import { _getInvalidOrExpiredConnection } from '../../src/contracts/socket/createSocketConnection';
-import { createKey } from '../../src/common/db';
-import { DbSocketConnection } from '../../src/types';
+import { SocketConnectionEntity } from '../../src/entities';
 
 const LIMIT = 5;
 
-function createConnection(id: string, expireAt: number): DbSocketConnection {
-  return {
-    ...createKey({
-      type: 'SOCKET_CONNECTION',
-      connectionId: '1',
-      userId: '1',
-    }),
+function createConnection(
+  id: string,
+  createdAt: number
+): SocketConnectionEntity {
+  return new SocketConnectionEntity({
+    userId: '1',
     connectionId: id,
-    data_n: expireAt,
-  };
+    createdAt,
+  });
 }
 
 describe('_getInvalidOrExpiredConnection', () => {

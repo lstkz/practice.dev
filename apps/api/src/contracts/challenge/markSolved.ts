@@ -1,7 +1,7 @@
 import { createContract } from '../../lib';
 import { S } from 'schema';
-import { transactWriteItems, createKey } from '../../common/db';
-import { DbChallengeSolved } from '../../types';
+import { ChallengeSolvedEntity } from '../../entities';
+import { transactWriteItems } from '../../common/db-next';
 
 export const markSolved = createContract('challenge.markSolved')
   .params('values')
@@ -13,26 +13,15 @@ export const markSolved = createContract('challenge.markSolved')
     }),
   })
   .fn(async values => {
-    const solvedKey = createKey({
-      type: 'CHALLENGE_SOLVED',
-      userId: values.userId,
-      challengeId: values.challengeId,
-    });
-    const dbSolved: DbChallengeSolved = {
-      ...solvedKey,
-      challengeId: values.challengeId,
-      data_n: values.solvedAt,
-      userId: values.userId,
-    };
-
-    await transactWriteItems({
-      conditionalPutItems: [
-        {
-          expression: 'attribute_not_exists(pk)',
-          item: dbSolved,
+    const solved = new ChallengeSolvedEntity(values);
+    await transactWriteItems([
+      {
+        Put: {
+          ...solved.preparePut(),
+          ConditionExpression: 'attribute_not_exists(pk)',
         },
-      ],
-    }).catch(e => {
+      },
+    ]).catch(e => {
       // ignore if already solved
       if (e.code === 'TransactionCanceledException') {
         return;

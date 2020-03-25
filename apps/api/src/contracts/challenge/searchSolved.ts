@@ -1,15 +1,11 @@
-import { QueryInput } from 'aws-sdk/clients/dynamodb';
-import { createContract, createRpcBinding, dynamodb } from '../../lib';
-import { Converter } from 'aws-sdk/clients/dynamodb';
+import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { AppError } from '../../common/errors';
-import { decLastKey, encLastKey } from '../../common/helper';
-import { createKey } from '../../common/db';
-import { getDbUserByUsername } from '../user/getDbUserByUsername';
-import { getUsersByIds } from '../user/getUsersByIds';
-import { DbChallengeSolved } from '../../types';
-import { mapDbChallengeSolvedMany } from '../../common/mapping';
-import { TABLE_NAME } from '../../config';
+import { doFn } from '../../common/helper';
+import * as challengeReader from '../../readers/challengeReader';
+import * as userReader from '../../readers/userReader';
+import { SearchResult } from 'shared';
+import { ChallengeSolvedEntity } from '../../entities';
 
 export const searchSolved = createContract('challenge.searchSolved')
   .params('criteria')
@@ -18,7 +14,7 @@ export const searchSolved = createContract('challenge.searchSolved')
       challengeId: S.number().optional(),
       username: S.string().optional(),
       limit: S.pageSize(),
-      lastKey: S.string().optional(),
+      cursor: S.string().optional(),
     }),
   })
   .fn(async criteria => {
@@ -26,67 +22,37 @@ export const searchSolved = createContract('challenge.searchSolved')
     if (!challengeId && !username) {
       throw new AppError('challengeId or username must be defined');
     }
-
-    const getQuery = async (): Promise<Partial<QueryInput> | null> => {
-      if (username) {
-        try {
-          const { userId } = await getDbUserByUsername(username);
-          const { pk } = createKey({
-            type: 'CHALLENGE_SOLVED',
-            challengeId: -1,
-            userId,
-          });
-          return {
-            KeyConditionExpression: 'pk = :pk',
-            ExpressionAttributeValues: Converter.marshall({
-              ':pk': pk,
-            }),
-          };
-        } catch (e) {
-          return null;
-        }
-      } else {
-        const { sk } = createKey({
-          type: 'CHALLENGE_SOLVED',
-          challengeId: challengeId!,
-          userId: '-1',
-        });
-        return {
-          IndexName: 'sk-data_n-index',
-          KeyConditionExpression: 'sk = :sk',
-          ExpressionAttributeValues: Converter.marshall({
-            ':sk': sk,
-          }),
-        };
-      }
-    };
-    const query = await getQuery();
-    if (!query) {
-      return {
-        items: [],
-        lastKey: null,
+    const { cursor, items } = await doFn(async () => {
+      const baseCriteria = {
+        limit: criteria.limit,
+        descending: true,
+        cursor: criteria.cursor,
       };
-    }
-
-    const { Items: rawItems = [], LastEvaluatedKey: lastKey } = await dynamodb
-      .query(
-        {
-          TableName: TABLE_NAME,
-          ...query,
-          Limit: criteria.limit,
-          ExclusiveStartKey: decLastKey(criteria.lastKey),
-          ScanIndexForward: false,
-        },
-        undefined
-      )
-      .promise();
-    const items = rawItems.map(
-      item => Converter.unmarshall(item) as DbChallengeSolved
-    );
-    const users = await getUsersByIds(items.map(x => x.userId));
+      if (username) {
+        const userId = await userReader.getIdByUsernameOrNull(username);
+        if (!userId) {
+          return {
+            items: [],
+            cursor: null,
+          } as SearchResult<ChallengeSolvedEntity>;
+        }
+        return challengeReader.searchSolvedByUserId({
+          ...baseCriteria,
+          userId,
+        });
+      }
+      if (challengeId) {
+        return challengeReader.searchSolvedByChallengeId({
+          ...baseCriteria,
+          challengeId,
+        });
+      }
+      throw new AppError('challengeId or username must be defined');
+    });
+    const users = await userReader.getByIds(items.map(x => x.userId));
     return {
-      items: mapDbChallengeSolvedMany(items, users),
-      lastKey: encLastKey(lastKey),
+      items: ChallengeSolvedEntity.toChallengeSolvedMany(items, users),
+      cursor: cursor,
     };
   });
 

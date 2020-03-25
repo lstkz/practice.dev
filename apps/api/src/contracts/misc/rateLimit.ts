@@ -2,10 +2,10 @@ import { AWSError, DynamoDB } from 'aws-sdk';
 import { AppError } from '../../common/errors';
 import { dynamodb, createContract } from '../../lib';
 import { S } from 'schema';
-import { createKey, getItem } from '../../common/db';
+import * as db from '../../common/db-next';
 import { Converter } from 'aws-sdk/clients/dynamodb';
-import { DbRateLimit } from '../../types';
 import { TABLE_NAME } from '../../config';
+import { RateLimitEntity } from '../../entities';
 
 async function updateWithConditionCheck(params: DynamoDB.PutItemInput) {
   try {
@@ -21,44 +21,39 @@ async function updateWithConditionCheck(params: DynamoDB.PutItemInput) {
   }
 }
 
-async function updateWithIncVersion(item: DbRateLimit) {
+async function updateWithIncVersion(item: RateLimitEntity) {
+  const version = item.version;
+  item.version++;
   await updateWithConditionCheck({
     TableName: TABLE_NAME,
-    Item: Converter.marshall({
-      ...item,
-      version: item.version + 1,
-    }),
+    Item: item.serialize(),
     ExpressionAttributeValues: Converter.marshall({
-      ':version': item.version,
+      ':version': version,
     }),
     ConditionExpression: `version = :version`,
   });
 }
 
 export const rateLimit = createContract('misc.rateLimit')
-  .params('key', 'duration', 'max')
+  .params('name', 'duration', 'max')
   .schema({
-    key: S.string(),
+    name: S.string(),
     duration: S.number(),
     max: S.number(),
   })
-  .fn(async (key, duration, max) => {
-    const dbKey = createKey({
-      type: 'RATE_LIMIT',
-      key,
-    });
-    let item = await getItem<DbRateLimit>(dbKey);
+  .fn(async (name, duration, max) => {
+    let item = await db.getOrNull(RateLimitEntity, { name });
 
     if (!item) {
-      item = {
-        ...dbKey,
+      item = new RateLimitEntity({
+        name,
         expireAt: Date.now() + duration,
         count: 1,
         version: 1,
-      };
+      });
       await updateWithConditionCheck({
         TableName: TABLE_NAME,
-        Item: Converter.marshall(item),
+        Item: item.serialize(),
         ConditionExpression: `attribute_not_exists(pk)`,
       });
       return;

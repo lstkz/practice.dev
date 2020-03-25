@@ -1,8 +1,8 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
 import { _createUser } from './_createUser';
-import { _generateAuthData } from './_generateAuthData';
 import { dispatch } from '../../dispatch';
+import { _generateAuthData } from './_generateAuthData';
 
 export const register = createContract('user.register')
   .params('values')
@@ -20,7 +20,7 @@ export const register = createContract('user.register')
     }),
   })
   .fn(async values => {
-    const dbUser = await _createUser({
+    const user = await _createUser({
       ...values,
       isVerified: false,
     });
@@ -29,11 +29,11 @@ export const register = createContract('user.register')
       type: 'UserRegisteredEvent',
       payload: {
         registeredAt: new Date().toISOString(),
-        userId: dbUser.userId,
+        userId: user.userId,
       },
     });
 
-    return _generateAuthData(dbUser);
+    return _generateAuthData(user);
   });
 
 export const registerRpc = createRpcBinding({

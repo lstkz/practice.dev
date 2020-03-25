@@ -1,9 +1,15 @@
 import { createContract, createDynamoStreamBinding } from '../../lib';
 import { S } from 'schema';
 import { Converter } from 'aws-sdk/clients/dynamodb';
-import { DbSolution, DbChallengeSolved } from '../../types';
-import { transactWriteItems, createKey } from '../../common/db';
 import { ignoreTransactionCanceled } from '../../common/helper';
+import {
+  SolutionEntity,
+  ChallengeSolvedEntity,
+  ChallengeEntity,
+} from '../../entities';
+import { transactWriteItems } from '../../common/db-next';
+import { EventEntity } from '../../entities/EventEntity';
+import { TABLE_NAME } from '../../config';
 
 export const updateChallengeStats = createContract(
   'challenge.updateChallengeStats'
@@ -16,57 +22,51 @@ export const updateChallengeStats = createContract(
     add: S.number(),
   })
   .fn(async (eventId, challengeId, name, add) => {
-    const key = createKey({ type: 'CHALLENGE', id: challengeId });
-    await transactWriteItems({
-      conditionalPutItems: [
-        {
-          expression: 'attribute_not_exists(pk)',
-          item: createKey({
-            type: 'EVENT',
-            eventId,
-          }),
-        },
-      ],
-      updateItems: [
-        {
-          Key: Converter.marshall(key),
+    await transactWriteItems([
+      {
+        Put: EventEntity.getEventConditionPutItem(eventId),
+      },
+      {
+        Update: {
+          TableName: TABLE_NAME,
+          Key: Converter.marshall(ChallengeEntity.createKey({ challengeId })),
           UpdateExpression: `SET stats.${name} = stats.${name} + :inc`,
           ExpressionAttributeValues: Converter.marshall({
             ':inc': add,
           }),
         },
-      ],
-    }).catch(ignoreTransactionCanceled());
+      },
+    ]).catch(ignoreTransactionCanceled());
   });
 
-export const handleSolution = createDynamoStreamBinding<DbSolution>({
-  type: 'Solution',
-  insert(eventId, item) {
-    return updateChallengeStats(eventId, item.challengeId, 'solutions', 1);
+export const handleSolution = createDynamoStreamBinding<SolutionEntity>({
+  type: 'SolutionEntity',
+  async insert(eventId, item) {
+    await updateChallengeStats(eventId, item.challengeId, 'solutions', 1);
   },
-  remove(eventId, item) {
-    return updateChallengeStats(eventId, item.challengeId, 'solutions', -1);
+  async remove(eventId, item) {
+    await updateChallengeStats(eventId, item.challengeId, 'solutions', -1);
   },
 });
 
-export const handleSubmission = createDynamoStreamBinding<DbSolution>({
-  type: 'Submission',
-  insert(eventId, item) {
-    return updateChallengeStats(eventId, item.challengeId, 'submissions', 1);
+export const handleSubmission = createDynamoStreamBinding<SolutionEntity>({
+  type: 'SubmissionEntity',
+  async insert(eventId, item) {
+    await updateChallengeStats(eventId, item.challengeId, 'submissions', 1);
   },
-  remove(eventId, item) {
-    return updateChallengeStats(eventId, item.challengeId, 'submissions', -1);
+  async remove(eventId, item) {
+    await updateChallengeStats(eventId, item.challengeId, 'submissions', -1);
   },
 });
 
 export const handleChallengeSolved = createDynamoStreamBinding<
-  DbChallengeSolved
+  ChallengeSolvedEntity
 >({
-  type: 'ChallengeSolved',
-  insert(eventId, item) {
-    return updateChallengeStats(eventId, item.challengeId, 'solved', 1);
+  type: 'ChallengeSolvedEntity',
+  async insert(eventId, item) {
+    await updateChallengeStats(eventId, item.challengeId, 'solved', 1);
   },
-  remove(eventId, item) {
-    return updateChallengeStats(eventId, item.challengeId, 'solved', -1);
+  async remove(eventId, item) {
+    await updateChallengeStats(eventId, item.challengeId, 'solved', -1);
   },
 });

@@ -36,17 +36,13 @@ beforeEach(async () => {
 it('throw error if solution not found', async () => {
   await expect(
     removeSolution(userId, '123')
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"ContractError: Solution not found"`
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"Solution not found"`);
 });
 
 it('throw error if not author', async () => {
   await expect(
     removeSolution('2', '1')
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"ContractError: No Permissions"`
-  );
+  ).rejects.toThrowErrorMatchingInlineSnapshot(`"No Permissions"`);
 });
 
 it('remove solution', async () => {

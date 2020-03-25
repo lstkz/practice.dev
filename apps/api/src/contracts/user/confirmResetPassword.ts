@@ -1,18 +1,11 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
 import { _createUser } from './_createUser';
-import { _generateAuthData } from './_generateAuthData';
 import { AppError } from '../../common/errors';
-import { _getDbUserByEmailOrUsername } from './_getDbUserByEmailOrUsername';
 import { createPasswordHash } from '../../common/helper';
-import {
-  createKey,
-  getItem,
-  transactWriteItems,
-  prepareUpdate,
-} from '../../common/db';
-import { DbResetPasswordCode } from '../../types';
-import { getDbUserById } from './getDbUserById';
+import * as db from '../../common/db-next';
+import * as userReader from '../../readers/userReader';
+import { _generateAuthData } from './_generateAuthData';
 
 export const confirmResetPassword = createContract('user.confirmResetPassword')
   .params('code', 'newPassword')
@@ -21,24 +14,22 @@ export const confirmResetPassword = createContract('user.confirmResetPassword')
     newPassword: S.string().min(5),
   })
   .fn(async (code, newPassword) => {
-    const resetKey = createKey({ type: 'RESET_PASSWORD_CODE', code });
-    const dbResetCode = await getItem<DbResetPasswordCode>(resetKey);
-    if (!dbResetCode) {
+    const resetCode = await userReader.getResetPasswordOrNull(code);
+    if (!resetCode) {
       throw new AppError('Invalid or used reset code');
     }
-    if (dbResetCode.expireAt < Date.now()) {
+    if (resetCode.expireAt < Date.now()) {
       throw new AppError('Expired code. Please request password reset again.');
     }
-    const dbUser = await getDbUserById(dbResetCode.userId);
-    const hashedPassword = await createPasswordHash(newPassword, dbUser.salt);
-    dbUser.password = hashedPassword;
+    const user = await userReader.getById(resetCode.userId);
+    const hashedPassword = await createPasswordHash(newPassword, user.salt);
+    user.password = hashedPassword;
 
-    await transactWriteItems({
-      deleteItems: [resetKey],
-      updateItems: [prepareUpdate(dbUser, ['password'])],
-    });
-
-    return _generateAuthData(dbUser);
+    await db.transactWriteItems([
+      { Delete: resetCode.prepareDelete() },
+      { Update: user.prepareUpdate(['password']) },
+    ]);
+    return _generateAuthData(user);
   });
 
 export const confirmResetPasswordRpc = createRpcBinding({

@@ -213,7 +213,7 @@ it('searching by tags throws an error', async () => {
       sortDesc: false,
     })
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"ContractError: Cannot search by tags if challengeId is not defined"`
+    `"Cannot search by tags if challengeId is not defined"`
   );
 });
 
@@ -225,7 +225,7 @@ it('search without params', async () => {
       sortDesc: false,
     })
   ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"ContractError: challengeId or username is required"`
+    `"challengeId or username is required"`
   );
 });
 

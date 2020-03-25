@@ -1,110 +1,85 @@
 import { createContract, createDynamoStreamBinding } from '../../lib';
 import { S } from 'schema';
 import * as R from 'remeda';
-import { DbSolution } from '../../types';
-import {
-  transactWriteItems,
-  createKey,
-  batchDelete,
-  getEventConditionItem,
-} from '../../common/db';
 import { ignoreTransactionCanceled } from '../../common/helper';
-
-function _getKeys(dbSolution: DbSolution) {
-  return [
-    createKey({
-      type: 'SOLUTION_SLUG',
-      ...dbSolution,
-    }),
-    createKey({
-      type: 'SOLUTION_USER',
-      ...dbSolution,
-    }),
-    createKey({
-      type: 'SOLUTION_CHALLENGE_USER',
-      ...dbSolution,
-    }),
-    ...dbSolution.tags.map(tag => ({
-      ...createKey({
-        type: 'SOLUTION_TAG',
-        challengeId: dbSolution.challengeId,
-        solutionId: dbSolution.solutionId,
-        tag,
-      }),
-    })),
-  ];
-}
+import { SolutionEntity } from '../../entities';
+import * as db from '../../common/db-next';
+import { EventEntity } from '../../entities/EventEntity';
+import { TransactWriteItemList } from 'aws-sdk/clients/dynamodb';
 
 export const indexSolutionRemove = createContract(
   'indexSolution.indexSolutionRemove'
 )
-  .params('eventId', 'dbSolution')
+  .params('eventId', 'solution')
   .schema({
     eventId: S.string(),
-    dbSolution: S.object().as<DbSolution>(),
+    solution: S.object().as<SolutionEntity>(),
   })
-  .fn(async (_, dbSolution) => {
-    await batchDelete(_getKeys(dbSolution));
+  .fn(async (_, solution) => {
+    await db.remove(solution.getAllIndexes().map(x => x.prepareDelete()));
   });
 
 export const indexSolutionInsert = createContract(
   'indexSolution.indexSolutionInsert'
 )
-  .params('eventId', 'dbSolution')
+  .params('eventId', 'solution')
   .schema({
     eventId: S.string(),
-    dbSolution: S.object().as<DbSolution>(),
+    solution: S.object().as<SolutionEntity>(),
   })
-  .fn(async (eventId, dbSolution) => {
-    await transactWriteItems({
-      conditionalPutItems: [getEventConditionItem(eventId)],
-      putItems: _getKeys(dbSolution).map(key => ({
-        ...dbSolution,
-        ...key,
-      })),
-    }).catch(ignoreTransactionCanceled());
+  .fn(async (eventId, solution) => {
+    await db
+      .transactWriteItems([
+        {
+          Put: EventEntity.getEventConditionPutItem(eventId),
+        },
+        ...solution.getAllIndexes().map(item => ({
+          Put: item.preparePut(),
+        })),
+      ])
+      .catch(ignoreTransactionCanceled());
   });
 
 export const indexSolutionUpdate = createContract(
   'indexSolution.indexSolutionInsert'
 )
-  .params('eventId', 'newDbSolution', 'oldDbSolution')
+  .params('eventId', 'newSolution', 'oldSolution')
   .schema({
     eventId: S.string(),
-    newDbSolution: S.object().as<DbSolution>(),
-    oldDbSolution: S.object().as<DbSolution>(),
+    newSolution: S.object().as<SolutionEntity>(),
+    oldSolution: S.object().as<SolutionEntity>(),
   })
-  .fn(async (eventId, newDbSolution, oldDbSolution) => {
-    const removedTags = R.difference(oldDbSolution.tags, newDbSolution.tags);
+  .fn(async (eventId, newSolution, oldSolution) => {
+    const removedTags = R.difference(oldSolution.tags, newSolution.tags);
+    const items: TransactWriteItemList = [
+      {
+        Put: EventEntity.getEventConditionPutItem(eventId),
+      },
+      ...newSolution.getAllIndexes().map(item => ({
+        Put: item.preparePut(),
+      })),
+      ...removedTags.map(tag => ({
+        Delete: oldSolution.asTagEntity(tag).prepareDelete(),
+      })),
+    ];
 
-    await transactWriteItems({
-      conditionalPutItems: [getEventConditionItem(eventId)],
-      putItems: [
-        ..._getKeys(newDbSolution).map(key => ({
-          ...newDbSolution,
-          ...key,
-        })),
-      ],
-      deleteItems: removedTags.map(tag =>
-        createKey({
-          type: 'SOLUTION_TAG',
-          challengeId: newDbSolution.challengeId,
-          solutionId: newDbSolution.solutionId,
-          tag,
-        })
-      ),
-    }).catch(ignoreTransactionCanceled());
+    if (newSolution.slug !== oldSolution.slug) {
+      items.push({
+        Delete: oldSolution.asSlugEntity().prepareDelete(),
+      });
+    }
+    await db.transactWriteItems(items).catch(ignoreTransactionCanceled());
   });
 
-export const handleSolution = createDynamoStreamBinding<DbSolution>({
-  type: 'Solution',
-  remove(eventId, item) {
-    indexSolutionRemove(eventId, item);
+export const handleSolution = createDynamoStreamBinding<SolutionEntity>({
+  type: 'SolutionEntity',
+  async remove(eventId, item) {
+    await indexSolutionRemove(eventId, item);
   },
-  insert(eventId, item) {
-    indexSolutionInsert(eventId, item);
+  async insert(eventId, item) {
+    await indexSolutionInsert(eventId, item);
   },
-  modify(eventId, item, oldItem) {
-    indexSolutionUpdate(eventId, item, oldItem);
+  async modify(eventId, item, oldItem) {
+    await indexSolutionUpdate(eventId, item, oldItem);
   },
 });

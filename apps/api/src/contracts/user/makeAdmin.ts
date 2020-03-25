@@ -1,7 +1,8 @@
 import { S } from 'schema';
 import { createContract } from '../../lib';
-import { getDbUserById } from './getDbUserById';
-import { updateItem } from '../../common/db';
+import * as db from '../../common/db-next';
+import { AppError } from '../../common/errors';
+import * as userReader from '../../readers/userReader';
 
 export const makeAdmin = createContract('user.makeAdmin')
   .params('userId')
@@ -9,7 +10,10 @@ export const makeAdmin = createContract('user.makeAdmin')
     userId: S.string(),
   })
   .fn(async userId => {
-    const dbUser = await getDbUserById(userId);
-    dbUser.isAdmin = true;
-    await updateItem(dbUser, ['isAdmin']);
+    const user = await userReader.getById(userId);
+    if (!user) {
+      throw new AppError('user not found');
+    }
+    user.isAdmin = true;
+    await db.update(user.prepareUpdate(['isAdmin']));
   });

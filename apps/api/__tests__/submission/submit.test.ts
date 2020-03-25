@@ -24,7 +24,7 @@ describe('validation', () => {
         challengeId: 3422,
         testUrl: 'http://example.com',
       },
-      'Challenge "3422" does not exist',
+      'Challenge not found',
     ],
   ])('.submit(%p) should throw `%s`', async (input: any, errorMessage: any) => {
     await expect(submit(userId, input)).rejects.toThrow(errorMessage);

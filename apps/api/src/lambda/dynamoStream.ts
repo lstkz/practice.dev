@@ -1,6 +1,50 @@
-import { DynamoDBStreamEvent } from '../types';
+import { DynamoDBStreamEvent, EntityType, DynamoDBRecord } from '../types';
 import { dynamoStreamMapping } from '../generated/dynamoStream-mapping';
-import { decodeStreamEntity } from '../common/db';
+import {
+  SubmissionEntity,
+  ChallengeSolvedEntity,
+  SolutionEntity,
+  SolutionVoteEntity,
+} from '../entities';
+import { Converter } from 'aws-sdk/clients/dynamodb';
+
+const Entities = [
+  SolutionEntity,
+  SolutionVoteEntity,
+  SubmissionEntity,
+  ChallengeSolvedEntity,
+];
+
+export function decodeStreamEntity(
+  record: DynamoDBRecord
+): {
+  type: EntityType;
+  oldItem: any | null;
+  newItem: any | null;
+} | null {
+  if (!record.eventName) {
+    throw new Error('eventName required');
+  }
+  const newItem = record.dynamodb?.NewImage
+    ? Converter.unmarshall(record.dynamodb.NewImage)
+    : null;
+  const oldItem = record.dynamodb?.OldImage
+    ? Converter.unmarshall(record.dynamodb.OldImage)
+    : null;
+  const item = newItem || oldItem;
+  if (!item) {
+    return null;
+  }
+  const Entity = Entities.find(entity => entity.isEntityKey(item as any));
+  if (!Entity) {
+    return null;
+  }
+  return {
+    type: Entity.name as any,
+    newItem: newItem && new Entity(newItem as any),
+    oldItem: oldItem && new Entity(oldItem as any),
+  };
+}
 
 export async function handler(event: DynamoDBStreamEvent) {
   await Promise.all(

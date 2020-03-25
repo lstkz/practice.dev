@@ -4,10 +4,11 @@ import { getDuration } from '../../common/helper';
 import { S } from 'schema';
 import uuid from 'uuid';
 import { SubmissionStatus, TesterMessage } from 'shared';
-import { _putSubmission } from './_putSubmission';
-import { getDbChallengeById } from '../challenge/getDbChallengeById';
-import { createKey } from '../../common/db';
 import { TESTER_TOPIC_ARN } from '../../config';
+import { SubmissionEntity } from '../../entities';
+import * as db from '../../common/db-next';
+import * as challengeReader from '../../readers/challengeReader';
+import { AppError } from '../../common/errors';
 
 const RATE_LIMIT_PER_DAY = 1000;
 const RATE_LIMIT_PER_HOUR = 100;
@@ -24,7 +25,13 @@ export const submit = createContract('submission.submit')
     }),
   })
   .fn(async (userId, values) => {
-    const challenge = await getDbChallengeById(values.challengeId);
+    const challenge = await challengeReader.getChallengeByIdOrNull(
+      values.challengeId
+    );
+    if (!challenge) {
+      throw new AppError('Challenge not found');
+    }
+
     await Promise.all([
       rateLimit(
         `SUBMIT_days:${userId}`,
@@ -37,19 +44,16 @@ export const submit = createContract('submission.submit')
         RATE_LIMIT_PER_HOUR
       ),
     ]);
-
     const id = uuid();
-
-    await _putSubmission({
-      ...createKey({ type: 'SUBMISSION', submissionId: id }),
+    const submission = new SubmissionEntity({
       submissionId: id,
       challengeId: values.challengeId,
       userId,
       status: SubmissionStatus.Queued,
-      data_n: Date.now(),
+      createdAt: Date.now(),
       testUrl: values.testUrl,
     });
-
+    await db.put(submission);
     const testerMessage: TesterMessage = {
       id,
       challengeId: values.challengeId,
@@ -58,7 +62,6 @@ export const submit = createContract('submission.submit')
       tests: challenge.testsBundleS3Key,
       type: challenge.domain === 'backend' ? 'backend' : 'frontend',
     };
-
     await sns
       .publish({
         TopicArn: TESTER_TOPIC_ARN,

@@ -1,7 +1,13 @@
 import { randomSalt, createPasswordHash } from '../../common/helper';
 import uuid from 'uuid';
-import { createKey, ensureNotExists, putItems } from '../../common/db';
-import { DbUser, DbUserUsername, DbUserEmail, DbGithubUser } from '../../types';
+import { BaseEntity } from '../../common/orm';
+import * as db from '../../common/db-next';
+import {
+  UserEmailEntity,
+  UserUsernameEntity,
+  UserEntity,
+  GithubUserEntity,
+} from '../../entities';
 
 interface CreateUserValues {
   userId?: string;
@@ -14,22 +20,23 @@ interface CreateUserValues {
 
 export async function _createUser(values: CreateUserValues) {
   const userId = values.userId || uuid();
-  const userKey = createKey({ type: 'USER', userId: userId });
-  const uniqueEmailKey = createKey({ type: 'USER_EMAIL', email: values.email });
-  const uniqueUsernameKey = createKey({
-    type: 'USER_USERNAME',
-    username: values.username,
-  });
   const salt = await randomSalt();
   const password = await createPasswordHash(values.password, salt);
+  const userEmail = new UserEmailEntity({
+    userId,
+    email: values.email,
+  });
+  const userUsername = new UserUsernameEntity({
+    userId,
+    username: values.username,
+  });
 
   await Promise.all([
-    ensureNotExists(uniqueEmailKey, 'Email is already registered'),
-    ensureNotExists(uniqueUsernameKey, 'Username is already taken'),
+    db.ensureNotExists(userEmail.key, 'Email is already registered'),
+    db.ensureNotExists(userUsername.key, 'Username is already taken'),
   ]);
 
-  const dbUser: DbUser = {
-    ...userKey,
+  const user = new UserEntity({
     userId: userId,
     email: values.email,
     username: values.username,
@@ -37,28 +44,17 @@ export async function _createUser(values: CreateUserValues) {
     password: password,
     isVerified: values.isVerified,
     githubId: values.githubId,
-  };
-  const dbUserEmail: DbUserEmail = {
-    ...uniqueEmailKey,
-    email: values.email,
-    userId,
-  };
-  const dbUsernameEmail: DbUserUsername = {
-    ...uniqueUsernameKey,
-    username: values.username,
-    userId,
-  };
-  const entities: any[] = [dbUser, dbUserEmail, dbUsernameEmail];
+  });
+  const entities: BaseEntity[] = [user, userEmail, userUsername];
   if (values.githubId) {
-    const dbGithubUser: DbGithubUser = {
-      ...createKey({ type: 'GITHUB_USER', id: values.githubId }),
-      userId,
-      githubId: values.githubId,
-    };
-    entities.push(dbGithubUser);
+    entities.push(
+      new GithubUserEntity({
+        userId,
+        githubId: values.githubId,
+      })
+    );
   }
 
-  await putItems(entities);
-
-  return dbUser;
+  await db.put(entities);
+  return user;
 }
