@@ -1,8 +1,7 @@
 import { S } from 'schema';
 import uuid from 'uuid';
 import { createContract } from '../../lib';
-import * as db from '../../common/db-next';
-import { TokenEntity } from '../../entities';
+import { TokenEntity } from '../../entities2';
 
 export const createToken = createContract('user.createToken')
   .params('userId', 'fixedToken')
@@ -17,7 +16,7 @@ export const createToken = createContract('user.createToken')
       userId,
       token: fixedToken || uuid(),
     });
-    await db.put(token);
+    await token.insert();
 
     return token.token;
   });

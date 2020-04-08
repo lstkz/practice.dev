@@ -1,5 +1,7 @@
 import { createBaseEntity } from '../lib';
 import { User, PublicUser } from 'shared';
+import { UserEmailEntity } from './UserEmailEntity';
+import { UserUsernameEntity } from './UserUsernameEntity';
 
 export interface UserKey {
   userId: string;
@@ -21,6 +23,35 @@ const BaseEntity = createBaseEntity()
   .build();
 
 export class UserEntity extends BaseEntity {
+  static async getUserIdByEmailOrUsernameOrNull(emailOrUsername: string) {
+    if (emailOrUsername.includes('@')) {
+      const item = await UserEmailEntity.getByKeyOrNull({
+        email: emailOrUsername,
+      });
+      return item?.userId;
+    } else {
+      const item = await UserUsernameEntity.getByKeyOrNull({
+        username: emailOrUsername,
+      });
+      return item?.userId;
+    }
+  }
+  static async getUserByEmailOrUsernameOrNull(emailOrUsername: string) {
+    const userId = await this.getUserIdByEmailOrUsernameOrNull(emailOrUsername);
+    if (!userId) {
+      return null;
+    }
+    return this.getById(userId);
+  }
+
+  static getByIdOrNull(userId: string) {
+    return this.getByKeyOrNull({ userId });
+  }
+
+  static getById(userId: string) {
+    return this.getByKey({ userId });
+  }
+
   toUser(): User {
     return {
       id: this.userId,

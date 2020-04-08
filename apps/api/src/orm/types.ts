@@ -25,16 +25,29 @@ export type ColumnMapping<TProps> = {
   [x in keyof TProps]?: string;
 };
 
-export type BaseEntityStatic<TProps, TKey> = {
-  fromDynamo(rawValues: Record<string, any>): Instance<TProps>;
-  getByKey(key: TKey): TProps;
-  getByKeyOrNull(key: TKey): TProps | null;
-  query(options: QueryOptions): SearchResult<Instance<TProps>>;
-};
+export interface BaseEntityStatic<TProps, TKey> {
+  fromDynamo<T extends BaseEntityClass<TProps, TKey>>(
+    this: T,
+    rawValues: Record<string, any>
+  ): InstanceType<T>;
+  getByKey<T extends BaseEntityClass<TProps, TKey>>(
+    this: T,
+    key: TKey
+  ): Promise<InstanceType<T>>;
+  getByKeyOrNull<T extends BaseEntityClass<TProps, TKey>>(
+    this: T,
+    key: TKey
+  ): Promise<InstanceType<T> | null>;
+  query<T extends BaseEntityClass<TProps, TKey>>(
+    this: T,
+    options: QueryOptions
+  ): SearchResult<InstanceType<T>>;
+}
 
-export type BaseEntityClass<TProps, TKey> = {
+export interface BaseEntityClass<TProps, TKey>
+  extends BaseEntityStatic<TProps, TKey> {
   new (props: TProps, mapping?: ColumnMapping<TProps>): Instance<TProps>;
-} & BaseEntityStatic<TProps, TKey>;
+}
 
 export interface SearchResult<T> {
   items: T[];

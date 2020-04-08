@@ -53,22 +53,22 @@ export async function _createUser(values: CreateUserValues) {
     }),
   ]);
 
-  const trans = createTransaction();
-  trans.insert(userEmail, {
+  const t = createTransaction();
+  t.insert(userEmail, {
     conditionExpression: 'attribute_not_exists(pk)',
   });
-  trans.insert(userUsername, {
+  t.insert(userUsername, {
     conditionExpression: 'attribute_not_exists(pk)',
   });
-  trans.insert(user);
+  t.insert(user);
   if (values.githubId) {
-    trans.insert(
+    t.insert(
       new GithubUserEntity({
         userId,
         githubId: values.githubId,
       })
     );
   }
-  await trans.commit();
+  await t.commit();
   return user;
 }

@@ -7,16 +7,34 @@ module.exports = function generate(plop) {
         type: 'input',
         name: 'name',
         message: 'choose feature name in camelCase (e.g. myFeature)',
-        basePath: '.'
-      }
+        basePath: '.',
+      },
     ],
     actions: [
       {
         type: 'addMany',
         destination: path.join(__dirname, 'apps/front/src/features'),
         base: '.blueprints/feature',
-        templateFiles: '.blueprints/feature/**/**'
-      }
-    ]
+        templateFiles: '.blueprints/feature/**/**',
+      },
+    ],
+  });
+  plop.setGenerator('entity', {
+    prompts: [
+      {
+        type: 'input',
+        name: 'name',
+        message: 'choose feature name in PascalCase (e.g. SolutionVote)',
+        basePath: '.',
+      },
+    ],
+    actions: [
+      {
+        type: 'addMany',
+        destination: path.join(__dirname, 'apps/api/src/entities2'),
+        base: '.blueprints/entity',
+        templateFiles: '.blueprints/entity/**/**',
+      },
+    ],
   });
 };

@@ -10,7 +10,7 @@ import {
 } from './types';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { DatabaseError } from './DatabaseError';
-import { getPropNames } from './helper';
+import { getPropNames, prepareUpdate } from './helper';
 
 export interface CreateBaseEntityProviderOptions<TIndexes> {
   dynamodb: AWS.DynamoDB;
@@ -61,11 +61,36 @@ class Builder {
     }
 
     const instance: InstanceMethods<any> = {
-      insert() {
-        throw new Error('todo');
+      async insert() {
+        await dynamodb
+          .putItem({
+            TableName: this.getTableName(),
+            Item: Converter.marshall(this.serialize()),
+          })
+          .promise();
       },
-      update(fields: any[], options) {
-        throw new Error('todo');
+      async update(fields: any[], options) {
+        const {
+          updateExpression,
+          expressionValues,
+          expressionNames,
+        } = prepareUpdate(instance, fields);
+        await dynamodb
+          .updateItem({
+            TableName: tableName,
+            Key: Converter.marshall(instance.getKey()),
+            UpdateExpression: updateExpression,
+            ConditionExpression: options?.conditionExpression,
+            ExpressionAttributeNames: {
+              ...expressionNames,
+              ...(options?.expressionNames ?? {}),
+            },
+            ExpressionAttributeValues: Converter.marshall({
+              ...expressionValues,
+              ...(options?.expressionValues ?? {}),
+            }),
+          })
+          .promise();
       },
       getTableName() {
         return tableName;
@@ -88,7 +113,6 @@ class Builder {
 
     const statics: BaseEntityStatic<any, any> = {
       fromDynamo(rawValues: Record<string, any>) {
-        this.constructor;
         const values = Converter.unmarshall(rawValues);
         const reverseMap: any = {};
         const props: any = {};
@@ -105,6 +129,7 @@ class Builder {
             props[classKey] = values[key];
           });
         const Ctor = this as any;
+
         return new Ctor(props);
       },
       async getByKey(key) {
@@ -117,7 +142,7 @@ class Builder {
             }" and sk="${dynamoKey.pk}"`
           );
         }
-        return this.fromDynamo(item);
+        return item;
       },
       async getByKeyOrNull(key) {
         const { Item: item } = await dynamodb
