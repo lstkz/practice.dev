@@ -4,9 +4,11 @@ import {
   BaseEntityClass,
   BaseEntityStatic,
   QueryOptions,
-  Instance,
   InstanceMethods,
   DynamoKey,
+  QueryAllOptions,
+  QueryOperator,
+  Instance,
 } from './types';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { DatabaseError } from './DatabaseError';
@@ -158,6 +160,55 @@ class Builder {
       },
       query(options: QueryOptions) {
         throw new Error('todo');
+      },
+      async queryAll(options: QueryAllOptions) {
+        const allItems: Array<any> = [];
+        const expressionValues: any = {
+          ...(options.expressionValues || {}),
+        };
+        const expressionNames: any = {
+          ...(options.expressionNames || {}),
+        };
+        let keyExpression = '';
+        ['pk', 'sk'].forEach(name => {
+          if (name in options.key) {
+            keyExpression = `#${name} = :${name}`;
+            expressionNames[`#${name}`] = name;
+            expressionValues[`:${name}`] = (options.key as any)[name];
+          }
+        });
+        ['data', 'data_n', 'data2_n'].forEach(name => {
+          if (name in options.key) {
+            const [op, value] = (options.key as any)[name] as [
+              QueryOperator,
+              number
+            ];
+            keyExpression += `AND #${name} ${op} :${name}`;
+            expressionNames[`#${name}`] = name;
+            expressionValues[`:${name}`] = value;
+          }
+        });
+
+        const fetch = async (lastKey?: any) => {
+          const result = await dynamodb
+            .query({
+              TableName: tableName,
+              KeyConditionExpression: keyExpression,
+              FilterExpression: options.filterExpression,
+              ExpressionAttributeNames: expressionNames,
+              ExpressionAttributeValues: Converter.marshall(expressionValues),
+              ExclusiveStartKey: lastKey,
+            })
+            .promise();
+          allItems.push(
+            ...(result.Items ?? []).map(item => this.fromDynamo(item))
+          );
+          if (result.LastEvaluatedKey) {
+            await fetch(result.LastEvaluatedKey);
+          }
+        };
+        await fetch();
+        return allItems as any;
       },
     };
     Object.assign(BaseEntity, statics);

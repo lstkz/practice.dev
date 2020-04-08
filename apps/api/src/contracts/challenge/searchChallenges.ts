@@ -2,7 +2,7 @@ import * as R from 'remeda';
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
 import { PagedResult, Challenge } from 'shared';
-import * as challengeReader from '../../readers/challengeReader';
+import { ChallengeEntity } from '../../entities2';
 
 export const searchChallenges = createContract('challenge.searchChallenges')
   .params('userId', 'criteria')
@@ -44,7 +44,7 @@ export const searchChallenges = createContract('challenge.searchChallenges')
     const pageNumber = criteria.pageNumber!;
 
     const [items, solved] = await Promise.all([
-      challengeReader.getChallengesAll(),
+      ChallengeEntity.getAll(),
       challengeReader.getSolvedChallengeIds(userId),
     ]);
 

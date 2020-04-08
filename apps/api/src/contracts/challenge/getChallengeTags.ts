@@ -1,12 +1,12 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { ChallengeTag } from 'shared';
-import * as challengeReader from '../../readers/challengeReader';
+import { ChallengeEntity } from '../../entities2';
 
 export const getChallengeTags = createContract('challenge.getChallengeTags')
   .params()
   .schema({})
   .fn(async () => {
-    const challenges = await challengeReader.getChallengesAll();
+    const challenges = await ChallengeEntity.getAll();
     const tagMap: { [x: string]: number } = {};
     challenges.forEach(challenge => {
       challenge.tags.forEach(tag => {

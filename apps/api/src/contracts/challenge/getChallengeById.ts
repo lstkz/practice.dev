@@ -1,7 +1,7 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
-import * as challengeReader from '../../readers/challengeReader';
 import { AppError } from '../../common/errors';
+import { ChallengeEntity, ChallengeSolvedEntity } from '../../entities2';
 
 export const getChallengeById = createContract('challenge.getChallengeById')
   .params('userId', 'id')
@@ -11,8 +11,8 @@ export const getChallengeById = createContract('challenge.getChallengeById')
   })
   .fn(async (userId, id) => {
     const [challenge, isSolved] = await Promise.all([
-      challengeReader.getChallengeByIdOrNull(id),
-      challengeReader.getIsSolved(userId, id),
+      ChallengeEntity.getByKeyOrNull({ challengeId: id }),
+      ChallengeSolvedEntity.getIsSolved(userId, id),
     ]);
     if (!challenge) {
       throw new AppError('Challenge not found');

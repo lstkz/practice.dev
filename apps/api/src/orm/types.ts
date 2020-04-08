@@ -41,7 +41,11 @@ export interface BaseEntityStatic<TProps, TKey> {
   query<T extends BaseEntityClass<TProps, TKey>>(
     this: T,
     options: QueryOptions
-  ): SearchResult<InstanceType<T>>;
+  ): Promise<SearchResult<InstanceType<T>>>;
+  queryAll<T extends BaseEntityClass<TProps, TKey>>(
+    this: T,
+    options: QueryAllOptions
+  ): Promise<InstanceType<T>>;
 }
 
 export interface BaseEntityClass<TProps, TKey>
@@ -54,9 +58,33 @@ export interface SearchResult<T> {
   lastKey: string;
 }
 
-export interface QueryOptions {
-  pk: string;
-  sk: ['=', string];
-  sort: 'asc' | 'desc';
+export interface QueryOptions extends QueryAllOptions {
+  limit: number;
   lastKey: DynamoKey;
+}
+
+export type QueryOperator = '=' | '!=';
+
+export interface QueryAllOptions {
+  key:
+    | {
+        pk: string;
+        sk?: [QueryOperator, string];
+      }
+    | {
+        sk: string;
+        data: [QueryOperator, string] | null;
+      }
+    | {
+        sk: string;
+        data_n: [QueryOperator, number] | null;
+      }
+    | {
+        sk: string;
+        data2_n: [QueryOperator, number] | null;
+      };
+  sort: 'asc' | 'desc';
+  filterExpression?: string;
+  expressionValues?: Record<string, any>;
+  expressionNames?: Record<string, string>;
 }

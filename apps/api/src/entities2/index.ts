@@ -5,3 +5,5 @@ export * from './GithubUserEntity';
 export * from './ConfirmCodeEntity';
 export * from './ResetPasswordCodeEntity';
 export * from './TokenEntity';
+export * from './ChallengeEntity';
+export * from './ChallengeSolvedEntity';
