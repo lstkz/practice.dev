@@ -1,7 +1,9 @@
-import './config';
+import { TABLE_NAME } from './config';
 import { initialize } from 'contract';
 import AWS from 'aws-sdk';
 import { AppEvent, EntityType } from './types';
+import { Transaction } from './orm/Transaction';
+import { createBaseEntityProvider } from './orm/createBaseEntityProvider';
 
 export const sns = new AWS.SNS({});
 export const s3 = new AWS.S3({});
@@ -15,6 +17,17 @@ export const dynamoStream = new AWS.DynamoDBStreams({
 
 export const ses = new AWS.SES({
   region: 'eu-west-1',
+});
+
+export const createTransaction = () => new Transaction(dynamodb);
+
+export const createBaseEntity = createBaseEntityProvider({
+  dynamodb,
+  tableName: TABLE_NAME,
+  indexes: {
+    data: 'string',
+    data_n: 'number',
+  },
 });
 
 export interface CreateRpcBindingOptions {

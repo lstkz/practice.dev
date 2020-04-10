@@ -1,13 +1,13 @@
 import { randomSalt, createPasswordHash } from '../../common/helper';
 import uuid from 'uuid';
-import { BaseEntity } from '../../common/orm';
-import * as db from '../../common/db-next';
 import {
   UserEmailEntity,
   UserUsernameEntity,
   UserEntity,
   GithubUserEntity,
 } from '../../entities';
+import { createTransaction } from '../../lib';
+import { AppError } from '../../common/errors';
 
 interface CreateUserValues {
   userId?: string;
@@ -30,12 +30,6 @@ export async function _createUser(values: CreateUserValues) {
     userId,
     username: values.username,
   });
-
-  await Promise.all([
-    db.ensureNotExists(userEmail.key, 'Email is already registered'),
-    db.ensureNotExists(userUsername.key, 'Username is already taken'),
-  ]);
-
   const user = new UserEntity({
     userId: userId,
     email: values.email,
@@ -45,16 +39,36 @@ export async function _createUser(values: CreateUserValues) {
     isVerified: values.isVerified,
     githubId: values.githubId,
   });
-  const entities: BaseEntity[] = [user, userEmail, userUsername];
+
+  await Promise.all([
+    UserEmailEntity.getIsTaken(values.email).then(isTaken => {
+      if (isTaken) {
+        throw new AppError('Email is already registered');
+      }
+    }),
+    UserUsernameEntity.getIsTaken(values.username).then(isTaken => {
+      if (isTaken) {
+        throw new AppError('Username is already taken');
+      }
+    }),
+  ]);
+
+  const t = createTransaction();
+  t.insert(userEmail, {
+    conditionExpression: 'attribute_not_exists(pk)',
+  });
+  t.insert(userUsername, {
+    conditionExpression: 'attribute_not_exists(pk)',
+  });
+  t.insert(user);
   if (values.githubId) {
-    entities.push(
+    t.insert(
       new GithubUserEntity({
         userId,
         githubId: values.githubId,
       })
     );
   }
-
-  await db.put(entities);
+  await t.commit();
   return user;
 }

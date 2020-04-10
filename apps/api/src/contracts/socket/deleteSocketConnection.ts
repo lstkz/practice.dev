@@ -1,7 +1,6 @@
 import { createContract } from '../../lib';
 import { S } from 'schema';
-import * as socketConnectionReader from '../../readers/socketConnectionReader';
-import * as db from '../../common/db-next';
+import { SocketConnectionEntity } from '../../entities';
 
 export const deleteSocketConnection = createContract(
   'socket.deleteSocketConnection'
@@ -11,8 +10,8 @@ export const deleteSocketConnection = createContract(
     connectionId: S.string(),
   })
   .fn(async connectionId => {
-    const connection = await socketConnectionReader.getById(connectionId);
+    const connection = await SocketConnectionEntity.getByIdOrNull(connectionId);
     if (connection) {
-      await db.remove(connection.prepareDelete());
+      await connection.delete();
     }
   });

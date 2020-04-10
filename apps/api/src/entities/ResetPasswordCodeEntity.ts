@@ -1,33 +1,17 @@
-import { PropsOnly } from '../types';
-import { BaseEntity } from '../common/orm';
+import { createBaseEntity } from '../lib';
 
-export type ResetPasswordCodeProps = PropsOnly<ResetPasswordCodeEntity>;
-
-export type ResetPasswordCodeKey = {
+export interface ResetPasswordCodeKey {
   code: string;
-};
-
-/**
- * Represents a reset password code.
- */
-export class ResetPasswordCodeEntity extends BaseEntity {
-  userId!: string;
-  code!: string;
-  expireAt!: number;
-
-  constructor(values: ResetPasswordCodeProps) {
-    super(values);
-  }
-
-  get key() {
-    return ResetPasswordCodeEntity.createKey(this);
-  }
-
-  static createKey({ code }: ResetPasswordCodeKey) {
-    const pk = `RESET_PASSWORD_CODE:${code.toLowerCase()}`;
-    return {
-      pk,
-      sk: pk,
-    };
-  }
 }
+
+export interface ResetPasswordCodeProps extends ResetPasswordCodeKey {
+  userId: string;
+  expireAt: number;
+}
+
+const BaseEntity = createBaseEntity()
+  .props<ResetPasswordCodeProps>()
+  .key<ResetPasswordCodeKey>(key => `RESET_PASSWORD_CODE:${key.code}`)
+  .build();
+
+export class ResetPasswordCodeEntity extends BaseEntity {}

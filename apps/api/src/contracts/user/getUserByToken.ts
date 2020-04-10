@@ -1,6 +1,6 @@
 import { createContract } from '../../lib';
 import { S } from 'schema';
-import * as userReader from '../../readers/userReader';
+import { TokenEntity, UserEntity } from '../../entities';
 
 export const getUserByToken = createContract('user.getUserByToken')
   .params('token')
@@ -8,9 +8,10 @@ export const getUserByToken = createContract('user.getUserByToken')
     token: S.string(),
   })
   .fn(async token => {
-    const user = await userReader.getByTokenOrNull(token);
-    if (!user) {
+    const tokenEntity = await TokenEntity.getByKeyOrNull({ token });
+    if (!tokenEntity) {
       return null;
     }
+    const user = await UserEntity.getByKey({ userId: tokenEntity.userId });
     return user.toUser();
   });

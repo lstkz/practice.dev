@@ -1,65 +1,109 @@
 import * as R from 'remeda';
-import { PropsOnly, DbKey } from '../types';
-import { BaseEntity } from '../common/orm';
+import { createBaseEntity } from '../lib';
 import { SubmissionStatus, Submission } from 'shared';
+import { DbKey } from '../types';
 import { UserEntity } from './UserEntity';
-
-export type SubmissionProps = PropsOnly<SubmissionEntity>;
-
-export type SubmissionKey = {
-  submissionId: string;
-};
-
-export type SubmissionUserKey = {
-  submissionId: string;
-  userId: string;
-};
-
-export type SubmissionChallengeKey = {
-  submissionId: string;
-  challengeId: number;
-};
-
-export type SubmissionUserChallengeKey = {
-  submissionId: string;
-  challengeId: number;
-  userId: string;
-};
+import { BaseSearchCriteria } from '../orm/types';
 
 export type SubmissionIndex = 'user' | 'challenge' | 'user_challenge';
 
-/**
- * Represents a challenge submission.
- */
-export class SubmissionEntity extends BaseEntity {
-  submissionId!: string;
-  createdAt!: number;
-  challengeId!: number;
-  userId!: string;
-  status!: SubmissionStatus;
+export interface SubmissionBaseKey {
+  submissionId: string;
+  __indexType?: null;
+}
+
+export interface SubmissionUserKey {
+  submissionId: string;
+  userId: string;
+  __indexType?: 'user';
+}
+
+export interface SubmissionChallengeKey {
+  submissionId: string;
+  challengeId: number;
+  __indexType?: 'challenge';
+}
+
+export interface SubmissionUserChallengeKey {
+  submissionId: string;
+  challengeId: number;
+  userId: string;
+  __indexType?: 'user_challenge';
+}
+
+export type SubmissionKey =
+  | SubmissionBaseKey
+  | SubmissionUserKey
+  | SubmissionChallengeKey
+  | SubmissionUserChallengeKey;
+
+export interface SubmissionProps {
+  submissionId: string;
+  createdAt: number;
+  challengeId: number;
+  userId: string;
+  status: SubmissionStatus;
   result?: string;
-  testUrl!: string;
+  testUrl: string;
+}
 
-  constructor(values: SubmissionProps, private indexType?: SubmissionIndex) {
-    super(values, {
-      createdAt: 'data_n',
-    });
-  }
+interface SearchByUserChallengeCriteria extends BaseSearchCriteria {
+  userId: string;
+  challengeId: number;
+}
 
-  get key() {
-    switch (this.indexType) {
-      case 'user':
-        return SubmissionEntity.createUserKey(this);
-      case 'challenge':
-        return SubmissionEntity.createChallengeKey(this);
-      case 'user_challenge':
-        return SubmissionEntity.createUserChallengeKey(this);
+interface SearchByUserCriteria extends BaseSearchCriteria {
+  userId: string;
+}
+
+interface SearchByChallengeCriteria extends BaseSearchCriteria {
+  challengeId: number;
+}
+
+const BaseEntity = createBaseEntity()
+  .props<SubmissionProps>()
+  .key<SubmissionKey>(key => {
+    switch (key.__indexType) {
+      case 'user': {
+        return {
+          pk: `SUBMISSION_USER:${key.submissionId}`,
+          sk: `SUBMISSION_USER:${key.userId}`,
+        };
+      }
+      case 'challenge': {
+        return {
+          pk: `SUBMISSION_CHALLENGE:${key.submissionId}`,
+          sk: `SUBMISSION_CHALLENGE:${key.challengeId}`,
+        };
+      }
+      case 'user_challenge': {
+        return {
+          pk: `SUBMISSION_USER_CHALLENGE:${key.submissionId}`,
+          sk: `SUBMISSION_USER_CHALLENGE:${key.challengeId}:${key.userId}`,
+        };
+      }
+      default: {
+        return `SUBMISSION:${key.submissionId}`;
+      }
     }
-    return SubmissionEntity.createKey(this);
+  })
+  .mapping({
+    createdAt: 'data_n',
+  })
+  .build();
+
+export class SubmissionEntity extends BaseEntity {
+  protected __indexType?: string;
+
+  constructor(props: SubmissionProps, index?: SubmissionIndex) {
+    super(props);
+    if (index) {
+      this.__indexType = index;
+    }
   }
 
   getAllIndexes() {
-    if (this.indexType) {
+    if (this.__indexType) {
       throw new Error('indexType must be not set.');
     }
     const props = this.getProps();
@@ -90,43 +134,47 @@ export class SubmissionEntity extends BaseEntity {
     return items.map(item => item.toSubmission(userMap[item.userId]));
   }
 
-  static createKey({ submissionId }: SubmissionKey) {
-    const pk = `SUBMISSION:${submissionId.toLowerCase()}`;
-    return {
-      pk,
-      sk: pk,
-    };
-  }
-
-  static createUserKey({ submissionId, userId }: SubmissionUserKey) {
-    return {
-      pk: `SUBMISSION_USER:${submissionId}`,
-      sk: `SUBMISSION_USER:${userId}`,
-    };
-  }
-
-  static createChallengeKey({
-    submissionId,
-    challengeId,
-  }: SubmissionChallengeKey) {
-    return {
-      pk: `SUBMISSION_CHALLENGE:${submissionId}`,
-      sk: `SUBMISSION_CHALLENGE:${challengeId}`,
-    };
-  }
-
-  static createUserChallengeKey({
-    challengeId,
-    submissionId,
-    userId,
-  }: SubmissionUserChallengeKey) {
-    return {
-      pk: `SUBMISSION_USER_CHALLENGE:${submissionId}`,
-      sk: `SUBMISSION_USER_CHALLENGE:${challengeId}:${userId}`,
-    };
-  }
-
   static isEntityKey(key: DbKey) {
     return key.pk.startsWith('SUBMISSION:');
+  }
+
+  static async searchByUserChallenge(criteria: SearchByUserChallengeCriteria) {
+    const { sk } = this.createKey({
+      __indexType: 'user_challenge',
+      challengeId: criteria.challengeId,
+      userId: criteria.userId,
+      submissionId: '-1',
+    });
+    return this._searchBySk(sk, criteria);
+  }
+
+  static async searchByUser(criteria: SearchByUserCriteria) {
+    const { sk } = this.createKey({
+      __indexType: 'user',
+      userId: criteria.userId,
+      submissionId: '-1',
+    });
+    return this._searchBySk(sk, criteria);
+  }
+
+  static async searchByChallenge(criteria: SearchByChallengeCriteria) {
+    const { sk } = this.createKey({
+      __indexType: 'challenge',
+      challengeId: criteria.challengeId,
+      submissionId: '-1',
+    });
+    return this._searchBySk(sk, criteria);
+  }
+
+  private static async _searchBySk(sk: string, criteria: BaseSearchCriteria) {
+    return this.query({
+      key: {
+        sk,
+        data_n: null,
+      },
+      lastKey: criteria.lastKey,
+      limit: criteria.limit,
+      sort: criteria.sort,
+    });
   }
 }

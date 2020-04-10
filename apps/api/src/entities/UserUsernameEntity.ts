@@ -1,32 +1,30 @@
-import { PropsOnly } from '../types';
-import { BaseEntity } from '../common/orm';
+import { createBaseEntity } from '../lib';
 
-export type UserUsernameProps = PropsOnly<UserUsernameEntity>;
-
-export type UserUsernameKey = {
+export interface UserUsernameKey {
   username: string;
-};
+}
 
-/**
- * Represents a unique constrains on user username.
- */
+export interface UserUsernameProps extends UserUsernameKey {
+  userId: string;
+}
+
+const BaseEntity = createBaseEntity()
+  .props<UserUsernameProps>()
+  .key<UserUsernameKey>(key => `USER_USERNAME:${key.username.toLowerCase()}`)
+  .build();
+
 export class UserUsernameEntity extends BaseEntity {
-  userId!: string;
-  username!: string;
-
-  constructor(values: UserUsernameProps) {
-    super(values);
+  static async getIsTaken(username: string) {
+    const item = await this.getByKeyOrNull({
+      username,
+    });
+    return item != null;
   }
 
-  get key() {
-    return UserUsernameEntity.createKey(this);
-  }
-
-  static createKey({ username }: UserUsernameKey) {
-    const pk = `USER_USERNAME:${username.toLowerCase()}`;
-    return {
-      pk,
-      sk: pk,
-    };
+  static async getUserIdOrNull(username: string) {
+    const ret = await UserUsernameEntity.getByKeyOrNull({
+      username,
+    });
+    return ret?.userId;
   }
 }

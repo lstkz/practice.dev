@@ -1,44 +1,40 @@
-import { PropsOnly } from '../types';
-import { BaseEntity } from '../common/orm';
 import {
   ChallengeStats,
   ChallengeDomain,
   ChallengeDifficulty,
   Challenge,
 } from 'shared';
+import { createBaseEntity } from '../lib';
 
-export type ChallengeProps = PropsOnly<ChallengeEntity>;
-
-export type ChallengeKey = {
+export interface ChallengeKey {
   challengeId: number;
-};
+}
 
-/**
- * Represents a challenge.
- */
+export interface ChallengeProps extends ChallengeKey {
+  title: string;
+  description: string;
+  domain: ChallengeDomain;
+  difficulty: ChallengeDifficulty;
+  detailsBundleS3Key: string;
+  testsBundleS3Key: string;
+  createdAt: number;
+  tags: string[];
+  stats: ChallengeStats;
+  testCase: string;
+}
+
+const BaseEntity = createBaseEntity()
+  .props<ChallengeProps>()
+  .key<ChallengeKey>(key => ({
+    pk: `CHALLENGE:${key.challengeId}`,
+    sk: 'CHALLENGE',
+  }))
+  .mapping({
+    challengeId: 'data_n',
+  })
+  .build();
+
 export class ChallengeEntity extends BaseEntity {
-  challengeId!: number;
-  title!: string;
-  description!: string;
-  domain!: ChallengeDomain;
-  difficulty!: ChallengeDifficulty;
-  detailsBundleS3Key!: string;
-  testsBundleS3Key!: string;
-  createdAt!: number;
-  tags!: string[];
-  stats!: ChallengeStats;
-  testCase!: string;
-
-  constructor(values: ChallengeProps) {
-    super(values, {
-      challengeId: 'data_n',
-    });
-  }
-
-  get key() {
-    return ChallengeEntity.createKey(this);
-  }
-
   toChallenge(isSolved = false): Challenge {
     return {
       id: this.challengeId,
@@ -55,10 +51,13 @@ export class ChallengeEntity extends BaseEntity {
     };
   }
 
-  static createKey({ challengeId }: ChallengeKey) {
-    return {
-      pk: `CHALLENGE:${challengeId}`,
-      sk: 'CHALLENGE',
-    };
+  static getAll() {
+    return this.queryAll({
+      key: {
+        sk: 'CHALLENGE',
+        data_n: null,
+      },
+      sort: 'asc',
+    });
   }
 }

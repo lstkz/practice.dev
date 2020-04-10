@@ -1,9 +1,8 @@
 import { S } from 'schema';
-import { createContract, createRpcBinding } from '../../lib';
+import { createContract, createRpcBinding, createTransaction } from '../../lib';
 import { AppError } from '../../common/errors';
-import * as db from '../../common/db-next';
-import * as userReader from '../../readers/userReader';
 import { _generateAuthData } from './_generateAuthData';
+import { ConfirmCodeEntity, UserEntity } from '../../entities';
 
 export const confirmEmail = createContract('user.confirmEmail')
   .params('code')
@@ -11,20 +10,17 @@ export const confirmEmail = createContract('user.confirmEmail')
     code: S.string(),
   })
   .fn(async code => {
-    const confirmCode = await userReader.getConfirmCodeOrNull(code);
+    const confirmCode = await ConfirmCodeEntity.getByKeyOrNull({ code });
     if (!confirmCode) {
       throw new AppError('Invalid code');
     }
-    const user = await userReader.getById(confirmCode.userId);
+    const user = await UserEntity.getByKey({ userId: confirmCode.userId });
     user.isVerified = true;
-    await db.transactWriteItems([
-      {
-        Delete: confirmCode.prepareDelete(),
-      },
-      {
-        Update: user.prepareUpdate(['isVerified']),
-      },
-    ]);
+    const t = createTransaction();
+    t.update(user, ['isVerified']);
+    t.delete(confirmCode);
+    await t.commit();
+
     return _generateAuthData(user);
   });
 

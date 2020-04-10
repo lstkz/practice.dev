@@ -5,9 +5,7 @@ import { _generateAuthData } from './_generateAuthData';
 import { AppError } from '../../common/errors';
 import { randomUniqString, getDuration } from '../../common/helper';
 import { BASE_URL, EMAIL_SENDER } from '../../config';
-import * as db from '../../common/db-next';
-import * as userReader from '../../readers/userReader';
-import { ResetPasswordCodeEntity } from '../../entities';
+import { ResetPasswordCodeEntity, UserEntity } from '../../entities';
 
 export const resetPassword = createContract('user.resetPassword')
   .params('emailOrUsername')
@@ -15,13 +13,12 @@ export const resetPassword = createContract('user.resetPassword')
     emailOrUsername: S.string().trim(),
   })
   .fn(async emailOrUsername => {
-    const userId = await userReader.getUserIdByEmailOrUsernameOrNull(
+    const user = await UserEntity.getUserByEmailOrUsernameOrNull(
       emailOrUsername
     );
-    if (!userId) {
+    if (!user) {
       throw new AppError('User not found');
     }
-    const user = await userReader.getById(userId);
     const code = randomUniqString();
     const resetPasswordCode = new ResetPasswordCodeEntity({
       code,
@@ -29,7 +26,7 @@ export const resetPassword = createContract('user.resetPassword')
       expireAt: Date.now() + getDuration(1, 'd'),
     });
 
-    await db.put(resetPasswordCode);
+    await resetPasswordCode.insert();
     const url = `${BASE_URL}/reset-password/${code}`;
 
     await ses

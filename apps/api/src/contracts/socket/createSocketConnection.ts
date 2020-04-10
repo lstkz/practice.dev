@@ -2,7 +2,6 @@ import * as R from 'remeda';
 import { getDuration } from '../../common/helper';
 import { getUserSocketConnections } from './getUserSocketConnections';
 import { S } from 'schema';
-import * as db from '../../common/db-next';
 import { createContract } from '../../lib';
 import { SocketConnectionEntity } from '../../entities';
 
@@ -46,12 +45,12 @@ export const createSocketConnection = createContract(
       LIMIT - 1
     );
     if (expired.length) {
-      await db.remove(expired.map(x => x.prepareDelete()));
+      Promise.all(expired.map(item => item.delete()));
     }
     const connection = new SocketConnectionEntity({
       createdAt: Date.now(),
       userId,
       connectionId,
     });
-    await db.put(connection);
+    await connection.insert();
   });

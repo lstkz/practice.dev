@@ -1,6 +1,7 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
-import * as solutionReader from '../../readers/solutionReader';
+import { SolutionTagStatsEntity } from '../../entities';
+import { decLastKey, encLastKey } from '../../common/helper';
 
 export const searchSolutionTags = createContract('solutionTags.searchSolutions')
   .params('criteria')
@@ -17,16 +18,16 @@ export const searchSolutionTags = createContract('solutionTags.searchSolutions')
     }),
   })
   .fn(async criteria => {
-    const { items, cursor } = await solutionReader.searchSolutionTags({
+    const { items, lastKey } = await SolutionTagStatsEntity.searchSolutionTags({
       challengeId: criteria.challengeId,
       keyword: criteria.keyword,
       limit: criteria.limit,
-      cursor: criteria.cursor,
-      descending: false,
+      lastKey: decLastKey(criteria.cursor),
+      sort: 'asc',
     });
     return {
       items: items.map(x => x.toSolutionTag()),
-      cursor,
+      cursor: encLastKey(lastKey),
     };
   });
 

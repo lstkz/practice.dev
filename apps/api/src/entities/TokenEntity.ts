@@ -1,32 +1,16 @@
-import { PropsOnly } from '../types';
-import { BaseEntity } from '../common/orm';
+import { createBaseEntity } from '../lib';
 
-export type TokenProps = PropsOnly<TokenEntity>;
-
-export type TokenKey = {
+export interface TokenKey {
   token: string;
-};
-
-/**
- * Represents an authentication token.
- */
-export class TokenEntity extends BaseEntity {
-  userId!: string;
-  token!: string;
-
-  constructor(values: TokenProps) {
-    super(values);
-  }
-
-  get key() {
-    return TokenEntity.createKey(this);
-  }
-
-  static createKey({ token }: TokenKey) {
-    const pk = `TOKEN:${token.toLowerCase()}`;
-    return {
-      pk,
-      sk: pk,
-    };
-  }
 }
+
+export interface TokenProps extends TokenKey {
+  userId: string;
+}
+
+const BaseEntity = createBaseEntity()
+  .props<TokenProps>()
+  .key<TokenKey>(key => `TOKEN:${key.token}`)
+  .build();
+
+export class TokenEntity extends BaseEntity {}

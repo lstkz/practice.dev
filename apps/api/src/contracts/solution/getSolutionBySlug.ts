@@ -1,8 +1,8 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { AppError } from '../../common/errors';
-import * as solutionReader from '../../readers/solutionReader';
 import { _populateSolution } from './_populateSolution';
+import { SolutionEntity } from '../../entities';
 
 export const getSolutionBySlug = createContract('solution.getSolutionBySlug')
   .params('userId', 'challengeId', 'slug')
@@ -12,10 +12,11 @@ export const getSolutionBySlug = createContract('solution.getSolutionBySlug')
     slug: S.string(),
   })
   .fn(async (userId, challengeId, slug) => {
-    const solution = await solutionReader.getSolutionBySlugOrNull(
+    const solution = await SolutionEntity.getByKeyOrNull({
+      __indexType: 'slug',
+      slug: slug,
       challengeId,
-      slug
-    );
+    });
     if (!solution) {
       throw new AppError('Solution not found');
     }

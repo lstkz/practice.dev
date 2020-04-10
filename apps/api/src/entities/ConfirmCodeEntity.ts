@@ -1,32 +1,16 @@
-import { PropsOnly } from '../types';
-import { BaseEntity } from '../common/orm';
+import { createBaseEntity } from '../lib';
 
-export type ConfirmCodeProps = PropsOnly<ConfirmCodeEntity>;
-
-export type ConfirmCodeKey = {
+export interface ConfirmCodeKey {
   code: string;
-};
-
-/**
- * Represents an email confirm code for registration.
- */
-export class ConfirmCodeEntity extends BaseEntity {
-  userId!: string;
-  code!: string;
-
-  constructor(values: ConfirmCodeProps) {
-    super(values);
-  }
-
-  get key() {
-    return ConfirmCodeEntity.createKey(this);
-  }
-
-  static createKey({ code }: ConfirmCodeKey) {
-    const pk = `CONFIRM_CODE:${code.toLowerCase()}`;
-    return {
-      pk,
-      sk: pk,
-    };
-  }
 }
+
+export interface ConfirmCodeProps extends ConfirmCodeKey {
+  userId: string;
+}
+
+const BaseEntity = createBaseEntity()
+  .props<ConfirmCodeProps>()
+  .key<ConfirmCodeKey>(key => `CONFIRM_CODE:${key.code}`)
+  .build();
+
+export class ConfirmCodeEntity extends BaseEntity {}

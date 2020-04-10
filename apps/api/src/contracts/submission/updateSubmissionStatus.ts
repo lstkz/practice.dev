@@ -2,8 +2,8 @@ import { createContract } from '../../lib';
 import { S } from 'schema';
 import { SubmissionStatus } from 'shared';
 import { markSolved } from '../challenge/markSolved';
-import * as db from '../../common/db-next';
-import * as submissionReader from '../../readers/submissionReader';
+import { SubmissionEntity } from '../../entities';
+import { AppError } from '../../common/errors';
 
 export const updateSubmissionStatus = createContract(
   'submission.updateSubmissionStatus'
@@ -19,10 +19,13 @@ export const updateSubmissionStatus = createContract(
     }),
   })
   .fn(async (submissionId, values) => {
-    const submission = await submissionReader.getById(submissionId);
+    const submission = await SubmissionEntity.getByKeyOrNull({ submissionId });
+    if (!submission) {
+      throw new AppError('Submission not found');
+    }
     submission.status = values.status;
     submission.result = values.result;
-    await db.update(submission.prepareUpdate(['status', 'result']));
+    await submission.update(['status', 'result']);
     if (values.status === SubmissionStatus.Pass) {
       await markSolved({
         challengeId: submission.challengeId,

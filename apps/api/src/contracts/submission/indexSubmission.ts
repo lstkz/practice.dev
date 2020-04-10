@@ -1,9 +1,10 @@
-import { createContract, createDynamoStreamBinding } from '../../lib';
+import {
+  createContract,
+  createDynamoStreamBinding,
+  createTransaction,
+} from '../../lib';
 import { S } from 'schema';
-import { ignoreTransactionCanceled } from '../../common/helper';
-import { SubmissionEntity } from '../../entities';
-import * as db from '../../common/db-next';
-import { EventEntity } from '../../entities/EventEntity';
+import { SubmissionEntity, EventEntity } from '../../entities';
 
 export const indexSubmissionRemove = createContract(
   'indexSubmission.indexSubmissionRemove'
@@ -14,7 +15,11 @@ export const indexSubmissionRemove = createContract(
     submission: S.object().as<SubmissionEntity>(),
   })
   .fn(async (_, submission) => {
-    await db.remove(submission.getAllIndexes().map(x => x.prepareDelete()));
+    const t = createTransaction();
+    submission.getAllIndexes().forEach(item => {
+      t.delete(item);
+    });
+    await t.commit();
   });
 
 export const indexSubmission = createContract('indexSubmission.indexSubmission')
@@ -24,16 +29,12 @@ export const indexSubmission = createContract('indexSubmission.indexSubmission')
     submission: S.object().as<SubmissionEntity>(),
   })
   .fn(async (eventId, submission) => {
-    await db
-      .transactWriteItems([
-        {
-          Put: EventEntity.getEventConditionPutItem(eventId),
-        },
-        ...submission.getAllIndexes().map(item => ({
-          Put: item.preparePut(),
-        })),
-      ])
-      .catch(ignoreTransactionCanceled());
+    const t = createTransaction();
+    EventEntity.addToTransaction(t, eventId);
+    submission.getAllIndexes().forEach(item => {
+      t.insert(item);
+    });
+    await t.commit({ ignoreTransactionCanceled: true });
   });
 
 export const handleSubmission = createDynamoStreamBinding<SubmissionEntity>({

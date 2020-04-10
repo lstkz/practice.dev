@@ -1,9 +1,9 @@
 import crypto from 'crypto';
 import { Response } from 'node-fetch';
-import { DynamoDB } from 'aws-sdk';
 import * as R from 'remeda';
 import { AppError } from './errors';
 import { UserEntity } from '../entities';
+import { DynamoKey } from '../orm/types';
 
 const SECURITY = {
   SALT_LENGTH: 64,
@@ -131,7 +131,7 @@ function getEncHash(data: string) {
     .substr(0, 10);
 }
 
-export function encLastKey(key: DynamoDB.Key | undefined) {
+export function encLastKey(key: DynamoKey | undefined | null) {
   if (!key) {
     return null;
   }
@@ -139,17 +139,17 @@ export function encLastKey(key: DynamoDB.Key | undefined) {
   return data + '.' + getEncHash(data);
 }
 
-export function decLastKey(key: string | undefined) {
+export function decLastKey(key: string | undefined | null): DynamoKey | null {
   if (!key) {
     return null;
   }
   const [data, hash] = key.split('.');
   if (!hash) {
-    return new AppError('Invalid lastKey');
+    throw new AppError('Invalid lastKey');
   }
   const expectedHash = getEncHash(data);
   if (hash !== expectedHash) {
-    return new AppError('Invalid lastKey');
+    throw new AppError('Invalid lastKey');
   }
   return JSON.parse(Buffer.from(data, 'base64').toString('utf8'));
 }

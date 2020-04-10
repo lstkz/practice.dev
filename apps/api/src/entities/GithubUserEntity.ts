@@ -1,32 +1,16 @@
-import { PropsOnly } from '../types';
-import { BaseEntity } from '../common/orm';
+import { createBaseEntity } from '../lib';
 
-export type GithubUserProps = PropsOnly<GithubUserEntity>;
-
-export type GithubUserKey = {
+export interface GithubUserKey {
   githubId: number;
-};
-
-/**
- * Represents a mapping between user and github id.
- */
-export class GithubUserEntity extends BaseEntity {
-  userId!: string;
-  githubId!: number;
-
-  constructor(values: GithubUserProps) {
-    super(values);
-  }
-
-  get key() {
-    return GithubUserEntity.createKey(this);
-  }
-
-  static createKey({ githubId }: GithubUserKey) {
-    const pk = `GITHUB_USER:${githubId}`;
-    return {
-      pk,
-      sk: pk,
-    };
-  }
 }
+
+export interface GithubUserProps extends GithubUserKey {
+  userId: string;
+}
+
+const BaseEntity = createBaseEntity()
+  .props<GithubUserProps>()
+  .key<GithubUserKey>(key => `GITHUB_USER:${key.githubId}`)
+  .build();
+
+export class GithubUserEntity extends BaseEntity {}

@@ -1,11 +1,13 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { AppError } from '../../common/errors';
-import { doFn } from '../../common/helper';
-import * as challengeReader from '../../readers/challengeReader';
-import * as userReader from '../../readers/userReader';
-import { SearchResult } from 'shared';
-import { ChallengeSolvedEntity } from '../../entities';
+import { doFn, decLastKey, encLastKey } from '../../common/helper';
+import { SearchResult, BaseSearchCriteria } from '../../orm/types';
+import {
+  UserUsernameEntity,
+  UserEntity,
+  ChallengeSolvedEntity,
+} from '../../entities';
 
 export const searchSolved = createContract('challenge.searchSolved')
   .params('criteria')
@@ -22,37 +24,37 @@ export const searchSolved = createContract('challenge.searchSolved')
     if (!challengeId && !username) {
       throw new AppError('challengeId or username must be defined');
     }
-    const { cursor, items } = await doFn(async () => {
-      const baseCriteria = {
+    const { lastKey, items } = await doFn(async () => {
+      const baseCriteria: BaseSearchCriteria = {
         limit: criteria.limit,
-        descending: true,
-        cursor: criteria.cursor,
+        sort: 'desc',
+        lastKey: decLastKey(criteria.cursor),
       };
       if (username) {
-        const userId = await userReader.getIdByUsernameOrNull(username);
+        const userId = await UserUsernameEntity.getUserIdOrNull(username);
         if (!userId) {
           return {
             items: [],
-            cursor: null,
+            lastKey: null,
           } as SearchResult<ChallengeSolvedEntity>;
         }
-        return challengeReader.searchSolvedByUserId({
+        return ChallengeSolvedEntity.searchSolvedByUserId({
           ...baseCriteria,
           userId,
         });
       }
       if (challengeId) {
-        return challengeReader.searchSolvedByChallengeId({
+        return ChallengeSolvedEntity.searchSolvedByChallengeId({
           ...baseCriteria,
           challengeId,
         });
       }
       throw new AppError('challengeId or username must be defined');
     });
-    const users = await userReader.getByIds(items.map(x => x.userId));
+    const users = await UserEntity.getByIds(items.map(x => x.userId));
     return {
       items: ChallengeSolvedEntity.toChallengeSolvedMany(items, users),
-      cursor: cursor,
+      cursor: encLastKey(lastKey),
     };
   });
 

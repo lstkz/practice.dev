@@ -1,32 +1,77 @@
-import { PropsOnly } from '../types';
-import { BaseEntity } from '../common/orm';
+import * as R from 'remeda';
+import { createBaseEntity } from '../lib';
 import { User, PublicUser } from 'shared';
+import { UserEmailEntity } from './UserEmailEntity';
+import { UserUsernameEntity } from './UserUsernameEntity';
 
-export type UserProps = PropsOnly<UserEntity>;
-
-export type UserKey = {
+export interface UserKey {
   userId: string;
-};
+}
 
-/**
- * Represents a main user entity.
- */
-export class UserEntity extends BaseEntity {
-  userId!: string;
-  email!: string;
-  username!: string;
-  salt!: string;
-  password!: string;
-  isVerified!: boolean;
+export interface UserProps extends UserKey {
+  email: string;
+  username: string;
+  salt: string;
+  password: string;
+  isVerified: boolean;
   githubId?: number;
   isAdmin?: boolean;
+}
 
-  constructor(values: UserProps) {
-    super(values);
+const BaseEntity = createBaseEntity()
+  .props<UserProps>()
+  .key<UserKey>(key => `USER:${key.userId}`)
+  .build();
+
+export class UserEntity extends BaseEntity {
+  static async getUserIdByEmailOrUsernameOrNull(emailOrUsername: string) {
+    if (emailOrUsername.includes('@')) {
+      const item = await UserEmailEntity.getByKeyOrNull({
+        email: emailOrUsername,
+      });
+      return item?.userId;
+    } else {
+      const item = await UserUsernameEntity.getByKeyOrNull({
+        username: emailOrUsername,
+      });
+      return item?.userId;
+    }
+  }
+  static async getUserByEmailOrUsernameOrNull(emailOrUsername: string) {
+    const userId = await this.getUserIdByEmailOrUsernameOrNull(emailOrUsername);
+    if (!userId) {
+      return null;
+    }
+    return this.getById(userId);
+  }
+  static async getUserIdUsernameOrNull(emailOrUsername: string) {
+    if (emailOrUsername.includes('@')) {
+      const item = await UserEmailEntity.getByKeyOrNull({
+        email: emailOrUsername,
+      });
+      return item?.userId;
+    } else {
+      const item = await UserUsernameEntity.getByKeyOrNull({
+        username: emailOrUsername,
+      });
+      return item?.userId;
+    }
   }
 
-  get key() {
-    return UserEntity.createKey(this);
+  static getByIdOrNull(userId: string) {
+    return this.getByKeyOrNull({ userId });
+  }
+
+  static getById(userId: string) {
+    return this.getByKey({ userId });
+  }
+
+  static getByIds(ids: string[]) {
+    if (!ids.length) {
+      return [];
+    }
+    const keys = R.uniq(ids).map(userId => ({ userId }));
+    return this.batchGet(keys);
   }
 
   toUser(): User {
@@ -43,14 +88,6 @@ export class UserEntity extends BaseEntity {
     return {
       id: this.userId,
       username: this.username,
-    };
-  }
-
-  static createKey({ userId }: UserKey) {
-    const pk = `USER:${userId}`;
-    return {
-      pk,
-      sk: pk,
     };
   }
 }

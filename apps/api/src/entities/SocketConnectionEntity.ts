@@ -1,35 +1,47 @@
-import { PropsOnly } from '../types';
-import { BaseEntity } from '../common/orm';
+import { createBaseEntity } from '../lib';
 
-export type SocketConnectionProps = PropsOnly<SocketConnectionEntity>;
-
-export type SocketConnectionKey = {
+export interface SocketConnectionKey {
   connectionId: string;
   userId: string;
-};
+}
 
-/**
- * Represents a socket connection.
- */
+export interface SocketConnectionProps extends SocketConnectionKey {
+  createdAt: number;
+}
+
+const BaseEntity = createBaseEntity()
+  .props<SocketConnectionProps>()
+  .key<SocketConnectionKey>(key => ({
+    pk: `SOCKET_CONNECTION:${key.connectionId}`,
+    sk: `SOCKET_CONNECTION:${key.userId}`,
+  }))
+  .mapping({
+    createdAt: 'data_n',
+  })
+  .build();
+
 export class SocketConnectionEntity extends BaseEntity {
-  connectionId!: string;
-  userId!: string;
-  createdAt!: number;
-
-  constructor(values: SocketConnectionProps) {
-    super(values, {
-      createdAt: 'data_n',
+  static async getAllUserConnections(userId: string) {
+    const { sk } = this.createKey({
+      connectionId: '-1',
+      userId,
+    });
+    return this.queryAll({
+      key: {
+        sk,
+        data_n: null,
+      },
     });
   }
 
-  get key() {
-    return SocketConnectionEntity.createKey(this);
-  }
-
-  static createKey({ connectionId, userId }: SocketConnectionKey) {
-    return {
-      pk: `SOCKET_CONNECTION:${connectionId}`,
-      sk: `SOCKET_CONNECTION:${userId}`,
-    };
+  static async getByIdOrNull(id: string) {
+    const { pk } = SocketConnectionEntity.createKey({
+      connectionId: id,
+      userId: '-1',
+    });
+    const items = await this.queryAll({
+      key: { pk },
+    });
+    return items.length ? items[0] : null;
   }
 }

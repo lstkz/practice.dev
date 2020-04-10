@@ -6,8 +6,7 @@ import uuid from 'uuid';
 import { _createSolution } from './_createSolution';
 import { solutionUserInput } from './_solutionSchema';
 import { normalizeTags } from '../../common/helper';
-import * as userReader from '../../readers/userReader';
-import * as challengeReader from '../../readers/challengeReader';
+import { UserEntity, ChallengeSolvedEntity } from '../../entities';
 
 export const createSolution = createContract('solution.createSolution')
   .params('userId', 'values')
@@ -20,10 +19,10 @@ export const createSolution = createContract('solution.createSolution')
   })
   .fn(async (userId, values) => {
     const [user] = await Promise.all([
-      userReader.getById(userId),
+      UserEntity.getById(userId),
       getChallengeById(userId, values.challengeId),
     ]);
-    const isSolved = await challengeReader.getIsSolved(
+    const isSolved = await ChallengeSolvedEntity.getIsSolved(
       userId,
       values.challengeId
     );

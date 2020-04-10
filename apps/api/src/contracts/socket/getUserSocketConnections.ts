@@ -1,6 +1,6 @@
 import { createContract } from '../../lib';
 import { S } from 'schema';
-import * as socketConnectionReader from '../../readers/socketConnectionReader';
+import { SocketConnectionEntity } from '../../entities';
 
 export const getUserSocketConnections = createContract(
   'socket.getUserSocketConnections'
@@ -10,5 +10,5 @@ export const getUserSocketConnections = createContract(
     userId: S.string(),
   })
   .fn(async userId => {
-    return socketConnectionReader.getAllUserConnections(userId);
+    return SocketConnectionEntity.getAllUserConnections(userId);
   });

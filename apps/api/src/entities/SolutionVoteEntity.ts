@@ -1,40 +1,53 @@
-import { PropsOnly, DbKey } from '../types';
-import { BaseEntity } from '../common/orm';
+import { createBaseEntity } from '../lib';
+import { DbKey } from '../types';
+import { SolutionEntity } from './SolutionEntity';
 
-export type SolutionVoteProps = PropsOnly<SolutionVoteEntity>;
-
-export type SolutionVoteKey = {
+export interface SolutionVoteKey {
   solutionId: string;
   userId: string;
-};
+}
 
-/**
- * Represents a vote on the solution by user.
- */
+export interface SolutionVoteProps extends SolutionVoteKey {
+  challengeId: number;
+  createdAt: number;
+}
+
+const BaseEntity = createBaseEntity()
+  .props<SolutionVoteProps>()
+  .key<SolutionVoteKey>(key => ({
+    pk: `SOLUTION_VOTE:${key.solutionId}:${key.userId}`,
+    sk: `SOLUTION_VOTE:${key.userId}`,
+  }))
+  .mapping({
+    createdAt: 'data_n',
+  })
+  .build();
+
 export class SolutionVoteEntity extends BaseEntity {
-  challengeId!: number;
-  solutionId!: string;
-  userId!: string;
-  createdAt!: number;
-
-  constructor(values: SolutionVoteProps) {
-    super(values, {
-      createdAt: 'data_n',
-    });
-  }
-
-  get key() {
-    return SolutionVoteEntity.createKey(this);
-  }
-
-  static createKey({ solutionId, userId }: SolutionVoteKey) {
-    return {
-      pk: `SOLUTION_VOTE:${solutionId}:${userId}`,
-      sk: `SOLUTION_VOTE:${userId}`,
-    };
-  }
-
   static isEntityKey(key: DbKey) {
     return key.pk.startsWith('SOLUTION_VOTE:');
+  }
+
+  static async getUserSolutionVotes(
+    userId: string | undefined,
+    solutions: SolutionEntity[]
+  ) {
+    if (!userId || !solutions.length) {
+      return [] as SolutionVoteEntity[];
+    }
+    return this.queryAll({
+      key: {
+        sk: this.createKey({ solutionId: '-1', userId }).sk,
+        data_n: null,
+      },
+      sort: 'asc',
+      filterExpression: `solutionId IN (${solutions
+        .map((_, i) => `:s${i}`)
+        .join(',')})`,
+      expressionValues: solutions.reduce((ret, solution, i) => {
+        ret[`:s${i}`] = solution.solutionId;
+        return ret;
+      }, {} as Record<string, any>),
+    });
   }
 }

@@ -1,39 +1,35 @@
 import { S } from 'schema';
-import { createContract, createRpcBinding } from '../../lib';
+import { createContract, createRpcBinding, createTransaction } from '../../lib';
 import { exchangeCode, getUserData, GitHubUserData } from '../../common/github';
 import { _generateAuthData } from './_generateAuthData';
 import { AppError } from '../../common/errors';
 import { _createUser } from './_createUser';
 import { randomUniqString } from '../../common/helper';
 import { _getNextUsername } from './_getNextUsername';
-import * as db from '../../common/db-next';
-import * as userReader from '../../readers/userReader';
-import { GithubUserEntity } from '../../entities';
+import { UserEmailEntity, UserEntity, GithubUserEntity } from '../../entities';
 
-async function _connectByEmail(githubUser: GitHubUserData) {
-  const userId = await userReader.getIdByEmailOrNull(githubUser.email);
-  if (!userId) {
+async function _connectByEmail(githubData: GitHubUserData) {
+  const email = await UserEmailEntity.getByKeyOrNull({
+    email: githubData.email,
+  });
+  if (!email) {
     return null;
   }
-  const user = await userReader.getById(userId);
+  const user = await UserEntity.getByKey({ userId: email.userId });
   if (user.githubId) {
     throw new AppError(
-      `Cannot register a new user. Another user with email ${githubUser.email} is already connected with different GitHub account.`
+      `Cannot register a new user. Another user with email ${githubData.email} is already connected with different GitHub account.`
     );
   }
-  user.githubId = githubUser.id;
-  const dbGithubUser = new GithubUserEntity({
+  user.githubId = githubData.id;
+  const githubUser = new GithubUserEntity({
     userId: user.userId,
-    githubId: githubUser.id,
+    githubId: githubData.id,
   });
-  await db.transactWriteItems([
-    {
-      Put: dbGithubUser.preparePut(),
-    },
-    {
-      Update: user.prepareUpdate(['githubId']),
-    },
-  ]);
+  const t = createTransaction();
+  t.insert(githubUser);
+  t.update(user, ['githubId']);
+  await t.commit();
   return user;
 }
 
@@ -44,28 +40,28 @@ export const authGithub = createContract('auth.authGithub')
   })
   .fn(async code => {
     const accessToken = await exchangeCode(code);
-    const githubUser = await getUserData(accessToken);
-    const userIdByGithub = await userReader.getIdByGithubIdOrNull(
-      githubUser.id
-    );
+    const githubData = await getUserData(accessToken);
+    const githubUser = await GithubUserEntity.getByKeyOrNull({
+      githubId: githubData.id,
+    });
 
     // already connected
-    if (userIdByGithub) {
-      const user = await userReader.getById(userIdByGithub);
+    if (githubUser) {
+      const user = await UserEntity.getByKey({ userId: githubUser.userId });
       return _generateAuthData(user);
     }
 
     // not connected, but email already registered
-    const connectedByEmailUser = await _connectByEmail(githubUser);
+    const connectedByEmailUser = await _connectByEmail(githubData);
     if (connectedByEmailUser) {
       return _generateAuthData(connectedByEmailUser);
     }
 
     // not connected, register a new user
     const createdUser = await _createUser({
-      email: githubUser.email,
-      githubId: githubUser.id,
-      username: await _getNextUsername(githubUser.username),
+      email: githubData.email,
+      githubId: githubData.id,
+      username: await _getNextUsername(githubData.username),
       password: randomUniqString(),
       isVerified: true,
     });

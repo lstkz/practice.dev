@@ -1,7 +1,6 @@
 import { resetDb } from '../helper';
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { SubmissionStatus, Submission } from 'shared';
-import * as db from '../../src/common/db-next';
 import { searchSubmissions } from '../../src/contracts/submission/searchSubmissions';
 import { SubmissionEntity } from '../../src/entities';
 import { MockStream } from '../MockStream';
@@ -47,7 +46,7 @@ beforeEach(async () => {
       status: SubmissionStatus.Queued,
     }),
   ];
-  await db.put(submissions);
+  await Promise.all(submissions.map(item => item.insert()));
   await mockStream.process();
 });
 

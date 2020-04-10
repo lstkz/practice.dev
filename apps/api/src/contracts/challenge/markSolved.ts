@@ -1,7 +1,6 @@
-import { createContract } from '../../lib';
+import { createContract, createTransaction } from '../../lib';
 import { S } from 'schema';
 import { ChallengeSolvedEntity } from '../../entities';
-import { transactWriteItems } from '../../common/db-next';
 
 export const markSolved = createContract('challenge.markSolved')
   .params('values')
@@ -14,14 +13,11 @@ export const markSolved = createContract('challenge.markSolved')
   })
   .fn(async values => {
     const solved = new ChallengeSolvedEntity(values);
-    await transactWriteItems([
-      {
-        Put: {
-          ...solved.preparePut(),
-          ConditionExpression: 'attribute_not_exists(pk)',
-        },
-      },
-    ]).catch(e => {
+    const t = createTransaction();
+    t.insert(solved, {
+      conditionExpression: 'attribute_not_exists(pk)',
+    });
+    await t.commit().catch(e => {
       // ignore if already solved
       if (e.code === 'TransactionCanceledException') {
         return;
