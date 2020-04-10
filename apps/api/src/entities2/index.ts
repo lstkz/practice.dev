@@ -11,4 +11,5 @@ export * from './EventEntity';
 export * from './SolutionVoteEntity';
 export * from './SolutionEntity';
 export * from './SequenceEntity';
+export * from './SubmissionEntity';
 export * from './RateLimitEntity';

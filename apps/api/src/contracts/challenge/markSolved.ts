@@ -17,7 +17,7 @@ export const markSolved = createContract('challenge.markSolved')
     t.insert(solved, {
       conditionExpression: 'attribute_not_exists(pk)',
     });
-    t.commit().catch(e => {
+    await t.commit().catch(e => {
       // ignore if already solved
       if (e.code === 'TransactionCanceledException') {
         return;

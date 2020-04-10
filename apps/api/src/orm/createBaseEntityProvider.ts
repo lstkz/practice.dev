@@ -16,6 +16,7 @@ import {
   getKeyExpression,
   getIndexName,
 } from './helper';
+import { DynamodbWrapper } from './DynamodbWrapper';
 
 export interface CreateBaseEntityProviderOptions<TIndexes> {
   dynamodb: AWS.DynamoDB;
@@ -46,7 +47,8 @@ class Builder {
     return this;
   }
   build() {
-    const { dynamodb, tableName } = this.options;
+    const { tableName } = this.options;
+    const dynamodb = new DynamodbWrapper(this.options.dynamodb);
     const colMapping = this.colMapping;
     const createKey = this.createKey;
     const getDynamoKey = (key: string | DynamoKey) => {
@@ -67,30 +69,26 @@ class Builder {
 
     const instance: InstanceMethods<any> = {
       async insert(options) {
-        await dynamodb
-          .putItem({
-            TableName: this.getTableName(),
-            Item: Converter.marshall(this.serialize()),
-            ConditionExpression: options?.conditionExpression,
-            ExpressionAttributeNames: options?.expressionNames ?? undefined,
-            ExpressionAttributeValues: options?.expressionValues
-              ? Converter.marshall(options?.expressionValues)
-              : undefined,
-          })
-          .promise();
+        await dynamodb.putItem({
+          TableName: this.getTableName(),
+          Item: Converter.marshall(this.serialize()),
+          ConditionExpression: options?.conditionExpression,
+          ExpressionAttributeNames: options?.expressionNames ?? undefined,
+          ExpressionAttributeValues: options?.expressionValues
+            ? Converter.marshall(options?.expressionValues)
+            : undefined,
+        });
       },
       async delete(options) {
-        await dynamodb
-          .deleteItem({
-            TableName: this.getTableName(),
-            Key: Converter.marshall(this.getKey()),
-            ConditionExpression: options?.conditionExpression,
-            ExpressionAttributeNames: options?.expressionNames ?? undefined,
-            ExpressionAttributeValues: options?.expressionValues
-              ? Converter.marshall(options?.expressionValues)
-              : undefined,
-          })
-          .promise();
+        await dynamodb.deleteItem({
+          TableName: this.getTableName(),
+          Key: Converter.marshall(this.getKey()),
+          ConditionExpression: options?.conditionExpression,
+          ExpressionAttributeNames: options?.expressionNames ?? undefined,
+          ExpressionAttributeValues: options?.expressionValues
+            ? Converter.marshall(options?.expressionValues)
+            : undefined,
+        });
       },
       async update(fields: any[], options) {
         const {
@@ -98,22 +96,20 @@ class Builder {
           expressionValues,
           expressionNames,
         } = prepareUpdate(this, fields);
-        await dynamodb
-          .updateItem({
-            TableName: tableName,
-            Key: Converter.marshall(this.getKey()),
-            UpdateExpression: updateExpression,
-            ConditionExpression: options?.conditionExpression,
-            ExpressionAttributeNames: {
-              ...expressionNames,
-              ...(options?.expressionNames ?? {}),
-            },
-            ExpressionAttributeValues: Converter.marshall({
-              ...expressionValues,
-              ...(options?.expressionValues ?? {}),
-            }),
-          })
-          .promise();
+        await dynamodb.updateItem({
+          TableName: tableName,
+          Key: Converter.marshall(this.getKey()),
+          UpdateExpression: updateExpression,
+          ConditionExpression: options?.conditionExpression,
+          ExpressionAttributeNames: {
+            ...expressionNames,
+            ...(options?.expressionNames ?? {}),
+          },
+          ExpressionAttributeValues: Converter.marshall({
+            ...expressionValues,
+            ...(options?.expressionValues ?? {}),
+          }),
+        });
       },
       getTableName() {
         return tableName;
@@ -179,12 +175,10 @@ class Builder {
         return item;
       },
       async getByKeyOrNull(key) {
-        const { Item: item } = await dynamodb
-          .getItem({
-            Key: Converter.marshall(getDynamoKey(key)),
-            TableName: tableName,
-          })
-          .promise();
+        const { Item: item } = await dynamodb.getItem({
+          Key: Converter.marshall(getDynamoKey(key)),
+          TableName: tableName,
+        });
         if (!item) {
           return null;
         }
@@ -204,19 +198,17 @@ class Builder {
           ...keyExpressionNames,
           ...(options.expressionNames || {}),
         };
-        const result = await dynamodb
-          .query({
-            TableName: tableName,
-            IndexName: getIndexName(options.key),
-            KeyConditionExpression: keyExpression,
-            FilterExpression: options.filterExpression,
-            ExpressionAttributeNames: expressionNames,
-            ExpressionAttributeValues: Converter.marshall(expressionValues),
-            ExclusiveStartKey: options.lastKey
-              ? Converter.marshall(options.lastKey)
-              : undefined,
-          })
-          .promise();
+        const result = await dynamodb.query({
+          TableName: tableName,
+          IndexName: getIndexName(options.key),
+          KeyConditionExpression: keyExpression,
+          FilterExpression: options.filterExpression,
+          ExpressionAttributeNames: expressionNames,
+          ExpressionAttributeValues: Converter.marshall(expressionValues),
+          ExclusiveStartKey: options.lastKey
+            ? Converter.marshall(options.lastKey)
+            : undefined,
+        });
         return {
           items: (result.Items ?? []).map(item =>
             this.fromDynamo(item)
@@ -252,11 +244,9 @@ class Builder {
             throw new Error('Cannot process batchGetItemWithRetry. Retry = 0.');
           }
           retry--;
-          const result = await dynamodb
-            .batchGetItem({
-              RequestItems: requestItems,
-            })
-            .promise();
+          const result = await dynamodb.batchGetItem({
+            RequestItems: requestItems,
+          });
 
           const ret = result.Responses || {};
 
@@ -272,7 +262,7 @@ class Builder {
         };
         await fetch({
           [tableName]: {
-            Keys: keys.map(key => Converter.marshall(key)),
+            Keys: keys.map(key => Converter.marshall(this.createKey(key))),
           },
         });
         return allItems;

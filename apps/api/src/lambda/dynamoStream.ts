@@ -5,7 +5,7 @@ import {
   ChallengeSolvedEntity,
   SolutionEntity,
   SolutionVoteEntity,
-} from '../entities';
+} from '../entities2';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 
 const Entities = [
@@ -41,8 +41,8 @@ export function decodeStreamEntity(
   }
   return {
     type: Entity.name as any,
-    newItem: newItem && new Entity(newItem as any),
-    oldItem: oldItem && new Entity(oldItem as any),
+    newItem: newItem && (Entity as any).fromDynamo(record.dynamodb?.NewImage),
+    oldItem: oldItem && (Entity as any).fromDynamo(record.dynamodb?.OldImage),
   };
 }
 

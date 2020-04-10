@@ -1,4 +1,3 @@
-import * as R from 'remeda';
 import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { AppError } from '../../common/errors';
@@ -32,9 +31,7 @@ export const searchSolved = createContract('challenge.searchSolved')
         lastKey: decLastKey(criteria.cursor),
       };
       if (username) {
-        const userId = await UserUsernameEntity.getByKeyOrNull({
-          username,
-        }).then(x => x?.userId);
+        const userId = await UserUsernameEntity.getUserIdOrNull(username);
         if (!userId) {
           return {
             items: [],
@@ -54,9 +51,7 @@ export const searchSolved = createContract('challenge.searchSolved')
       }
       throw new AppError('challengeId or username must be defined');
     });
-    const users = await UserEntity.batchGet(
-      items.map(x => R.pick(x, ['userId']))
-    );
+    const users = await UserEntity.batchGet(items);
     return {
       items: ChallengeSolvedEntity.toChallengeSolvedMany(items, users),
       cursor: encLastKey(lastKey),

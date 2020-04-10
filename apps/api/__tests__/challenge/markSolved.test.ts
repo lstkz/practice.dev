@@ -20,7 +20,6 @@ it('mark as solved and ignore additional solved', async () => {
     limit: 10,
   });
   expect(ret.items).toHaveLength(0);
-
   await markSolved({
     userId: '1',
     challengeId: 2,

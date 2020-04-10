@@ -20,4 +20,11 @@ export class UserUsernameEntity extends BaseEntity {
     });
     return item != null;
   }
+
+  static async getUserIdOrNull(username: string) {
+    const ret = await UserUsernameEntity.getByKeyOrNull({
+      username,
+    });
+    return ret?.userId;
+  }
 }
