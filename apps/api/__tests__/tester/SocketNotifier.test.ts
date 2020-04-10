@@ -1,7 +1,7 @@
 import { SocketNotifier } from '../../src/tester/SocketNotifier';
 import { ApiGatewayManagementApi } from 'aws-sdk';
 import { SocketMessage } from 'shared';
-import { SocketConnectionEntity } from '../../src/entities';
+import { SocketConnectionEntity } from '../../src/entities2';
 
 let connections: SocketConnectionEntity[] = [];
 let api: {

@@ -1,9 +1,7 @@
-import { createContract, createRpcBinding } from '../../lib';
+import { createContract, createRpcBinding, createTransaction } from '../../lib';
 import { S } from 'schema';
 import { AppError } from '../../common/errors';
-import * as solutionReader from '../../readers/solutionReader';
-import { SolutionVoteEntity } from '../../entities';
-import { transactWriteItems } from '../../common/db-next';
+import { SolutionVoteEntity, SolutionEntity } from '../../entities2';
 
 export const voteSolution = createContract('solution.voteSolution')
   .params('userId', 'values')
@@ -15,7 +13,7 @@ export const voteSolution = createContract('solution.voteSolution')
     }),
   })
   .fn(async (userId, values) => {
-    const solution = await solutionReader.getByIdOrNull(values.solutionId);
+    const solution = await SolutionEntity.getByIdOrNull(values.solutionId);
     if (!solution) {
       throw new AppError('Solution not found');
     }
@@ -26,21 +24,18 @@ export const voteSolution = createContract('solution.voteSolution')
       challengeId: solution.challengeId,
       userId,
     });
-    const changed = await transactWriteItems([
-      values.like
-        ? {
-            Put: {
-              ...vote.preparePut(),
-              ConditionExpression: 'attribute_not_exists(pk)',
-            },
-          }
-        : {
-            Delete: {
-              ...vote.prepareDelete(),
-              ConditionExpression: 'attribute_exists(pk)',
-            },
-          },
-    ])
+    const t = createTransaction();
+    if (values.like) {
+      await t.insert(vote, {
+        conditionExpression: 'attribute_not_exists(pk)',
+      });
+    } else {
+      await t.delete(vote, {
+        conditionExpression: 'attribute_not_exists(pk)',
+      });
+    }
+    const changed = t
+      .commit()
       .then(() => true)
       .catch((e: any) => {
         // ignore duplicate votes

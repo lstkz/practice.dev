@@ -1,6 +1,5 @@
 import crypto from 'crypto';
 import { Response } from 'node-fetch';
-import { DynamoDB } from 'aws-sdk';
 import * as R from 'remeda';
 import { AppError } from './errors';
 import { UserEntity } from '../entities2';
