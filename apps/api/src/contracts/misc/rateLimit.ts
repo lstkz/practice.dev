@@ -1,37 +1,29 @@
-import { AWSError, DynamoDB } from 'aws-sdk';
+import { AWSError } from 'aws-sdk';
 import { AppError } from '../../common/errors';
-import { dynamodb, createContract } from '../../lib';
+import { createContract } from '../../lib';
 import { S } from 'schema';
-import * as db from '../../common/db-next';
-import { Converter } from 'aws-sdk/clients/dynamodb';
-import { TABLE_NAME } from '../../config';
-import { RateLimitEntity } from '../../entities';
+import { RateLimitEntity } from '../../entities2';
 
-async function updateWithConditionCheck(params: DynamoDB.PutItemInput) {
-  try {
-    await dynamodb.putItem(params).promise();
-  } catch (e) {
-    const err: AWSError = e;
-    if (err.code === 'ConditionalCheckFailedException') {
-      throw new AppError(
-        'Rate limiter error. Parallel requests are not supported.'
-      );
-    }
-    throw err;
+function checkTransactionError(e: AWSError) {
+  if (e.code === 'ConditionalCheckFailedException') {
+    throw new AppError(
+      'Rate limiter error. Parallel requests are not supported.'
+    );
   }
+  throw e;
 }
 
 async function updateWithIncVersion(item: RateLimitEntity) {
   const version = item.version;
   item.version++;
-  await updateWithConditionCheck({
-    TableName: TABLE_NAME,
-    Item: item.serialize(),
-    ExpressionAttributeValues: Converter.marshall({
-      ':version': version,
-    }),
-    ConditionExpression: `version = :version`,
-  });
+  await item
+    .insert({
+      conditionExpression: `version = :version`,
+      expressionValues: {
+        ':version': version,
+      },
+    })
+    .catch(checkTransactionError);
 }
 
 export const rateLimit = createContract('misc.rateLimit')
@@ -42,7 +34,9 @@ export const rateLimit = createContract('misc.rateLimit')
     max: S.number(),
   })
   .fn(async (name, duration, max) => {
-    let item = await db.getOrNull(RateLimitEntity, { name });
+    let item = await RateLimitEntity.getByKeyOrNull({
+      name,
+    });
 
     if (!item) {
       item = new RateLimitEntity({
@@ -51,11 +45,12 @@ export const rateLimit = createContract('misc.rateLimit')
         count: 1,
         version: 1,
       });
-      await updateWithConditionCheck({
-        TableName: TABLE_NAME,
-        Item: item.serialize(),
-        ConditionExpression: `attribute_not_exists(pk)`,
-      });
+      await item
+        .insert({
+          conditionExpression: `attribute_not_exists(pk)`,
+        })
+        .catch(checkTransactionError);
+
       return;
     }
 

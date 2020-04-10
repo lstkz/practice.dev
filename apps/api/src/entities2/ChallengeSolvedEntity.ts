@@ -3,6 +3,7 @@ import { createBaseEntity } from '../lib';
 import { DbKey } from '../types';
 import { ChallengeSolved } from 'shared';
 import { UserEntity } from './UserEntity';
+import { BaseSearchCriteria } from '../orm/types';
 
 export interface ChallengeSolvedKey {
   userId: string;
@@ -11,6 +12,14 @@ export interface ChallengeSolvedKey {
 
 export interface ChallengeSolvedProps extends ChallengeSolvedKey {
   solvedAt: number;
+}
+
+interface SearchSolvedByUserIdCriteria extends BaseSearchCriteria {
+  userId: string;
+}
+
+interface SearchSolvedByChallengeIdCriteria extends BaseSearchCriteria {
+  challengeId: number;
 }
 
 const BaseEntity = createBaseEntity()
@@ -68,5 +77,33 @@ export class ChallengeSolvedEntity extends BaseEntity {
 
   static isEntityKey(key: DbKey) {
     return key.pk.startsWith('CHALLENGE_SOLVED:');
+  }
+
+  static searchSolvedByUserId(criteria: SearchSolvedByUserIdCriteria) {
+    const { pk } = this.createKey({
+      challengeId: -1,
+      userId: criteria.userId,
+    });
+    return this.query({
+      key: { pk },
+      lastKey: criteria.lastKey,
+      limit: criteria.limit,
+      sort: criteria.sort,
+    });
+  }
+
+  static searchSolvedByChallengeId(
+    criteria: SearchSolvedByChallengeIdCriteria
+  ) {
+    const { sk } = this.createKey({
+      challengeId: criteria.challengeId,
+      userId: '-1',
+    });
+    return this.query({
+      key: { sk, data_n: null },
+      lastKey: criteria.lastKey,
+      limit: criteria.limit,
+      sort: criteria.sort,
+    });
   }
 }

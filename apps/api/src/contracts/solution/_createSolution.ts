@@ -1,7 +1,7 @@
 import * as R from 'remeda';
 import { rethrowTransactionCanceled } from '../../common/helper';
-import { SolutionEntity } from '../../entities';
-import { transactWriteItems } from '../../common/db-next';
+import { SolutionEntity } from '../../entities2';
+import { createTransaction } from '../../lib';
 
 interface CreateSolutionValues {
   createdAt: number;
@@ -23,18 +23,13 @@ export async function _createSolution(values: CreateSolutionValues) {
   };
   const solution = new SolutionEntity(props);
   const solutionSlug = new SolutionEntity(props, { type: 'slug' });
-
-  await transactWriteItems([
-    {
-      Put: {
-        ...solutionSlug.preparePut(),
-        ConditionExpression: 'attribute_not_exists(pk)',
-      },
-    },
-    {
-      Put: solution.preparePut(),
-    },
-  ]).catch(rethrowTransactionCanceled('Duplicated slug for this challenge'));
-
+  const t = createTransaction();
+  t.insert(solutionSlug, {
+    conditionExpression: 'attribute_not_exists(pk)',
+  });
+  t.insert(solution);
+  await t
+    .commit()
+    .catch(rethrowTransactionCanceled('Duplicated slug for this challenge'));
   return solution;
 }

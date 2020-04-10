@@ -1,15 +1,16 @@
-import * as solutionReader from '../../readers/solutionReader';
-import * as userReader from '../../readers/userReader';
 import { AppError } from '../../common/errors';
 import { assertAuthorOrAdmin } from '../../common/helper';
+import { UserEntity, SolutionEntity } from '../../entities2';
 
 export async function _getSolutionWithPermissionCheck(
   userId: string,
   solutionId: string
 ) {
   const [user, solution] = await Promise.all([
-    userReader.getById(userId),
-    solutionReader.getByIdOrNull(solutionId),
+    UserEntity.getByKey({
+      userId,
+    }),
+    SolutionEntity.getByIdOrNull(solutionId),
   ]);
   if (!solution) {
     throw new AppError('Solution not found');

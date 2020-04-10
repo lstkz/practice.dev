@@ -43,6 +43,19 @@ export class UserEntity extends BaseEntity {
     }
     return this.getById(userId);
   }
+  static async getUserIdUsernameOrNull(emailOrUsername: string) {
+    if (emailOrUsername.includes('@')) {
+      const item = await UserEmailEntity.getByKeyOrNull({
+        email: emailOrUsername,
+      });
+      return item?.userId;
+    } else {
+      const item = await UserUsernameEntity.getByKeyOrNull({
+        username: emailOrUsername,
+      });
+      return item?.userId;
+    }
+  }
 
   static getByIdOrNull(userId: string) {
     return this.getByKeyOrNull({ userId });

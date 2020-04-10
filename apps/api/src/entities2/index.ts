@@ -10,3 +10,5 @@ export * from './ChallengeSolvedEntity';
 export * from './EventEntity';
 export * from './SolutionVoteEntity';
 export * from './SolutionEntity';
+export * from './SequenceEntity';
+export * from './RateLimitEntity';

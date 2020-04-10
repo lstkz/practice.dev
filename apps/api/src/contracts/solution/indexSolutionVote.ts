@@ -1,11 +1,15 @@
 import { S } from 'schema';
-import { createContract, createDynamoStreamBinding } from '../../lib';
-import { SolutionVoteEntity, SolutionEntity } from '../../entities';
-import * as db from '../../common/db-next';
-import { EventEntity } from '../../entities/EventEntity';
+import {
+  createContract,
+  createDynamoStreamBinding,
+  createTransaction,
+} from '../../lib';
+import {
+  SolutionVoteEntity,
+  SolutionEntity,
+  EventEntity,
+} from '../../entities2';
 import { TABLE_NAME } from '../../config';
-import { Converter } from 'aws-sdk/clients/dynamodb';
-import { ignoreTransactionCanceled } from '../../common/helper';
 
 export const updateSolutionLikes = createContract(
   'solution.updateSolutionLikes'
@@ -18,25 +22,19 @@ export const updateSolutionLikes = createContract(
     add: S.number(),
   })
   .fn(async (eventId, challengeId, solutionId, add) => {
-    await db
-      .transactWriteItems([
-        {
-          Put: EventEntity.getEventConditionPutItem(eventId),
-        },
-        {
-          Update: {
-            TableName: TABLE_NAME,
-            Key: Converter.marshall(
-              SolutionEntity.createKey({ challengeId, solutionId })
-            ),
-            UpdateExpression: `SET data2_n = data2_n + :inc`,
-            ExpressionAttributeValues: Converter.marshall({
-              ':inc': add,
-            }),
-          },
-        },
-      ])
-      .catch(ignoreTransactionCanceled());
+    const t = createTransaction();
+    EventEntity.addToTransaction(t, eventId);
+    t.updateRaw({
+      tableName: TABLE_NAME,
+      key: SolutionEntity.createKey({ challengeId, solutionId }),
+      updateExpression: `SET data2_n = data2_n + :inc`,
+      expressionValues: {
+        ':inc': add,
+      },
+    });
+    await t.commit({
+      ignoreTransactionCanceled: true,
+    });
   });
 
 export const handleSolutionVote = createDynamoStreamBinding<SolutionVoteEntity>(

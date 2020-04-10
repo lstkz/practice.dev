@@ -8,7 +8,7 @@ import {
   DynamoKey,
   QueryAllOptions,
 } from './types';
-import { Converter } from 'aws-sdk/clients/dynamodb';
+import { Converter, BatchGetRequestMap } from 'aws-sdk/clients/dynamodb';
 import { DatabaseError } from './DatabaseError';
 import {
   getPropNames,
@@ -66,11 +66,29 @@ class Builder {
     }
 
     const instance: InstanceMethods<any> = {
-      async insert() {
+      async insert(options) {
         await dynamodb
           .putItem({
             TableName: this.getTableName(),
             Item: Converter.marshall(this.serialize()),
+            ConditionExpression: options?.conditionExpression,
+            ExpressionAttributeNames: options?.expressionNames ?? undefined,
+            ExpressionAttributeValues: options?.expressionValues
+              ? Converter.marshall(options?.expressionValues)
+              : undefined,
+          })
+          .promise();
+      },
+      async delete(options) {
+        await dynamodb
+          .deleteItem({
+            TableName: this.getTableName(),
+            Key: Converter.marshall(this.getKey()),
+            ConditionExpression: options?.conditionExpression,
+            ExpressionAttributeNames: options?.expressionNames ?? undefined,
+            ExpressionAttributeValues: options?.expressionValues
+              ? Converter.marshall(options?.expressionValues)
+              : undefined,
           })
           .promise();
       },
@@ -172,11 +190,7 @@ class Builder {
         }
         return this.fromDynamo(item);
       },
-      query(options: QueryOptions) {
-        throw new Error('todo');
-      },
-      async queryAll(options: QueryAllOptions) {
-        const allItems: Array<InstanceType<any>> = [];
+      async query(options: QueryOptions) {
         const {
           keyExpression,
           keyExpressionNames,
@@ -190,27 +204,77 @@ class Builder {
           ...keyExpressionNames,
           ...(options.expressionNames || {}),
         };
-
+        const result = await dynamodb
+          .query({
+            TableName: tableName,
+            IndexName: getIndexName(options.key),
+            KeyConditionExpression: keyExpression,
+            FilterExpression: options.filterExpression,
+            ExpressionAttributeNames: expressionNames,
+            ExpressionAttributeValues: Converter.marshall(expressionValues),
+            ExclusiveStartKey: options.lastKey
+              ? Converter.marshall(options.lastKey)
+              : undefined,
+          })
+          .promise();
+        return {
+          items: (result.Items ?? []).map(item =>
+            this.fromDynamo(item)
+          ) as Array<InstanceType<any>>,
+          lastKey: result.LastEvaluatedKey
+            ? (Converter.unmarshall(result.LastEvaluatedKey) as DynamoKey)
+            : null,
+        };
+      },
+      async queryAll(options: QueryAllOptions) {
+        const allItems: Array<InstanceType<any>> = [];
         const fetch = async (lastKey?: any) => {
-          const result = await dynamodb
-            .query({
-              TableName: tableName,
-              IndexName: getIndexName(options.key),
-              KeyConditionExpression: keyExpression,
-              FilterExpression: options.filterExpression,
-              ExpressionAttributeNames: expressionNames,
-              ExpressionAttributeValues: Converter.marshall(expressionValues),
-              ExclusiveStartKey: lastKey,
-            })
-            .promise();
-          allItems.push(
-            ...(result.Items ?? []).map(item => this.fromDynamo(item))
-          );
-          if (result.LastEvaluatedKey) {
-            await fetch(result.LastEvaluatedKey);
+          const result = await this.query({
+            ...options,
+            lastKey,
+          });
+          allItems.push(...result.items);
+          if (result.lastKey) {
+            await fetch(result.lastKey);
           }
         };
         await fetch();
+        return allItems;
+      },
+      async batchGet(keys, retry = 20) {
+        if (!keys.length) {
+          return [];
+        }
+        const allItems: Array<InstanceType<any>> = [];
+        const fetch = async (requestItems: BatchGetRequestMap) => {
+          if (!retry) {
+            console.error('requestItems', requestItems);
+            throw new Error('Cannot process batchGetItemWithRetry. Retry = 0.');
+          }
+          retry--;
+          const result = await dynamodb
+            .batchGetItem({
+              RequestItems: requestItems,
+            })
+            .promise();
+
+          const ret = result.Responses || {};
+
+          allItems.push(
+            ...(ret[tableName] ?? []).map(item => this.fromDynamo(item))
+          );
+          if (
+            result.UnprocessedKeys &&
+            Object.keys(result.UnprocessedKeys).length
+          ) {
+            await fetch(result.UnprocessedKeys);
+          }
+        };
+        await fetch({
+          [tableName]: {
+            Keys: keys.map(key => Converter.marshall(key)),
+          },
+        });
         return allItems;
       },
     };

@@ -7,7 +7,8 @@ export interface ExpressionOptions {
 export type DbIndex = 'sk-data_n-index' | 'sk-data2_n-index' | 'sk-data-index';
 
 export interface InstanceMethods<T> {
-  insert(): Promise<void>;
+  delete(options?: ExpressionOptions): Promise<void>;
+  insert(options?: ExpressionOptions): Promise<void>;
   update(fields: Array<keyof T>, options?: ExpressionOptions): Promise<void>;
   getTableName(): string;
   getKey(): DynamoKey;
@@ -50,21 +51,26 @@ export interface BaseEntityStatic<TProps, TKey> {
     options: QueryAllOptions
   ): Promise<Array<InstanceType<T>>>;
   createKey(key: TKey): DynamoKey;
+  batchGet<T extends BaseEntityClass<TProps, TKey>>(
+    this: T,
+    keys: TKey[],
+    retry?: number
+  ): Promise<Array<InstanceType<T>>>;
 }
 
 export interface BaseEntityClass<TProps, TKey>
   extends BaseEntityStatic<TProps, TKey> {
-  new (props: TProps, mapping?: ColumnMapping<TProps>): Instance<TProps>;
+  new (props: TProps): Instance<TProps>;
 }
 
 export interface SearchResult<T> {
   items: T[];
-  lastKey: string;
+  lastKey: DynamoKey | null;
 }
 
 export interface QueryOptions extends QueryAllOptions {
-  limit: number;
-  lastKey: DynamoKey;
+  limit?: number;
+  lastKey?: DynamoKey | null;
 }
 
 export type QueryOperator = '=' | '!=';
@@ -93,4 +99,10 @@ export interface QueryAllOptions {
   filterExpression?: string;
   expressionValues?: Record<string, any>;
   expressionNames?: Record<string, string>;
+}
+
+export interface BaseSearchCriteria {
+  limit?: number;
+  lastKey?: DynamoKey | null;
+  sort: 'asc' | 'desc';
 }

@@ -1,6 +1,8 @@
-import { SolutionEntity } from '../../entities';
-import * as solutionReader from '../../readers/solutionReader';
-import * as userReader from '../../readers/userReader';
+import {
+  SolutionEntity,
+  UserEntity,
+  SolutionVoteEntity,
+} from '../../entities2';
 
 export async function _populateSolution(
   solution: SolutionEntity,
@@ -8,9 +10,12 @@ export async function _populateSolution(
 ) {
   const [vote, user] = await Promise.all([
     userId
-      ? solutionReader.getSolutionVoteOrNull(solution.solutionId, userId)
+      ? SolutionVoteEntity.getByKeyOrNull({
+          solutionId: solution.solutionId,
+          userId,
+        })
       : undefined,
-    userReader.getById(solution.userId),
+    UserEntity.getByKey({ userId: solution.userId }),
   ]);
   return solution.toSolution(user!, vote);
 }

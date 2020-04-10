@@ -3,6 +3,7 @@ import { createBaseEntity } from '../lib';
 import { UserEntity } from './UserEntity';
 import { SolutionVoteEntity } from './SolutionVoteEntity';
 import { DbKey } from '../types';
+import { DynamoKey, QueryKey, BaseSearchCriteria } from '../orm/types';
 
 export type SolutionIndex =
   | { type: 'user' }
@@ -41,7 +42,6 @@ export interface SolutionSlugKey {
 export interface SolutionTagKey {
   challengeId: number;
   solutionId: string;
-  tag: string;
   __indexType: 'tag';
   __indexTag: string;
 }
@@ -65,6 +65,29 @@ export type SolutionKey =
   | SolutionChallengeUserKey
   | SolutionSlugKey
   | SolutionTagKey;
+
+export interface BaseSolutionSearchCriteria extends BaseSearchCriteria {
+  sortBy: 'date' | 'likes';
+}
+
+interface SearchByChallengeUserCriteria extends BaseSolutionSearchCriteria {
+  userId: string;
+  challengeId: number;
+}
+
+interface SearchByUserCriteria extends BaseSolutionSearchCriteria {
+  userId: string;
+}
+
+interface SearchByChallengeCriteria extends BaseSolutionSearchCriteria {
+  challengeId: number;
+}
+
+interface SearchByTagsCriteria extends BaseSolutionSearchCriteria {
+  challengeId: number;
+  tags: string[];
+  userId?: string | null;
+}
 
 const BaseEntity = createBaseEntity()
   .props<SolutionProps>()
@@ -166,6 +189,16 @@ export class SolutionEntity extends BaseEntity {
     };
   }
 
+  static async getByIdOrNull(id: string) {
+    const ret = await this.queryAll({
+      key: {
+        pk: `SOLUTION:${id}`,
+      },
+      sort: 'asc',
+    });
+    return ret.length ? ret[0] : null;
+  }
+
   static toSolutionMany(
     solutions: SolutionEntity[],
     users: UserEntity[],
@@ -183,4 +216,108 @@ export class SolutionEntity extends BaseEntity {
   static isEntityKey(key: DbKey) {
     return key.pk.startsWith('SOLUTION:');
   }
+
+  static async searchByChallengeUser(criteria: SearchByChallengeUserCriteria) {
+    return this.query({
+      key: _getKey(
+        this.createKey({
+          __indexType: 'user_challenge',
+          solutionId: '-1',
+          challengeId: criteria.challengeId,
+          userId: criteria.userId,
+        }).sk,
+        criteria.sortBy
+      ),
+      lastKey: criteria.lastKey,
+      limit: criteria.limit,
+      sort: criteria.sort,
+    });
+  }
+
+  static async searchByUser(criteria: SearchByUserCriteria) {
+    return this.query({
+      key: _getKey(
+        this.createKey({
+          __indexType: 'user',
+          solutionId: '-1',
+          userId: criteria.userId,
+        }).sk,
+        criteria.sortBy
+      ),
+      lastKey: criteria.lastKey,
+      limit: criteria.limit,
+      sort: criteria.sort,
+    });
+  }
+
+  static async searchByChallenge(criteria: SearchByChallengeCriteria) {
+    return this.query({
+      key: _getKey(
+        this.createKey({
+          challengeId: criteria.challengeId,
+          solutionId: '-1',
+        }).sk,
+        criteria.sortBy
+      ),
+      lastKey: criteria.lastKey,
+      limit: criteria.limit,
+      sort: criteria.sort,
+    });
+  }
+
+  static async searchByTags(criteria: SearchByTagsCriteria) {
+    const [first, ...restTags] = criteria.tags;
+    const filter = _createSolutionFilter(criteria.userId, restTags);
+    return this.query({
+      key: _getKey(
+        this.createKey({
+          __indexType: 'tag',
+          __indexTag: first,
+          solutionId: '-1',
+          challengeId: criteria.challengeId,
+        }).sk,
+        criteria.sortBy
+      ),
+      lastKey: criteria.lastKey,
+      limit: criteria.limit,
+      sort: criteria.sort,
+      ...filter,
+    });
+  }
+}
+
+function _getKey(sk: string, sortBy: 'date' | 'likes'): QueryKey {
+  if (sortBy === 'date') {
+    return { sk, data_n: null };
+  }
+  return { sk, data2_n: null };
+}
+
+function _createSolutionFilter(
+  userId: string | undefined | null,
+  tags: string[] | undefined | null
+) {
+  const conditions: string[] = [];
+  const values: { [key: string]: any } = {};
+  if (userId) {
+    conditions.push(`userId = :f_userId`);
+    values[':f_userId'] = userId;
+  }
+  if (tags?.length) {
+    tags.forEach((tag, i) => {
+      conditions.push(`contains(tags, :f_tag_${i})`);
+      values[`:f_tag_${i}`] = tag;
+    });
+  }
+
+  if (!conditions.length) {
+    return {
+      expressionValues: {},
+    };
+  }
+
+  return {
+    filterExpression: conditions.join(' AND '),
+    expressionValues: values,
+  };
 }

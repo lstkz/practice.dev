@@ -1,11 +1,16 @@
-import { SearchResult } from 'shared';
 import { S } from 'schema';
+import * as R from 'remeda';
 import { createContract, createRpcBinding } from '../../lib';
 import { UnreachableCaseError, AppError } from '../../common/errors';
-import * as solutionReader from '../../readers/solutionReader';
-import * as userReader from '../../readers/userReader';
-import { doFn } from '../../common/helper';
-import { SolutionEntity } from '../../entities';
+import { doFn, decLastKey, encLastKey } from '../../common/helper';
+import {
+  SolutionEntity,
+  UserUsernameEntity,
+  BaseSolutionSearchCriteria,
+  UserEntity,
+  SolutionVoteEntity,
+} from '../../entities2';
+import { SearchResult } from '../../orm/types';
 
 export const searchSolutions = createContract('solution.searchSolutions')
   .params('userId', 'criteria')
@@ -29,7 +34,7 @@ export const searchSolutions = createContract('solution.searchSolutions')
   .fn(async (userId, criteria) => {
     const { challengeId, username, tags, sortBy, sortDesc } = criteria;
 
-    const { cursor, items } = await doFn(async () => {
+    const { items, lastKey } = await doFn(async () => {
       if (tags?.length && !challengeId) {
         throw new AppError(
           'Cannot search by tags if challengeId is not defined'
@@ -39,22 +44,24 @@ export const searchSolutions = createContract('solution.searchSolutions')
         throw new AppError('challengeId or username is required');
       }
       const userId = username
-        ? await userReader.getIdByUsernameOrNull(username)
+        ? await UserUsernameEntity.getByKeyOrNull({ username }).then(
+            x => x?.userId
+          )
         : null;
       if (username && !userId) {
         return {
           items: [],
-          cursor: null,
+          lastKey: null,
         } as SearchResult<SolutionEntity>;
       }
-      const baseCriteria = {
-        cursor: criteria.cursor,
-        descending: sortDesc,
-        limit: criteria.limit,
+      const baseCriteria: BaseSolutionSearchCriteria = {
+        lastKey: decLastKey(criteria.cursor),
+        sort: sortDesc ? 'desc' : 'asc',
+        limit: criteria.limit!,
         sortBy,
       };
       if (tags?.length) {
-        return solutionReader.searchByTags({
+        return SolutionEntity.searchByTags({
           ...baseCriteria,
           challengeId: challengeId!,
           userId,
@@ -62,20 +69,20 @@ export const searchSolutions = createContract('solution.searchSolutions')
         });
       }
       if (userId && challengeId) {
-        return solutionReader.searchByChallengeUser({
+        return SolutionEntity.searchByChallengeUser({
           ...baseCriteria,
           challengeId: challengeId,
           userId,
         });
       }
       if (userId) {
-        return solutionReader.searchByUser({
+        return SolutionEntity.searchByUser({
           ...baseCriteria,
           userId,
         });
       }
       if (challengeId) {
-        return solutionReader.searchByChallenge({
+        return SolutionEntity.searchByChallenge({
           ...baseCriteria,
           challengeId,
         });
@@ -84,12 +91,12 @@ export const searchSolutions = createContract('solution.searchSolutions')
     });
 
     const [users, votes] = await Promise.all([
-      userReader.getByIds(items.map(x => x.userId)),
-      solutionReader.getUserSolutionVotes(userId, items),
+      UserEntity.batchGet(items.map(x => R.pick(x, ['userId']))),
+      SolutionVoteEntity.getUserSolutionVotes(userId, items),
     ]);
     return {
       items: SolutionEntity.toSolutionMany(items, users, votes),
-      cursor,
+      cursor: encLastKey(lastKey),
     };
   });
 

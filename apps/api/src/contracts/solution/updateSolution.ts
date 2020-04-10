@@ -1,18 +1,15 @@
-import { createContract, createRpcBinding } from '../../lib';
+import { createContract, createRpcBinding, createTransaction } from '../../lib';
 import { S } from 'schema';
 import { _createSolution } from './_createSolution';
 import { solutionUserInput } from './_solutionSchema';
-import * as userReader from '../../readers/userReader';
 import {
   normalizeTags,
   rethrowTransactionCanceled,
   safeKeys,
   safeAssign,
 } from '../../common/helper';
-import { Converter } from 'aws-sdk/clients/dynamodb';
-import { transactWriteItems } from '../../common/db-next';
 import { _getSolutionWithPermissionCheck } from './_getSolutionWithCheck';
-import { SolutionEntity } from '../../entities';
+import { SolutionEntity, UserEntity } from '../../entities2';
 
 export const updateSolution = createContract('solution.updateSolution')
   .params('userId', 'solutionId', 'values')
@@ -27,26 +24,23 @@ export const updateSolution = createContract('solution.updateSolution')
     values.tags = normalizeTags(values.tags);
 
     const slug = new SolutionEntity(solution, { type: 'slug' });
+    const t = createTransaction();
+    t.update(solution, safeKeys(solutionUserInput));
+    t.insert(slug, {
+      conditionExpression:
+        'attribute_not_exists(pk) OR (attribute_exists(pk) AND solutionId = :solutionId)',
+      expressionValues: {
+        ':solutionId': solutionId,
+      },
+    });
 
     const [solutionAuthor] = await Promise.all([
-      userReader.getById(userId),
-      transactWriteItems([
-        {
-          Update: solution.prepareUpdate(safeKeys(solutionUserInput)),
-        },
-        {
-          Put: {
-            ...slug.preparePut(),
-            ConditionExpression:
-              'attribute_not_exists(pk) OR (attribute_exists(pk) AND solutionId = :solutionId)',
-            ExpressionAttributeValues: Converter.marshall({
-              ':solutionId': solutionId,
-            }),
-          },
-        },
-      ]).catch(
-        rethrowTransactionCanceled('Duplicated slug for this challenge')
-      ),
+      UserEntity.getById(userId),
+      t
+        .commit()
+        .catch(
+          rethrowTransactionCanceled('Duplicated slug for this challenge')
+        ),
     ]);
     return solution.toSolution(solutionAuthor);
   });

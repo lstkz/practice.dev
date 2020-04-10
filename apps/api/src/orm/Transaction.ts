@@ -11,6 +11,10 @@ interface UpdateRawOptions {
   expressionNames?: Record<string, string>;
 }
 
+interface CommitOptions {
+  ignoreTransactionCanceled?: boolean;
+}
+
 export class Transaction {
   private insertEntities: Array<[Instance<{}>, ExpressionOptions?]> = [];
   private updateEntities: Array<
@@ -41,7 +45,7 @@ export class Transaction {
     this.deleteEntities.push([entity, options]);
   }
 
-  async commit() {
+  async commit(options?: CommitOptions) {
     const items: TransactWriteItemList = [];
     this.insertEntities.forEach(([instance, options]) => {
       items.push({
@@ -105,25 +109,34 @@ export class Transaction {
         },
       });
     });
-    if (process.env.MOCK_DB && items.length > 10) {
-      await Promise.all([
-        this.dynamodb
+    try {
+      if (process.env.MOCK_DB && items.length > 10) {
+        await Promise.all([
+          this.dynamodb
+            .transactWriteItems({
+              TransactItems: items.slice(0, 10),
+            })
+            .promise(),
+          this.dynamodb
+            .transactWriteItems({
+              TransactItems: items.slice(10),
+            })
+            .promise(),
+        ]);
+      } else {
+        await this.dynamodb
           .transactWriteItems({
-            TransactItems: items.slice(0, 10),
+            TransactItems: items,
           })
-          .promise(),
-        this.dynamodb
-          .transactWriteItems({
-            TransactItems: items.slice(10),
-          })
-          .promise(),
-      ]);
-    } else {
-      await this.dynamodb
-        .transactWriteItems({
-          TransactItems: items,
-        })
-        .promise();
+          .promise();
+      }
+    } catch (e) {
+      if (options?.ignoreTransactionCanceled) {
+        if (e.code === 'TransactionCanceledException') {
+          return;
+        }
+      }
+      throw e;
     }
   }
 }
