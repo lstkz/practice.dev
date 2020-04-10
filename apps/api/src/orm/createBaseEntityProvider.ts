@@ -201,10 +201,12 @@ class Builder {
         const result = await dynamodb.query({
           TableName: tableName,
           IndexName: getIndexName(options.key),
+          ScanIndexForward: options.sort === 'asc',
           KeyConditionExpression: keyExpression,
           FilterExpression: options.filterExpression,
           ExpressionAttributeNames: expressionNames,
           ExpressionAttributeValues: Converter.marshall(expressionValues),
+          Limit: options.limit,
           ExclusiveStartKey: options.lastKey
             ? Converter.marshall(options.lastKey)
             : undefined,

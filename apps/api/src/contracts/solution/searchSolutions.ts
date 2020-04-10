@@ -1,5 +1,4 @@
 import { S } from 'schema';
-import * as R from 'remeda';
 import { createContract, createRpcBinding } from '../../lib';
 import { UnreachableCaseError, AppError } from '../../common/errors';
 import { doFn, decLastKey, encLastKey } from '../../common/helper';
@@ -91,7 +90,7 @@ export const searchSolutions = createContract('solution.searchSolutions')
     });
 
     const [users, votes] = await Promise.all([
-      UserEntity.batchGet(items.map(x => R.pick(x, ['userId']))),
+      UserEntity.getByIds(items.map(x => x.userId)),
       SolutionVoteEntity.getUserSolutionVotes(userId, items),
     ]);
     return {

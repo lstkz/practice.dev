@@ -58,6 +58,9 @@ export const indexSolutionUpdate = createContract(
     newSolution.getAllIndexes().forEach(item => {
       t.insert(item);
     });
+    if (newSolution.slug !== oldSolution.slug) {
+      t.delete(oldSolution.asSlugEntity());
+    }
     removedTags.forEach(tag => {
       t.delete(oldSolution.asTagEntity(tag));
     });

@@ -51,7 +51,7 @@ export const searchSolved = createContract('challenge.searchSolved')
       }
       throw new AppError('challengeId or username must be defined');
     });
-    const users = await UserEntity.batchGet(items);
+    const users = await UserEntity.getByIds(items.map(x => x.userId));
     return {
       items: ChallengeSolvedEntity.toChallengeSolvedMany(items, users),
       cursor: encLastKey(lastKey),

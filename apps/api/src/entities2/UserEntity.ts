@@ -1,3 +1,4 @@
+import * as R from 'remeda';
 import { createBaseEntity } from '../lib';
 import { User, PublicUser } from 'shared';
 import { UserEmailEntity } from './UserEmailEntity';
@@ -63,6 +64,14 @@ export class UserEntity extends BaseEntity {
 
   static getById(userId: string) {
     return this.getByKey({ userId });
+  }
+
+  static getByIds(ids: string[]) {
+    if (!ids.length) {
+      return [];
+    }
+    const keys = R.uniq(ids).map(userId => ({ userId }));
+    return this.batchGet(keys);
   }
 
   toUser(): User {
