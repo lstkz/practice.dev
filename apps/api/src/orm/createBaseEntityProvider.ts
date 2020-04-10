@@ -7,12 +7,15 @@ import {
   InstanceMethods,
   DynamoKey,
   QueryAllOptions,
-  QueryOperator,
-  Instance,
 } from './types';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { DatabaseError } from './DatabaseError';
-import { getPropNames, prepareUpdate } from './helper';
+import {
+  getPropNames,
+  prepareUpdate,
+  getKeyExpression,
+  getIndexName,
+} from './helper';
 
 export interface CreateBaseEntityProviderOptions<TIndexes> {
   dynamodb: AWS.DynamoDB;
@@ -76,11 +79,11 @@ class Builder {
           updateExpression,
           expressionValues,
           expressionNames,
-        } = prepareUpdate(instance, fields);
+        } = prepareUpdate(this, fields);
         await dynamodb
           .updateItem({
             TableName: tableName,
-            Key: Converter.marshall(instance.getKey()),
+            Key: Converter.marshall(this.getKey()),
             UpdateExpression: updateExpression,
             ConditionExpression: options?.conditionExpression,
             ExpressionAttributeNames: {
@@ -111,6 +114,14 @@ class Builder {
         });
         return values;
       },
+      getProps() {
+        const values: any = {};
+        const names = getPropNames(this);
+        names.forEach(name => {
+          values[name] = (this as any)[name];
+        });
+        return values;
+      },
     };
 
     const statics: BaseEntityStatic<any, any> = {
@@ -133,6 +144,9 @@ class Builder {
         const Ctor = this as any;
 
         return new Ctor(props);
+      },
+      createKey(key) {
+        return getDynamoKey(key);
       },
       async getByKey(key) {
         const item = await this.getByKeyOrNull(key);
@@ -162,37 +176,26 @@ class Builder {
         throw new Error('todo');
       },
       async queryAll(options: QueryAllOptions) {
-        const allItems: Array<any> = [];
+        const allItems: Array<InstanceType<any>> = [];
+        const {
+          keyExpression,
+          keyExpressionNames,
+          keyExpressionValues,
+        } = getKeyExpression(options.key);
         const expressionValues: any = {
+          ...keyExpressionValues,
           ...(options.expressionValues || {}),
         };
         const expressionNames: any = {
+          ...keyExpressionNames,
           ...(options.expressionNames || {}),
         };
-        let keyExpression = '';
-        ['pk', 'sk'].forEach(name => {
-          if (name in options.key) {
-            keyExpression = `#${name} = :${name}`;
-            expressionNames[`#${name}`] = name;
-            expressionValues[`:${name}`] = (options.key as any)[name];
-          }
-        });
-        ['data', 'data_n', 'data2_n'].forEach(name => {
-          if (name in options.key) {
-            const [op, value] = (options.key as any)[name] as [
-              QueryOperator,
-              number
-            ];
-            keyExpression += `AND #${name} ${op} :${name}`;
-            expressionNames[`#${name}`] = name;
-            expressionValues[`:${name}`] = value;
-          }
-        });
 
         const fetch = async (lastKey?: any) => {
           const result = await dynamodb
             .query({
               TableName: tableName,
+              IndexName: getIndexName(options.key),
               KeyConditionExpression: keyExpression,
               FilterExpression: options.filterExpression,
               ExpressionAttributeNames: expressionNames,
@@ -208,7 +211,7 @@ class Builder {
           }
         };
         await fetch();
-        return allItems as any;
+        return allItems;
       },
     };
     Object.assign(BaseEntity, statics);

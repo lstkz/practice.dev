@@ -33,6 +33,20 @@ export class ChallengeSolvedEntity extends BaseEntity {
     };
   }
 
+  static async getSolvedChallengeIds(userId: string | undefined) {
+    if (!userId) {
+      return [];
+    }
+    const items = await this.queryAll({
+      key: {
+        pk: `CHALLENGE_SOLVED:${userId}`,
+        data_n: null,
+      },
+      sort: 'asc',
+    });
+    return items.map(item => item.challengeId);
+  }
+
   static async getIsSolved(userId: string | undefined, challengeId: number) {
     if (!userId) {
       return false;

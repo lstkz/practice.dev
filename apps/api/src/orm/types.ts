@@ -4,12 +4,15 @@ export interface ExpressionOptions {
   expressionValues?: Record<string, any>;
 }
 
+export type DbIndex = 'sk-data_n-index' | 'sk-data2_n-index' | 'sk-data-index';
+
 export interface InstanceMethods<T> {
   insert(): Promise<void>;
   update(fields: Array<keyof T>, options?: ExpressionOptions): Promise<void>;
   getTableName(): string;
   getKey(): DynamoKey;
   serialize(): object;
+  getProps(): T;
 }
 
 export type Instance<T> = T & InstanceMethods<T>;
@@ -45,7 +48,8 @@ export interface BaseEntityStatic<TProps, TKey> {
   queryAll<T extends BaseEntityClass<TProps, TKey>>(
     this: T,
     options: QueryAllOptions
-  ): Promise<InstanceType<T>>;
+  ): Promise<Array<InstanceType<T>>>;
+  createKey(key: TKey): DynamoKey;
 }
 
 export interface BaseEntityClass<TProps, TKey>
@@ -65,24 +69,26 @@ export interface QueryOptions extends QueryAllOptions {
 
 export type QueryOperator = '=' | '!=';
 
+export type QueryKey =
+  | {
+      pk: string;
+      sk?: [QueryOperator, string];
+    }
+  | {
+      sk: string;
+      data: [QueryOperator, string] | null;
+    }
+  | {
+      sk: string;
+      data_n: [QueryOperator, number] | null;
+    }
+  | {
+      sk: string;
+      data2_n: [QueryOperator, number] | null;
+    };
+
 export interface QueryAllOptions {
-  key:
-    | {
-        pk: string;
-        sk?: [QueryOperator, string];
-      }
-    | {
-        sk: string;
-        data: [QueryOperator, string] | null;
-      }
-    | {
-        sk: string;
-        data_n: [QueryOperator, number] | null;
-      }
-    | {
-        sk: string;
-        data2_n: [QueryOperator, number] | null;
-      };
+  key: QueryKey;
   sort: 'asc' | 'desc';
   filterExpression?: string;
   expressionValues?: Record<string, any>;

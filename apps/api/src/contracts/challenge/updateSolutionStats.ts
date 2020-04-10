@@ -1,14 +1,16 @@
-import { createContract, createDynamoStreamBinding } from '../../lib';
+import {
+  createContract,
+  createDynamoStreamBinding,
+  createTransaction,
+} from '../../lib';
 import { S } from 'schema';
-import { Converter } from 'aws-sdk/clients/dynamodb';
 import { ignoreTransactionCanceled } from '../../common/helper';
 import {
+  EventEntity,
   SolutionEntity,
   ChallengeSolvedEntity,
   ChallengeEntity,
-} from '../../entities';
-import { transactWriteItems } from '../../common/db-next';
-import { EventEntity } from '../../entities/EventEntity';
+} from '../../entities2';
 import { TABLE_NAME } from '../../config';
 
 export const updateChallengeStats = createContract(
@@ -22,21 +24,17 @@ export const updateChallengeStats = createContract(
     add: S.number(),
   })
   .fn(async (eventId, challengeId, name, add) => {
-    await transactWriteItems([
-      {
-        Put: EventEntity.getEventConditionPutItem(eventId),
+    const t = createTransaction();
+    EventEntity.addToTransaction(t, eventId);
+    t.updateRaw({
+      tableName: TABLE_NAME,
+      key: ChallengeEntity.createKey({ challengeId }),
+      updateExpression: `SET stats.${name} = stats.${name} + :inc`,
+      expressionValues: {
+        ':inc': add,
       },
-      {
-        Update: {
-          TableName: TABLE_NAME,
-          Key: Converter.marshall(ChallengeEntity.createKey({ challengeId })),
-          UpdateExpression: `SET stats.${name} = stats.${name} + :inc`,
-          ExpressionAttributeValues: Converter.marshall({
-            ':inc': add,
-          }),
-        },
-      },
-    ]).catch(ignoreTransactionCanceled());
+    });
+    await t.commit().catch(ignoreTransactionCanceled());
   });
 
 export const handleSolution = createDynamoStreamBinding<SolutionEntity>({

@@ -1,7 +1,15 @@
 import { DynamoDB } from 'aws-sdk';
-import { ExpressionOptions, Instance } from './types';
+import { ExpressionOptions, Instance, DynamoKey } from './types';
 import { TransactWriteItemList, Converter } from 'aws-sdk/clients/dynamodb';
 import { prepareUpdate } from './helper';
+
+interface UpdateRawOptions {
+  tableName: string;
+  key: DynamoKey;
+  updateExpression: string;
+  expressionValues: Record<string, any>;
+  expressionNames?: Record<string, string>;
+}
 
 export class Transaction {
   private insertEntities: Array<[Instance<{}>, ExpressionOptions?]> = [];
@@ -9,6 +17,7 @@ export class Transaction {
     [Instance<{}>, string[], ExpressionOptions?]
   > = [];
   private deleteEntities: Array<[Instance<{}>, ExpressionOptions?]> = [];
+  private updateRawEntities: UpdateRawOptions[] = [];
 
   constructor(private dynamodb: DynamoDB) {}
 
@@ -22,6 +31,10 @@ export class Transaction {
     options?: ExpressionOptions
   ) {
     this.updateEntities.push([entity, fields, options]);
+  }
+
+  updateRaw(options: UpdateRawOptions) {
+    this.updateRawEntities.push(options);
   }
 
   delete<T>(entity: Instance<T>, options?: ExpressionOptions) {
@@ -76,6 +89,19 @@ export class Transaction {
           ExpressionAttributeValues: options?.expressionValues
             ? Converter.marshall(options.expressionValues)
             : undefined,
+        },
+      });
+    });
+    this.updateRawEntities.forEach(options => {
+      items.push({
+        Update: {
+          TableName: options.tableName,
+          Key: Converter.marshall(options.key),
+          UpdateExpression: options.updateExpression,
+          ExpressionAttributeValues: Converter.marshall(
+            options.expressionValues
+          ),
+          ExpressionAttributeNames: options.expressionNames,
         },
       });
     });

@@ -29,6 +29,9 @@ const BaseEntity = createBaseEntity()
     pk: `CHALLENGE:${key.challengeId}`,
     sk: 'CHALLENGE',
   }))
+  .mapping({
+    challengeId: 'data_n',
+  })
   .build();
 
 export class ChallengeEntity extends BaseEntity {
@@ -52,6 +55,7 @@ export class ChallengeEntity extends BaseEntity {
     return this.queryAll({
       key: {
         sk: 'CHALLENGE',
+        data_n: null,
       },
       sort: 'asc',
     });

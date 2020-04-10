@@ -7,3 +7,6 @@ export * from './ResetPasswordCodeEntity';
 export * from './TokenEntity';
 export * from './ChallengeEntity';
 export * from './ChallengeSolvedEntity';
+export * from './EventEntity';
+export * from './SolutionVoteEntity';
+export * from './SolutionEntity';
