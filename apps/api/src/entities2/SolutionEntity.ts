@@ -3,7 +3,7 @@ import { createBaseEntity } from '../lib';
 import { UserEntity } from './UserEntity';
 import { SolutionVoteEntity } from './SolutionVoteEntity';
 import { DbKey } from '../types';
-import { DynamoKey, QueryKey, BaseSearchCriteria } from '../orm/types';
+import { QueryKey, BaseSearchCriteria } from '../orm/types';
 
 export type SolutionIndex =
   | { type: 'user' }

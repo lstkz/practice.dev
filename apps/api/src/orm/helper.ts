@@ -45,7 +45,11 @@ export function createKeyExpression(options: CreateKeyExpressionOptions) {
   keyExpressionNames[`#${pk.name}`] = pk.name;
   keyExpressionValues[`:${pk.name}`] = pk.value;
   if (sk) {
-    keyExpression += `AND #${sk.name} ${sk.value[0]} :${sk.name}`;
+    if (sk.value[0] === 'begins_with') {
+      keyExpression += ` AND begins_with(#${sk.name}, :${sk.name})`;
+    } else {
+      keyExpression += ` AND #${sk.name} ${sk.value[0]} :${sk.name}`;
+    }
     keyExpressionNames[`#${sk.name}`] = sk.name;
     keyExpressionValues[`:${sk.name}`] = sk.value[1];
   }

@@ -73,7 +73,7 @@ export interface QueryOptions extends QueryAllOptions {
   lastKey?: DynamoKey | null;
 }
 
-export type QueryOperator = '=' | '!=';
+export type QueryOperator = '=' | '!=' | 'begins_with';
 
 export type QueryKey =
   | {
