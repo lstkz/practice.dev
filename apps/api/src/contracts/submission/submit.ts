@@ -5,10 +5,8 @@ import { S } from 'schema';
 import uuid from 'uuid';
 import { SubmissionStatus, TesterMessage } from 'shared';
 import { TESTER_TOPIC_ARN } from '../../config';
-import { SubmissionEntity } from '../../entities';
-import * as db from '../../common/db-next';
-import * as challengeReader from '../../readers/challengeReader';
 import { AppError } from '../../common/errors';
+import { SubmissionEntity, ChallengeEntity } from '../../entities2';
 
 const RATE_LIMIT_PER_DAY = 1000;
 const RATE_LIMIT_PER_HOUR = 100;
@@ -25,9 +23,9 @@ export const submit = createContract('submission.submit')
     }),
   })
   .fn(async (userId, values) => {
-    const challenge = await challengeReader.getChallengeByIdOrNull(
-      values.challengeId
-    );
+    const challenge = await ChallengeEntity.getByKeyOrNull({
+      challengeId: values.challengeId,
+    });
     if (!challenge) {
       throw new AppError('Challenge not found');
     }
@@ -53,7 +51,7 @@ export const submit = createContract('submission.submit')
       createdAt: Date.now(),
       testUrl: values.testUrl,
     });
-    await db.put(submission);
+    await submission.insert();
     const testerMessage: TesterMessage = {
       id,
       challengeId: values.challengeId,

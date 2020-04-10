@@ -23,7 +23,7 @@ export const searchSolutionTags = createContract('solutionTags.searchSolutions')
       keyword: criteria.keyword,
       limit: criteria.limit,
       lastKey: decLastKey(criteria.cursor),
-      sort: 'desc',
+      sort: 'asc',
     });
     return {
       items: items.map(x => x.toSolutionTag()),

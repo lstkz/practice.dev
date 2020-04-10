@@ -5,7 +5,6 @@ import {
   Challenge,
 } from 'shared';
 import { createBaseEntity } from '../lib';
-import { BaseSearchCriteria } from '../orm/types';
 
 export interface ChallengeKey {
   challengeId: number;
