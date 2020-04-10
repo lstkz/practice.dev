@@ -13,3 +13,4 @@ export * from './SolutionEntity';
 export * from './SequenceEntity';
 export * from './SubmissionEntity';
 export * from './RateLimitEntity';
+export * from './SocketConnectionEntity';

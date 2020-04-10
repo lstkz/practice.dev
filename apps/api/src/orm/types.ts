@@ -95,7 +95,7 @@ export type QueryKey =
 
 export interface QueryAllOptions {
   key: QueryKey;
-  sort: 'asc' | 'desc';
+  sort?: 'asc' | 'desc';
   filterExpression?: string;
   expressionValues?: Record<string, any>;
   expressionNames?: Record<string, string>;

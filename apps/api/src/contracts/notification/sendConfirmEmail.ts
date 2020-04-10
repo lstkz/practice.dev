@@ -2,9 +2,7 @@ import { S } from 'schema';
 import { createContract, createEventBinding, ses } from '../../lib';
 import { randomUniqString } from '../../common/helper';
 import { BASE_URL, EMAIL_SENDER } from '../../config';
-import * as userReader from '../../readers/userReader';
-import * as db from '../../common/db-next';
-import { ConfirmCodeEntity } from '../../entities';
+import { UserEntity, ConfirmCodeEntity } from '../../entities2';
 
 export const sendConfirmEmail = createContract('notification.sendConfirmEmail')
   .params('userId', 'registeredAt')
@@ -14,12 +12,12 @@ export const sendConfirmEmail = createContract('notification.sendConfirmEmail')
   })
   .fn(async (userId, _) => {
     const code = randomUniqString();
-    const user = await userReader.getById(userId);
+    const user = await UserEntity.getByKey({ userId });
     const confirmCode = new ConfirmCodeEntity({
       userId: user.userId,
       code,
     });
-    await db.put(confirmCode);
+    await confirmCode.insert();
 
     const url = `${BASE_URL}/confirm/${code}`;
     await ses
