@@ -1,6 +1,6 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
-import { UserEntity } from '../../entities2';
+import { UserEntity } from '../../entities';
 
 export const getMe = createContract('user.getMe')
   .params('userId')

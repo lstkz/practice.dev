@@ -1,7 +1,7 @@
 import { S } from 'schema';
 import { createContract } from '../../lib';
 import { AppError } from '../../common/errors';
-import { UserEntity } from '../../entities2';
+import { UserEntity } from '../../entities';
 
 export const makeAdmin = createContract('user.makeAdmin')
   .params('userId')

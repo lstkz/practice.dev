@@ -1,6 +1,6 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { ChallengeTag } from 'shared';
-import { ChallengeEntity } from '../../entities2';
+import { ChallengeEntity } from '../../entities';
 
 export const getChallengeTags = createContract('challenge.getChallengeTags')
   .params()

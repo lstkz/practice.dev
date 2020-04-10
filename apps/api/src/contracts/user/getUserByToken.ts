@@ -1,6 +1,6 @@
 import { createContract } from '../../lib';
 import { S } from 'schema';
-import { TokenEntity, UserEntity } from '../../entities2';
+import { TokenEntity, UserEntity } from '../../entities';
 
 export const getUserByToken = createContract('user.getUserByToken')
   .params('token')

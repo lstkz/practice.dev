@@ -1,11 +1,8 @@
 import { AuthData } from 'shared';
 import { createToken } from './createToken';
-import { UserEntity } from '../../entities/UserEntity';
-import { UserEntity as UserEntity2 } from '../../entities2/UserEntity';
+import { UserEntity } from '../../entities';
 
-export async function _generateAuthData(
-  user: UserEntity | UserEntity2
-): Promise<AuthData> {
+export async function _generateAuthData(user: UserEntity): Promise<AuthData> {
   return {
     user: user.toUser(),
     token: await createToken(user.userId, null),

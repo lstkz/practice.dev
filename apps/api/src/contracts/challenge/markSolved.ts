@@ -1,6 +1,6 @@
 import { createContract, createTransaction } from '../../lib';
 import { S } from 'schema';
-import { ChallengeSolvedEntity } from '../../entities2';
+import { ChallengeSolvedEntity } from '../../entities';
 
 export const markSolved = createContract('challenge.markSolved')
   .params('values')

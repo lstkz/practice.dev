@@ -9,7 +9,7 @@ import {
   safeAssign,
 } from '../../common/helper';
 import { _getSolutionWithPermissionCheck } from './_getSolutionWithCheck';
-import { SolutionEntity, UserEntity } from '../../entities2';
+import { SolutionEntity, UserEntity } from '../../entities';
 
 export const updateSolution = createContract('solution.updateSolution')
   .params('userId', 'solutionId', 'values')

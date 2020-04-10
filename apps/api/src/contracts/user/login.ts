@@ -4,7 +4,7 @@ import { _createUser } from './_createUser';
 import { _generateAuthData } from './_generateAuthData';
 import { AppError } from '../../common/errors';
 import { createPasswordHash } from '../../common/helper';
-import { UserEntity } from '../../entities2';
+import { UserEntity } from '../../entities';
 
 const INVALID_CRED = 'Invalid credentials or user not found';
 

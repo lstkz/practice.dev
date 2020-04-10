@@ -5,7 +5,7 @@ import {
   UserUsernameEntity,
   UserEntity,
   GithubUserEntity,
-} from '../../entities2';
+} from '../../entities';
 import { createTransaction } from '../../lib';
 import { AppError } from '../../common/errors';
 

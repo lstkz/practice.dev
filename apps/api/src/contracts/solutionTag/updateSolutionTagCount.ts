@@ -9,7 +9,7 @@ import {
   SolutionTagStatsEntity,
   SolutionEntity,
   EventEntity,
-} from '../../entities2';
+} from '../../entities';
 import { TABLE_NAME } from '../../config';
 
 export const updateSolutionTagCount = createContract(

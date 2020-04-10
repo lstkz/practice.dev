@@ -4,7 +4,7 @@ import {
   createTransaction,
 } from '../../lib';
 import { S } from 'schema';
-import { SubmissionEntity, EventEntity } from '../../entities2';
+import { SubmissionEntity, EventEntity } from '../../entities';
 
 export const indexSubmissionRemove = createContract(
   'indexSubmission.indexSubmissionRemove'

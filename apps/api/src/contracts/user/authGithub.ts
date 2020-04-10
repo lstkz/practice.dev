@@ -6,7 +6,7 @@ import { AppError } from '../../common/errors';
 import { _createUser } from './_createUser';
 import { randomUniqString } from '../../common/helper';
 import { _getNextUsername } from './_getNextUsername';
-import { UserEmailEntity, UserEntity, GithubUserEntity } from '../../entities2';
+import { UserEmailEntity, UserEntity, GithubUserEntity } from '../../entities';
 
 async function _connectByEmail(githubData: GitHubUserData) {
   const email = await UserEmailEntity.getByKeyOrNull({

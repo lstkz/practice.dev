@@ -2,7 +2,7 @@ import { S } from 'schema';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { createContract, dynamodb } from '../../lib';
 import { TABLE_NAME } from '../../config';
-import { SequenceEntity } from '../../entities2';
+import { SequenceEntity } from '../../entities';
 
 export const nexSeq = createContract('misc.nextSeq')
   .params('name')

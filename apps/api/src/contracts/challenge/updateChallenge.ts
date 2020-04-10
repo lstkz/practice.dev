@@ -2,7 +2,7 @@ import { S } from 'schema';
 import * as R from 'remeda';
 import { createContract, createRpcBinding } from '../../lib';
 import { safeAssign, safeKeys } from '../../common/helper';
-import { ChallengeEntity } from '../../entities2';
+import { ChallengeEntity } from '../../entities';
 
 export const updateChallenge = createContract('challenge.updateChallenge')
   .params('values')

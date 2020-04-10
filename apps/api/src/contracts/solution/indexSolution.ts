@@ -5,7 +5,7 @@ import {
 } from '../../lib';
 import { S } from 'schema';
 import * as R from 'remeda';
-import { SolutionEntity, EventEntity } from '../../entities2';
+import { SolutionEntity, EventEntity } from '../../entities';
 
 export const indexSolutionRemove = createContract(
   'indexSolution.indexSolutionRemove'

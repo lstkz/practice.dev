@@ -7,7 +7,7 @@ import {
   UserUsernameEntity,
   UserEntity,
   ChallengeSolvedEntity,
-} from '../../entities2';
+} from '../../entities';
 
 export const searchSolved = createContract('challenge.searchSolved')
   .params('criteria')

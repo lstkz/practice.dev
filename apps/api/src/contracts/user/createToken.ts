@@ -1,7 +1,7 @@
 import { S } from 'schema';
 import uuid from 'uuid';
 import { createContract } from '../../lib';
-import { TokenEntity } from '../../entities2';
+import { TokenEntity } from '../../entities';
 
 export const createToken = createContract('user.createToken')
   .params('userId', 'fixedToken')

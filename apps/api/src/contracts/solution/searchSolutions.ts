@@ -8,7 +8,7 @@ import {
   BaseSolutionSearchCriteria,
   UserEntity,
   SolutionVoteEntity,
-} from '../../entities2';
+} from '../../entities';
 import { SearchResult } from '../../orm/types';
 
 export const searchSolutions = createContract('solution.searchSolutions')

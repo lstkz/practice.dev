@@ -1,6 +1,6 @@
 import { Notifier } from 'tester';
 import { SocketMessage } from 'shared';
-import { SocketConnectionEntity } from '../entities2';
+import { SocketConnectionEntity } from '../entities';
 
 export class SocketNotifier implements Notifier {
   private lastNotify = 0;

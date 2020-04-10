@@ -1,6 +1,6 @@
 import { _getNextUsername } from '../../src/contracts/user/_getNextUsername';
 import { resetDb } from '../helper';
-import { UserUsernameEntity } from '../../src/entities2';
+import { UserUsernameEntity } from '../../src/entities';
 
 beforeEach(resetDb);
 

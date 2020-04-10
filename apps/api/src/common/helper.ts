@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { Response } from 'node-fetch';
 import * as R from 'remeda';
 import { AppError } from './errors';
-import { UserEntity } from '../entities2';
+import { UserEntity } from '../entities';
 import { DynamoKey } from '../orm/types';
 
 const SECURITY = {

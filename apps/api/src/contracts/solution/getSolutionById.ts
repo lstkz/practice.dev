@@ -2,7 +2,7 @@ import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { _populateSolution } from './_populateSolution';
 import { AppError } from '../../common/errors';
-import { SolutionEntity } from '../../entities2';
+import { SolutionEntity } from '../../entities';
 
 export const getSolutionById = createContract('solution.getSolutionById')
   .params('userId', 'id')

@@ -2,7 +2,7 @@ import { createContract } from '../../lib';
 import { S } from 'schema';
 import { SubmissionStatus } from 'shared';
 import { markSolved } from '../challenge/markSolved';
-import { SubmissionEntity } from '../../entities2';
+import { SubmissionEntity } from '../../entities';
 import { AppError } from '../../common/errors';
 
 export const updateSubmissionStatus = createContract(

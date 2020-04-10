@@ -2,7 +2,7 @@ import { S } from 'schema';
 import { createContract, createEventBinding, ses } from '../../lib';
 import { randomUniqString } from '../../common/helper';
 import { BASE_URL, EMAIL_SENDER } from '../../config';
-import { UserEntity, ConfirmCodeEntity } from '../../entities2';
+import { UserEntity, ConfirmCodeEntity } from '../../entities';
 
 export const sendConfirmEmail = createContract('notification.sendConfirmEmail')
   .params('userId', 'registeredAt')

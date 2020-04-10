@@ -1,6 +1,6 @@
 import { AppError } from '../../common/errors';
 import { assertAuthorOrAdmin } from '../../common/helper';
-import { UserEntity, SolutionEntity } from '../../entities2';
+import { UserEntity, SolutionEntity } from '../../entities';
 
 export async function _getSolutionWithPermissionCheck(
   userId: string,

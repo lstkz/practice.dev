@@ -5,7 +5,7 @@ import {
   SubmissionEntity,
   UserUsernameEntity,
   UserEntity,
-} from '../../entities2';
+} from '../../entities';
 import { doFn, decLastKey, encLastKey } from '../../common/helper';
 import { SearchResult, BaseSearchCriteria } from '../../orm/types';
 

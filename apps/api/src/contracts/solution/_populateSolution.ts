@@ -2,7 +2,7 @@ import {
   SolutionEntity,
   UserEntity,
   SolutionVoteEntity,
-} from '../../entities2';
+} from '../../entities';
 
 export async function _populateSolution(
   solution: SolutionEntity,

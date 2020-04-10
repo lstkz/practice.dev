@@ -2,7 +2,7 @@ import { dynamodb } from '../src/lib';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 import { ChallengeStats } from 'shared';
 import { TABLE_NAME } from '../src/config';
-import { ChallengeEntity } from '../src/entities2';
+import { ChallengeEntity } from '../src/entities';
 
 export async function resetDb() {
   const deleteNext = async () => {

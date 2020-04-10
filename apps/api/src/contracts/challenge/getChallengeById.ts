@@ -1,7 +1,7 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { AppError } from '../../common/errors';
-import { ChallengeEntity, ChallengeSolvedEntity } from '../../entities2';
+import { ChallengeEntity, ChallengeSolvedEntity } from '../../entities';
 
 export const getChallengeById = createContract('challenge.getChallengeById')
   .params('userId', 'id')

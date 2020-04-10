@@ -1,5 +1,5 @@
 import { _getInvalidOrExpiredConnection } from '../../src/contracts/socket/createSocketConnection';
-import { SocketConnectionEntity } from '../../src/entities2';
+import { SocketConnectionEntity } from '../../src/entities';
 
 const LIMIT = 5;
 

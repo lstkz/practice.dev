@@ -2,7 +2,7 @@ import { S } from 'schema';
 import { createContract, createRpcBinding, createTransaction } from '../../lib';
 import { AppError } from '../../common/errors';
 import { _generateAuthData } from './_generateAuthData';
-import { ConfirmCodeEntity, UserEntity } from '../../entities2';
+import { ConfirmCodeEntity, UserEntity } from '../../entities';
 
 export const confirmEmail = createContract('user.confirmEmail')
   .params('code')

@@ -3,7 +3,7 @@ import { getDuration } from '../../common/helper';
 import { getUserSocketConnections } from './getUserSocketConnections';
 import { S } from 'schema';
 import { createContract } from '../../lib';
-import { SocketConnectionEntity } from '../../entities2';
+import { SocketConnectionEntity } from '../../entities';
 
 const LIMIT = 5;
 const EXPIRATION = getDuration(1, 'h');

@@ -1,6 +1,6 @@
 import * as R from 'remeda';
 import { rethrowTransactionCanceled } from '../../common/helper';
-import { SolutionEntity } from '../../entities2';
+import { SolutionEntity } from '../../entities';
 import { createTransaction } from '../../lib';
 
 interface CreateSolutionValues {

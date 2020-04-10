@@ -2,7 +2,7 @@ import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { AppError } from '../../common/errors';
 import { _populateSolution } from './_populateSolution';
-import { SolutionEntity } from '../../entities2';
+import { SolutionEntity } from '../../entities';
 
 export const getSolutionBySlug = createContract('solution.getSolutionBySlug')
   .params('userId', 'challengeId', 'slug')

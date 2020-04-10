@@ -1,4 +1,4 @@
-import { UserUsernameEntity } from '../../entities2';
+import { UserUsernameEntity } from '../../entities';
 
 export async function _getNextUsername(
   username: string,

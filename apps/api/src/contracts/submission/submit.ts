@@ -6,7 +6,7 @@ import uuid from 'uuid';
 import { SubmissionStatus, TesterMessage } from 'shared';
 import { TESTER_TOPIC_ARN } from '../../config';
 import { AppError } from '../../common/errors';
-import { SubmissionEntity, ChallengeEntity } from '../../entities2';
+import { SubmissionEntity, ChallengeEntity } from '../../entities';
 
 const RATE_LIMIT_PER_DAY = 1000;
 const RATE_LIMIT_PER_HOUR = 100;

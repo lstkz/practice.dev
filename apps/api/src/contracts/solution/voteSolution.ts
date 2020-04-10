@@ -1,7 +1,7 @@
 import { createContract, createRpcBinding, createTransaction } from '../../lib';
 import { S } from 'schema';
 import { AppError } from '../../common/errors';
-import { SolutionVoteEntity, SolutionEntity } from '../../entities2';
+import { SolutionVoteEntity, SolutionEntity } from '../../entities';
 
 export const voteSolution = createContract('solution.voteSolution')
   .params('userId', 'values')
@@ -31,10 +31,10 @@ export const voteSolution = createContract('solution.voteSolution')
       });
     } else {
       await t.delete(vote, {
-        conditionExpression: 'attribute_not_exists(pk)',
+        conditionExpression: 'attribute_exists(pk)',
       });
     }
-    const changed = t
+    const changed = await t
       .commit()
       .then(() => true)
       .catch((e: any) => {

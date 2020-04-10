@@ -18,6 +18,9 @@ const BaseEntity = createBaseEntity()
     pk: `SOLUTION_VOTE:${key.solutionId}:${key.userId}`,
     sk: `SOLUTION_VOTE:${key.userId}`,
   }))
+  .mapping({
+    createdAt: 'data_n',
+  })
   .build();
 
 export class SolutionVoteEntity extends BaseEntity {

@@ -5,7 +5,7 @@ import { _generateAuthData } from './_generateAuthData';
 import { AppError } from '../../common/errors';
 import { randomUniqString, getDuration } from '../../common/helper';
 import { BASE_URL, EMAIL_SENDER } from '../../config';
-import { ResetPasswordCodeEntity, UserEntity } from '../../entities2';
+import { ResetPasswordCodeEntity, UserEntity } from '../../entities';
 
 export const resetPassword = createContract('user.resetPassword')
   .params('emailOrUsername')

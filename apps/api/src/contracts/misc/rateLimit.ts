@@ -2,7 +2,7 @@ import { AWSError } from 'aws-sdk';
 import { AppError } from '../../common/errors';
 import { createContract } from '../../lib';
 import { S } from 'schema';
-import { RateLimitEntity } from '../../entities2';
+import { RateLimitEntity } from '../../entities';
 
 function checkTransactionError(e: AWSError) {
   if (e.code === 'ConditionalCheckFailedException') {

@@ -1,6 +1,6 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
-import { SolutionTagStatsEntity } from '../../entities2';
+import { SolutionTagStatsEntity } from '../../entities';
 import { decLastKey, encLastKey } from '../../common/helper';
 
 export const searchSolutionTags = createContract('solutionTags.searchSolutions')

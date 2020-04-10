@@ -6,7 +6,7 @@ import uuid from 'uuid';
 import { _createSolution } from './_createSolution';
 import { solutionUserInput } from './_solutionSchema';
 import { normalizeTags } from '../../common/helper';
-import { UserEntity, ChallengeSolvedEntity } from '../../entities2';
+import { UserEntity, ChallengeSolvedEntity } from '../../entities';
 
 export const createSolution = createContract('solution.createSolution')
   .params('userId', 'values')

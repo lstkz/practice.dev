@@ -5,7 +5,7 @@ import {
   ChallengeSolvedEntity,
   SolutionEntity,
   SolutionVoteEntity,
-} from '../entities2';
+} from '../entities';
 import { Converter } from 'aws-sdk/clients/dynamodb';
 
 const Entities = [

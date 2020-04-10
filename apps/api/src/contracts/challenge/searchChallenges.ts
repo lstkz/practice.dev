@@ -2,7 +2,7 @@ import * as R from 'remeda';
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
 import { PagedResult, Challenge } from 'shared';
-import { ChallengeEntity, ChallengeSolvedEntity } from '../../entities2';
+import { ChallengeEntity, ChallengeSolvedEntity } from '../../entities';
 
 export const searchChallenges = createContract('challenge.searchChallenges')
   .params('userId', 'criteria')

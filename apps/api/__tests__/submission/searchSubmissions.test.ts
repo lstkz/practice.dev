@@ -2,7 +2,7 @@ import { resetDb } from '../helper';
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { SubmissionStatus, Submission } from 'shared';
 import { searchSubmissions } from '../../src/contracts/submission/searchSubmissions';
-import { SubmissionEntity } from '../../src/entities2';
+import { SubmissionEntity } from '../../src/entities';
 import { MockStream } from '../MockStream';
 
 const mockStream = new MockStream();

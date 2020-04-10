@@ -1,6 +1,6 @@
 import { createContract } from '../../lib';
 import { S } from 'schema';
-import { SocketConnectionEntity } from '../../entities2';
+import { SocketConnectionEntity } from '../../entities';
 
 export const deleteSocketConnection = createContract(
   'socket.deleteSocketConnection'
