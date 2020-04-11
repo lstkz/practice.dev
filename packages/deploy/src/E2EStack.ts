@@ -44,7 +44,7 @@ class MainStack extends cdk.Stack {
       memorySize: 3008,
       environment: {
         AWS: '1',
-        BUCKET_NAME: bucket.bucketName,
+        E2E_WEBSITE_URL: bucket.bucketWebsiteUrl,
       },
     });
 

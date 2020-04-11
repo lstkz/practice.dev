@@ -4,8 +4,14 @@ import Path from 'path';
 import program from 'commander';
 import { execSync } from 'child_process';
 import chalk from 'chalk';
-import { getEnvSettings } from '../helper';
+import mime from 'mime-types';
+import fs from 'mz/fs';
+import { getEnvSettings, walk, getAppRoot } from '../helper';
+import { build } from './build';
 
+const cf = new AWS.CloudFormation();
+const lambda = new AWS.Lambda();
+const s3 = new AWS.S3();
 const e2eFrontDir = Path.join(__dirname, '../../../../e2e-tests/front');
 
 export function getTests() {
@@ -76,14 +82,158 @@ interface TestResult {
   result: TestUnitResult[];
 }
 
+async function updateLambdaCode(testLambda: AWS.CloudFormation.StackResource) {
+  const zip = new AdmZip();
+  zip.addLocalFolder(Path.join(e2eFrontDir, 'src'), 'src');
+  zip.addLocalFile(
+    Path.join(__dirname, '../../../deploy/src/e2e-lambdas/test.js'),
+    'src/lambda',
+    'test.js'
+  );
+  zip.addLocalFile(Path.join(e2eFrontDir, 'package.json'));
+  zip.addLocalFile(Path.join(e2eFrontDir, 'tsconfig.json'));
+
+  await lambda
+    .updateFunctionCode({
+      FunctionName: testLambda.PhysicalResourceId!,
+      ZipFile: zip.toBuffer(),
+    })
+    .promise();
+}
+
+async function runTests({
+  fanoutLambda,
+  testLambda,
+  checkCost,
+}: {
+  testLambda: AWS.CloudFormation.StackResource;
+  fanoutLambda: AWS.CloudFormation.StackResource;
+  checkCost: boolean;
+}) {
+  const commandArgs: string[][] = [];
+
+  const tests = getTests();
+  tests.forEach(test => {
+    test.testCases.forEach(testCase => {
+      commandArgs.push([
+        '-t',
+        `^${testCase}$`,
+        '--testPathPattern',
+        `${test.fileName}$`,
+      ]);
+    });
+  });
+
+  console.time('start');
+  const ret = await lambda
+    .invoke({
+      FunctionName: fanoutLambda.PhysicalResourceId + ':$LATEST',
+      Payload: JSON.stringify({
+        functionName: testLambda.PhysicalResourceId + ':$LATEST',
+        tasks: commandArgs.map(args => ({ args })),
+      }),
+    })
+    .promise();
+
+  // fs.writeFileSync('./out.json', JSON.stringify(ret));
+  console.timeEnd('start');
+  if (ret.FunctionError) {
+    console.log('--------------------------');
+    console.log(ret.FunctionError);
+    console.log(ret.Payload);
+    process.exit(1);
+  }
+  const stats: Stats = {};
+  const data: TestResult[] = JSON.parse(ret.Payload as string);
+
+  let testCost = 0;
+  let wrapperCost = 0;
+  data.forEach(item => {
+    if (item.wrapper) {
+      wrapperCost += item.cost;
+      return;
+    }
+    if (!item.success) {
+      console.log(item.error);
+      return;
+    }
+    if (!item.result) {
+      return;
+    }
+    if (!Array.isArray(item.result)) {
+      console.log(item.result);
+      return;
+    }
+    testCost += item.cost;
+    item.result.forEach(testResult => {
+      const name = /\/(src\/.+)/.exec(testResult.name)![1];
+      testResult.assertionResults.forEach(assertion => {
+        if (assertion.status !== 'pending') {
+          if (!stats[name]) {
+            stats[name] = {
+              failed: 0,
+              passed: 0,
+              total: 0,
+            };
+          }
+          const testStats = stats[name];
+          testStats.total++;
+          if (assertion.status === 'passed') {
+            testStats.passed++;
+          } else if (assertion.status === 'failed') {
+            // console.error(testResult.message);
+            testStats.failed++;
+          } else {
+            console.log('unknown status', assertion.status);
+          }
+        }
+      });
+    });
+  });
+  if (checkCost) {
+    console.log(`cost wrapper: $${wrapperCost}`);
+    console.log(`cost test: $${testCost}`);
+    console.log(`cost total: $${testCost + wrapperCost}`);
+  }
+  Object.keys(stats).forEach(fileName => {
+    const data = stats[fileName];
+    console.log(chalk.white(fileName));
+    console.log(`Total: ${data.total}`);
+    console.log(chalk.green(`Passed: ${data.passed}`));
+    console.log(chalk.red(`Failed: ${data.failed}`));
+  });
+}
+
+async function uploadS3(bucketName: string) {
+  const frontRoot = getAppRoot('front');
+  const buildDir = Path.join(frontRoot, 'build');
+  const files = walk(buildDir);
+
+  await Promise.all(
+    files.map(async filePath => {
+      const contentType = mime.lookup(filePath);
+      if (!contentType) {
+        throw new Error('no contentType for ' + filePath);
+      }
+      const file = Path.relative(buildDir, filePath);
+      await s3
+        .upload({
+          Bucket: bucketName,
+          Key: file.replace(/\\/g, '/'),
+          Body: await fs.readFile(filePath),
+          ContentType: contentType,
+        })
+        .promise();
+    })
+  );
+}
+
 export function init() {
   program
     .command('e2e')
     .option('--no-update', 'no update')
     .option('--check-cost', 'print cost info')
     .action(async ({ update, checkCost }) => {
-      const cf = new AWS.CloudFormation();
-      const lambda = new AWS.Lambda();
       const env = getEnvSettings({});
       const resources = await cf
         .describeStackResources({
@@ -100,23 +250,15 @@ export function init() {
       }
 
       if (update) {
-        const zip = new AdmZip();
-        zip.addLocalFolder(Path.join(e2eFrontDir, 'src'), 'src');
-        zip.addLocalFile(
-          Path.join(__dirname, '../../../deploy/src/e2e-lambdas/test.js'),
-          'src/lambda',
-          'test.js'
-        );
-        zip.addLocalFile(Path.join(e2eFrontDir, 'package.json'));
-        zip.addLocalFile(Path.join(e2eFrontDir, 'tsconfig.json'));
-
-        await lambda
-          .updateFunctionCode({
-            FunctionName: testLambda.PhysicalResourceId!,
-            ZipFile: zip.toBuffer(),
-          })
-          .promise();
+        await Promise.all([
+          updateLambdaCode(testLambda),
+          Promise.resolve().then(async () => {
+            await build('front', {});
+            await uploadS3(env.E2E_BUCKET_NAME);
+          }),
+        ]);
       }
+
       const fanoutLambda = resources.StackResources!.find(
         res =>
           res.LogicalResourceId.startsWith('fanout') &&
@@ -125,95 +267,10 @@ export function init() {
       if (!fanoutLambda) {
         throw new Error('Cannot find fanout lambda');
       }
-      const commandArgs: string[][] = [];
-
-      const tests = getTests();
-      tests.forEach(test => {
-        test.testCases.forEach(testCase => {
-          commandArgs.push([
-            '-t',
-            `^${testCase}$`,
-            '--testPathPattern',
-            `${test.fileName}$`,
-          ]);
-        });
-      });
-
-      console.time('start');
-      const ret = await lambda
-        .invoke({
-          FunctionName: fanoutLambda.PhysicalResourceId + ':$LATEST',
-          Payload: JSON.stringify({
-            functionName: testLambda.PhysicalResourceId + ':$LATEST',
-            tasks: commandArgs.map(args => ({ args })),
-          }),
-        })
-        .promise();
-      // fs.writeFileSync('./out.json', JSON.stringify(ret));
-      console.timeEnd('start');
-      if (ret.FunctionError) {
-        console.log('--------------------------');
-        console.log(ret.FunctionError);
-        console.log(ret.Payload);
-        process.exit(1);
-      }
-      const stats: Stats = {};
-      const data: TestResult[] = JSON.parse(ret.Payload as string);
-      let testCost = 0;
-      let wrapperCost = 0;
-      data.forEach(item => {
-        if (item.wrapper) {
-          wrapperCost += item.cost;
-          return;
-        }
-        if (!item.success) {
-          console.log(item.error);
-          return;
-        }
-        if (!item.result) {
-          return;
-        }
-        if (!Array.isArray(item.result)) {
-          console.log(item.result);
-          return;
-        }
-        testCost += item.cost;
-        item.result.forEach(testResult => {
-          const name = /\/(src\/.+)/.exec(testResult.name)![1];
-          testResult.assertionResults.forEach(assertion => {
-            if (assertion.status !== 'pending') {
-              if (!stats[name]) {
-                stats[name] = {
-                  failed: 0,
-                  passed: 0,
-                  total: 0,
-                };
-              }
-              const testStats = stats[name];
-              testStats.total++;
-              if (assertion.status === 'passed') {
-                testStats.passed++;
-              } else if (assertion.status === 'failed') {
-                // console.error(testResult.message);
-                testStats.failed++;
-              } else {
-                console.log('unknown status', assertion.status);
-              }
-            }
-          });
-        });
-      });
-      if (checkCost) {
-        console.log(`cost wrapper: $${wrapperCost}`);
-        console.log(`cost test: $${testCost}`);
-        console.log(`cost total: $${testCost + wrapperCost}`);
-      }
-      Object.keys(stats).forEach(fileName => {
-        const data = stats[fileName];
-        console.log(chalk.white(fileName));
-        console.log(`Total: ${data.total}`);
-        console.log(chalk.green(`Passed: ${data.passed}`));
-        console.log(chalk.red(`Failed: ${data.failed}`));
+      await runTests({
+        checkCost,
+        fanoutLambda,
+        testLambda,
       });
     });
 }

@@ -106,3 +106,18 @@ export function getStackOutput(stack: AWS.CloudFormation.Stack, name: string) {
   }
   return output.OutputValue;
 }
+
+export function walk(dir: string) {
+  const results: string[] = [];
+  const list = fs.readdirSync(dir);
+  list.forEach(file => {
+    file = path.join(dir, file);
+    var stat = fs.statSync(file);
+    if (stat && stat.isDirectory()) {
+      results.push(...walk(file));
+    } else {
+      results.push(file);
+    }
+  });
+  return results;
+}
