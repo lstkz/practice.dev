@@ -81,17 +81,25 @@ const _TopBanner = (props: TopBannerProps) => {
   }, []);
 
   return (
-    <div className={className}>
+    <div className={className} data-test="landing-banner">
       <Container>
         <TopNav>
           <div>
             <Logo type="dark" />
           </div>
           <Buttons>
-            <Button type="secondary" href={createUrl({ name: 'login' })}>
+            <Button
+              testId="top-login-btn"
+              type="secondary"
+              href={createUrl({ name: 'login' })}
+            >
               LOGIN
             </Button>
-            <Button type="primary" href={createUrl({ name: 'register' })}>
+            <Button
+              testId="top-register-btn"
+              type="primary"
+              href={createUrl({ name: 'register' })}
+            >
               JOIN NOW
             </Button>
           </Buttons>
@@ -114,7 +122,11 @@ const _TopBanner = (props: TopBannerProps) => {
               technology, and learn by doing.
             </Desc>
             <BannerButtonWrapper>
-              <Button type="primary" href={createUrl({ name: 'register' })}>
+              <Button
+                type="primary"
+                testId="banner-register-btn"
+                href={createUrl({ name: 'register' })}
+              >
                 JOIN NOW
               </Button>
               <FreeText>It’s free!</FreeText>

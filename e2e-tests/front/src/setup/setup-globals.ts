@@ -25,13 +25,13 @@ function rethrowNonTimeout(error: Error) {
 }
 
 function wrapWithScreenshot<T extends { [x: string]: any }>(obj: T) {
-  Object.keys(obj).forEach((key) => {
+  Object.keys(obj).forEach(key => {
     if (typeof obj[key] === 'object') {
       wrapWithScreenshot(obj[key]);
       return;
     }
     const target = obj[key];
-    (obj as any)[key] = async function (...args: any[]) {
+    (obj as any)[key] = async function(...args: any[]) {
       try {
         return await target.call(this, ...args);
       } catch (e) {
@@ -77,7 +77,7 @@ export function $(selector: string) {
       const btn: ElementHandle = await page.waitForFunction(
         (handle, input, text) => {
           const elements = [...handle.querySelectorAll(input)];
-          return elements.find((element) => element.innerText.includes(text));
+          return elements.find(element => element.innerText.includes(text));
         },
         {
           timeout: defaultTimeout,
@@ -90,7 +90,7 @@ export function $(selector: string) {
     },
     async clickClient() {
       await page.waitForSelector(input, defaultWaitOptions);
-      await page.evaluate((input) => {
+      await page.evaluate(input => {
         document.querySelector<HTMLButtonElement>(input).click();
       }, input);
     },
@@ -151,7 +151,7 @@ export function $(selector: string) {
           rethrowNonTimeout(error);
           const actual = await page.evaluate(
             (handle, input) =>
-              [...handle.querySelectorAll(input)].map((x) => x.toString()),
+              [...handle.querySelectorAll(input)].map(x => x.toString()),
             handle,
             input
           );
@@ -160,6 +160,48 @@ export function $(selector: string) {
       },
       async toHaveValue(expected: string) {
         await this.toMatch(expected, true);
+      },
+      async toMatchAttr(name: string, expected: string) {
+        const handle = await page.evaluateHandle(() => document);
+        try {
+          await page.waitForFunction(
+            (handle, input, name, expected) => {
+              const elements = [...handle.querySelectorAll(input)];
+              if (elements.length !== 1) {
+                return null;
+              }
+              const element = elements[0];
+              return element.getAttribute(name) === expected;
+            },
+            {
+              timeout: defaultTimeout,
+            },
+            handle,
+            input,
+            name,
+            expected
+          );
+        } catch (error) {
+          rethrowNonTimeout(error);
+          const actual = await page.evaluate(
+            (handle, input, name) => {
+              const elements = [...handle.querySelectorAll(input)];
+              if (elements.length !== 1) {
+                return { error: 'multiple', count: elements.length };
+              }
+              return { attr: elements[0].getAttribute(name) };
+            },
+            handle,
+            input,
+            name
+          );
+          if (actual.error === 'multiple') {
+            throw new Error(
+              `Found ${actual.count} elements with selector '${selector}'. Expected only 1.`
+            );
+          }
+          expect(actual.attr).toEqual(expected);
+        }
       },
       async toMatch(expected: string | RegExp, exact = false) {
         const handle = await page.evaluateHandle(() => document);
@@ -198,7 +240,7 @@ export function $(selector: string) {
               if (elements.length !== 1) {
                 return { error: 'multiple', count: elements.length };
               }
-              return elements[0].textContent.trim();
+              return { text: elements[0].textContent.trim() };
             },
             handle,
             input
@@ -208,7 +250,7 @@ export function $(selector: string) {
               `Found ${actual.count} elements with selector '${selector}'. Expected only 1.`
             );
           }
-          expect(actual).toMatch(expected);
+          expect(actual.text).toMatch(expected);
         }
       },
     },
