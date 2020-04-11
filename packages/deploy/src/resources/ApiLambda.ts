@@ -27,7 +27,7 @@ export class ApiLambda {
         ? new lambda.InlineCode('//init placeholder')
         : new lambda.AssetCode(Path.join(appsDir, 'api/dist')),
       handler: 'app-lambda.handler',
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       environment: initOnly ? {} : getLambdaSharedEnv(deps),
       timeout: cdk.Duration.seconds(7),
       memorySize: 512,

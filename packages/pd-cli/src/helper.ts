@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
 import { ChildProcess } from 'child_process';
 import { libs, rootPath, apps } from './config';
@@ -79,4 +80,29 @@ export function updateEnvSettings(
     }, [] as string[])
     .join('\n');
   fs.writeFileSync(path.join(rootPath, envFile), serialized);
+}
+
+export async function getStack(stackName: string) {
+  const cf = new AWS.CloudFormation();
+  const { Stacks: stacks } = await cf
+    .describeStacks({
+      StackName: stackName,
+    })
+    .promise();
+  const stack = stacks && stacks[0];
+  if (!stack) {
+    throw new Error(`Stack ${stackName} not found`);
+  }
+  return stack;
+}
+
+export function getStackOutput(stack: AWS.CloudFormation.Stack, name: string) {
+  const output = (stack.Outputs || []).find(x => x.OutputKey === name);
+  if (!output) {
+    throw new Error(`Output not found: ${output}`);
+  }
+  if (!output.OutputValue) {
+    throw new Error(`Output not set: ${output}`);
+  }
+  return output.OutputValue;
 }
