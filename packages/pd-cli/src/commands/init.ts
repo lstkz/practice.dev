@@ -5,6 +5,8 @@ import {
   getEnvSettings,
   cpToPromise,
   updateEnvSettings,
+  getStack,
+  getStackOutput,
 } from '../helper';
 import AWS from 'aws-sdk';
 
@@ -26,26 +28,9 @@ export function init() {
           ...getSpawnOptions('deploy'),
         })
       );
-
-      const cf = new AWS.CloudFormation();
-      const { Stacks: stacks } = await cf
-        .describeStacks({
-          StackName: env.STACK_NAME,
-        })
-        .promise();
-      const stack = stacks && stacks[0];
-      if (!stack) {
-        throw new Error(`Stack ${env.STACK_NAME} not found`);
-      }
+      const stack = await getStack(env.STACK_NAME);
       const getOutput = (name: string) => {
-        const output = (stack.Outputs || []).find(x => x.OutputKey === name);
-        if (!output) {
-          throw new Error(`Output not found: ${output}`);
-        }
-        if (!output.OutputValue) {
-          throw new Error(`Output not set: ${output}`);
-        }
-        return output.OutputValue;
+        return getStackOutput(stack, name);
       };
       env.API_URL = getOutput('apiUrl');
       env.SOCKET_URL = getOutput('socketUrl');

@@ -26,7 +26,7 @@ export class TesterLambda {
     }
     const layer = new lambda.LayerVersion(scope, 'TesterLayer', {
       code: lambda.Code.fromAsset(testerLayerDir),
-      compatibleRuntimes: [lambda.Runtime.NODEJS_10_X],
+      compatibleRuntimes: [lambda.Runtime.NODEJS_12_X],
       license: 'Apache-2.0',
     });
     this.testerLambda = new lambda.Function(scope, `tester-lambda`, {
@@ -34,7 +34,7 @@ export class TesterLambda {
         ? new lambda.InlineCode('//init placeholder')
         : new lambda.AssetCode(Path.join(appsDir, 'api/dist')),
       handler: 'app-lambda.handler',
-      runtime: lambda.Runtime.NODEJS_10_X,
+      runtime: lambda.Runtime.NODEJS_12_X,
       environment: initOnly ? {} : getLambdaSharedEnv(deps),
       timeout: cdk.Duration.seconds(90),
       memorySize: 1856,

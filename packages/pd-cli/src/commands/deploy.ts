@@ -19,12 +19,20 @@ export function init() {
       }
       const env = getEnvSettings({ prod, stage });
 
-      spawn('cdk', ['deploy'], {
-        env: {
-          ...process.env,
-          ...env,
-        },
-        ...getSpawnOptions('deploy'),
-      });
+      spawn(
+        'cdk',
+        [
+          'deploy',
+          '--app',
+          '"yarn workspace deploy run ts-node -T src/MainStack"',
+        ],
+        {
+          env: {
+            ...process.env,
+            ...env,
+          },
+          ...getSpawnOptions('deploy'),
+        }
+      );
     });
 }

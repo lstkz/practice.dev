@@ -4,6 +4,7 @@
   "scripts": {},
   "workspaces": [
     "packages/*",
+    "e2e-tests/*",
     "apps/*"
   ],
   "dependencies": {

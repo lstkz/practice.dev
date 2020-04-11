@@ -1,0 +1,41 @@
+{
+  "name": "e2e-front",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/jest": "^24.0.18",
+    "adm-zip": "^0.4.13",
+    "aws-sdk": "^2.656.0",
+    "chalk": "^2.4.2",
+    "chrome-aws-lambda": "^2.1.1",
+    "jest": "^25.3.0",
+    "mz": "^2.7.0",
+    "puppeteer": "^2.1.1",
+    "puppeteer-core": "^2.1.1",
+    "ts-jest": "^25.3.1",
+    "typescript": "^3.8.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "./src/setup/jest-environment.js",
+    "globalSetup": "./src/setup/jest-setup.ts",
+    "globalTeardown": "./src/setup/teardown.ts",
+    "setupFilesAfterEnv": [
+      "./src/setup/setup-globals.ts"
+    ],
+    "testRegex": ".*\\.test\\.(js|ts)$",
+    "globals": {
+      "window": {},
+      "ts-jest": {
+        "tsConfig": "./tsconfig.json",
+        "isolatedModules": true,
+        "diagnostics": false
+      }
+    }
+  },
+  "devDependencies": {}
+}

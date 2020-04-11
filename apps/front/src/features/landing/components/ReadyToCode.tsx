@@ -34,7 +34,11 @@ const _ReadyToCode = (props: ReadyToCodeProps) => {
         <Inner>
           <Text>Ready to code?</Text>
           <ReadyToCodeSvg />
-          <Button type="primary" href={createUrl({ name: 'register' })}>
+          <Button
+            testId="start-coding-register-btn"
+            type="primary"
+            href={createUrl({ name: 'register' })}
+          >
             START CODING
           </Button>
         </Inner>

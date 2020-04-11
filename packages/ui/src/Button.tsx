@@ -19,6 +19,7 @@ interface ButtonProps {
     e: React.MouseEvent<HTMLAnchorElement | HTMLDivElement, MouseEvent>
   ) => void;
   'data-dropdown-toggle'?: boolean;
+  testId?: string;
 }
 
 const Icon = styled.span`
@@ -41,6 +42,7 @@ const _Button = (props: ButtonProps, ref: any) => {
     htmlType,
     loading,
     disabled,
+    testId,
   } = props;
   const { push } = href ? useActions(RouterActions) : { push: null! };
   const inner = (
@@ -53,6 +55,7 @@ const _Button = (props: ButtonProps, ref: any) => {
   if (href) {
     return (
       <a
+        data-test={testId}
         data-dropdown-toggle={props['data-dropdown-toggle']}
         className={className}
         href={href}
@@ -77,6 +80,7 @@ const _Button = (props: ButtonProps, ref: any) => {
   } else {
     return (
       <button
+        data-test={testId}
         data-dropdown-toggle={props['data-dropdown-toggle']}
         disabled={loading || disabled}
         onClick={onClick as any}
