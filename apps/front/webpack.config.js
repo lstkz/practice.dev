@@ -33,6 +33,7 @@ module.exports = {
   entry: {
     app: './src/main.tsx',
   },
+  stats: 'errors-only',
   devServer: {
     // contentBase: path.join(__dirname, 'dist'),
     compress: true,

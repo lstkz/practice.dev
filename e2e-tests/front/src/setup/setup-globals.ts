@@ -36,6 +36,7 @@ function wrapWithScreenshot<T extends { [x: string]: any }>(obj: T) {
         return await target.call(this, ...args);
       } catch (e) {
         if (process.env.AWS) {
+          const BUCKET_NAME = process.env.BUCKET_NAME;
           const filename =
             'screenshot_' + Math.floor(Math.random() * 1e6) + '.png';
           const path = '/tmp/' + filename;
@@ -45,13 +46,13 @@ function wrapWithScreenshot<T extends { [x: string]: any }>(obj: T) {
           await s3
             .upload({
               ContentType: 'image/png',
-              Bucket: 'styx-dev',
+              Bucket: BUCKET_NAME,
               Body: fs.readFileSync(path),
               Key: 'screenshots/' + filename,
             })
             .promise();
           const url = s3.getSignedUrl('getObject', {
-            Bucket: 'styx-dev',
+            Bucket: BUCKET_NAME,
             Key: 'screenshots/' + filename,
           });
           e.stack += '\nScreenshot ' + url;

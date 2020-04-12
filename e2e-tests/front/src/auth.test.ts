@@ -312,7 +312,7 @@ describe('confirm reset password', () => {
       throw new MockError('Invalid code');
     });
     await page.goto(WEBSITE_URL + '/confirm/foo');
-    await $('@confirm-page').expect.toBeVisible();
+    await $('@app-error').expect.toMatch('Invalid code');
   });
 
   it('confirm password', async () => {
@@ -323,7 +323,7 @@ describe('confirm reset password', () => {
       return authData1Verified;
     });
     await page.goto(WEBSITE_URL + '/confirm/foo');
-    await $('@confirm-page').expect.toBeVisible();
     await $('@challenges-page').expect.toBeVisible();
+    await $('@app-error').expect.toBeHidden();
   });
 });

@@ -72,6 +72,7 @@ interface AssertionResult {
 }
 interface TestUnitResult {
   name: string;
+  message: string;
   assertionResults: AssertionResult[];
 }
 interface TestResult {
@@ -181,7 +182,7 @@ async function runTests({
           if (assertion.status === 'passed') {
             testStats.passed++;
           } else if (assertion.status === 'failed') {
-            // console.error(testResult.message);
+            console.error(testResult.message);
             testStats.failed++;
           } else {
             console.log('unknown status', assertion.status);
