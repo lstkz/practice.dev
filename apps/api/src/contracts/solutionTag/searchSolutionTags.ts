@@ -2,6 +2,7 @@ import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
 import { SolutionTagStatsEntity } from '../../entities';
 import { decLastKey, encLastKey } from '../../common/helper';
+import { LoadMoreResult, SolutionTag } from 'shared';
 
 export const searchSolutionTags = createContract('solutionTags.searchSolutions')
   .params('criteria')
@@ -28,7 +29,7 @@ export const searchSolutionTags = createContract('solutionTags.searchSolutions')
     return {
       items: items.map(x => x.toSolutionTag()),
       cursor: encLastKey(lastKey),
-    };
+    } as LoadMoreResult<SolutionTag>;
   });
 
 export const searchSolutionsRpc = createRpcBinding({

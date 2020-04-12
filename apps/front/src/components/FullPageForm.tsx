@@ -10,6 +10,7 @@ interface AuthFormProps {
   children: React.ReactNode;
   bottom?: React.ReactNode;
   padding?: 'sm' | 'default';
+  testId?: string;
 }
 
 const Card = styled.div<{
@@ -64,9 +65,9 @@ const Bottom = styled.div`
 `;
 
 export function FullPageForm(props: AuthFormProps) {
-  const { title, subTitle, children, bottom, padding } = props;
+  const { title, subTitle, children, bottom, padding, testId } = props;
   return (
-    <Wrapper>
+    <Wrapper data-test={testId}>
       <Logo type="dark" />
       <Card padding={padding}>
         <Top>

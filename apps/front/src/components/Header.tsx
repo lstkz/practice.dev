@@ -157,10 +157,18 @@ const _Header = (props: HeaderProps) => {
             </UserInfoWrapper>
           ) : (
             <Buttons>
-              <Button type="secondary" href={createUrl({ name: 'login' })}>
+              <Button
+                testId="header-login-btn"
+                type="secondary"
+                href={createUrl({ name: 'login' })}
+              >
                 LOGIN
               </Button>
-              <Button type="primary" href={createUrl({ name: 'register' })}>
+              <Button
+                testId="header-register-btn"
+                type="primary"
+                href={createUrl({ name: 'register' })}
+              >
                 JOIN NOW
               </Button>
             </Buttons>

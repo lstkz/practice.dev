@@ -49,7 +49,7 @@ export function ChallengesView() {
   return (
     <Dashboard>
       <ConfirmEmailWarning />
-      <Container>
+      <Container data-test="challenges-page">
         <Breadcrumb
           icon={<ChallengesIcon />}
           url={createUrl({ name: 'challenges' })}

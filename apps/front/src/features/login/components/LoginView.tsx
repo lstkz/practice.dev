@@ -28,7 +28,9 @@ export function LoginView() {
       bottom={
         <>
           Not registered?{' '}
-          <Link href={createUrl({ name: 'register' })}>Create account</Link>
+          <Link testId="register-link" href={createUrl({ name: 'register' })}>
+            Create account
+          </Link>
         </>
       }
     >
@@ -39,7 +41,11 @@ export function LoginView() {
             submit();
           }}
         >
-          {error && <Alert type="error">{error}</Alert>}
+          {error && (
+            <Alert data-test="login-error" type="error">
+              {error}
+            </Alert>
+          )}
 
           <FormInput
             id="emailOrUsername"

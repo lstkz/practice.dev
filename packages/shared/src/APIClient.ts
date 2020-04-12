@@ -7,9 +7,9 @@ import {
   Challenge,
   ChallengeTag,
   PagedResult,
+  LoadMoreResult,
   ChallengeSolved,
   Solution,
-  SearchResult,
   SolutionTag,
   Submission,
   AuthData,
@@ -34,11 +34,11 @@ export class APIClient {
     return this.call('challenge.getChallengeTags');
   }
   challenge_searchChallenges(criteria: {
+    tags?: string[] | undefined;
     sortBy?: 'created' | 'likes' | 'solved' | 'submissions' | undefined;
     sortOrder?: 'desc' | 'asc' | undefined;
     pageSize?: number | undefined;
     pageNumber?: number | undefined;
-    tags?: string[] | undefined;
     domains?: string[] | undefined;
     difficulties?: string[] | undefined;
     statuses?: ('solved' | 'unsolved')[] | undefined;
@@ -49,27 +49,27 @@ export class APIClient {
     challengeId?: number | undefined;
     username?: string | undefined;
     limit?: number | undefined;
-    lastKey?: string | undefined;
-  }): Rx.Observable<{ items: ChallengeSolved[]; lastKey: string | null }> {
+    cursor?: string | undefined;
+  }): Rx.Observable<LoadMoreResult<ChallengeSolved>> {
     return this.call('challenge.searchSolved', criteria);
   }
   challenge_updateChallenge(values: {
     id: number;
-    tags: string[];
     title: string;
     description: string;
-    detailsBundleS3Key: string;
-    testsBundleS3Key: string;
-    testCase: string;
     domain: 'frontend' | 'backend' | 'fullstack' | 'styling';
     difficulty: 'easy' | 'medium' | 'hard';
+    detailsBundleS3Key: string;
+    testsBundleS3Key: string;
+    tags: string[];
+    testCase: string;
   }): Rx.Observable<number> {
     return this.call('challenge.updateChallenge', values);
   }
   solution_createSolution(values: {
+    title: string;
     tags: string[];
     challengeId: number;
-    title: string;
     url: string;
     slug: string;
     description?: string | undefined;
@@ -96,14 +96,14 @@ export class APIClient {
     username?: string | undefined;
     limit?: number | undefined;
     cursor?: string | null | undefined;
-  }): Rx.Observable<SearchResult<Solution>> {
+  }): Rx.Observable<LoadMoreResult<Solution>> {
     return this.call('solution.searchSolutions', criteria);
   }
   solution_updateSolution(
     solutionId: string,
     values: {
-      tags: string[];
       title: string;
+      tags: string[];
       url: string;
       slug: string;
       description?: string | undefined;
@@ -122,7 +122,7 @@ export class APIClient {
     limit?: number | undefined;
     cursor?: string | null | undefined;
     keyword?: string | undefined;
-  }): Rx.Observable<{ items: SolutionTag[]; cursor: string | null }> {
+  }): Rx.Observable<LoadMoreResult<SolutionTag>> {
     return this.call('solutionTags.searchSolutionTags', criteria);
   }
   submission_searchSubmissions(criteria: {
@@ -130,7 +130,7 @@ export class APIClient {
     username?: string | undefined;
     limit?: number | undefined;
     cursor?: string | null | undefined;
-  }): Rx.Observable<SearchResult<Submission>> {
+  }): Rx.Observable<LoadMoreResult<Submission>> {
     return this.call('submission.searchSubmissions', criteria);
   }
   challenge_submit(values: {
@@ -158,15 +158,15 @@ export class APIClient {
     return this.call('user.getMe');
   }
   user_login(values: {
-    emailOrUsername: string;
     password: string;
+    emailOrUsername: string;
   }): Rx.Observable<AuthData> {
     return this.call('user.login', values);
   }
   user_register(values: {
     username: string;
-    password: string;
     email: string;
+    password: string;
   }): Rx.Observable<AuthData> {
     return this.call('user.register', values);
   }

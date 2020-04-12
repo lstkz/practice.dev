@@ -4,7 +4,7 @@ import AWS from 'aws-sdk';
 
 const s3 = new AWS.S3();
 
-jest.setTimeout(10000);
+jest.setTimeout(process.env.AWS ? 10000 : 30000);
 
 function convertSelector(selector: string) {
   return selector.replace(/\@([a-zA-Z0-9_-]+)/g, '[data-test="$1"]');
@@ -31,7 +31,7 @@ function wrapWithScreenshot<T extends { [x: string]: any }>(obj: T) {
       return;
     }
     const target = obj[key];
-    (obj as any)[key] = async function(...args: any[]) {
+    (obj as any)[key] = async function (...args: any[]) {
       try {
         return await target.call(this, ...args);
       } catch (e) {

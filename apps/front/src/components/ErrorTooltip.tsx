@@ -55,10 +55,11 @@ interface ErrorTooltip {
   isVisible: boolean;
   error?: string | string;
   children: (props: { ref: React.Ref<any> }) => React.ReactNode;
+  testId?: string;
 }
 
 export function ErrorTooltip(props: ErrorTooltip) {
-  const { isVisible, error, children, id } = props;
+  const { isVisible, error, children, id, testId } = props;
 
   return (
     <Manager>
@@ -79,6 +80,7 @@ export function ErrorTooltip(props: ErrorTooltip) {
               return (
                 <ErrorPopup style={style}>
                   <Error
+                    data-test={testId}
                     role="alert"
                     id={id}
                     ref={ref as any}

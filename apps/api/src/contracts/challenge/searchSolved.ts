@@ -8,6 +8,7 @@ import {
   UserEntity,
   ChallengeSolvedEntity,
 } from '../../entities';
+import { Challenge, LoadMoreResult, ChallengeSolved } from 'shared';
 
 export const searchSolved = createContract('challenge.searchSolved')
   .params('criteria')
@@ -55,7 +56,7 @@ export const searchSolved = createContract('challenge.searchSolved')
     return {
       items: ChallengeSolvedEntity.toChallengeSolvedMany(items, users),
       cursor: encLastKey(lastKey),
-    };
+    } as LoadMoreResult<ChallengeSolved>;
   });
 
 export const searchSolvedRpc = createRpcBinding({

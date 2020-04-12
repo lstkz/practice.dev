@@ -1,7 +1,7 @@
 import { createModule, useActions } from 'typeless';
 import { Solution } from 'shared';
 import { SolutionsTabSymbol } from '../symbol';
-import { SelectOption, SearchResult } from 'src/types';
+import { SelectOption, LoadMoreResult } from 'src/types';
 import React from 'react';
 import * as Rx from 'src/rx';
 import { TabContent } from './TabContent';
@@ -51,7 +51,7 @@ export const [handle, SolutionsTabActions, getSolutionsTabState] = createModule(
       },
     }),
     load: (loadMore: boolean) => ({ payload: { loadMore } }),
-    loaded: (loadMore: boolean, result: SearchResult<Solution>) => ({
+    loaded: (loadMore: boolean, result: LoadMoreResult<Solution>) => ({
       payload: { loadMore, result },
     }),
     setIsLoading: (isLoading: boolean) => ({ payload: { isLoading } }),

@@ -24,6 +24,7 @@ export function RegisterView() {
 
   return (
     <FullPageForm
+      testId="register-form"
       title="Create your account"
       subTitle={
         <>
@@ -44,8 +45,13 @@ export function RegisterView() {
             submit();
           }}
         >
-          {error && <Alert type="error">{error}</Alert>}
+          {error && (
+            <Alert data-test="register-error" type="error">
+              {error}
+            </Alert>
+          )}
           <FormInput
+            testId="username-input"
             id="username"
             name="username"
             label="Username"
@@ -53,6 +59,7 @@ export function RegisterView() {
           />
 
           <FormInput
+            testId="email-input"
             id="email"
             name="email"
             label="Email Address"
@@ -60,6 +67,7 @@ export function RegisterView() {
           />
 
           <FormInput
+            testId="password-input"
             id="password"
             name="password"
             label="Password"
@@ -67,13 +75,20 @@ export function RegisterView() {
             type="password"
           />
           <FormInput
+            testId="confirm-password-input"
             id="confirmPassword"
             name="confirmPassword"
             label="Confirm Password"
             placeholder="********"
             type="password"
           />
-          <Button type="primary" block loading={isSubmitting} htmlType="submit">
+          <Button
+            testId="register-submit"
+            type="primary"
+            block
+            loading={isSubmitting}
+            htmlType="submit"
+          >
             CREATE MY ACCOUNT
           </Button>
           <SocialFormButtons />
