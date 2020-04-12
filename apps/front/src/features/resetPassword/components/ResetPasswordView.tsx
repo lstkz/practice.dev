@@ -27,12 +27,15 @@ export function ResetPasswordView() {
 
   return (
     <FullPageForm
+      testId="reset-password-form"
       title="Reset Password"
       subTitle="We will send you an email that will allow you to reset your password."
       bottom={
         <>
           Not registered?{' '}
-          <Link href={createUrl({ name: 'register' })}>Create account</Link>
+          <Link testId="register-link" href={createUrl({ name: 'register' })}>
+            Create account
+          </Link>
         </>
       }
     >
@@ -43,15 +46,26 @@ export function ResetPasswordView() {
             submit();
           }}
         >
-          {error && <Alert type="error">{error}</Alert>}
+          {error && (
+            <Alert data-test="reset-password-error" type="error">
+              {error}
+            </Alert>
+          )}
 
           <FormInput
+            testId="email-input"
             id="email"
             name="email"
             label="Email address"
             placeholder="name@example.com"
           />
-          <Button type="primary" block loading={isSubmitting} htmlType="submit">
+          <Button
+            testId="reset-password-submit"
+            type="primary"
+            block
+            loading={isSubmitting}
+            htmlType="submit"
+          >
             RESET PASSWORD
           </Button>
         </form>

@@ -17,3 +17,13 @@ export const authData1: AuthData = {
     isVerified: false,
   },
 };
+
+export const authData1Verified: AuthData = {
+  token: 'token1',
+  user: {
+    id: 'u1',
+    email: '1@g.com',
+    username: 'user1',
+    isVerified: true,
+  },
+};

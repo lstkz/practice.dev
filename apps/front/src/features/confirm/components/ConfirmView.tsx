@@ -15,7 +15,7 @@ export function ConfirmView() {
   useConfirmModule();
 
   return (
-    <Wrapper>
+    <Wrapper data-test="confirm-page">
       <Spinner blue size="40px" />
     </Wrapper>
   );

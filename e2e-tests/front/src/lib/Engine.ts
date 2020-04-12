@@ -16,12 +16,6 @@ type GetResult<T> = T extends (...args: any[]) => Observable<infer K>
   ? K
   : never;
 
-interface ErrorResponse {
-  isError: boolean;
-  text: string;
-  status?: number;
-}
-
 export class MockError extends Error {
   constructor(message: string, public status: number = 400) {
     super(message);
@@ -52,7 +46,6 @@ export class Engine {
   private mocks: Record<string, (params: any, count: number) => any> = {};
   private requestCount: Record<string, number> = {};
   private onRequest: (request: Request) => Promise<void> = null!;
-  private error: Error | null = null;
 
   constructor(private page: Page, private baseUrl: string) {}
 
@@ -100,11 +93,7 @@ export class Engine {
           body.length === 0 ? null : body.length === 1 ? body[0] : body,
           this.requestCount[name]
         );
-        if (ret.isError) {
-          await request.respond(createResponse({ error: ret.text }, 400));
-        } else {
-          await request.respond(createResponse(ret, 200));
-        }
+        await request.respond(createResponse(ret, 200));
       } catch (e) {
         if (e instanceof MockError) {
           await request.respond(

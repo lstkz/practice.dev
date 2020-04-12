@@ -1,6 +1,6 @@
 import { WEBSITE_URL } from './config';
 import { Engine, MockError } from './lib/Engine';
-import { emptyChallenges, authData1 } from './test-data';
+import { emptyChallenges, authData1, authData1Verified } from './test-data';
 
 let engine: Engine = null!;
 
@@ -24,6 +24,11 @@ describe('register', () => {
 
   it('should open registration from login page', async () => {
     await page.goto(WEBSITE_URL + '/login');
+    await $('@register-link').expect.toBeVisible();
+  });
+
+  it('should open registration from reset password page', async () => {
+    await page.goto(WEBSITE_URL + '/reset-password');
     await $('@register-link').expect.toBeVisible();
   });
 
@@ -70,12 +75,255 @@ describe('register', () => {
       }
       return authData1;
     });
-    engine.mock('challenge_searchChallenges', (values, count) => {
+    engine.mock('challenge_searchChallenges', () => {
       return emptyChallenges;
     });
     await $('@register-submit').click();
     await $('@register-error').expect.toMatch('Username is already taken');
     await $('@register-submit').click();
+    await $('@challenges-page').expect.toBeVisible();
+  });
+
+  it('register', async () => {
+    engine.mock('user_register', (values, count) => {
+      expect(values).toEqual<typeof values>({
+        email: 'u1@g.com',
+        password: '12345',
+        username: 'user1',
+      });
+      return authData1;
+    });
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    await page.goto(WEBSITE_URL + '/register');
+    await $('@username-input').type('user1');
+    await $('@email-input').type('u1@g.com');
+    await $('@password-input').type('12345');
+    await $('@confirm-password-input').type('12345');
+    await $('@register-submit').click();
+    await $('@challenges-page').expect.toBeVisible();
+  });
+
+  it('register with github', async () => {
+    engine.mock('user_authGithub', (values, count) => {
+      expect(values).toEqual<typeof values>('foo');
+      if (count === 1) {
+        throw new MockError('social error');
+      }
+      return authData1;
+    });
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    await page.goto(WEBSITE_URL + '/register');
+    await $('@social-github-btn').expect.toBeVisible();
+    await page.evaluate(() => {
+      (window as any).githubCallback('foo');
+    });
+    await $('@register-error').expect.toMatch('social error');
+    await page.evaluate(() => {
+      (window as any).githubCallback('foo');
+    });
+    await $('@challenges-page').expect.toBeVisible();
+  });
+
+  it('register with google', async () => {
+    engine.mock('user_authGoogle', (values, count) => {
+      expect(values).toEqual<typeof values>('foo');
+      if (count === 1) {
+        throw new MockError('social error');
+      }
+      return authData1;
+    });
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    await page.goto(WEBSITE_URL + '/register');
+    await $('@social-google-btn').expect.toBeVisible();
+    await page.evaluate(() => {
+      (window as any).googleCallback('foo');
+    });
+    await $('@register-error').expect.toMatch('social error');
+    await page.evaluate(() => {
+      (window as any).googleCallback('foo');
+    });
+    await $('@challenges-page').expect.toBeVisible();
+  });
+});
+
+describe('login', () => {
+  it('should open login from landing page', async () => {
+    await page.goto(WEBSITE_URL);
+    await $('@top-login-btn').click();
+    await $('@login-form').expect.toBeVisible();
+  });
+
+  it('should open login from challenges page', async () => {
+    await page.goto(WEBSITE_URL + '/challenges');
+    await $('@header-login-btn').click();
+    await $('@login-form').expect.toBeVisible();
+  });
+
+  it('should open login from register page', async () => {
+    await page.goto(WEBSITE_URL + '/register');
+    await $('@login-link').expect.toBeVisible();
+  });
+
+  it('login with errors', async () => {
+    await page.goto(WEBSITE_URL + '/login');
+    await $('@login-submit').click();
+    await $('@login-input_error').expect.toMatch('This field is required');
+    await $('@password-input_error').expect.toMatch('This field is required');
+    await $('@login-input').type('user1');
+    await $('@password-input').type('12345');
+    await $('@login-input_error').expect.toBeHidden();
+    await $('@password-input_error').expect.toBeHidden();
+
+    engine.mock('user_login', (values, count) => {
+      expect(values).toEqual<typeof values>({
+        password: '12345',
+        emailOrUsername: 'user1',
+      });
+      if (count === 1) {
+        throw new MockError('Invalid credentials');
+      }
+      return authData1;
+    });
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    await $('@login-submit').click();
+    await $('@login-error').expect.toMatch('Invalid credentials');
+    await $('@login-submit').click();
+    await $('@challenges-page').expect.toBeVisible();
+  });
+
+  it('login', async () => {
+    await page.goto(WEBSITE_URL + '/login');
+    await $('@login-input').type('user1');
+    await $('@password-input').type('12345');
+
+    engine.mock('user_login', (values, count) => {
+      expect(values).toEqual<typeof values>({
+        password: '12345',
+        emailOrUsername: 'user1',
+      });
+      return authData1;
+    });
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    await $('@login-submit').click();
+    await $('@challenges-page').expect.toBeVisible();
+  });
+
+  it('login with github', async () => {
+    engine.mock('user_authGithub', (values, count) => {
+      expect(values).toEqual<typeof values>('foo');
+      if (count === 1) {
+        throw new MockError('social error');
+      }
+      return authData1;
+    });
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    await page.goto(WEBSITE_URL + '/login');
+    await $('@social-github-btn').expect.toBeVisible();
+    await page.evaluate(() => {
+      (window as any).githubCallback('foo');
+    });
+    await $('@login-error').expect.toMatch('social error');
+    await page.evaluate(() => {
+      (window as any).githubCallback('foo');
+    });
+    await $('@challenges-page').expect.toBeVisible();
+  });
+
+  it('login with google', async () => {
+    engine.mock('user_authGoogle', (values, count) => {
+      expect(values).toEqual<typeof values>('foo');
+      if (count === 1) {
+        throw new MockError('social error');
+      }
+      return authData1;
+    });
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    await page.goto(WEBSITE_URL + '/login');
+    await $('@social-google-btn').expect.toBeVisible();
+    await page.evaluate(() => {
+      (window as any).googleCallback('foo');
+    });
+    await $('@login-error').expect.toMatch('social error');
+    await page.evaluate(() => {
+      (window as any).googleCallback('foo');
+    });
+    await $('@challenges-page').expect.toBeVisible();
+  });
+});
+
+describe('reset password', () => {
+  it('should open login from login page', async () => {
+    await page.goto(WEBSITE_URL + '/login');
+    await $('@reset-password-link').click();
+    await $('@reset-password-form').expect.toBeVisible();
+  });
+
+  it('reset password with errors', async () => {
+    engine.mock('user_resetPassword', (values, count) => {
+      if (count === 1) {
+        throw new MockError('User is not registered');
+      }
+      expect(values).toEqual<typeof values>('u1@g.com');
+    });
+    await page.goto(WEBSITE_URL + '/reset-password');
+    await $('@reset-password-form').expect.toBeVisible();
+    await $('@reset-password-submit').click();
+    await $('@email-input_error').expect.toMatch('This field is required');
+    await $('@email-input').type('u');
+    await $('@email-input_error').expect.toMatch('Must a valid email');
+    await $('@email-input').type('1@g.com');
+    await $('@reset-password-submit').click();
+    await $('@reset-password-error').expect.toMatch('User is not registered');
+    await $('@reset-password-submit').click();
+    await $('@reset-password-success').expect.toBeVisible();
+  });
+
+  it('reset password with errors', async () => {
+    engine.mock('user_resetPassword', (values, count) => {
+      expect(values).toEqual<typeof values>('u1@g.com');
+    });
+    await page.goto(WEBSITE_URL + '/reset-password');
+    await $('@email-input').type('u1@g.com');
+    await $('@reset-password-submit').click();
+    await $('@reset-password-success').expect.toBeVisible();
+  });
+});
+
+describe('confirm reset password', () => {
+  it('confirm password - invalid code', async () => {
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    engine.mock('user_confirmEmail', () => {
+      throw new MockError('Invalid code');
+    });
+    await page.goto(WEBSITE_URL + '/confirm/foo');
+    await $('@confirm-page').expect.toBeVisible();
+  });
+
+  it('confirm password', async () => {
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    engine.mock('user_confirmEmail', () => {
+      return authData1Verified;
+    });
+    await page.goto(WEBSITE_URL + '/confirm/foo');
+    await $('@confirm-page').expect.toBeVisible();
     await $('@challenges-page').expect.toBeVisible();
   });
 });

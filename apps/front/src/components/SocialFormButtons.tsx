@@ -70,6 +70,7 @@ export function SocialFormButtons() {
       <Row gutter={10}>
         <Col lg={6}>
           <Button
+            testId="social-github-btn"
             onClick={() => {
               const params = [
                 `client_id=${GITHUB_CLIENT_ID}`,
@@ -92,6 +93,7 @@ export function SocialFormButtons() {
         </Col>
         <Col lg={6}>
           <Button
+            testId="social-google-btn"
             onClick={() => {
               const params = [
                 `client_id=${GOOGLE_CLIENT_ID}`,

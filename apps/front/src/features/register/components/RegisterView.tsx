@@ -34,7 +34,9 @@ export function RegisterView() {
       bottom={
         <>
           Already have an account?{' '}
-          <Link href={createUrl({ name: 'login' })}>Sign in</Link>
+          <Link testId="login-link" href={createUrl({ name: 'login' })}>
+            Sign in
+          </Link>
         </>
       }
     >
