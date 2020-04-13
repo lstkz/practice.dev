@@ -150,7 +150,9 @@ const _Header = (props: HeaderProps) => {
               >
                 <UserInfo>
                   <Avatar />
-                  <Username>{user.username}</Username>
+                  <Username data-test="current-username">
+                    {user.username}
+                  </Username>
                   <Caret />
                 </UserInfo>
               </MenuDropdown>

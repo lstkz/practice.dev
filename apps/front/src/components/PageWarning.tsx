@@ -21,7 +21,7 @@ const Inner = styled.div`
 const _PageWarning = (props: PageWarningProps) => {
   const { className, children } = props;
   return (
-    <div className={className}>
+    <div className={className} data-test="page-warning">
       <Inner>
         <WarningIcon />
         {children}

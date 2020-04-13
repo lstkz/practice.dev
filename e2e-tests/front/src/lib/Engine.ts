@@ -49,6 +49,14 @@ export class Engine {
 
   constructor(private page: Page, private baseUrl: string) {}
 
+  private token: string | null = null;
+  private isTokenSet = true;
+
+  setToken(token: string | null) {
+    this.token = token;
+    this.isTokenSet = false;
+  }
+
   async setup() {
     await this.page.removeAllListeners();
     await page.setRequestInterception(true);
@@ -58,6 +66,12 @@ export class Engine {
         'appcache,cache_storage,cookies,indexeddb,local_storage,service_workers,websql',
     });
     this.onRequest = async request => {
+      if (!this.isTokenSet && this.page.url() !== 'about:blank') {
+        await this.page.evaluate(() => {
+          localStorage.setItem('token', this.token);
+        });
+        this.isTokenSet = true;
+      }
       const url = request.url();
       const exec = /rpc\/(.+)$/.exec(url);
       if (!exec) {
