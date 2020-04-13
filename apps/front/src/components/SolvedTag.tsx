@@ -8,7 +8,11 @@ interface SolvedTagProps {
 
 const _SolvedTag = (props: SolvedTagProps) => {
   const { className } = props;
-  return <div className={className}>SOLVED</div>;
+  return (
+    <div data-test="solved-tag" className={className}>
+      SOLVED
+    </div>
+  );
 };
 
 export const SolvedTag = styled(_SolvedTag)`

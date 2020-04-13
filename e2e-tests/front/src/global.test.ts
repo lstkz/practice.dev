@@ -1,6 +1,11 @@
 import { WEBSITE_URL } from './config';
 import { Engine, MockError } from './lib/Engine';
-import { authData1, emptyChallenges, authData1Verified } from './test-data';
+import {
+  authData1,
+  emptyChallenges,
+  authData1Verified,
+  authData2Verified,
+} from './test-data';
 
 let engine: Engine = null!;
 
@@ -9,7 +14,7 @@ beforeEach(async () => {
   await engine.setup();
 });
 
-fit('should open challenges if logged in', async () => {
+it('should open challenges if logged in', async () => {
   engine.mock('user_getMe', () => {
     return authData1.user;
   });
@@ -28,7 +33,7 @@ it('should show verify warning if not verified', async () => {
   engine.mock('challenge_searchChallenges', () => emptyChallenges);
   engine.setToken('t1');
   await page.goto(WEBSITE_URL);
-  $('@page-warning').expect.toMatch(
+  await $('@page-warning').expect.toMatch(
     'Please check your email and confirm your account.'
   );
 });
@@ -41,7 +46,7 @@ it('should not show verify warning if verified', async () => {
   engine.setToken('t1');
   await page.goto(WEBSITE_URL);
   await $('@challenges-page').expect.toBeVisible();
-  $('@page-warning').expect.toBeHidden();
+  await $('@page-warning').expect.toBeHidden();
 });
 
 it('should open landing page if session is invalid', async () => {
@@ -50,4 +55,29 @@ it('should open landing page if session is invalid', async () => {
   });
   await page.goto(WEBSITE_URL);
   await $('@landing-banner').expect.toBeVisible();
+});
+
+it('should logout and relogin', async () => {
+  engine.mock('user_login', (values, count) => {
+    expect(values).toEqual<typeof values>({
+      password: '12345',
+      emailOrUsername: 'user1',
+    });
+    return authData1;
+  });
+  engine.mock('user_getMe', () => {
+    return authData1Verified.user;
+  });
+  engine.mock('user_login', (values, count) => {
+    return authData2Verified;
+  });
+  engine.mock('challenge_searchChallenges', () => emptyChallenges);
+  engine.setToken('t1');
+  await page.goto(WEBSITE_URL);
+  await $('@header-menu').click();
+  await $('@logout-btn').click();
+  await $('@login-input').type('u2');
+  await $('@password-input').type('pass');
+  await $('@login-submit').click();
+  await $('@current-username').expect.toMatch('user2');
 });

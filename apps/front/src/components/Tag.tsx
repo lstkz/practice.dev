@@ -18,25 +18,30 @@ interface TagProps {
   onClick?: () => void;
   children: React.ReactChild;
   url?: string;
+  testId?: string;
 }
 
 const _Tag = (props: TagProps) => {
-  const { className, children, onClick, url } = props;
+  const { className, children, onClick, url, testId } = props;
   if (url) {
     return (
-      <Link className={className} onClick={onClick} href={url}>
+      <Link testId={testId} className={className} onClick={onClick} href={url}>
         {children}
       </Link>
     );
   }
   if (onClick) {
     return (
-      <VoidLink className={className} onClick={onClick}>
+      <VoidLink data-test={testId} className={className} onClick={onClick}>
         {children}
       </VoidLink>
     );
   }
-  return <div className={className}>{children}</div>;
+  return (
+    <div data-test={testId} className={className}>
+      {children}
+    </div>
+  );
 };
 
 export const Tag = styled(_Tag)`

@@ -16,6 +16,7 @@ interface MenuDropdownProps {
   children: React.ReactElement;
   dropdown: React.ReactNode;
   placement?: PopperJS.Placement;
+  testId?: string;
 }
 
 function isClickable(node: HTMLElement | null): boolean {
@@ -29,7 +30,7 @@ function isClickable(node: HTMLElement | null): boolean {
 }
 
 export function MenuDropdown(props: MenuDropdownProps) {
-  const { children, dropdown, placement } = props;
+  const { children, dropdown, placement, testId } = props;
   const [isOpen, setOpen] = React.useState(false);
   React.useEffect(() => {
     const onClick = () => {
@@ -48,6 +49,7 @@ export function MenuDropdown(props: MenuDropdownProps) {
         {({ ref }) =>
           React.cloneElement(children, {
             'data-dropdown-toggle': true,
+            'data-test': testId,
             ref: ref,
             onClick: () => {
               setOpen(!isOpen);

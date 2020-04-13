@@ -67,10 +67,14 @@ export class Engine {
     });
     this.onRequest = async request => {
       if (!this.isTokenSet && this.page.url() !== 'about:blank') {
-        await this.page.evaluate(() => {
-          localStorage.setItem('token', this.token);
-        });
         this.isTokenSet = true;
+        await this.page.evaluate(token => {
+          if (token) {
+            localStorage.setItem('token', token);
+          } else {
+            localStorage.removeItem('token');
+          }
+        }, this.token);
       }
       const url = request.url();
       const exec = /rpc\/(.+)$/.exec(url);

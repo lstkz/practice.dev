@@ -37,10 +37,11 @@ const _ChallengeFilter = (props: ChallengeFilterProps) => {
   return (
     <div className={className}>
       {user && (
-        <FilterSection label="Challenges">
+        <FilterSection label="Challenges" testId="filter-challenges">
           {statuses.map(item => {
             return (
               <Checkbox
+                testId={`option-${item}`}
                 key={item}
                 onChange={() => {
                   let copy = { ...filter.statuses };
@@ -59,10 +60,11 @@ const _ChallengeFilter = (props: ChallengeFilterProps) => {
           })}
         </FilterSection>
       )}
-      <FilterSection label="Difficulty">
+      <FilterSection label="Difficulty" testId="filter-difficulty">
         {difficulties.map(item => {
           return (
             <Checkbox
+              testId={`option-${item}`}
               key={item}
               onChange={() => {
                 let copy = { ...filter.difficulties };
@@ -80,10 +82,11 @@ const _ChallengeFilter = (props: ChallengeFilterProps) => {
           );
         })}
       </FilterSection>
-      <FilterSection label="Domain">
+      <FilterSection label="Domain" testId="filter-domain">
         {domains.map(item => {
           return (
             <Checkbox
+              testId={`option-${item}`}
               key={item}
               onChange={() => {
                 let copy = { ...filter.domains };
@@ -101,7 +104,7 @@ const _ChallengeFilter = (props: ChallengeFilterProps) => {
           );
         })}
       </FilterSection>
-      <FilterSection label="Tags">
+      <FilterSection label="Tags" testId="filter-tags">
         <Select
           id="tags"
           name="tags"
@@ -123,7 +126,7 @@ const _ChallengeFilter = (props: ChallengeFilterProps) => {
           }}
         />
       </FilterSection>
-      <FilterSection label="Sort by">
+      <FilterSection label="Sort by" testId="filter-sort">
         <Select
           id="sortBy"
           name="sortBy"

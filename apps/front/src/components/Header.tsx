@@ -129,6 +129,7 @@ const _Header = (props: HeaderProps) => {
           {user ? (
             <UserInfoWrapper>
               <MenuDropdown
+                testId="header-menu"
                 dropdown={
                   <Dropdown>
                     <MenuItem>
@@ -143,7 +144,9 @@ const _Header = (props: HeaderProps) => {
                     </MenuItem>
                     <MenuSeparator />
                     <MenuItem red>
-                      <VoidLink onClick={logout}>Logout</VoidLink>
+                      <VoidLink data-test="logout-btn" onClick={logout}>
+                        Logout
+                      </VoidLink>
                     </MenuItem>
                   </Dropdown>
                 }

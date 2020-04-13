@@ -6,13 +6,14 @@ interface DomainTagProps {
   domain: ChallengeDomain;
   onClick?: () => void;
   url?: string;
+  testId?: string;
 }
 
 export function DomainTag(props: DomainTagProps) {
-  const { domain, onClick, url } = props;
+  const { testId, domain, onClick, url } = props;
 
   return (
-    <Tag type={domain} onClick={onClick} url={url}>
+    <Tag testId={testId} type={domain} onClick={onClick} url={url}>
       {domain}
     </Tag>
   );

@@ -86,7 +86,7 @@ interface ChallengeInfoProps {
 export function ChallengeInfo(props: ChallengeInfoProps) {
   const { challenge } = props;
   return (
-    <ChallengeCard>
+    <ChallengeCard data-test={`challenge_${challenge.id}`}>
       <Col1>
         {challenge.domain === 'frontend' ? (
           <FrontendIcon />
@@ -102,25 +102,27 @@ export function ChallengeInfo(props: ChallengeInfoProps) {
               name: 'challenge',
               id: challenge.id,
             })}
+            data-test="title"
           >
             {challenge.title}
           </Link>
         </Title>
-        <Desc>{challenge.description}</Desc>
+        <Desc data-test="desc">{challenge.description}</Desc>
         <Tags>
           <ChallengeTags challenge={challenge} />
         </Tags>
       </Col2>
       <Col3>
-        <IconCounter data-tip="Total Submissions">
+        <IconCounter data-tip="Total Submissions" data-test="submissions">
           <FileIcon /> {challenge.stats.submissions}
         </IconCounter>
         <ReactTooltip place="top" type="dark" effect="solid" />
-        <IconCounter data-tip="User Solved">
+        <IconCounter data-tip="User Solved" data-test="solved">
           <UserIcon /> {challenge.stats.solved}
         </IconCounter>
         <ReactTooltip place="top" type="dark" effect="solid" />
         <Button
+          testId="solve-btn"
           type="primary"
           href={createUrl({ name: 'challenge', id: challenge.id })}
         >
