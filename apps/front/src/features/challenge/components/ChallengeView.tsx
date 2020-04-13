@@ -70,6 +70,7 @@ export function ChallengeView() {
               >
                 <Tab title="Details" name="details">
                   <TabContent
+                    testId="challenge-details"
                     left={<Component />}
                     right={
                       <SidebarStack>

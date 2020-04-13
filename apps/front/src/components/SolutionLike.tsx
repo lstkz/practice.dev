@@ -30,7 +30,7 @@ interface SolutionLikeProps {
 const _SolutionLike = (props: SolutionLikeProps) => {
   const { className, voteSolution, solution } = props;
   return (
-    <div className={className}>
+    <div className={className} data-test="like">
       <Like
         onClick={() => {
           voteSolution(solution.id, !solution.isLiked);

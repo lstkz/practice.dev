@@ -51,6 +51,11 @@ export class Engine {
 
   private token: string | null = null;
   private isTokenSet = true;
+  private mockedBundle: string | null = null;
+
+  setMockedBundle(mockedBundle: string | null) {
+    this.mockedBundle = mockedBundle;
+  }
 
   setToken(token: string | null) {
     this.token = token;
@@ -66,6 +71,19 @@ export class Engine {
         'appcache,cache_storage,cookies,indexeddb,local_storage,service_workers,websql',
     });
     this.onRequest = async request => {
+      if (this.mockedBundle && request.url().endsWith('/bundle.js')) {
+        request.respond({
+          body: `
+          ChallengeJSONP({
+            Details: function () {
+              return '${this.mockedBundle}'
+            }
+          })
+          `,
+          contentType: 'text/javascript',
+        });
+        return;
+      }
       if (!this.isTokenSet && this.page.url() !== 'about:blank') {
         this.isTokenSet = true;
         await this.page.evaluate(token => {

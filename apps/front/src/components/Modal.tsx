@@ -16,6 +16,7 @@ interface ModalProps {
   size?: 'lg' | 'md' | 'sm';
   maxHeight?: string;
   noBackgroundClose?: boolean;
+  testId?: string;
 }
 
 const GlobalStyle = createGlobalStyle`
@@ -100,6 +101,7 @@ export function Modal(props: ModalProps) {
     size,
     maxHeight,
     noBackgroundClose,
+    testId,
   } = props;
 
   const modalRef = React.useRef<HTMLDivElement | null>(null);
@@ -158,6 +160,7 @@ export function Modal(props: ModalProps) {
           >
             <FocusContainer data-focus-root>
               <ModalContent
+                data-test={testId}
                 ref={modalRef}
                 style={{
                   background: transparent ? 'transparent' : 'white',
@@ -167,7 +170,11 @@ export function Modal(props: ModalProps) {
                 tabIndex={-1}
                 role="modal"
               >
-                <Close onClick={() => close('close-button')} aria-label="close">
+                <Close
+                  data-test="close-btn"
+                  onClick={() => close('close-button')}
+                  aria-label="close"
+                >
                   <CloseIcon scale={1.3} color={Theme.text} />
                 </Close>
 

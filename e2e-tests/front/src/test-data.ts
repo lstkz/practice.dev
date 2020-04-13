@@ -1,4 +1,4 @@
-import { PagedResult, Challenge, AuthData } from 'shared';
+import { PagedResult, Challenge, AuthData, TestInfo, Solution } from 'shared';
 import { getRange } from './helper';
 
 export const emptyChallenges: PagedResult<Challenge> = {
@@ -54,7 +54,7 @@ export const getChallenges = (loggedIn: boolean) =>
       title: 'Challenge ' + id,
       description: 'Desc ' + id,
       difficulty: mod3 === 0 ? 'easy' : mod3 === 1 ? 'medium' : 'hard',
-      detailsBundleS3Key: 'key',
+      detailsBundleS3Key: `bundle.js`,
       domain: mod4 === 0 ? 'backend' : mod4 === 1 ? 'frontend' : 'fullstack',
       isSolved: loggedIn && id % 2 === 1,
       tags: ['tag' + mod3],
@@ -64,6 +64,41 @@ export const getChallenges = (loggedIn: boolean) =>
         solved: 1,
         submissions: 100,
       },
-      testCase: 'test-case',
+      testCase: JSON.stringify([
+        {
+          id: 1,
+          name: 'Navigate to page',
+          steps: [],
+        },
+        {
+          id: 2,
+          name: 'Click on button',
+          steps: [],
+        },
+        {
+          id: 3,
+          name: 'Enter text',
+          steps: [],
+        },
+      ] as TestInfo[]),
     } as Challenge;
   });
+
+export const solutions: Solution[] = getRange(20).map(id => {
+
+  return  {
+    id: `s${id}`,
+    title: `Solution ${id}`,
+    tags: ['react', `sample${id % 3 + 1}`],
+    description: `Solution desc ${id}`,
+    isLiked: false,
+    likes: 10,
+    slug: `solution-${id}`,
+    challengeId: 1,
+    createdAt: new Date(2000, 0, 1).toISOString(),
+    url: 'https://github.com/foo/bar',
+    user: {
+      id: `u${id%2+1}`,
+      username: `user${id%2+1}`
+    },
+  }); 

@@ -65,7 +65,7 @@ const _ChallengeHeader = (props: ChallengeHeaderProps) => {
         <FrontendIcon />
       </Col1>
       <Col2>
-        <Title>{challenge.title}</Title>
+        <Title data-test="challenge-title">{challenge.title}</Title>
         <Tags>
           <ChallengeTags challenge={challenge} />
         </Tags>
@@ -73,6 +73,7 @@ const _ChallengeHeader = (props: ChallengeHeaderProps) => {
       <Col3 double={challenge.isSolved}>
         <Buttons>
           <Button
+            testId="submit-btn"
             block
             type={challenge.isSolved ? 'secondary' : 'primary'}
             onClick={showSubmit}
@@ -82,6 +83,7 @@ const _ChallengeHeader = (props: ChallengeHeaderProps) => {
           </Button>
           {challenge.isSolved && (
             <Button
+              testId="create-solution-btn"
               block
               type="primary"
               onClick={() => showSolution('edit', null)}

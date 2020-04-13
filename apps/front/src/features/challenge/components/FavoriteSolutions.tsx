@@ -20,7 +20,7 @@ const _FavoriteSolutions = (props: FavoriteSolutionsProps) => {
   const solutions = useSolutions(favoriteSolutions);
   const { showSolutionsWithTag } = useActions(ChallengeActions);
   return (
-    <div className={className}>
+    <div className={className} data-test="fav-solutions">
       <SidebarTitle marginBottom>Favorite Solutions</SidebarTitle>
       {solutions.length ? (
         solutions.map(item => (
@@ -31,7 +31,7 @@ const _FavoriteSolutions = (props: FavoriteSolutionsProps) => {
           />
         ))
       ) : (
-        <NoData>No solutions yet.</NoData>
+        <NoData data-test="no-solutions">No solutions yet.</NoData>
       )}
     </div>
   );
