@@ -26,6 +26,21 @@ beforeEach(async () => {
       items: [],
     };
   });
+  engine.mock('solutionTags_searchSolutionTags', () => {
+    return {
+      cursor: null,
+      items: [
+        {
+          name: 'react',
+          count: 10,
+        },
+        {
+          name: 'sample2',
+          count: 2,
+        },
+      ],
+    };
+  });
   engine.setMockedBundle('example challenge details');
   engine.setToken('t1');
 });
@@ -86,4 +101,73 @@ it('should display favorite solutions', async () => {
   await $('@solution-modal @close-btn').click();
   await $('@solution-details-s1').expect.toBeHidden();
   expect(page.url()).toEqual(WEBSITE_URL + '/challenges/1');
+});
+
+it('should open solutions tab', async () => {
+  engine.mock('solution_searchSolutions', (params, count) => {
+    if (count === 1) {
+      return {
+        cursor: null,
+        items: [],
+      };
+    }
+    if (count === 2) {
+      return {
+        cursor: 'c1',
+        items: solutions.slice(0, 2),
+      };
+    }
+    if (count === 3) {
+      return {
+        cursor: null,
+        items: solutions.slice(2, 4),
+      };
+    }
+    return {
+      cursor: null,
+      items: [],
+    };
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  await $('@solutions-tab').click();
+  await $('@solution-details-s1').expect.toBeVisible();
+  await $('@solution-details-s2').expect.toBeVisible();
+  await $('@solution-details-s3').expect.toBeHidden();
+  await $('@load-more-btn').click();
+  await $('@solution-details-s1').expect.toBeVisible();
+  await $('@solution-details-s2').expect.toBeVisible();
+  await $('@solution-details-s3').expect.toBeVisible();
+  await $('@solution-details-s4').expect.toBeVisible();
+  await $('@load-more-btn').expect.toBeHidden();
+});
+
+fit('delete solution', async () => {
+  engine.mock('solution_searchSolutions', () => {
+    return {
+      cursor: null,
+      items: solutions.slice(0, 2),
+    };
+  });
+  engine.mock('solution_removeSolution', params => {
+    expect(params).toEqual<typeof params>('s2');
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  await $('@solution-s2').expect.toBeVisible();
+  await $('@solutions-tab').click();
+  await $('@solution-details-s2').expect.toBeVisible();
+  await $('@details-tab').click();
+  await $('@solution-s2 @title').click();
+  await $('@solution-menu-btn').click();
+  await $('@solution-menu @delete-btn').click();
+  await $('@confirm-modal').expect.toBeVisible();
+  await $('@confirm-modal @close-btn').click();
+  await $('@confirm-modal').expect.toBeHidden();
+  await $('@solution-menu-btn').click();
+  await $('@solution-menu @delete-btn').click();
+  await $('@confirm-modal @delete-btn').click();
+  await $('@confirm-modal').expect.toBeHidden();
+  await $('@solution-s2').expect.toBeHidden();
+  await $('@solutions-tab').click();
+  await $('@solution-details-s2').expect.toBeHidden();
+  await $('@solution-details-s1').expect.toBeVisible();
 });

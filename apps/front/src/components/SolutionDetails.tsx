@@ -146,14 +146,25 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
         {canEdit && (
           <Menu>
             <MenuDropdown
+              testId="solution-menu-btn"
               dropdown={
-                <Dropdown style={{ minWidth: 100 }}>
+                <Dropdown data-test="solution-menu" style={{ minWidth: 100 }}>
                   <MenuItem>
-                    <VoidLink onClick={() => onMenu('edit')}>Edit</VoidLink>
+                    <VoidLink
+                      data-test="edit-btn"
+                      onClick={() => onMenu('edit')}
+                    >
+                      Edit
+                    </VoidLink>
                   </MenuItem>
                   <MenuSeparator />
                   <MenuItem red>
-                    <VoidLink onClick={() => onMenu('delete')}>Remove</VoidLink>
+                    <VoidLink
+                      data-test="delete-btn"
+                      onClick={() => onMenu('delete')}
+                    >
+                      Remove
+                    </VoidLink>
                   </MenuItem>
                 </Dropdown>
               }

@@ -68,7 +68,7 @@ export function ChallengeView() {
                 selectedTab={tab}
                 onIndexChange={(value: ChallengeTab) => changeTab(value)}
               >
-                <Tab title="Details" name="details">
+                <Tab testId="details-tab" title="Details" name="details">
                   <TabContent
                     testId="challenge-details"
                     left={<Component />}
@@ -86,7 +86,7 @@ export function ChallengeView() {
                     right={<MyRecentSubmissions />}
                   />
                 </Tab>
-                <Tab title="Solutions" name="solutions">
+                <Tab testId="solutions-tab" title="Solutions" name="solutions">
                   <SolutionsTab />
                 </Tab>
                 <Tab title="Discussion" name="discussion">

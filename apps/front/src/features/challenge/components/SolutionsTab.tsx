@@ -216,7 +216,7 @@ export function SolutionList() {
     );
   }
   if (!items.length) {
-    return <NoData>No Solutions</NoData>;
+    return <NoData data-test="no-solutions">No Solutions</NoData>;
   }
   return (
     <div>
@@ -246,7 +246,9 @@ export function SolutionList() {
           {isLoading ? (
             <VoidLink>Loading...</VoidLink>
           ) : (
-            <VoidLink onClick={() => load(true)}>Load More</VoidLink>
+            <VoidLink data-test="load-more-btn" onClick={() => load(true)}>
+              Load More
+            </VoidLink>
           )}
         </LoadMore>
       )}

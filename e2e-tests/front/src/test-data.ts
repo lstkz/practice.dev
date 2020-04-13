@@ -85,11 +85,10 @@ export const getChallenges = (loggedIn: boolean) =>
   });
 
 export const solutions: Solution[] = getRange(20).map(id => {
-
-  return  {
+  return {
     id: `s${id}`,
     title: `Solution ${id}`,
-    tags: ['react', `sample${id % 3 + 1}`],
+    tags: ['react', `sample${(id % 3) + 1}`],
     description: `Solution desc ${id}`,
     isLiked: false,
     likes: 10,
@@ -98,7 +97,8 @@ export const solutions: Solution[] = getRange(20).map(id => {
     createdAt: new Date(2000, 0, 1).toISOString(),
     url: 'https://github.com/foo/bar',
     user: {
-      id: `u${id%2+1}`,
-      username: `user${id%2+1}`
+      id: `u${(id % 2) + 1}`,
+      username: `user${(id % 2) + 1}`,
     },
-  }); 
+  };
+});
