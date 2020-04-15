@@ -16,7 +16,7 @@ import { getErrorMessage, searchSolutionTags } from 'src/common/helper';
 import { GlobalSolutionsActions } from '../globalSolutions/interface';
 import { GlobalActions } from '../global/interface';
 import { confirmDeleteSolution } from 'src/common/solution';
-import { RouterActions } from 'typeless-router';
+import { RouterActions, getRouterState } from 'typeless-router';
 import { createUrl } from 'src/common/url';
 
 handle
@@ -48,14 +48,14 @@ handle
           const actions: any[] = [
             GlobalSolutionsActions.addSolutions([solution]),
           ];
+          const url = createUrl({
+            name: 'challenge',
+            id: solution.challengeId,
+            solutionSlug: solution.slug,
+          });
+          const [pathname, search] = url.split('?');
           if (!solutionId) {
             actions.push(SolutionActions.created());
-            const url = createUrl({
-              name: 'challenge',
-              id: solution.challengeId,
-              solutionSlug: solution.slug,
-            });
-            const [pathname, search] = url.split('?');
             actions.push(
               RouterActions.push({
                 pathname: pathname,
@@ -63,6 +63,14 @@ handle
               })
             );
           } else {
+            if (search !== getRouterState().location?.search) {
+              actions.push(
+                RouterActions.replace({
+                  pathname: pathname,
+                  search,
+                })
+              );
+            }
             actions.push(SolutionActions.show('view', solution));
           }
           return actions;

@@ -87,7 +87,6 @@ function BaseSelect(
     }
     return value ? value.label : null;
   }
-  console.log(rest);
 
   return (
     <ErrorTooltip

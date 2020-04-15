@@ -75,7 +75,7 @@ export function $(selector: string) {
     },
     async clickByText(text: string) {
       const handle = await page.evaluateHandle(() => document);
-      const btn: ElementHandle = await page.waitForFunction(
+      const btn = (await page.waitForFunction(
         (handle, input, text) => {
           const elements = [...handle.querySelectorAll(input)];
           return elements.find(element => element.innerText.includes(text));
@@ -86,7 +86,7 @@ export function $(selector: string) {
         handle,
         input,
         text
-      );
+      )) as ElementHandle;
       await btn.click();
     },
     async clickClient() {
@@ -208,7 +208,7 @@ export function $(selector: string) {
           expect(actual.attr).toEqual(expected);
         }
       },
-      async toMatch(expected: string | RegExp, exact = false) {
+      async toMatch(expected: string, exact = false) {
         const handle = await page.evaluateHandle(() => document);
         try {
           await page.waitForFunction(

@@ -37,7 +37,7 @@ beforeEach(async () => {
   engine.setToken('t1');
 });
 
-fit('should create a solution with errors', async () => {
+it('should create a solution with errors', async () => {
   engine.mock('challenge_getChallengeById', () => {
     const challenges = getChallenges(false);
     challenges[0].isSolved = true;
@@ -151,4 +151,94 @@ it('like solution', async () => {
   await $('@solution-s1 @like').expect.toMatch('11');
   await $('@solution-s1 @like').click();
   await $('@solution-s1 @like').expect.toMatch('10');
+});
+
+it('should open a solution directly from url (error)', async () => {
+  engine.mock('solution_getSolutionBySlug', () => {
+    throw new MockError('Solution not found');
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1?s=solution-1');
+  await $('@app-error').expect.toMatch('Solution not found');
+  expect(page.url()).toMatch(WEBSITE_URL + '/challenges/1');
+});
+
+it('should open a solution directly from url and edit', async () => {
+  engine.mock('solution_getSolutionBySlug', params => {
+    expect(params).toEqual<typeof params>([1, 'solution-2']);
+    return solutions[1];
+  });
+  engine.mock('solution_updateSolution', (params, count) => {
+    expect(params).toEqual<typeof params>([
+      's2',
+      {
+        description: 'x',
+        slug: 'solution-2x',
+        tags: ['react', 'sample3', 'foo'],
+        title: 'Solution 2x',
+        url: 'https://github.com/foo/barx',
+      },
+    ]);
+    return {
+      ...solutions[1],
+      ...params[1],
+    };
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1?s=solution-2');
+  await $('@solution-details-s2 @title').expect.toMatch('Solution 2');
+  await $('@solution-details-s2 @author').expect.toMatch('@user1');
+  await $('@solution-details-s2 @like').expect.toMatch('10');
+  await $('@solution-details-s2 @url').expect.toMatch(
+    'https://github.com/foo/bar'
+  );
+  await $('@solution-details-s2 @desc').expect.toMatch('Solution desc 2');
+  await $('@solution-details-s2 @date').expect.toMatch('01.01.2000');
+  await $('@solution-details-s2 @tag:nth-child(1)').expect.toMatch('react');
+  await $('@solution-details-s2 @tag:nth-child(2)').expect.toMatch('sample3');
+  await $('@solution-menu-btn').click();
+  await $('@solution-menu @edit-btn').click();
+  await $('@url').type('x');
+  await $('@title').type('x');
+  await $('@tags').click();
+  await $('@tags input').type('foo');
+  await $('@tags input').press('Enter');
+  await $('@description').clear();
+  await $('@description').type('x');
+  await $('@submit-btn').click();
+  await $('@solution-details-s2 @title').expect.toMatch('Solution 2x');
+  await $('@solution-details-s2 @url').expect.toMatch(
+    'https://github.com/foo/barx'
+  );
+  await $('@solution-details-s2 @desc').expect.toMatch('x');
+  await $('@solution-details-s2 @tag:nth-child(1)').expect.toMatch('react');
+  await $('@solution-details-s2 @tag:nth-child(2)').expect.toMatch('sample3');
+  await $('@solution-details-s2 @tag:nth-child(3)').expect.toMatch('foo');
+  expect(page.url()).toMatch(WEBSITE_URL + '/challenges/1?s=solution-2x');
+});
+
+it('open solution, close and re-open with back/forward buttons', async () => {
+  engine.mock('solution_searchSolutions', () => {
+    return {
+      cursor: null,
+      items: solutions.slice(0, 3),
+    };
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  await $('@solution-s1 @title').click();
+  await $('@solution-modal').expect.toBeVisible();
+  await $('@solution-details-s1').expect.toBeVisible();
+  await page.goBack();
+  await $('@solution-modal').expect.toBeHidden();
+  await $('@solution-s2 @title').click();
+  await $('@solution-modal').expect.toBeVisible();
+  await $('@solution-details-s2').expect.toBeVisible();
+  await $('@solution-modal @close-btn').click();
+  await $('@solution-modal').expect.toBeHidden();
+  await page.goBack();
+  await $('@solution-modal').expect.toBeVisible();
+  await $('@solution-details-s2').expect.toBeVisible();
+  await page.goBack();
+  await $('@solution-modal').expect.toBeHidden();
+  await page.goForward();
+  await $('@solution-modal').expect.toBeVisible();
+  await $('@solution-details-s2').expect.toBeVisible();
 });
