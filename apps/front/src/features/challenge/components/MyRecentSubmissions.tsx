@@ -22,14 +22,14 @@ const _MyRecentSubmissions = (props: MyRecentSubmissionsProps) => {
     return null;
   }
   return (
-    <div className={className}>
+    <div className={className} data-test="recent-submissions">
       <SidebarTitle>My Recent Submissions</SidebarTitle>
       {recentSubmissions.length ? (
         recentSubmissions.map(item => (
           <MySubmission key={item.id} submission={item} />
         ))
       ) : (
-        <Na>N/A</Na>
+        <Na data-test="empty">N/A</Na>
       )}
     </div>
   );

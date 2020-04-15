@@ -20,13 +20,29 @@ const _MySubmission = (props: MySubmissionProps) => {
   const renderTag = () => {
     switch (submission.status) {
       case SubmissionStatus.Fail:
-        return <Tag type="fail">FAIL</Tag>;
+        return (
+          <Tag testId="tag" type="fail">
+            FAIL
+          </Tag>
+        );
       case SubmissionStatus.Pass:
-        return <Tag type="pass">PASS</Tag>;
+        return (
+          <Tag testId="tag" type="pass">
+            PASS
+          </Tag>
+        );
       case SubmissionStatus.Queued:
-        return <Tag type="pending">QUEUED</Tag>;
+        return (
+          <Tag testId="tag" type="pending">
+            QUEUED
+          </Tag>
+        );
       case SubmissionStatus.Running:
-        return <Tag type="pending">RUNNING</Tag>;
+        return (
+          <Tag testId="tag" type="pending">
+            RUNNING
+          </Tag>
+        );
     }
   };
 
@@ -37,7 +53,7 @@ const _MySubmission = (props: MySubmissionProps) => {
   }, []);
 
   return (
-    <div className={className}>
+    <div className={className} data-test={`submission-${submission.id}`}>
       {renderTag()}
       <Ago>{ago}</Ago>
     </div>

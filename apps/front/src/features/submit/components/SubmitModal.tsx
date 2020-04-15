@@ -22,7 +22,7 @@ export function SubmitModal() {
   const { isOpened, error, isSubmitting } = getSubmitState.useState();
   const { submit } = useActions(SubmitFormActions);
   return (
-    <Modal size="sm" isOpen={isOpened} close={close}>
+    <Modal testId="submit-modal" size="sm" isOpen={isOpened} close={close}>
       <FormModalContent title="Submit">
         <SubmitFormProvider>
           <form
@@ -31,14 +31,20 @@ export function SubmitModal() {
               submit();
             }}
           >
-            {error && <Alert type="error">{error}</Alert>}
+            {error && (
+              <Alert data-test="submit-error" type="error">
+                {error}
+              </Alert>
+            )}
             <FormInput
+              testId="url-input"
               id="url"
               name="url"
               label="Enter URL address"
               placeholder="http://example.org"
             />
             <Button
+              testId="submit-btn"
               type="primary"
               block
               htmlType="submit"

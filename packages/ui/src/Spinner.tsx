@@ -7,6 +7,7 @@ interface SpinnerProps {
   black?: boolean;
   blue?: boolean;
   size?: string;
+  testId?: string;
 }
 
 const rotate = keyframes`
@@ -14,9 +15,13 @@ const rotate = keyframes`
 `;
 
 const _Spinner = (props: SpinnerProps) => {
-  const { className, blue, black, size = '20px' } = props;
+  const { testId, className, blue, black, size = '20px' } = props;
   return (
-    <div className={className} style={{ height: size, width: size }}>
+    <div
+      data-test={testId}
+      className={className}
+      style={{ height: size, width: size }}
+    >
       <svg
         viewBox="0 0 1024 1024"
         width={size}

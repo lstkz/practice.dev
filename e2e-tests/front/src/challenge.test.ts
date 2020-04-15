@@ -1,5 +1,5 @@
 import { WEBSITE_URL } from './config';
-import { Engine, MockError } from './lib/Engine';
+import { Engine } from './lib/Engine';
 import { authData1Verified, getChallenges, solutions } from './test-data';
 
 let engine: Engine = null!;
@@ -141,7 +141,7 @@ it('should open solutions tab', async () => {
   await $('@load-more-btn').expect.toBeHidden();
 });
 
-fit('delete solution', async () => {
+it('delete solution', async () => {
   engine.mock('solution_searchSolutions', () => {
     return {
       cursor: null,
@@ -171,3 +171,59 @@ fit('delete solution', async () => {
   await $('@solution-details-s2').expect.toBeHidden();
   await $('@solution-details-s1').expect.toBeVisible();
 });
+
+it('like solution', async () => {
+  engine.mock('solution_searchSolutions', () => {
+    return {
+      cursor: null,
+      items: solutions.slice(0, 2),
+    };
+  });
+  engine.mock('solution_voteSolution', (params, count) => {
+    if (count === 1) {
+      expect(params).toEqual<typeof params>({
+        like: true,
+        solutionId: 's1',
+      });
+      return 11;
+    }
+    expect(params).toEqual<typeof params>({
+      like: false,
+      solutionId: 's1',
+    });
+    return 10;
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  await $('@solution-s1 @like').click();
+  await $('@solution-s1 @like').expect.toMatch('11');
+  await $('@solution-s1 @like').click();
+  await $('@solution-s1 @like').expect.toMatch('10');
+});
+
+it('should open solutions tab on clicking solution tag', async () => {
+  engine.mock('solution_searchSolutions', (params, count) => {
+    if (count === 1) {
+      return {
+        cursor: null,
+        items: solutions.slice(0, 2),
+      };
+    }
+    expect(params).toEqual<typeof params>({
+      challengeId: 1,
+      cursor: null,
+      sortBy: 'likes',
+      sortDesc: true,
+      tags: ['react'],
+    });
+    return {
+      cursor: null,
+      items: [],
+    };
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  await $('@solution-s1 @tag:first-child').click();
+});
+
+xit('should open login popup if clicking like as anonymous', () => {});
+
+xit('should open login popup if clicking submit as anonymous', () => {});

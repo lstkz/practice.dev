@@ -63,6 +63,9 @@ export class Engine {
   }
 
   async setup() {
+    if (page.url() !== 'about:blank') {
+      await page.goto('about:blank');
+    }
     await this.page.removeAllListeners();
     await page.setRequestInterception(true);
     await (this.page as any)._client.send('Storage.clearDataForOrigin', {

@@ -40,6 +40,8 @@ export function getTests() {
   global.afterEach = noop;
   // @ts-ignore
   global.after = noop;
+  // @ts-ignore
+  global.xit = noop;
   const fileNames = execSync('find src -name *.test.*', {
     cwd: e2eFrontDir,
   })
