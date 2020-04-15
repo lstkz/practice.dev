@@ -53,8 +53,13 @@ export function SolutionForm() {
           submit();
         }}
       >
-        {error && <Alert type="error">{error}</Alert>}
+        {error && (
+          <Alert data-test="solution-error" type="error">
+            {error}
+          </Alert>
+        )}
         <FormInput
+          testId="url"
           id="url"
           name="url"
           label="Provide Github or Codesandbox URL"
@@ -63,6 +68,7 @@ export function SolutionForm() {
         />
         <FormInput
           id="title"
+          testId="title"
           name="title"
           label="Short title"
           maxLength={50}
@@ -70,17 +76,20 @@ export function SolutionForm() {
         />
         <FormInput
           id="slug"
+          testId="slug"
           name="slug"
           label="Solution slug"
           maxLength={30}
           placeholder="pure-vanilla-javascript"
           description={
             <ShareWrapper>
-              Share url: <ShareInput value={shareUrl} readOnly />
+              Share url:{' '}
+              <ShareInput data-test="share-url" value={shareUrl} readOnly />
             </ShareWrapper>
           }
         />
         <AsyncCreatableFormSelect
+          testId="tags"
           id="tags"
           name="tags"
           label="Tags"
@@ -96,12 +105,19 @@ export function SolutionForm() {
         <FormInput
           multiline
           maxLength={500}
+          testId="description"
           id="description"
           name="description"
           label="Description (optional)"
           placeholder="A very basic solution using vanilla javascript without any frameworks."
         />
-        <Button type="primary" block htmlType="submit" loading={isSubmitting}>
+        <Button
+          testId="submit-btn"
+          type="primary"
+          block
+          htmlType="submit"
+          loading={isSubmitting}
+        >
           SUBMIT
         </Button>
       </form>

@@ -141,65 +141,6 @@ it('should open solutions tab', async () => {
   await $('@load-more-btn').expect.toBeHidden();
 });
 
-it('delete solution', async () => {
-  engine.mock('solution_searchSolutions', () => {
-    return {
-      cursor: null,
-      items: solutions.slice(0, 2),
-    };
-  });
-  engine.mock('solution_removeSolution', params => {
-    expect(params).toEqual<typeof params>('s2');
-  });
-  await page.goto(WEBSITE_URL + '/challenges/1');
-  await $('@solution-s2').expect.toBeVisible();
-  await $('@solutions-tab').click();
-  await $('@solution-details-s2').expect.toBeVisible();
-  await $('@details-tab').click();
-  await $('@solution-s2 @title').click();
-  await $('@solution-menu-btn').click();
-  await $('@solution-menu @delete-btn').click();
-  await $('@confirm-modal').expect.toBeVisible();
-  await $('@confirm-modal @close-btn').click();
-  await $('@confirm-modal').expect.toBeHidden();
-  await $('@solution-menu-btn').click();
-  await $('@solution-menu @delete-btn').click();
-  await $('@confirm-modal @delete-btn').click();
-  await $('@confirm-modal').expect.toBeHidden();
-  await $('@solution-s2').expect.toBeHidden();
-  await $('@solutions-tab').click();
-  await $('@solution-details-s2').expect.toBeHidden();
-  await $('@solution-details-s1').expect.toBeVisible();
-});
-
-it('like solution', async () => {
-  engine.mock('solution_searchSolutions', () => {
-    return {
-      cursor: null,
-      items: solutions.slice(0, 2),
-    };
-  });
-  engine.mock('solution_voteSolution', (params, count) => {
-    if (count === 1) {
-      expect(params).toEqual<typeof params>({
-        like: true,
-        solutionId: 's1',
-      });
-      return 11;
-    }
-    expect(params).toEqual<typeof params>({
-      like: false,
-      solutionId: 's1',
-    });
-    return 10;
-  });
-  await page.goto(WEBSITE_URL + '/challenges/1');
-  await $('@solution-s1 @like').click();
-  await $('@solution-s1 @like').expect.toMatch('11');
-  await $('@solution-s1 @like').click();
-  await $('@solution-s1 @like').expect.toMatch('10');
-});
-
 it('should open solutions tab on clicking solution tag', async () => {
   engine.mock('solution_searchSolutions', (params, count) => {
     if (count === 1) {

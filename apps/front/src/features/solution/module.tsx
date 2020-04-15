@@ -16,6 +16,8 @@ import { getErrorMessage, searchSolutionTags } from 'src/common/helper';
 import { GlobalSolutionsActions } from '../globalSolutions/interface';
 import { GlobalActions } from '../global/interface';
 import { confirmDeleteSolution } from 'src/common/solution';
+import { RouterActions } from 'typeless-router';
+import { createUrl } from 'src/common/url';
 
 handle
   .epic()
@@ -43,11 +45,27 @@ handle
         }
       }).pipe(
         Rx.mergeMap(solution => {
-          return [
+          const actions: any[] = [
             GlobalSolutionsActions.addSolutions([solution]),
-            SolutionActions.created(),
-            SolutionActions.show('view', solution),
           ];
+          if (!solutionId) {
+            actions.push(SolutionActions.created());
+            const url = createUrl({
+              name: 'challenge',
+              id: solution.challengeId,
+              solutionSlug: solution.slug,
+            });
+            const [pathname, search] = url.split('?');
+            actions.push(
+              RouterActions.push({
+                pathname: pathname,
+                search,
+              })
+            );
+          } else {
+            actions.push(SolutionActions.show('view', solution));
+          }
+          return actions;
         }),
         Rx.catchLog(e => Rx.of(SolutionActions.setError(getErrorMessage(e))))
       ),

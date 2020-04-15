@@ -99,6 +99,10 @@ export function $(selector: string) {
       await page.waitForSelector(input, defaultWaitOptions);
       await page.type(input, text, { delay: 10 });
     },
+    async press(key: string) {
+      await page.waitForSelector(input, defaultWaitOptions);
+      await (await page.$(input)).press(key);
+    },
     async clear() {
       await page.waitForSelector(input, defaultWaitOptions);
       await page.click(input, { clickCount: 3 });

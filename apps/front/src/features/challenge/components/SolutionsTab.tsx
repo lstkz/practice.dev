@@ -61,7 +61,12 @@ export const [handle, SolutionsTabActions, getSolutionsTabState] = createModule(
 
 handle
   .epic()
-  .on(SolutionActions.created, () => SolutionsTabActions.load(false))
+  .on(SolutionActions.created, () => {
+    if (!getSolutionsTabState().isLoaded) {
+      return Rx.empty();
+    }
+    return SolutionsTabActions.load(false);
+  })
   .on(SolutionsTabActions.searchTags, ({ keyword, resolve, cursor }) => {
     return searchSolutionTags(
       getChallengeState().challenge.id,

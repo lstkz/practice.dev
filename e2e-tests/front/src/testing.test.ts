@@ -105,7 +105,7 @@ it('should handle an error if there is an error after connect', async () => {
 
 it('should test the solution with PASS', async () => {
   await page.goto(WEBSITE_URL + '/challenges/1');
-  await $('@submit-btn').expect.toBeHidden();
+  await $('@create-solution-btn').expect.toBeHidden();
   const mockSocket = new MockSocket(page);
   await mockSocket.init();
 
@@ -207,7 +207,7 @@ it('should test the solution with PASS', async () => {
   await $('@test-2 @loading').expect.toBeHidden();
   await $('@test-pass').expect.toMatch('PASS');
   await $('@submission-t1 @tag').expect.toMatch('PASS');
-  await $('@submit-btn').expect.toBeVisible();
+  await $('@create-solution-btn').expect.toBeVisible();
 });
 
 it('should test the solution with FAIL', async () => {
