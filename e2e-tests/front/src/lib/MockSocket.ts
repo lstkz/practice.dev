@@ -47,5 +47,6 @@ export class MockSocket {
         data,
       });
     }, JSON.stringify(messages));
+    await page.waitFor(1);
   }
 }

@@ -51,7 +51,41 @@ it('should handle an error if cannot connect to socket', async () => {
 });
 
 it('should handle an error if there is an error after connect', async () => {
-  //
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  const mockSocket = new MockSocket(page);
+  await mockSocket.init();
+  await $('@submit-btn').click();
+  await $('@submit-modal @url-input').type('http://a.bb');
+  await $('@submit-modal @submit-btn').click();
+  await mockSocket.open();
+  await page.waitFor(10);
+  const meta = { id: testId };
+  await mockSocket.sendMessage([
+    {
+      type: 'TEST_INFO',
+      payload: {
+        tests: [
+          {
+            id: 1,
+            name: 'Test1',
+            steps: [],
+            result: 'pending',
+          },
+          {
+            id: 2,
+            name: 'Test2',
+            steps: [],
+            result: 'pending',
+          },
+        ],
+      },
+      meta,
+    },
+  ]);
+  await mockSocket.error('Some error');
+  await $('@app-error').expect.toMatch(
+    'An error occurred. Please refresh the page.'
+  );
 });
 
 it('should handle an error if there is an error after connect', async () => {
@@ -71,6 +105,7 @@ it('should handle an error if there is an error after connect', async () => {
 
 it('should test the solution with PASS', async () => {
   await page.goto(WEBSITE_URL + '/challenges/1');
+  await $('@submit-btn').expect.toBeHidden();
   const mockSocket = new MockSocket(page);
   await mockSocket.init();
 
@@ -172,6 +207,7 @@ it('should test the solution with PASS', async () => {
   await $('@test-2 @loading').expect.toBeHidden();
   await $('@test-pass').expect.toMatch('PASS');
   await $('@submission-t1 @tag').expect.toMatch('PASS');
+  await $('@submit-btn').expect.toBeVisible();
 });
 
 it('should test the solution with FAIL', async () => {
