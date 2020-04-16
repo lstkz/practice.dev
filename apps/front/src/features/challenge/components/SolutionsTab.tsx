@@ -1,7 +1,7 @@
 import { createModule, useActions } from 'typeless';
 import { Solution } from 'shared';
 import { SolutionsTabSymbol } from '../symbol';
-import { SelectOption, SearchResult } from 'src/types';
+import { SelectOption, LoadMoreResult } from 'src/types';
 import React from 'react';
 import * as Rx from 'src/rx';
 import { TabContent } from './TabContent';
@@ -51,7 +51,7 @@ export const [handle, SolutionsTabActions, getSolutionsTabState] = createModule(
       },
     }),
     load: (loadMore: boolean) => ({ payload: { loadMore } }),
-    loaded: (loadMore: boolean, result: SearchResult<Solution>) => ({
+    loaded: (loadMore: boolean, result: LoadMoreResult<Solution>) => ({
       payload: { loadMore, result },
     }),
     setIsLoading: (isLoading: boolean) => ({ payload: { isLoading } }),
@@ -61,7 +61,12 @@ export const [handle, SolutionsTabActions, getSolutionsTabState] = createModule(
 
 handle
   .epic()
-  .on(SolutionActions.created, () => SolutionsTabActions.load(false))
+  .on(SolutionActions.created, () => {
+    if (!getSolutionsTabState().isLoaded) {
+      return Rx.empty();
+    }
+    return SolutionsTabActions.load(false);
+  })
   .on(SolutionsTabActions.searchTags, ({ keyword, resolve, cursor }) => {
     return searchSolutionTags(
       getChallengeState().challenge.id,
@@ -216,7 +221,7 @@ export function SolutionList() {
     );
   }
   if (!items.length) {
-    return <NoData>No Solutions</NoData>;
+    return <NoData data-test="no-solutions">No Solutions</NoData>;
   }
   return (
     <div>
@@ -246,7 +251,9 @@ export function SolutionList() {
           {isLoading ? (
             <VoidLink>Loading...</VoidLink>
           ) : (
-            <VoidLink onClick={() => load(true)}>Load More</VoidLink>
+            <VoidLink data-test="load-more-btn" onClick={() => load(true)}>
+              Load More
+            </VoidLink>
           )}
         </LoadMore>
       )}

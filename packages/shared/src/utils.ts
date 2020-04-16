@@ -43,7 +43,7 @@ export function updateTestResult<T extends TestResultState>(
       const nextTest = getTest(testId + 1);
       test.result = 'pass';
       if (nextTest) {
-        nextTest.result == 'running';
+        nextTest.result = 'running';
       }
       break;
     }

@@ -18,6 +18,7 @@ interface TabProps {
   className?: string;
   children: React.ReactNode;
   active?: boolean;
+  testId?: string;
 }
 
 function _Tabs(props: TabsProps) {
@@ -36,9 +37,10 @@ function _Tabs(props: TabsProps) {
     <div className={className}>
       <ul>
         {tabs.map((item, i) => {
-          const { name, title } = item.props;
+          const { name, testId, title } = item.props;
           return (
             <TabTitle
+              data-test={testId}
               key={name || i}
               active={i === selectedTab || name === selectedTab}
               onClick={() => onIndexChange(name || i)}

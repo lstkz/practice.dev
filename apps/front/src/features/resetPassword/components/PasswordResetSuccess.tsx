@@ -21,7 +21,11 @@ const Icon = styled.div`
 
 export function PasswordResetSuccess() {
   return (
-    <FullPageForm title="Reset Password" padding="sm">
+    <FullPageForm
+      testId="reset-password-success"
+      title="Reset Password"
+      padding="sm"
+    >
       <Content>
         <Icon>
           <MailSuccessIcon />

@@ -49,7 +49,7 @@ export function ChallengesView() {
   return (
     <Dashboard>
       <ConfirmEmailWarning />
-      <Container>
+      <Container data-test="challenges-page">
         <Breadcrumb
           icon={<ChallengesIcon />}
           url={createUrl({ name: 'challenges' })}
@@ -64,7 +64,7 @@ export function ChallengesView() {
                 <ChallengePlaceholder />
               </>
             ) : items.length === 0 ? (
-              <NoData>No Challenges</NoData>
+              <NoData data-test="no-challenges">No Challenges</NoData>
             ) : (
               items.map(item => (
                 <ChallengeInfo key={item.id} challenge={item} />

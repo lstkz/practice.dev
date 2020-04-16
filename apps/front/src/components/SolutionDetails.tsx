@@ -101,10 +101,11 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
     onTagClick,
   } = props;
   return (
-    <div className={className}>
+    <div className={className} data-test={`solution-details-${solution.id}`}>
       <Left>
         {link ? (
           <Title
+            data-test="title"
             as={Link}
             href={createUrl({
               name: 'challenge',
@@ -115,18 +116,19 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
             {solution.title}
           </Title>
         ) : (
-          <Title>{solution.title}</Title>
+          <Title data-test="title">{solution.title}</Title>
         )}
         <By>
-          By <VoidLink>@{solution.user.username}</VoidLink>
+          By <VoidLink data-test="author">@{solution.user.username}</VoidLink>
         </By>
-        <Url href={solution.url} target="_blank">
+        <Url data-test="url" href={solution.url} target="_blank">
           {solution.url}
         </Url>
-        <Desc>{solution.description}</Desc>
+        <Desc data-test="desc">{solution.description}</Desc>
         <Tags>
           {solution.tags.map(tag => (
             <Tag
+              testId="tag"
               key={tag}
               type="difficulty"
               onClick={onTagClick ? () => onTagClick(tag) : undefined}
@@ -138,20 +140,31 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
       </Left>
       <Right>
         <SolutionLike solution={solution} voteSolution={voteSolution} />
-        <DateWrapper>
+        <DateWrapper data-test="date">
           {DateFns.format(new Date(solution.createdAt), 'dd.MM.yyyy')}
         </DateWrapper>
         {canEdit && (
           <Menu>
             <MenuDropdown
+              testId="solution-menu-btn"
               dropdown={
-                <Dropdown style={{ minWidth: 100 }}>
+                <Dropdown data-test="solution-menu" style={{ minWidth: 100 }}>
                   <MenuItem>
-                    <VoidLink onClick={() => onMenu('edit')}>Edit</VoidLink>
+                    <VoidLink
+                      data-test="edit-btn"
+                      onClick={() => onMenu('edit')}
+                    >
+                      Edit
+                    </VoidLink>
                   </MenuItem>
                   <MenuSeparator />
                   <MenuItem red>
-                    <VoidLink onClick={() => onMenu('delete')}>Remove</VoidLink>
+                    <VoidLink
+                      data-test="delete-btn"
+                      onClick={() => onMenu('delete')}
+                    >
+                      Remove
+                    </VoidLink>
                   </MenuItem>
                 </Dropdown>
               }

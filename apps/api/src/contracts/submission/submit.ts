@@ -18,7 +18,7 @@ export const submit = createContract('submission.submit')
     values: S.object().keys({
       challengeId: S.number(),
       testUrl: S.string().regex(
-        /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?$/
+        /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%_\+.~#?&//=]{1,256}\.[a-z]{1,10}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?$/
       ),
     }),
   })

@@ -14,6 +14,7 @@ export function ChallengeTags(props: ChallengeTagsProps) {
   return (
     <>
       <DomainTag
+        testId="tag-domain"
         domain={challenge.domain}
         url={createFullChallengesUrl({
           domains: [challenge.domain],
@@ -21,6 +22,7 @@ export function ChallengeTags(props: ChallengeTagsProps) {
       />
       <Tag
         type="difficulty"
+        testId="tag-difficulty"
         url={createFullChallengesUrl({
           difficulties: [challenge.difficulty],
         })}
@@ -29,6 +31,7 @@ export function ChallengeTags(props: ChallengeTagsProps) {
       </Tag>
       {challenge.tags.map((tag, i) => (
         <Tag
+          testId="tag-custom"
           key={i}
           type="custom"
           url={createFullChallengesUrl({

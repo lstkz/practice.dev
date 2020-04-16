@@ -41,7 +41,7 @@ const _AppErrorBanner = (props: AppErrorBannerProps) => {
     return null;
   }
   return (
-    <div className={className}>
+    <div className={className} data-test="app-error">
       <Inner>
         <WarningIcon color={'white'} scale={1.3} />
         {appError.error}

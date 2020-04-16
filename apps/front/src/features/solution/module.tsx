@@ -16,6 +16,8 @@ import { getErrorMessage, searchSolutionTags } from 'src/common/helper';
 import { GlobalSolutionsActions } from '../globalSolutions/interface';
 import { GlobalActions } from '../global/interface';
 import { confirmDeleteSolution } from 'src/common/solution';
+import { RouterActions, getRouterState } from 'typeless-router';
+import { createUrl } from 'src/common/url';
 
 handle
   .epic()
@@ -43,11 +45,35 @@ handle
         }
       }).pipe(
         Rx.mergeMap(solution => {
-          return [
+          const actions: any[] = [
             GlobalSolutionsActions.addSolutions([solution]),
-            SolutionActions.created(),
-            SolutionActions.show('view', solution),
           ];
+          const url = createUrl({
+            name: 'challenge',
+            id: solution.challengeId,
+            solutionSlug: solution.slug,
+          });
+          const [pathname, search] = url.split('?');
+          if (!solutionId) {
+            actions.push(SolutionActions.created());
+            actions.push(
+              RouterActions.push({
+                pathname: pathname,
+                search,
+              })
+            );
+          } else {
+            if (search !== getRouterState().location?.search) {
+              actions.push(
+                RouterActions.replace({
+                  pathname: pathname,
+                  search,
+                })
+              );
+            }
+            actions.push(SolutionActions.show('view', solution));
+          }
+          return actions;
         }),
         Rx.catchLog(e => Rx.of(SolutionActions.setError(getErrorMessage(e))))
       ),

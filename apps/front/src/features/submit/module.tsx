@@ -17,18 +17,29 @@ import { getChallengeState, ChallengeActions } from '../challenge/interface';
 import { ActionLike } from 'typeless';
 import { SOCKET_URL } from 'src/config';
 import { getErrorMessage } from 'src/common/helper';
+import { GlobalActions } from '../global/interface';
 
 handle
   .epic()
   .on(SubmitActions.connect, (_, { action$ }) => {
     return new Rx.Observable<ActionLike>(subscriber => {
       const ws = new WebSocket(`${SOCKET_URL}?token=${getAccessToken()}`);
+      let isOpened = false;
       ws.onerror = e => {
         console.error(e);
-        subscriber.next(SubmitActions.setError('Cannot connect to server'));
+        if (isOpened) {
+          subscriber.next(
+            GlobalActions.showAppError(
+              'An error occurred. Please refresh the page.'
+            )
+          );
+        } else {
+          subscriber.next(SubmitActions.setError('Cannot connect to server'));
+        }
       };
       ws.onopen = () => {
         subscriber.next(SubmitActions.connected());
+        isOpened = true;
       };
       const subject = new Rx.Subject<ActionLike>();
 

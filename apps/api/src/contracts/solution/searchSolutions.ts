@@ -10,6 +10,7 @@ import {
   SolutionVoteEntity,
 } from '../../entities';
 import { SearchResult } from '../../orm/types';
+import { LoadMoreResult, Solution } from 'shared';
 
 export const searchSolutions = createContract('solution.searchSolutions')
   .params('userId', 'criteria')
@@ -96,7 +97,7 @@ export const searchSolutions = createContract('solution.searchSolutions')
     return {
       items: SolutionEntity.toSolutionMany(items, users, votes),
       cursor: encLastKey(lastKey),
-    };
+    } as LoadMoreResult<Solution>;
   });
 
 export const searchSolutionsRpc = createRpcBinding({

@@ -35,7 +35,7 @@ class MainStack extends cdk.Stack {
       memorySize: 3008,
     });
 
-    new lambda.Function(this, `test`, {
+    const testLambda = new lambda.Function(this, `test`, {
       code: new lambda.InlineCode('//placeholder'),
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: 'src/lambda/test.handler',
@@ -45,8 +45,10 @@ class MainStack extends cdk.Stack {
       environment: {
         AWS: '1',
         E2E_WEBSITE_URL: bucket.bucketWebsiteUrl,
+        BUCKET_NAME: bucket.bucketName,
       },
     });
+    bucket.grantReadWrite(testLambda);
 
     fanout.addToRolePolicy(
       new PolicyStatement({
@@ -65,7 +67,7 @@ class MainStack extends cdk.Stack {
   }
 }
 
-(async function() {
+(async function () {
   const app = new cdk.App();
   new MainStack(app, process.env.E2E_STACK_NAME!);
 

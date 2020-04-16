@@ -1,4 +1,4 @@
-export interface SearchResult<T> {
+export interface LoadMoreResult<T> {
   items: T[];
   cursor: null | string;
 }

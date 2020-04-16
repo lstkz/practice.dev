@@ -28,6 +28,7 @@ export function SolutionModal(props: SolutionModalProps) {
 
   return (
     <Modal
+      testId="solution-modal"
       size="md"
       isOpen={isOpened}
       close={source => {

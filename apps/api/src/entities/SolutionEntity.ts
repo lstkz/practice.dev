@@ -4,6 +4,7 @@ import { UserEntity } from './UserEntity';
 import { SolutionVoteEntity } from './SolutionVoteEntity';
 import { DbKey } from '../types';
 import { QueryKey, BaseSearchCriteria } from '../orm/types';
+import { Solution } from 'shared';
 
 export type SolutionIndex =
   | { type: 'user' }
@@ -173,7 +174,7 @@ export class SolutionEntity extends BaseEntity {
     });
   }
 
-  toSolution(user: UserEntity, vote?: SolutionVoteEntity | null) {
+  toSolution(user: UserEntity, vote?: SolutionVoteEntity | null): Solution {
     return {
       id: this.solutionId,
       challengeId: this.challengeId,

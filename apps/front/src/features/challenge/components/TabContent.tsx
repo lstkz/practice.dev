@@ -6,6 +6,7 @@ interface TabContentProps {
   className?: string;
   left: React.ReactChild;
   right: React.ReactChild;
+  testId?: string;
 }
 
 const Col1 = styled.div`
@@ -21,9 +22,9 @@ const Col2 = styled.div`
 `;
 
 const _TabContent = (props: TabContentProps) => {
-  const { className, left, right } = props;
+  const { className, left, right, testId } = props;
   return (
-    <div className={className}>
+    <div className={className} data-test={testId}>
       <Col1>{left}</Col1>
       <Col2>{right}</Col2>
     </div>

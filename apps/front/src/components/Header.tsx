@@ -129,6 +129,7 @@ const _Header = (props: HeaderProps) => {
           {user ? (
             <UserInfoWrapper>
               <MenuDropdown
+                testId="header-menu"
                 dropdown={
                   <Dropdown>
                     <MenuItem>
@@ -143,24 +144,36 @@ const _Header = (props: HeaderProps) => {
                     </MenuItem>
                     <MenuSeparator />
                     <MenuItem red>
-                      <VoidLink onClick={logout}>Logout</VoidLink>
+                      <VoidLink data-test="logout-btn" onClick={logout}>
+                        Logout
+                      </VoidLink>
                     </MenuItem>
                   </Dropdown>
                 }
               >
                 <UserInfo>
                   <Avatar />
-                  <Username>{user.username}</Username>
+                  <Username data-test="current-username">
+                    {user.username}
+                  </Username>
                   <Caret />
                 </UserInfo>
               </MenuDropdown>
             </UserInfoWrapper>
           ) : (
             <Buttons>
-              <Button type="secondary" href={createUrl({ name: 'login' })}>
+              <Button
+                testId="header-login-btn"
+                type="secondary"
+                href={createUrl({ name: 'login' })}
+              >
                 LOGIN
               </Button>
-              <Button type="primary" href={createUrl({ name: 'register' })}>
+              <Button
+                testId="header-register-btn"
+                type="primary"
+                href={createUrl({ name: 'register' })}
+              >
                 JOIN NOW
               </Button>
             </Buttons>

@@ -24,6 +24,7 @@ export interface InputProps {
   maxLength?: number;
   multiline?: boolean;
   description?: React.ReactNode;
+  testId?: string;
 }
 
 const Prepend = styled.div`
@@ -92,6 +93,7 @@ const _Input = (props: InputProps) => {
     maxLength,
     multiline,
     description,
+    testId,
     ...rest
   } = props;
 
@@ -116,6 +118,7 @@ const _Input = (props: InputProps) => {
       },
       maxLength: maxLength,
       'aria-describedby': `${id}_error`,
+      'data-test': testId,
       ...rest,
     };
     if (multiline) {
@@ -128,6 +131,7 @@ const _Input = (props: InputProps) => {
   return (
     <ErrorTooltip
       id={`${id}_error`}
+      testId={testId ? `${testId}_error` : undefined}
       error={props.feedback}
       isVisible={props.state === 'error'}
     >

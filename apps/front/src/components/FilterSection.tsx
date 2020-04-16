@@ -7,6 +7,7 @@ interface FilterSectionProps {
   className?: string;
   label: string;
   children: React.ReactNode;
+  testId?: string;
 }
 
 const Label = styled.div`
@@ -17,9 +18,9 @@ const Label = styled.div`
 `;
 
 const _FilterSection = (props: FilterSectionProps) => {
-  const { className, label, children } = props;
+  const { className, label, children, testId } = props;
   return (
-    <div className={className}>
+    <div className={className} data-test={testId}>
       <Label>{label}</Label>
       {children}
     </div>

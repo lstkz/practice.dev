@@ -52,10 +52,11 @@ const _SolutionInfo = (props: SolutionInfoProps) => {
   const { className, solution, onTagClick } = props;
   const { voteSolution } = useActions(GlobalSolutionsActions);
   return (
-    <div className={className}>
+    <div className={className} data-test={`solution-${solution.id}`}>
       <Top>
         <Left>
           <Title
+            testId="title"
             href={createUrl({
               name: 'challenge',
               id: solution.challengeId,
@@ -65,7 +66,7 @@ const _SolutionInfo = (props: SolutionInfoProps) => {
             {solution.title}
           </Title>
           <By>
-            By <VoidLink>@{solution.user.username}</VoidLink>
+            By <VoidLink data-test="author">@{solution.user.username}</VoidLink>
           </By>
         </Left>
         <Right>
@@ -75,6 +76,7 @@ const _SolutionInfo = (props: SolutionInfoProps) => {
       <Tags>
         {solution.tags.map(tag => (
           <Tag
+            testId="tag"
             key={tag}
             type="difficulty"
             onClick={onTagClick ? () => onTagClick(tag) : undefined}

@@ -79,18 +79,20 @@ const _TestSuite = (props: TestSuiteProps) => {
   return (
     <div className={className}>
       {targetTestCase.map(test => (
-        <TestRow key={test.id}>
+        <TestRow key={test.id} data-test={`test-${test.id}`}>
           <TestNumber>
             <Colored color={getTestColor(test)}>Test {test.id}:</Colored>
           </TestNumber>
           <TestContent>
             <TestName>
-              {test.result === 'running' && <Spinner size="14px" blue />}
+              {test.result === 'running' && (
+                <Spinner testId="loading" size="14px" blue />
+              )}
               <Colored color={getTestColor(test)}>{test.name}</Colored>
             </TestName>
             {test.steps?.map((step, i) => (
               <React.Fragment key={i}>
-                <Step>{step.text}</Step>
+                <Step data-test={`step-${i + 1}`}>{step.text}</Step>
               </React.Fragment>
             ))}
             {test.error && (
@@ -98,7 +100,9 @@ const _TestSuite = (props: TestSuiteProps) => {
                 <StepResult>
                   <Colored color="red">✗</Colored>
                 </StepResult>
-                <Colored color="red">{test.error}</Colored>
+                <Colored color="red" data-test="test-error">
+                  {test.error}
+                </Colored>
               </StepError>
             )}
           </TestContent>
@@ -107,8 +111,16 @@ const _TestSuite = (props: TestSuiteProps) => {
       {result && (
         <Result>
           <ResultLabel>Result:</ResultLabel>
-          {result === 'FAIL' && <Colored color="red">FAIL</Colored>}
-          {result === 'PASS' && <Colored color="green">PASS</Colored>}
+          {result === 'FAIL' && (
+            <Colored data-test="test-fail" color="red">
+              FAIL
+            </Colored>
+          )}
+          {result === 'PASS' && (
+            <Colored data-test="test-pass" color="green">
+              PASS
+            </Colored>
+          )}
         </Result>
       )}
     </div>

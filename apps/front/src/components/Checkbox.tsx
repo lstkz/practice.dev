@@ -6,12 +6,13 @@ interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   children?: React.ReactNode;
   radio?: boolean;
+  testId?: string;
 }
 
 const _Checkbox = (props: CheckboxProps) => {
-  const { className, children, style, radio, ...rest } = props;
+  const { className, testId, children, style, radio, ...rest } = props;
   return (
-    <label className={className} style={style}>
+    <label className={className} style={style} data-test={testId}>
       <input type="checkbox" {...rest} />
       {children}
       <span />

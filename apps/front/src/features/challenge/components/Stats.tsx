@@ -19,16 +19,20 @@ const _Stats = (props: StatsProps) => {
   const { className } = props;
   const { challenge } = getChallengeState.useState();
   return (
-    <div className={className}>
+    <div className={className} data-test="challenge-stats">
       <SidebarTitle>Stats</SidebarTitle>
       <Row>
-        Submissions <VoidLink>{challenge.stats.submissions}</VoidLink>
+        Submissions{' '}
+        <VoidLink data-test="submissions">
+          {challenge.stats.submissions}
+        </VoidLink>
       </Row>
       <Row>
-        Solved <VoidLink>{challenge.stats.solved}</VoidLink>
+        Solved <VoidLink data-test="solved">{challenge.stats.solved}</VoidLink>
       </Row>
       <Row>
-        Solution <VoidLink>{challenge.stats.solutions}</VoidLink>
+        Solutions{' '}
+        <VoidLink data-test="solutions">{challenge.stats.solutions}</VoidLink>
       </Row>
     </div>
   );

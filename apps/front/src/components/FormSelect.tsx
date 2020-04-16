@@ -22,6 +22,7 @@ interface BaseFormSelectProps {
   label?: string;
   readOnlyText?: boolean;
   description?: string;
+  testId?: string;
 }
 
 interface FormSelectProps<OptionType>
@@ -64,6 +65,7 @@ function BaseSelect(
     id,
     label,
     description,
+    testId,
     ...rest
   } = props;
   const targetId = id || 'select';
@@ -85,10 +87,10 @@ function BaseSelect(
     }
     return value ? value.label : null;
   }
-  console.log(rest);
 
   return (
     <ErrorTooltip
+      testId={testId ? `${targetId}_error` : undefined}
       id={`${targetId}_error`}
       error={data.errors[name]}
       isVisible={hasError}
@@ -96,7 +98,7 @@ function BaseSelect(
       {({ ref }) => (
         <Wrapper data-error={hasError ? true : undefined}>
           {label && <FormLabel id={targetId} label={label} />}
-          <SelectWrapper ref={ref}>
+          <SelectWrapper data-test={testId} ref={ref}>
             <Component
               styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
               // menuPortalTarget={document.body}

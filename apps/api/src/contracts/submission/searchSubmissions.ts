@@ -8,6 +8,7 @@ import {
 } from '../../entities';
 import { doFn, decLastKey, encLastKey } from '../../common/helper';
 import { SearchResult, BaseSearchCriteria } from '../../orm/types';
+import { LoadMoreResult, Submission } from 'shared';
 
 export const searchSubmissions = createContract('submission.searchSubmissions')
   .params('criteria')
@@ -73,7 +74,7 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
     return {
       items: submissions,
       cursor: encLastKey(lastKey),
-    };
+    } as LoadMoreResult<Submission>;
   });
 
 export const searchSubmissionsRpc = createRpcBinding({

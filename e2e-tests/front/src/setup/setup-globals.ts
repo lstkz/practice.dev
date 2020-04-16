@@ -4,7 +4,7 @@ import AWS from 'aws-sdk';
 
 const s3 = new AWS.S3();
 
-jest.setTimeout(10000);
+jest.setTimeout(process.env.AWS ? 10000 : 30000);
 
 function convertSelector(selector: string) {
   return selector.replace(/\@([a-zA-Z0-9_-]+)/g, '[data-test="$1"]');
@@ -31,11 +31,12 @@ function wrapWithScreenshot<T extends { [x: string]: any }>(obj: T) {
       return;
     }
     const target = obj[key];
-    (obj as any)[key] = async function(...args: any[]) {
+    (obj as any)[key] = async function (...args: any[]) {
       try {
         return await target.call(this, ...args);
       } catch (e) {
         if (process.env.AWS) {
+          const BUCKET_NAME = process.env.BUCKET_NAME;
           const filename =
             'screenshot_' + Math.floor(Math.random() * 1e6) + '.png';
           const path = '/tmp/' + filename;
@@ -45,13 +46,13 @@ function wrapWithScreenshot<T extends { [x: string]: any }>(obj: T) {
           await s3
             .upload({
               ContentType: 'image/png',
-              Bucket: 'styx-dev',
+              Bucket: BUCKET_NAME,
               Body: fs.readFileSync(path),
               Key: 'screenshots/' + filename,
             })
             .promise();
           const url = s3.getSignedUrl('getObject', {
-            Bucket: 'styx-dev',
+            Bucket: BUCKET_NAME,
             Key: 'screenshots/' + filename,
           });
           e.stack += '\nScreenshot ' + url;
@@ -74,7 +75,7 @@ export function $(selector: string) {
     },
     async clickByText(text: string) {
       const handle = await page.evaluateHandle(() => document);
-      const btn: ElementHandle = await page.waitForFunction(
+      const btn = (await page.waitForFunction(
         (handle, input, text) => {
           const elements = [...handle.querySelectorAll(input)];
           return elements.find(element => element.innerText.includes(text));
@@ -85,7 +86,7 @@ export function $(selector: string) {
         handle,
         input,
         text
-      );
+      )) as ElementHandle;
       await btn.click();
     },
     async clickClient() {
@@ -97,6 +98,10 @@ export function $(selector: string) {
     async type(text: string) {
       await page.waitForSelector(input, defaultWaitOptions);
       await page.type(input, text, { delay: 10 });
+    },
+    async press(key: string) {
+      await page.waitForSelector(input, defaultWaitOptions);
+      await (await page.$(input)).press(key);
     },
     async clear() {
       await page.waitForSelector(input, defaultWaitOptions);
@@ -203,7 +208,7 @@ export function $(selector: string) {
           expect(actual.attr).toEqual(expected);
         }
       },
-      async toMatch(expected: string | RegExp, exact = false) {
+      async toMatch(expected: string, exact = false) {
         const handle = await page.evaluateHandle(() => document);
         try {
           await page.waitForFunction(

@@ -23,12 +23,15 @@ export function LoginView() {
 
   return (
     <FullPageForm
+      testId="login-form"
       title="Login"
       subTitle="Sign in to your account to continue."
       bottom={
         <>
           Not registered?{' '}
-          <Link href={createUrl({ name: 'register' })}>Create account</Link>
+          <Link testId="register-link" href={createUrl({ name: 'register' })}>
+            Create account
+          </Link>
         </>
       }
     >
@@ -39,27 +42,42 @@ export function LoginView() {
             submit();
           }}
         >
-          {error && <Alert type="error">{error}</Alert>}
+          {error && (
+            <Alert data-test="login-error" type="error">
+              {error}
+            </Alert>
+          )}
 
           <FormInput
+            testId="login-input"
             id="emailOrUsername"
             name="emailOrUsername"
             label="Username or Email"
             placeholder="name@example.com or coder"
           />
           <FormInput
+            testId="password-input"
             id="password"
             name="password"
             label="Password"
             placeholder="********"
             type="password"
             rightLabel={
-              <Link href={createUrl({ name: 'reset-password' })}>
+              <Link
+                testId="reset-password-link"
+                href={createUrl({ name: 'reset-password' })}
+              >
                 Lost password?
               </Link>
             }
           />
-          <Button type="primary" block loading={isSubmitting} htmlType="submit">
+          <Button
+            testId="login-submit"
+            type="primary"
+            block
+            loading={isSubmitting}
+            htmlType="submit"
+          >
             SIGN IN
           </Button>
           <SocialFormButtons />

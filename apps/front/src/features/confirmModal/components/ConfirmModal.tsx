@@ -36,13 +36,19 @@ export function ConfirmModalView() {
   } = getConfirmModalState.useState();
 
   return (
-    <Modal size="sm" isOpen={isOpened} close={() => onResult('close')}>
+    <Modal
+      testId="confirm-modal"
+      size="sm"
+      isOpen={isOpened}
+      close={() => onResult('close')}
+    >
       <FormModalContent title={title}>
         {error && <Alert type="error">{error}</Alert>}
         <Desc>{description}</Desc>
         <Buttons>
           {buttons.map(item => (
             <Button
+              testId={`${item.value}-btn`}
               key={item.value}
               type={item.type}
               onClick={() => onResult(item.value)}
