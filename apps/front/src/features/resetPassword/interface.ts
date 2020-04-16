@@ -10,6 +10,8 @@ export const [
 ] = createModule(ResetPasswordSymbol)
   .withActions({
     $init: null,
+    showModal: null,
+    hideModal: null,
     setDone: null,
     setSubmitting: (isSubmitting: boolean) => ({ payload: { isSubmitting } }),
     setError: (error: string | null) => ({ payload: { error } }),
@@ -30,6 +32,7 @@ export const routeConfig: RouteConfig = {
 
 // --- Types ---
 export interface ResetPasswordState {
+  isModalOpen: boolean;
   isSubmitting: boolean;
   isDone: boolean;
   error: string | null;

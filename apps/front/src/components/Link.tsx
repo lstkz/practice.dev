@@ -17,7 +17,12 @@ export const Link = (props: LinkProps) => {
       href={href}
       ref={innerRef}
       onClick={e => {
-        e.preventDefault();
+        if (onClick) {
+          onClick(e);
+          if (e.isDefaultPrevented()) {
+            return;
+          }
+        }
         if (href) {
           const [pathname, search] = href.split('?');
           push({
@@ -25,9 +30,7 @@ export const Link = (props: LinkProps) => {
             search,
           });
         }
-        if (onClick) {
-          onClick(e);
-        }
+        e.preventDefault();
       }}
     />
   );

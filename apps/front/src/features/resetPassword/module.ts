@@ -27,6 +27,7 @@ handle
 
 // --- Reducer ---
 const initialState: ResetPasswordState = {
+  isModalOpen: false,
   isSubmitting: false,
   isDone: false,
   error: null,
@@ -36,6 +37,13 @@ handle
   .reducer(initialState)
   .on(ResetPasswordActions.$init, state => {
     Object.assign(state, initialState);
+  })
+  .on(ResetPasswordActions.showModal, state => {
+    Object.assign(state, initialState);
+    state.isModalOpen = true;
+  })
+  .on(ResetPasswordActions.hideModal, state => {
+    state.isModalOpen = false;
   })
   .on(ResetPasswordActions.setSubmitting, (state, { isSubmitting }) => {
     state.isSubmitting = isSubmitting;

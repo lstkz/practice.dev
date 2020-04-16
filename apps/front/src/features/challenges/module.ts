@@ -13,6 +13,7 @@ import { RouterActions, getRouterState, RouterLocation } from 'typeless-router';
 import { createChallengesUrl, parseQueryString, isRoute } from 'src/common/url';
 import { ChallengeDifficulty, ChallengeDomain } from 'shared';
 import { SelectOption } from 'src/types';
+import { GlobalActions } from '../global/interface';
 
 export const statuses: SolveStatus[] = ['solved', 'unsolved'];
 export const difficulties: ChallengeDifficulty[] = ['easy', 'medium', 'hard'];
@@ -81,6 +82,7 @@ export function getFilter(location: RouterLocation) {
 // --- Epic ---
 handle
   .epic()
+  .on(GlobalActions.auth, () => ChallengesActions.load())
   .on(ChallengesActions.$mounted, () => ChallengesActions.load())
   .on(RouterActions.locationChange, () => {
     if (isRoute('challenges')) {

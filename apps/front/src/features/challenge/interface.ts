@@ -11,6 +11,8 @@ export const [handle, ChallengeActions, getChallengeState] = createModule(
     $init: null,
     $mounted: null,
     $unmounted: null,
+    reset: null,
+    load: null,
     loaded: (
       challenge: Challenge,
       recentSubmissions: Submission[],

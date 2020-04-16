@@ -5,7 +5,7 @@ import { getRouteParams, parseQueryString, createUrl } from 'src/common/url';
 import { handleAppError } from 'src/common/helper';
 import { BUNDLE_BASE_URL } from 'src/config';
 import { ActionLike } from 'typeless';
-import { getGlobalState } from '../global/interface';
+import { getGlobalState, GlobalActions } from '../global/interface';
 import { SubmitActions } from '../submit/interface';
 import { RouterActions, getRouterState } from 'typeless-router';
 import {
@@ -58,7 +58,11 @@ handle
   .on(ChallengeActions.$mounted, () => {
     return checkSolutionModal();
   })
-  .on(ChallengeActions.$mounted, (_, { action$ }) => {
+  .on(ChallengeActions.$mounted, () => {
+    return ChallengeActions.load();
+  })
+  .on(GlobalActions.auth, () => ChallengeActions.load())
+  .on(ChallengeActions.load, (_, { action$ }) => {
     const { id } = getRouteParams('challenge');
     return Rx.forkJoin([
       api.challenge_getChallengeById(id),

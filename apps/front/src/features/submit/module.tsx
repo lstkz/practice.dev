@@ -17,7 +17,8 @@ import { getChallengeState, ChallengeActions } from '../challenge/interface';
 import { ActionLike } from 'typeless';
 import { SOCKET_URL } from 'src/config';
 import { getErrorMessage } from 'src/common/helper';
-import { GlobalActions } from '../global/interface';
+import { GlobalActions, getGlobalState } from '../global/interface';
+import { LoginActions } from '../login/interface';
 
 handle
   .epic()
@@ -129,7 +130,13 @@ handle
       Rx.of(SubmitActions.setIsSubmitting(false))
     );
   })
-  .on(SubmitActions.show, () => [
+  .on(SubmitActions.show, () => {
+    if (getGlobalState().user) {
+      return SubmitActions.commitShow();
+    }
+    return [LoginActions.showModal()];
+  })
+  .on(SubmitActions.commitShow, () => [
     SubmitFormActions.reset(),
     SubmitActions.setError(null),
   ]);
@@ -157,7 +164,7 @@ handle
   .on(SubmitActions.retry, state => {
     state.tests = [];
   })
-  .on(SubmitActions.show, state => {
+  .on(SubmitActions.commitShow, state => {
     state.isOpened = true;
     state.isSubmitting = false;
     state.error = null;

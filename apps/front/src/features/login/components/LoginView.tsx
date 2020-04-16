@@ -10,6 +10,8 @@ import { useActions } from 'typeless';
 import { getLoginState, LoginActions } from '../interface';
 import { Alert } from 'src/components/Alert';
 import { SocialFormButtons } from 'src/components/SocialFormButtons';
+import { RegisterActions } from 'src/features/register/interface';
+import { ResetPasswordActions } from 'src/features/resetPassword/interface';
 
 export interface LoginViewProps {
   isModal?: boolean;
@@ -20,6 +22,10 @@ export function LoginView(props?: LoginViewProps) {
   useLoginModule();
   const { submit } = useActions(LoginFormActions);
   const { hideModal } = useActions(LoginActions);
+  const { showModal: showRegisterModal } = useActions(RegisterActions);
+  const { showModal: showResetPasswordModal } = useActions(
+    ResetPasswordActions
+  );
   const { isSubmitting, error, isModalOpen } = getLoginState.useState();
 
   return (
@@ -38,7 +44,17 @@ export function LoginView(props?: LoginViewProps) {
       bottom={
         <>
           Not registered?{' '}
-          <Link testId="register-link" href={createUrl({ name: 'register' })}>
+          <Link
+            onClick={e => {
+              if (isModal) {
+                hideModal();
+                showRegisterModal();
+                e.preventDefault();
+              }
+            }}
+            testId="register-link"
+            href={createUrl({ name: 'register' })}
+          >
             Create account
           </Link>
         </>
@@ -73,6 +89,13 @@ export function LoginView(props?: LoginViewProps) {
             type="password"
             rightLabel={
               <Link
+                onClick={e => {
+                  if (isModal) {
+                    hideModal();
+                    showResetPasswordModal();
+                    e.preventDefault();
+                  }
+                }}
                 testId="reset-password-link"
                 href={createUrl({ name: 'reset-password' })}
               >

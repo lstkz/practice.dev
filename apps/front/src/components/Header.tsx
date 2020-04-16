@@ -178,6 +178,10 @@ const _Header = (props: HeaderProps) => {
                 LOGIN
               </Button>
               <Button
+                onClick={e => {
+                  showRegisterModal();
+                  e.preventDefault();
+                }}
                 testId="header-register-btn"
                 type="primary"
                 href={createUrl({ name: 'register' })}

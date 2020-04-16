@@ -9,6 +9,7 @@ export const [handle, SubmitActions, getSubmitState] = createModule(
   .withActions({
     $init: null,
     show: null,
+    commitShow: null,
     close: null,
     connect: null,
     connected: null,

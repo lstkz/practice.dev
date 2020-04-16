@@ -54,6 +54,7 @@ export function RegisterView(props?: RegisterViewProps) {
             onClick={e => {
               if (isModal) {
                 showLoginModal();
+                hideModal();
                 e.preventDefault();
               }
             }}
