@@ -1,35 +1,58 @@
 import React from 'react';
-import { useLoginModule } from '../module';
 import { Button } from 'ui';
 import { Link } from '../../../components/Link';
-import {
-  useLoginForm,
-  LoginFormProvider,
-  LoginFormActions,
-} from '../login-form';
+import { LoginFormProvider, LoginFormActions } from '../login-form';
 import { FormInput } from '../../../components/FormInput';
 import { FullPageForm } from '../../../components/FullPageForm';
 import { createUrl } from '../../../common/url';
 import { useActions } from 'typeless';
-import { getLoginState } from '../interface';
+import { getLoginState, LoginActions } from '../interface';
 import { Alert } from 'src/components/Alert';
 import { SocialFormButtons } from 'src/components/SocialFormButtons';
+import { RegisterActions } from 'src/features/register/interface';
+import { ResetPasswordActions } from 'src/features/resetPassword/interface';
 
-export function LoginView() {
-  useLoginForm();
-  useLoginModule();
+export interface LoginViewProps {
+  isModal?: boolean;
+}
+
+export function LoginView(props?: LoginViewProps) {
+  const { isModal } = props || {};
   const { submit } = useActions(LoginFormActions);
-  const { isSubmitting, error } = getLoginState.useState();
+  const { hideModal } = useActions(LoginActions);
+  const { showModal: showRegisterModal } = useActions(RegisterActions);
+  const { showModal: showResetPasswordModal } = useActions(
+    ResetPasswordActions
+  );
+  const { isSubmitting, error, isModalOpen } = getLoginState.useState();
 
   return (
     <FullPageForm
+      modal={
+        isModal
+          ? {
+              onClose: hideModal,
+              isOpen: isModalOpen,
+            }
+          : null
+      }
       testId="login-form"
       title="Login"
       subTitle="Sign in to your account to continue."
       bottom={
         <>
           Not registered?{' '}
-          <Link testId="register-link" href={createUrl({ name: 'register' })}>
+          <Link
+            onClick={e => {
+              if (isModal) {
+                hideModal();
+                showRegisterModal();
+                e.preventDefault();
+              }
+            }}
+            testId="register-link"
+            href={createUrl({ name: 'register' })}
+          >
             Create account
           </Link>
         </>
@@ -64,6 +87,13 @@ export function LoginView() {
             type="password"
             rightLabel={
               <Link
+                onClick={e => {
+                  if (isModal) {
+                    hideModal();
+                    showResetPasswordModal();
+                    e.preventDefault();
+                  }
+                }}
                 testId="reset-password-link"
                 href={createUrl({ name: 'reset-password' })}
               >

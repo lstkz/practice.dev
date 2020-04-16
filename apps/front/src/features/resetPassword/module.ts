@@ -3,20 +3,32 @@ import { ResetPasswordActions, ResetPasswordState, handle } from './interface';
 import {
   ResetPasswordFormActions,
   getResetPasswordFormState,
+  useResetPasswordForm,
 } from './resetPassword-form';
 import { api } from 'src/services/api';
 import { getErrorMessage } from 'src/common/helper';
+import { RouterActions } from 'typeless-router';
 
 // --- Epic ---
 handle
   .epic()
-  .on(ResetPasswordActions.$init, () => ResetPasswordFormActions.reset())
-  .on(ResetPasswordFormActions.setSubmitSucceeded, () => {
+  .onMany([ResetPasswordActions.showModal, ResetPasswordActions.reset], () =>
+    ResetPasswordFormActions.reset()
+  )
+  .on(ResetPasswordFormActions.setSubmitSucceeded, ({}, { action$ }) => {
     return Rx.concatObs(
       Rx.of(ResetPasswordActions.setSubmitting(true)),
       Rx.of(ResetPasswordActions.setError(null)),
       api.user_resetPassword(getResetPasswordFormState().values.email).pipe(
-        Rx.map(() => ResetPasswordActions.setDone()),
+        Rx.mergeMap(() =>
+          Rx.mergeObs(
+            action$.pipe(
+              Rx.waitForType(RouterActions.locationChange),
+              Rx.map(() => ResetPasswordActions.reset())
+            ),
+            Rx.of(ResetPasswordActions.setDone())
+          )
+        ),
         Rx.catchLog(e => {
           return Rx.of(ResetPasswordActions.setError(getErrorMessage(e)));
         })
@@ -27,6 +39,7 @@ handle
 
 // --- Reducer ---
 const initialState: ResetPasswordState = {
+  isModalOpen: false,
   isSubmitting: false,
   isDone: false,
   error: null,
@@ -34,8 +47,15 @@ const initialState: ResetPasswordState = {
 
 handle
   .reducer(initialState)
-  .on(ResetPasswordActions.$init, state => {
+  .on(ResetPasswordActions.reset, state => {
     Object.assign(state, initialState);
+  })
+  .on(ResetPasswordActions.showModal, state => {
+    Object.assign(state, initialState);
+    state.isModalOpen = true;
+  })
+  .on(ResetPasswordActions.hideModal, state => {
+    state.isModalOpen = false;
   })
   .on(ResetPasswordActions.setSubmitting, (state, { isSubmitting }) => {
     state.isSubmitting = isSubmitting;
@@ -49,5 +69,6 @@ handle
 
 // --- Module ---
 export function useResetPasswordModule() {
+  useResetPasswordForm();
   handle();
 }

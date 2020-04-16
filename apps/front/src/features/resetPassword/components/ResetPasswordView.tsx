@@ -1,9 +1,7 @@
 import React from 'react';
-import { useResetPasswordModule } from '../module';
 import { Button } from 'ui';
 import { Link } from '../../../components/Link';
 import {
-  useResetPasswordForm,
   ResetPasswordFormProvider,
   ResetPasswordFormActions,
 } from '../resetPassword-form';
@@ -11,29 +9,58 @@ import { FormInput } from '../../../components/FormInput';
 import { FullPageForm } from '../../../components/FullPageForm';
 import { createUrl } from '../../../common/url';
 import { useActions } from 'typeless';
-import { getResetPasswordState } from '../interface';
+import { getResetPasswordState, ResetPasswordActions } from '../interface';
 import { Alert } from 'src/components/Alert';
 import { PasswordResetSuccess } from './PasswordResetSuccess';
+import { RegisterActions } from 'src/features/register/interface';
 
-export function ResetPasswordView() {
-  useResetPasswordForm();
-  useResetPasswordModule();
+interface ResetPasswordViewProps {
+  isModal?: boolean;
+}
+
+export function ResetPasswordView(props?: ResetPasswordViewProps) {
+  const { isModal } = props || {};
   const { submit } = useActions(ResetPasswordFormActions);
-  const { isSubmitting, error, isDone } = getResetPasswordState.useState();
+  const { hideModal } = useActions(ResetPasswordActions);
+  const { showModal: showRegisterModal } = useActions(RegisterActions);
+  const {
+    isSubmitting,
+    error,
+    isDone,
+    isModalOpen,
+  } = getResetPasswordState.useState();
 
   if (isDone) {
-    return <PasswordResetSuccess />;
+    return <PasswordResetSuccess isModal={isModal} />;
   }
 
   return (
     <FullPageForm
+      modal={
+        isModal
+          ? {
+              onClose: hideModal,
+              isOpen: isModalOpen,
+            }
+          : null
+      }
       testId="reset-password-form"
       title="Reset Password"
       subTitle="We will send you an email that will allow you to reset your password."
       bottom={
         <>
           Not registered?{' '}
-          <Link testId="register-link" href={createUrl({ name: 'register' })}>
+          <Link
+            onClick={e => {
+              if (isModal) {
+                hideModal();
+                showRegisterModal();
+                e.preventDefault();
+              }
+            }}
+            testId="register-link"
+            href={createUrl({ name: 'register' })}
+          >
             Create account
           </Link>
         </>

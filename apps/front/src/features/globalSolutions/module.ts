@@ -5,19 +5,27 @@ import {
 } from './interface';
 import * as Rx from 'src/rx';
 import { api } from 'src/services/api';
+import { getGlobalState } from '../global/interface';
+import { LoginActions } from '../login/interface';
 
 handle.epic().on(GlobalSolutionsActions.voteSolution, ({ id, like }) => {
-  return api
-    .solution_voteSolution({
-      like,
-      solutionId: id,
-    })
-    .pipe(
-      Rx.ignoreElements(),
-      Rx.catchLog(() => {
-        return Rx.empty();
+  if (!getGlobalState().user) {
+    return LoginActions.showModal();
+  }
+  return Rx.concatObs(
+    Rx.of(GlobalSolutionsActions.commitVoteSolution(id, like)),
+    api
+      .solution_voteSolution({
+        like,
+        solutionId: id,
       })
-    );
+      .pipe(
+        Rx.ignoreElements(),
+        Rx.catchLog(() => {
+          return Rx.empty();
+        })
+      )
+  );
 });
 
 // --- Reducer ---
@@ -32,7 +40,7 @@ handle
       state.solutionMap[item.id] = item;
     });
   })
-  .on(GlobalSolutionsActions.voteSolution, (state, { id, like }) => {
+  .on(GlobalSolutionsActions.commitVoteSolution, (state, { id, like }) => {
     const solution = state.solutionMap[id];
     if (like) {
       solution.likes++;

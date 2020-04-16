@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { FullPageForm } from 'src/components/FullPageForm';
 import { Theme } from 'src/common/Theme';
 import { MailSuccessIcon } from 'src/icons/MailSuccessIcon';
+import { useActions } from 'typeless';
+import { ResetPasswordActions, getResetPasswordState } from '../interface';
 
 const Content = styled.div`
   border-radius: 5px;
@@ -19,12 +21,27 @@ const Icon = styled.div`
   margin-bottom: 10px;
 `;
 
-export function PasswordResetSuccess() {
+interface PasswordResetSuccessProps {
+  isModal?: boolean;
+}
+
+export function PasswordResetSuccess(props: PasswordResetSuccessProps) {
+  const { isModal } = props;
+  const { hideModal } = useActions(ResetPasswordActions);
+  const { isModalOpen } = getResetPasswordState.useState();
   return (
     <FullPageForm
       testId="reset-password-success"
       title="Reset Password"
       padding="sm"
+      modal={
+        isModal
+          ? {
+              onClose: hideModal,
+              isOpen: isModalOpen,
+            }
+          : null
+      }
     >
       <Content>
         <Icon>

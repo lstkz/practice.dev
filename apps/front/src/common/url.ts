@@ -1,4 +1,4 @@
-import { getRouterState } from 'typeless-router';
+import { getRouterState, RouterLocation } from 'typeless-router';
 import * as R from 'remeda';
 
 export type UrlOptions =
@@ -73,12 +73,14 @@ export function getRouteParams(
   }
 }
 
-export function isRoute(name: 'challenges'): boolean;
-export function isRoute(name: 'challenges'): boolean {
-  const location = getRouterState().location!;
+export function isRoute(
+  name: 'challenges' | 'register' | 'login' | 'reset-password',
+  location?: RouterLocation | null
+): boolean {
+  const { pathname } = location || getRouterState().location!;
   switch (name) {
-    case 'challenges': {
-      return location.pathname === createUrl({ name });
+    default: {
+      return pathname === createUrl({ name });
     }
   }
   return false;

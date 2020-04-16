@@ -4,6 +4,8 @@ import { GlobalActions } from 'src/features/global/interface';
 import { ActionLike } from 'typeless';
 import { AsyncResult } from 'react-select-async-paginate';
 import { api } from 'src/services/api';
+import { AuthData } from 'shared';
+import { RouterActions } from 'typeless-router';
 
 function fixErrorMessage(message: string) {
   if (message === 'is required') {
@@ -71,4 +73,28 @@ export function searchSolutionTags(
         return Rx.empty();
       })
     );
+}
+
+interface HandleAuthOptions {
+  authData: AuthData;
+  isModalOpen: boolean;
+  hideModal: () => any;
+  reset: () => any;
+  action$: Rx.Observable<any>;
+}
+
+export function handleAuth(options: HandleAuthOptions) {
+  const { authData, isModalOpen, hideModal, reset, action$ } = options;
+  return Rx.mergeObs(
+    action$.pipe(
+      Rx.waitForType(RouterActions.locationChange),
+      Rx.map(() => reset())
+    ),
+    Rx.defer(() => {
+      if (isModalOpen) {
+        return [GlobalActions.auth(authData, true), hideModal()];
+      }
+      return [GlobalActions.auth(authData)];
+    })
+  );
 }

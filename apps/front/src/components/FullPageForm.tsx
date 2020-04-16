@@ -1,7 +1,8 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Theme } from '../common/Theme';
 import { Logo } from './Logo';
+import { Modal } from './Modal';
 
 interface AuthFormProps {
   className?: string;
@@ -11,15 +12,25 @@ interface AuthFormProps {
   bottom?: React.ReactNode;
   padding?: 'sm' | 'default';
   testId?: string;
+  modal?: {
+    isOpen: boolean;
+    onClose: () => void;
+  } | null;
 }
 
 const Card = styled.div<{
   padding?: 'sm' | 'default';
+  noBorder?: boolean;
 }>`
   border: 1px solid ${Theme.grayLight};
   border-radius: 5px;
   background: white;
   padding: 20px ${props => (props.padding === 'sm' ? '25px' : '55px')} 30px;
+  ${props =>
+    props.noBorder &&
+    css`
+      border: none;
+    `}
 `;
 
 const Wrapper = styled.div`
@@ -65,7 +76,27 @@ const Bottom = styled.div`
 `;
 
 export function FullPageForm(props: AuthFormProps) {
-  const { title, subTitle, children, bottom, padding, testId } = props;
+  const { title, subTitle, children, bottom, padding, testId, modal } = props;
+  if (modal) {
+    return (
+      <Modal
+        isOpen={modal.isOpen}
+        testId={testId}
+        size="sm"
+        close={modal.onClose}
+        noBackgroundClose
+      >
+        <Card padding={padding} noBorder>
+          <Top>
+            <Title>{title}</Title>
+            {subTitle && <SubTitle>{subTitle}</SubTitle>}
+          </Top>
+          {children}
+          {bottom && <Bottom>{bottom}</Bottom>}
+        </Card>
+      </Modal>
+    );
+  }
   return (
     <Wrapper data-test={testId}>
       <Logo type="dark" />

@@ -1,19 +1,37 @@
 import * as Rx from 'src/rx';
-import { LoginActions, LoginState, handle } from './interface';
-import { LoginFormActions, getLoginFormState } from './login-form';
+import { LoginActions, LoginState, handle, getLoginState } from './interface';
+import {
+  LoginFormActions,
+  getLoginFormState,
+  useLoginForm,
+} from './login-form';
 import { api } from 'src/services/api';
 import { GlobalActions } from '../global/interface';
-import { getErrorMessage } from 'src/common/helper';
+import { getErrorMessage, handleAuth } from 'src/common/helper';
 import { AuthData } from 'shared';
+import { isRoute } from 'src/common/url';
 
 // --- Epic ---
 
-function authWith(fn: () => Rx.Observable<AuthData>) {
+function authWith(
+  action$: Rx.Observable<any>,
+  fn: () => Rx.Observable<AuthData>
+) {
+  const { isModalOpen } = getLoginState();
+
   return Rx.concatObs(
     Rx.of(LoginActions.setSubmitting(true)),
     Rx.of(LoginActions.setError(null)),
     fn().pipe(
-      Rx.map(ret => GlobalActions.auth(ret)),
+      Rx.mergeMap(authData =>
+        handleAuth({
+          authData,
+          isModalOpen,
+          hideModal: LoginActions.hideModal,
+          reset: LoginActions.reset,
+          action$,
+        })
+      ),
       Rx.catchLog(e => {
         return Rx.of(LoginActions.setError(getErrorMessage(e)));
       })
@@ -22,29 +40,49 @@ function authWith(fn: () => Rx.Observable<AuthData>) {
   );
 }
 
+function getIsActive() {
+  return getLoginState().isSubmitting || isRoute('login');
+}
+
 handle
   .epic()
-  .on(LoginActions.$init, () => LoginFormActions.reset())
-  .on(LoginFormActions.setSubmitSucceeded, () => {
-    return authWith(() => api.user_login(getLoginFormState().values));
+  .onMany([LoginActions.showModal, LoginActions.reset], () =>
+    LoginFormActions.reset()
+  )
+  .on(LoginFormActions.setSubmitSucceeded, ({}, { action$ }) => {
+    return authWith(action$, () => api.user_login(getLoginFormState().values));
   })
-  .on(GlobalActions.githubCallback, ({ code }) => {
-    return authWith(() => api.user_authGithub(code));
+  .on(GlobalActions.githubCallback, ({ code }, { action$ }) => {
+    if (!getIsActive()) {
+      return Rx.empty();
+    }
+    return authWith(action$, () => api.user_authGithub(code));
   })
-  .on(GlobalActions.googleCallback, ({ token }) => {
-    return authWith(() => api.user_authGoogle(token));
+  .on(GlobalActions.googleCallback, ({ token }, { action$ }) => {
+    if (!getIsActive()) {
+      return Rx.empty();
+    }
+    return authWith(action$, () => api.user_authGoogle(token));
   });
 
 // --- Reducer ---
 const initialState: LoginState = {
+  isModalOpen: false,
   isSubmitting: false,
   error: null,
 };
 
 handle
   .reducer(initialState)
-  .on(LoginActions.$init, state => {
+  .on(LoginActions.reset, state => {
     Object.assign(state, initialState);
+  })
+  .on(LoginActions.showModal, state => {
+    Object.assign(state, initialState);
+    state.isModalOpen = true;
+  })
+  .on(LoginActions.hideModal, state => {
+    state.isModalOpen = false;
   })
   .on(LoginActions.setSubmitting, (state, { isSubmitting }) => {
     state.isSubmitting = isSubmitting;
@@ -55,5 +93,6 @@ handle
 
 // --- Module ---
 export function useLoginModule() {
+  useLoginForm();
   handle();
 }
