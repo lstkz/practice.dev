@@ -27,6 +27,8 @@ describe('register', () => {
     await $('@register-link').expect.toBeVisible();
   });
 
+  xit('should open registration modal from login modal', async () => {});
+
   it('should open registration from reset password page', async () => {
     await page.goto(WEBSITE_URL + '/reset-password');
     await $('@register-link').expect.toBeVisible();
@@ -150,6 +152,8 @@ describe('register', () => {
     });
     await $('@challenges-page').expect.toBeVisible();
   });
+
+  xit('register in modal', async () => {});
 });
 
 describe('login', () => {
@@ -169,6 +173,8 @@ describe('login', () => {
     await page.goto(WEBSITE_URL + '/register');
     await $('@login-link').expect.toBeVisible();
   });
+
+  xit('should open login modal from register modal', async () => {});
 
   it('login with errors', async () => {
     await page.goto(WEBSITE_URL + '/login');
@@ -263,14 +269,20 @@ describe('login', () => {
     });
     await $('@challenges-page').expect.toBeVisible();
   });
+
+  xit('login in modal', async () => {
+    //
+  });
 });
 
 describe('reset password', () => {
-  it('should open login from login page', async () => {
+  it('should open reset password from login page', async () => {
     await page.goto(WEBSITE_URL + '/login');
     await $('@reset-password-link').click();
     await $('@reset-password-form').expect.toBeVisible();
   });
+
+  xit('should open reset password modal from login modal', async () => {});
 
   it('reset password with errors', async () => {
     engine.mock('user_resetPassword', (values, count) => {
@@ -292,7 +304,7 @@ describe('reset password', () => {
     await $('@reset-password-success').expect.toBeVisible();
   });
 
-  it('reset password with errors', async () => {
+  it('reset password', async () => {
     engine.mock('user_resetPassword', (values, count) => {
       expect(values).toEqual<typeof values>('u1@g.com');
     });
@@ -301,6 +313,8 @@ describe('reset password', () => {
     await $('@reset-password-submit').click();
     await $('@reset-password-success').expect.toBeVisible();
   });
+
+  xit('reset password in modal', async () => {});
 });
 
 describe('confirm reset password', () => {

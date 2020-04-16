@@ -12,18 +12,34 @@ import { useActions } from 'typeless';
 import { FullPageForm } from '../../../components/FullPageForm';
 import { SocialFormButtons } from '../../../components/SocialFormButtons';
 import { createUrl } from '../../../common/url';
-import { getRegisterState } from '../interface';
+import { getRegisterState, RegisterActions } from '../interface';
 import { Alert } from 'src/components/Alert';
 import { Colored } from 'src/components/Colored';
+import { LoginActions } from 'src/features/login/interface';
 
-export function RegisterView() {
+export interface RegisterViewProps {
+  isModal?: boolean;
+}
+
+export function RegisterView(props?: RegisterViewProps) {
+  const { isModal } = props || {};
   useRegisterForm();
   useRegisterModule();
   const { submit } = useActions(RegisterFormActions);
-  const { isSubmitting, error } = getRegisterState.useState();
+  const { hideModal } = useActions(RegisterActions);
+  const { showModal: showLoginModal } = useActions(LoginActions);
+  const { isSubmitting, error, isModalOpen } = getRegisterState.useState();
 
   return (
     <FullPageForm
+      modal={
+        isModal
+          ? {
+              onClose: hideModal,
+              isOpen: isModalOpen,
+            }
+          : null
+      }
       testId="register-form"
       title="Create your account"
       subTitle={
@@ -34,7 +50,16 @@ export function RegisterView() {
       bottom={
         <>
           Already have an account?{' '}
-          <Link testId="login-link" href={createUrl({ name: 'login' })}>
+          <Link
+            onClick={e => {
+              if (isModal) {
+                showLoginModal();
+                e.preventDefault();
+              }
+            }}
+            testId="login-link"
+            href={createUrl({ name: 'login' })}
+          >
             Sign in
           </Link>
         </>

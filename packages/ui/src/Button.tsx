@@ -61,6 +61,12 @@ const _Button = (props: ButtonProps, ref: any) => {
         href={href}
         ref={ref}
         onClick={e => {
+          if (onClick) {
+            onClick(e);
+            if (e.isDefaultPrevented()) {
+              return;
+            }
+          }
           e.preventDefault();
           if (href) {
             const [pathname, search] = href.split('?');
@@ -68,9 +74,6 @@ const _Button = (props: ButtonProps, ref: any) => {
               pathname,
               search,
             });
-          }
-          if (onClick) {
-            onClick(e);
           }
         }}
       >

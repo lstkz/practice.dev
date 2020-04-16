@@ -8,6 +8,7 @@ import {
 } from 'src/services/Storage';
 import { api } from 'src/services/api';
 import { createUrl } from 'src/common/url';
+import { ActionLike } from 'typeless';
 
 // --- Epic ---
 handle
@@ -28,12 +29,12 @@ handle
     clearAccessToken();
     return RouterActions.push(createUrl({ name: 'login' }));
   })
-  .on(GlobalActions.auth, ({ user, token }) => {
+  .on(GlobalActions.auth, ({ user, token, noRedirect }) => {
     setAccessToken(token);
-    return Rx.from([
+    return R.compact([
       GlobalActions.loggedIn(user),
-      RouterActions.push(createUrl({ name: 'challenges' })),
-    ]);
+      noRedirect ? null : RouterActions.push(createUrl({ name: 'challenges' })),
+    ]) as ActionLike[];
   });
 
 // --- Reducer ---

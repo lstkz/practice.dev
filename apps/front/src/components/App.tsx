@@ -6,6 +6,7 @@ import { useRouterModule } from '../features/router';
 import { getGlobalState } from 'src/features/global/interface';
 import { useMappedState } from 'typeless';
 import { useGlobalSolutionsModule } from 'src/features/globalSolutions/module';
+import { GlobalModals } from './GlobalModals';
 
 export function App() {
   useGlobalModule();
@@ -19,6 +20,7 @@ export function App() {
   return (
     <>
       <RouteResolver />
+      <GlobalModals />
     </>
   );
 }

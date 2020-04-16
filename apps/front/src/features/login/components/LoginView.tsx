@@ -2,27 +2,36 @@ import React from 'react';
 import { useLoginModule } from '../module';
 import { Button } from 'ui';
 import { Link } from '../../../components/Link';
-import {
-  useLoginForm,
-  LoginFormProvider,
-  LoginFormActions,
-} from '../login-form';
+import { LoginFormProvider, LoginFormActions } from '../login-form';
 import { FormInput } from '../../../components/FormInput';
 import { FullPageForm } from '../../../components/FullPageForm';
 import { createUrl } from '../../../common/url';
 import { useActions } from 'typeless';
-import { getLoginState } from '../interface';
+import { getLoginState, LoginActions } from '../interface';
 import { Alert } from 'src/components/Alert';
 import { SocialFormButtons } from 'src/components/SocialFormButtons';
 
-export function LoginView() {
-  useLoginForm();
+export interface LoginViewProps {
+  isModal?: boolean;
+}
+
+export function LoginView(props?: LoginViewProps) {
+  const { isModal } = props || {};
   useLoginModule();
   const { submit } = useActions(LoginFormActions);
-  const { isSubmitting, error } = getLoginState.useState();
+  const { hideModal } = useActions(LoginActions);
+  const { isSubmitting, error, isModalOpen } = getLoginState.useState();
 
   return (
     <FullPageForm
+      modal={
+        isModal
+          ? {
+              onClose: hideModal,
+              isOpen: isModalOpen,
+            }
+          : null
+      }
       testId="login-form"
       title="Login"
       subTitle="Sign in to your account to continue."
