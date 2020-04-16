@@ -1,5 +1,4 @@
 import React from 'react';
-import { useLoginModule } from '../module';
 import { Button } from 'ui';
 import { Link } from '../../../components/Link';
 import { LoginFormProvider, LoginFormActions } from '../login-form';
@@ -19,7 +18,6 @@ export interface LoginViewProps {
 
 export function LoginView(props?: LoginViewProps) {
   const { isModal } = props || {};
-  useLoginModule();
   const { submit } = useActions(LoginFormActions);
   const { hideModal } = useActions(LoginActions);
   const { showModal: showRegisterModal } = useActions(RegisterActions);

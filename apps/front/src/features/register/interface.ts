@@ -7,9 +7,9 @@ export const [handle, RegisterActions, getRegisterState] = createModule(
   RegisterSymbol
 )
   .withActions({
-    $init: null,
     showModal: null,
     hideModal: null,
+    reset: null,
     setSubmitting: (isSubmitting: boolean) => ({ payload: { isSubmitting } }),
     setError: (error: string | null) => ({ payload: { error } }),
   })

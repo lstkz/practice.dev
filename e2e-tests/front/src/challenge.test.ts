@@ -1,6 +1,11 @@
 import { WEBSITE_URL } from './config';
 import { Engine } from './lib/Engine';
-import { authData1Verified, getChallenges, solutions } from './test-data';
+import {
+  authData1Verified,
+  getChallenges,
+  solutions,
+  authData1,
+} from './test-data';
 
 let engine: Engine = null!;
 
@@ -165,6 +170,46 @@ it('should open solutions tab on clicking solution tag', async () => {
   await $('@solution-s1 @tag:first-child').click();
 });
 
-xit('should open login popup if clicking like as anonymous', () => {});
+it('should open login popup if clicking submit as anonymous', async () => {
+  engine.setToken(null);
+  engine.mock('challenge_getChallengeById', (params, count) => {
+    const challenges = getChallenges(count === 2);
+    return challenges[0];
+  });
+  engine.mock('user_login', (values, count) => {
+    return authData1;
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  await $('@create-solution-btn').expect.toBeHidden();
+  await $('@submit-btn').click();
+  await $('@login-form').expect.toBeVisible();
+  await $('@challenge-title').expect.toBeVisible();
+  await $('@submit-modal').expect.toBeHidden();
+  await $('@login-input').type('a');
+  await $('@password-input').type('a');
+  await $('@login-submit').click();
+  await $('@login-form').expect.toBeHidden();
+  await $('@create-solution-btn').expect.toBeVisible();
+  await $('@submit-btn').click();
+  await $('@submit-modal').expect.toBeVisible();
+});
 
-xit('should open login popup if clicking submit as anonymous', () => {});
+it('should open login popup if clicking like as anonymous', async () => {
+  engine.setToken(null);
+  engine.mock('challenge_getChallengeById', (params, count) => {
+    const challenges = getChallenges(count === 2);
+    return challenges[0];
+  });
+  engine.mock('solution_searchSolutions', () => {
+    return {
+      cursor: null,
+      items: solutions.slice(0, 2),
+    };
+  });
+  engine.mock('solution_voteSolution', () => {
+    throw new Error('Should not be called');
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  await $('@solution-s1 @like').click();
+  await $('@login-form').expect.toBeVisible();
+});

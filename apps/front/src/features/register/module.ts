@@ -6,27 +6,38 @@ import {
   handle,
   getRegisterState,
 } from './interface';
-import { RegisterFormActions, getRegisterFormState } from './register-form';
+import {
+  RegisterFormActions,
+  getRegisterFormState,
+  useRegisterForm,
+} from './register-form';
 import { api } from 'src/services/api';
 import { GlobalActions } from '../global/interface';
-import { getErrorMessage } from 'src/common/helper';
+import { getErrorMessage, handleAuth } from 'src/common/helper';
 import { AuthData } from 'shared';
+import { isRoute } from 'src/common/url';
 
 // --- Epic ---
 
-function authWith(fn: () => Rx.Observable<AuthData>) {
+function authWith(
+  action$: Rx.Observable<any>,
+  fn: () => Rx.Observable<AuthData>
+) {
   const { isModalOpen } = getRegisterState();
 
   return Rx.concatObs(
     Rx.of(RegisterActions.setSubmitting(true)),
     Rx.of(RegisterActions.setError(null)),
     fn().pipe(
-      Rx.mergeMap(ret => {
-        if (isModalOpen) {
-          return [GlobalActions.auth(ret, true), RegisterActions.hideModal()];
-        }
-        return [GlobalActions.auth(ret)];
-      }),
+      Rx.mergeMap(authData =>
+        handleAuth({
+          authData,
+          isModalOpen,
+          hideModal: RegisterActions.hideModal,
+          reset: RegisterActions.reset,
+          action$,
+        })
+      ),
       Rx.catchLog(e => {
         return Rx.of(RegisterActions.setError(getErrorMessage(e)));
       })
@@ -35,20 +46,30 @@ function authWith(fn: () => Rx.Observable<AuthData>) {
   );
 }
 
+function getIsActive() {
+  return getRegisterState().isSubmitting || isRoute('register');
+}
+
 handle
   .epic()
-  .onMany([RegisterActions.$init, RegisterActions.showModal], () =>
+  .onMany([RegisterActions.showModal, RegisterActions.reset], () =>
     RegisterFormActions.reset()
   )
-  .on(RegisterFormActions.setSubmitSucceeded, () => {
+  .on(RegisterFormActions.setSubmitSucceeded, ({}, { action$ }) => {
     const values = R.omit(getRegisterFormState().values, ['confirmPassword']);
-    return authWith(() => api.user_register(values));
+    return authWith(action$, () => api.user_register(values));
   })
-  .on(GlobalActions.githubCallback, ({ code }) => {
-    return authWith(() => api.user_authGithub(code));
+  .on(GlobalActions.githubCallback, ({ code }, { action$ }) => {
+    if (!getIsActive()) {
+      return Rx.empty();
+    }
+    return authWith(action$, () => api.user_authGithub(code));
   })
-  .on(GlobalActions.googleCallback, ({ token }) => {
-    return authWith(() => api.user_authGoogle(token));
+  .on(GlobalActions.googleCallback, ({ token }, { action$ }) => {
+    if (!getIsActive()) {
+      return Rx.empty();
+    }
+    return authWith(action$, () => api.user_authGoogle(token));
   });
 
 // --- Reducer ---
@@ -60,7 +81,7 @@ const initialState: RegisterState = {
 
 handle
   .reducer(initialState)
-  .on(RegisterActions.$init, state => {
+  .on(RegisterActions.reset, state => {
     Object.assign(state, initialState);
   })
   .on(RegisterActions.showModal, state => {
@@ -79,5 +100,6 @@ handle
 
 // --- Module ---
 export function useRegisterModule() {
+  useRegisterForm();
   handle();
 }

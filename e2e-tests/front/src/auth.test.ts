@@ -1,6 +1,11 @@
 import { WEBSITE_URL } from './config';
 import { Engine, MockError } from './lib/Engine';
-import { emptyChallenges, authData1, authData1Verified } from './test-data';
+import {
+  emptyChallenges,
+  authData1,
+  authData1Verified,
+  getChallenges,
+} from './test-data';
 
 let engine: Engine = null!;
 
@@ -27,7 +32,17 @@ describe('register', () => {
     await $('@register-link').expect.toBeVisible();
   });
 
-  xit('should open registration modal from login modal', async () => {});
+  it('should open registration modal from login modal', async () => {
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    await page.goto(WEBSITE_URL + '/challenges');
+    await $('@header-login-btn').click();
+    await $('@login-form').expect.toBeVisible();
+    await $('@register-link').click();
+    await $('@login-form').expect.toBeHidden();
+    await $('@register-form').expect.toBeVisible();
+  });
 
   it('should open registration from reset password page', async () => {
     await page.goto(WEBSITE_URL + '/reset-password');
@@ -153,7 +168,31 @@ describe('register', () => {
     await $('@challenges-page').expect.toBeVisible();
   });
 
-  xit('register in modal', async () => {});
+  it('register in modal', async () => {
+    engine.mock('user_register', (values, count) => {
+      expect(values).toEqual<typeof values>({
+        email: 'u1@g.com',
+        password: '12345',
+        username: 'user1',
+      });
+      return authData1;
+    });
+    engine.mock('challenge_searchChallenges', (params, count) => {
+      if (count === 1) {
+        return emptyChallenges;
+      }
+      return emptyChallenges;
+    });
+    await page.goto(WEBSITE_URL + '/challenges');
+    await $('@header-register-btn').click();
+    await $('@username-input').type('user1');
+    await $('@email-input').type('u1@g.com');
+    await $('@password-input').type('12345');
+    await $('@confirm-password-input').type('12345');
+    await $('@register-submit').click();
+    await $('@current-username').expect.toMatch('user1');
+    await $('@register-form').expect.toBeHidden();
+  });
 });
 
 describe('login', () => {
@@ -174,7 +213,17 @@ describe('login', () => {
     await $('@login-link').expect.toBeVisible();
   });
 
-  xit('should open login modal from register modal', async () => {});
+  it('should open login modal from register modal', async () => {
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    await page.goto(WEBSITE_URL + '/challenges');
+    await $('@header-register-btn').click();
+    await $('@register-form').expect.toBeVisible();
+    await $('@login-link').click();
+    await $('@login-form').expect.toBeVisible();
+    await $('@register-form').expect.toBeHidden();
+  });
 
   it('login with errors', async () => {
     await page.goto(WEBSITE_URL + '/login');
@@ -270,8 +319,33 @@ describe('login', () => {
     await $('@challenges-page').expect.toBeVisible();
   });
 
-  xit('login in modal', async () => {
-    //
+  it('login in modal', async () => {
+    engine.mock('user_login', (values, count) => {
+      expect(values).toEqual<typeof values>({
+        password: '12345',
+        emailOrUsername: 'user1',
+      });
+      return authData1;
+    });
+    engine.mock('challenge_searchChallenges', (params, count) => {
+      const challenges = getChallenges(count > 1);
+      return {
+        items: challenges.slice(0, 10),
+        pageNumber: 0,
+        pageSize: 10,
+        total: challenges.length,
+        totalPages: Math.ceil(challenges.length / 10),
+      };
+    });
+    await page.goto(WEBSITE_URL + '/challenges');
+    await $('@challenge_1').expect.toBeVisible();
+    await $('@challenge_1 @solved-tag').expect.toBeHidden();
+    await $('@header-login-btn').click();
+    await $('@login-input').type('user1');
+    await $('@password-input').type('12345');
+    await $('@login-submit').click();
+    await $('@login-form').expect.toBeHidden();
+    await $('@challenge_1 @solved-tag').expect.toBeVisible();
   });
 });
 
@@ -282,7 +356,20 @@ describe('reset password', () => {
     await $('@reset-password-form').expect.toBeVisible();
   });
 
-  xit('should open reset password modal from login modal', async () => {});
+  it('should open reset password modal from login modal', async () => {
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    await page.goto(WEBSITE_URL + '/challenges');
+    await $('@header-login-btn').click();
+    await $('@login-form').expect.toBeVisible();
+    await $('@reset-password-link').click();
+    await $('@reset-password-form').expect.toBeVisible();
+    await $('@login-form').expect.toBeHidden();
+    await $('@register-link').click();
+    await $('@reset-password-form').expect.toBeHidden();
+    await $('@register-form').expect.toBeVisible();
+  });
 
   it('reset password with errors', async () => {
     engine.mock('user_resetPassword', (values, count) => {

@@ -9,7 +9,7 @@ export const [
   getResetPasswordState,
 ] = createModule(ResetPasswordSymbol)
   .withActions({
-    $init: null,
+    reset: null,
     showModal: null,
     hideModal: null,
     setDone: null,

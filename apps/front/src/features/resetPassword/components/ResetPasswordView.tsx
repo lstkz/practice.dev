@@ -1,9 +1,7 @@
 import React from 'react';
-import { useResetPasswordModule } from '../module';
 import { Button } from 'ui';
 import { Link } from '../../../components/Link';
 import {
-  useResetPasswordForm,
   ResetPasswordFormProvider,
   ResetPasswordFormActions,
 } from '../resetPassword-form';
@@ -22,8 +20,6 @@ interface ResetPasswordViewProps {
 
 export function ResetPasswordView(props?: ResetPasswordViewProps) {
   const { isModal } = props || {};
-  useResetPasswordForm();
-  useResetPasswordModule();
   const { submit } = useActions(ResetPasswordFormActions);
   const { hideModal } = useActions(ResetPasswordActions);
   const { showModal: showRegisterModal } = useActions(RegisterActions);

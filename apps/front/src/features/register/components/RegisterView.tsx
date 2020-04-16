@@ -1,12 +1,7 @@
 import React from 'react';
-import { useRegisterModule } from '../module';
 import { Button } from 'ui';
 import { Link } from '../../../components/Link';
-import {
-  useRegisterForm,
-  RegisterFormProvider,
-  RegisterFormActions,
-} from '../register-form';
+import { RegisterFormProvider, RegisterFormActions } from '../register-form';
 import { FormInput } from '../../../components/FormInput';
 import { useActions } from 'typeless';
 import { FullPageForm } from '../../../components/FullPageForm';
@@ -23,8 +18,6 @@ export interface RegisterViewProps {
 
 export function RegisterView(props?: RegisterViewProps) {
   const { isModal } = props || {};
-  useRegisterForm();
-  useRegisterModule();
   const { submit } = useActions(RegisterFormActions);
   const { hideModal } = useActions(RegisterActions);
   const { showModal: showLoginModal } = useActions(LoginActions);
