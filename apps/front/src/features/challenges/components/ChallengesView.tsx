@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { ChallengeInfo } from './ChallengeInfo';
 import { getChallengesState } from '../interface';
 import { Container } from 'src/components/Container';
-import { ConfirmEmailWarning } from 'src/components/ConfirmEmailWarning';
 import { Breadcrumb } from 'src/components/Breadcrumb';
 import { createUrl } from 'src/common/url';
 import { ChallengesIcon } from 'src/icons/ChallengesIcon';
@@ -48,7 +47,6 @@ export function ChallengesView() {
 
   return (
     <Dashboard>
-      <ConfirmEmailWarning />
       <Container data-test="challenges-page">
         <Breadcrumb
           icon={<ChallengesIcon />}

@@ -24,6 +24,10 @@ export type UrlOptions =
     }
   | {
       name: 'home';
+    }
+  | {
+      name: 'profile';
+      username: string;
     };
 
 export function createUrl(options: UrlOptions) {
@@ -47,14 +51,17 @@ export function createUrl(options: UrlOptions) {
       return '/projects';
     case 'home':
       return '/challenges';
+    case 'profile':
+      return '/profile/' + options.username;
   }
 }
 
 export function getRouteParams(name: 'reset-password'): { code: string };
 export function getRouteParams(name: 'challenge'): { id: number };
 export function getRouteParams(name: 'confirm'): { code: string };
+export function getRouteParams(name: 'profile'): { username: string };
 export function getRouteParams(
-  name: 'reset-password' | 'challenge' | 'confirm'
+  name: 'reset-password' | 'challenge' | 'confirm' | 'profile'
 ): any {
   const location = getRouterState().location!;
   const getLast = () => R.last(location.pathname.split('/'));
@@ -68,6 +75,11 @@ export function getRouteParams(
     case 'challenge': {
       return {
         id: Number(getLast()),
+      };
+    }
+    case 'profile': {
+      return {
+        username: getLast(),
       };
     }
   }

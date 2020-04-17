@@ -1,7 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Solution } from 'shared';
-import { VoidLink } from 'src/components/VoidLink';
 import { Tag } from 'src/components/Tag';
 import { Theme } from 'ui';
 import { useActions } from 'typeless';
@@ -66,7 +65,16 @@ const _SolutionInfo = (props: SolutionInfoProps) => {
             {solution.title}
           </Title>
           <By>
-            By <VoidLink data-test="author">@{solution.user.username}</VoidLink>
+            By{' '}
+            <Link
+              href={createUrl({
+                name: 'profile',
+                username: solution.user.username,
+              })}
+              data-test="author"
+            >
+              @{solution.user.username}
+            </Link>
           </By>
         </Left>
         <Right>
