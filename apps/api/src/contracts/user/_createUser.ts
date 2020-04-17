@@ -38,6 +38,13 @@ export async function _createUser(values: CreateUserValues) {
     password: password,
     isVerified: values.isVerified,
     githubId: values.githubId,
+    stats: {
+      followers: 0,
+      following: 0,
+      likes: 0,
+      solutions: 0,
+      submissions: 0,
+    },
   });
 
   await Promise.all([

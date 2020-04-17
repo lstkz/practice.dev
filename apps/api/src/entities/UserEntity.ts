@@ -1,6 +1,6 @@
 import * as R from 'remeda';
 import { createBaseEntity } from '../lib';
-import { User, PublicUser } from 'shared';
+import { User, PublicUser, PublicUserProfile } from 'shared';
 import { UserEmailEntity } from './UserEmailEntity';
 import { UserUsernameEntity } from './UserUsernameEntity';
 
@@ -16,6 +16,17 @@ export interface UserProps extends UserKey {
   isVerified: boolean;
   githubId?: number;
   isAdmin?: boolean;
+  name?: string;
+  url?: string;
+  avatarUrl?: string;
+  bio?: string;
+  stats: {
+    solutions: number;
+    likes: number;
+    followers: number;
+    following: number;
+    submissions: number;
+  };
 }
 
 const BaseEntity = createBaseEntity()
@@ -24,6 +35,19 @@ const BaseEntity = createBaseEntity()
   .build();
 
 export class UserEntity extends BaseEntity {
+  constructor(props: UserProps) {
+    if (!props.stats) {
+      props.stats = {
+        solutions: 0,
+        likes: 0,
+        followers: 0,
+        following: 0,
+        submissions: 0,
+      };
+    }
+    super(props);
+  }
+
   static async getUserIdByEmailOrUsernameOrNull(emailOrUsername: string) {
     if (emailOrUsername.includes('@')) {
       const item = await UserEmailEntity.getByKeyOrNull({
@@ -88,6 +112,23 @@ export class UserEntity extends BaseEntity {
     return {
       id: this.userId,
       username: this.username,
+    };
+  }
+
+  toPublicUserProfile(isFollowed: boolean): PublicUserProfile {
+    return {
+      id: this.userId,
+      username: this.username,
+      avatarUrl: this.avatarUrl ?? null,
+      name: this.name ?? '',
+      url: this.url ?? '',
+      bio: this.bio ?? '',
+      isFollowed,
+      submissionsCount: this.stats.submissions,
+      solutionsCount: this.stats.solutions,
+      likesCount: this.stats.likes,
+      followersCount: this.stats.followers,
+      followingCount: this.stats.following,
     };
   }
 }

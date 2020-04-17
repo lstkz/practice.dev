@@ -2,6 +2,7 @@ import { DynamoDB } from 'aws-sdk';
 import { ExpressionOptions, Instance, DynamoKey } from './types';
 import { TransactWriteItemList, Converter } from 'aws-sdk/clients/dynamodb';
 import { prepareUpdate } from './helper';
+import { DynamodbWrapper } from './DynamodbWrapper';
 
 interface UpdateRawOptions {
   tableName: string;
@@ -22,8 +23,11 @@ export class Transaction {
   > = [];
   private deleteEntities: Array<[Instance<{}>, ExpressionOptions?]> = [];
   private updateRawEntities: UpdateRawOptions[] = [];
+  private dynamodb: DynamodbWrapper;
 
-  constructor(private dynamodb: DynamoDB) {}
+  constructor(dynamodb: DynamoDB) {
+    this.dynamodb = new DynamodbWrapper(dynamodb);
+  }
 
   insert<T>(entity: Instance<T>, options?: ExpressionOptions) {
     this.insertEntities.push([entity, options]);
@@ -112,23 +116,17 @@ export class Transaction {
     try {
       if (process.env.MOCK_DB && items.length > 10) {
         await Promise.all([
-          this.dynamodb
-            .transactWriteItems({
-              TransactItems: items.slice(0, 10),
-            })
-            .promise(),
-          this.dynamodb
-            .transactWriteItems({
-              TransactItems: items.slice(10),
-            })
-            .promise(),
+          this.dynamodb.transactWriteItems({
+            TransactItems: items.slice(0, 10),
+          }),
+          this.dynamodb.transactWriteItems({
+            TransactItems: items.slice(10),
+          }),
         ]);
       } else {
-        await this.dynamodb
-          .transactWriteItems({
-            TransactItems: items,
-          })
-          .promise();
+        await this.dynamodb.transactWriteItems({
+          TransactItems: items,
+        });
       }
     } catch (e) {
       if (options?.ignoreTransactionCanceled) {
