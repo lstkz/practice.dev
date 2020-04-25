@@ -1,8 +1,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { getPublicProfileState } from '../interface';
-import { Theme, Button } from 'ui';
+import { Theme } from 'ui';
 import { LinkIcon } from 'src/icons/LinkIcon';
+import { countryList } from 'shared';
 
 interface ProfileInfoProps {
   className?: string;
@@ -20,6 +21,7 @@ const Name = styled.div`
   line-height: 32px;
   font-weight: 500;
   margin-top: 20px;
+  color: ${Theme.textDark};
 `;
 const Country = styled.div`
   margin-top: 12px;
@@ -33,9 +35,9 @@ const Bio = styled.div`
   border-radius: 5px;
 `;
 
-const FollowButton = styled(Button)`
-  margin-top: 20px;
-`;
+// const FollowButton = styled(Button)`
+//   margin-top: 20px;
+// `;
 
 const ExternalLink = styled.a`
   margin-top: 30px;
@@ -50,19 +52,31 @@ const ExternalLink = styled.a`
 const _ProfileInfo = (props: ProfileInfoProps) => {
   const { className } = props;
   const { profile } = getPublicProfileState.useState();
+  const country = React.useMemo(() => {
+    if (!profile.country) {
+      return null;
+    }
+    return countryList.find(x => x.code === profile.country);
+  }, [profile]);
   return (
-    <div className={className}>
+    <div className={className} data-test="profile-info">
       <Avatar />
-      <Name>{profile.username}</Name>
-      <Country>🇵🇱Poland</Country>
-      <Bio>“Hi, I am a full stack developer!“</Bio>
-      <FollowButton block type="primary">
+      <Name data-test="name">{profile.name || profile.username}</Name>
+      {country && (
+        <Country data-test="country">
+          {country.emoji} {country.name}
+        </Country>
+      )}
+      {profile.bio && <Bio data-test="bio">“{profile.bio}“</Bio>}
+      {/* <FollowButton block type="primary">
         + FOLLOW
-      </FollowButton>
-      <ExternalLink>
-        <LinkIcon />
-        https://twitter.com/MyAccount
-      </ExternalLink>
+      </FollowButton> */}
+      {profile.url && (
+        <ExternalLink data-test="url" href={profile.url} target="_blank">
+          <LinkIcon />
+          {profile.url}
+        </ExternalLink>
+      )}
     </div>
   );
 };

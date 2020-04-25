@@ -3,9 +3,6 @@ import ContentLoader from 'react-content-loader';
 import styled from 'styled-components';
 import { Theme } from 'ui';
 
-const primaryColor = '#DDDEE4';
-const secondaryColor = '#ccc';
-
 interface SolutionLoaderProps {
   className?: string;
 }
@@ -19,8 +16,8 @@ const _SolutionLoader = (props: SolutionLoaderProps) => {
         width={700}
         height={200}
         viewBox="0 0 700 200"
-        primaryColor={primaryColor}
-        secondaryColor={secondaryColor}
+        primaryColor={Theme.loaderPrimary}
+        secondaryColor={Theme.loaderSecondary}
       >
         <rect x="0" y="0" rx="5" ry="5" width="250" height="25" />
         <rect x="0" y="90" rx="5" ry="5" width="356" height="15" />

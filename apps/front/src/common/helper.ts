@@ -98,3 +98,22 @@ export function handleAuth(options: HandleAuthOptions) {
     })
   );
 }
+
+export function getSolutionsSortCriteria(
+  sortOrder: 'likes' | 'newest' | 'oldest'
+) {
+  return sortOrder === 'newest'
+    ? {
+        sortBy: 'date' as const,
+        sortDesc: true,
+      }
+    : sortOrder === 'oldest'
+    ? {
+        sortBy: 'date' as const,
+        sortDesc: false,
+      }
+    : {
+        sortBy: 'likes' as const,
+        sortDesc: true,
+      };
+}

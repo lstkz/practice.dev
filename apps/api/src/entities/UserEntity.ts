@@ -11,6 +11,7 @@ export interface UserKey {
 export interface UserProps extends UserKey {
   email: string;
   username: string;
+  country?: string;
   salt: string;
   password: string;
   isVerified: boolean;
@@ -119,6 +120,7 @@ export class UserEntity extends BaseEntity {
     return {
       id: this.userId,
       username: this.username,
+      country: this.country ?? null,
       avatarUrl: this.avatarUrl ?? null,
       name: this.name ?? '',
       url: this.url ?? '',

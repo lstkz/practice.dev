@@ -188,6 +188,7 @@ export interface PagedResult<T> {
 export interface PublicUserProfile {
   id: string;
   username: string;
+  country: string | null;
   avatarUrl: string | null;
   name: string;
   url: string;

@@ -44,4 +44,6 @@ export const Theme = {
   pinkTagBg: '#EDD7F8',
   orangeTag: '#FFAC28',
   orangeTagBg: '#FFF4D8',
+  loaderPrimary: '#DDDEE4',
+  loaderSecondary: '#ccc',
 };
