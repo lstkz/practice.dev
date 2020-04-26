@@ -2,14 +2,15 @@ import { mocked } from 'ts-jest/utils';
 import { exchangeCode, getUserData } from '../../src/common/github';
 import { _createUser } from '../../src/contracts/user/_createUser';
 import { authGithub } from '../../src/contracts/user/authGithub';
-import { resetDb } from '../helper';
+import { resetDb, initDb } from '../helper';
 
 jest.mock('../../src/common/github');
 
 const mockedExchangeCode = mocked(exchangeCode);
 const mockedGetUserData = mocked(getUserData);
 
-beforeAll(() => {
+beforeAll(async () => {
+  await initDb();
   mockedExchangeCode.mockImplementation(async () => '123');
 });
 
@@ -17,7 +18,6 @@ beforeEach(resetDb);
 
 it('return auth data for connected user', async () => {
   await _createUser({
-    userId: '1',
     email: 'user1@example.com',
     password: 'pass',
     username: 'user1',
@@ -32,12 +32,11 @@ it('return auth data for connected user', async () => {
   }));
 
   const ret = await authGithub('abc');
-  expect(ret.user.id).toEqual('1');
+  expect(ret.user.id).toEqual(1);
 });
 
 it('return auth data for not connected user, but email exists', async () => {
   await _createUser({
-    userId: '1',
     email: 'user1@example.com',
     password: 'pass',
     username: 'user1',
@@ -52,12 +51,11 @@ it('return auth data for not connected user, but email exists', async () => {
   }));
 
   const ret = await authGithub('abc');
-  expect(ret.user.id).toEqual('1');
+  expect(ret.user.id).toEqual(1);
 });
 
 it('throw error if trying to connect by email and already associated with github', async () => {
   await _createUser({
-    userId: '1',
     email: 'user1@example.com',
     password: 'pass',
     username: 'user1',
@@ -88,7 +86,6 @@ it('register a new user', async () => {
 
 it('register a new user (duplicated username)', async () => {
   await _createUser({
-    userId: '2',
     email: 'user2@example.com',
     password: 'pass',
     username: 'git123',

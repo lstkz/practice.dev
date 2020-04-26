@@ -1,4 +1,4 @@
-import { resetDb } from '../helper';
+import { resetDb, initDb } from '../helper';
 import { SES } from 'aws-sdk';
 import { login } from '../../src/contracts/user/login';
 import { confirmResetPassword } from '../../src/contracts/user/confirmResetPassword';
@@ -7,6 +7,10 @@ import { ses } from '../../src/lib';
 import { resetPassword } from '../../src/contracts/user/resetPassword';
 
 let resetCode: string = '';
+
+beforeAll(async () => {
+  await initDb();
+});
 
 beforeEach(async () => {
   await resetDb();

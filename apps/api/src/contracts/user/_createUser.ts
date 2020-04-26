@@ -1,16 +1,8 @@
 import { randomSalt, createPasswordHash } from '../../common/helper';
-import uuid from 'uuid';
-import {
-  UserEmailEntity,
-  UserUsernameEntity,
-  UserEntity,
-  GithubUserEntity,
-} from '../../entities';
-import { createTransaction } from '../../lib';
-import { AppError } from '../../common/errors';
+import { SeqCollection } from '../../collections/SeqModel';
+import { UserModel, UserCollection } from '../../collections/UserModel';
 
 interface CreateUserValues {
-  userId?: string;
   email: string;
   password: string;
   username: string;
@@ -18,26 +10,36 @@ interface CreateUserValues {
   githubId?: number;
 }
 
+export async function getNextUserId() {
+  const ret = await SeqCollection.findOneAndUpdate(
+    {
+      _id: 'user_id',
+    },
+    {
+      $inc: {
+        seq: 1,
+      },
+    },
+    {
+      upsert: true,
+      returnOriginal: false,
+    }
+  );
+  return ret.value!.seq;
+}
+
 export async function _createUser(values: CreateUserValues) {
-  const userId = values.userId || uuid();
   const salt = await randomSalt();
   const password = await createPasswordHash(values.password, salt);
-  const userEmail = new UserEmailEntity({
-    userId,
-    email: values.email,
-  });
-  const userUsername = new UserUsernameEntity({
-    userId,
-    username: values.username,
-  });
-  const user = new UserEntity({
-    userId: userId,
-    email: values.email,
-    username: values.username,
+
+  const user: UserModel = {
+    _id: await getNextUserId(),
+    ...values,
     salt: salt,
     password: password,
-    isVerified: values.isVerified,
-    githubId: values.githubId,
+    email_lowered: values.email.toLowerCase(),
+    username_lowered: values.username.toLowerCase(),
+    isVerified: false,
     stats: {
       followers: 0,
       following: 0,
@@ -45,37 +47,8 @@ export async function _createUser(values: CreateUserValues) {
       solutions: 0,
       submissions: 0,
     },
-  });
+  };
+  await UserCollection.insertOne(user);
 
-  await Promise.all([
-    UserEmailEntity.getIsTaken(values.email).then(isTaken => {
-      if (isTaken) {
-        throw new AppError('Email is already registered');
-      }
-    }),
-    UserUsernameEntity.getIsTaken(values.username).then(isTaken => {
-      if (isTaken) {
-        throw new AppError('Username is already taken');
-      }
-    }),
-  ]);
-
-  const t = createTransaction();
-  t.insert(userEmail, {
-    conditionExpression: 'attribute_not_exists(pk)',
-  });
-  t.insert(userUsername, {
-    conditionExpression: 'attribute_not_exists(pk)',
-  });
-  t.insert(user);
-  if (values.githubId) {
-    t.insert(
-      new GithubUserEntity({
-        userId,
-        githubId: values.githubId,
-      })
-    );
-  }
-  await t.commit();
   return user;
 }

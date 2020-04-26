@@ -1,56 +1,46 @@
-import { dynamodb } from '../src/lib';
-import { Converter } from 'aws-sdk/clients/dynamodb';
-import { ChallengeStats } from 'shared';
-import { TABLE_NAME } from '../src/config';
-import { ChallengeEntity } from '../src/entities';
+import { connect } from '../src/db';
+import { SeqCollection } from '../src/collections/SeqModel';
+import { UserCollection } from '../src/collections/UserModel';
+import { TokenCollection } from '../src/collections/TokenModel';
+import { ConfirmCodeCollection } from '../src/collections/ConfirmCode';
+import { ResetPasswordCollection } from '../src/collections/ResetPassword';
+import { ChallengeCollection } from '../src/collections/Challenge';
+
+const collections = [
+  SeqCollection,
+  UserCollection,
+  TokenCollection,
+  ConfirmCodeCollection,
+  ResetPasswordCollection,
+  ChallengeCollection,
+];
+
+export async function initDb() {
+  await connect();
+  await Promise.all(
+    collections.map((collection: any) => collection.initIndex())
+  );
+}
 
 export async function resetDb() {
-  const deleteNext = async () => {
-    const ret = await dynamodb
-      .scan({
-        TableName: TABLE_NAME,
-      })
-      .promise();
-
-    if (!ret.Count) {
-      return;
-    }
-
-    await Promise.all(
-      (ret.Items || []).map(item =>
-        dynamodb
-          .deleteItem({
-            TableName: TABLE_NAME,
-            Key: {
-              pk: item.pk,
-              sk: item.sk,
-            },
-          })
-          .promise()
-      )
-    );
-
-    await deleteNext();
-  };
-
-  await deleteNext();
+  await Promise.all(collections.map(collection => collection.deleteMany({})));
 }
 
-export async function setChallengeStats(id: number, stats: ChallengeStats) {
-  await dynamodb
-    .updateItem({
-      TableName: TABLE_NAME,
-      Key: Converter.marshall(
-        ChallengeEntity.createKey({
-          challengeId: id,
-        })
-      ),
-      UpdateExpression: 'SET stats = :stats',
-      ExpressionAttributeValues: Converter.marshall({ ':stats': stats }),
-    })
-    .promise();
-}
+// export async function setChallengeStats(id: number, stats: ChallengeStats) {
+//   await dynamodb
+//     .updateItem({
+//       TableName: TABLE_NAME,
+//       Key: Converter.marshall(
+//         ChallengeEntity.createKey({
+//           challengeId: id,
+//         })
+//       ),
+//       UpdateExpression: 'SET stats = :stats',
+//       ExpressionAttributeValues: Converter.marshall({ ':stats': stats }),
+//     })
+//     .promise();
+// }
 
-export function mapToTimestamps<T extends { createdAt: string }>(items: T[]) {
-  return items.map(item => new Date(item.createdAt).getTime());
-}
+// export function mapToTimestamps<T extends { createdAt: string }>(items: T[]) {
+//   return items.map(item => new Date(item.createdAt).getTime());
+// }

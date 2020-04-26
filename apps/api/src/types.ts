@@ -1,11 +1,11 @@
 export interface UserRegisteredEvent {
   type: 'UserRegisteredEvent';
-  payload: { userId: string; registeredAt: string };
+  payload: { userId: number; registeredAt: string };
 }
 
 export interface UserEmailConfirmedEvent {
   type: 'UserEmailConfirmedEvent';
-  payload: { userId: string };
+  payload: { userId: number };
 }
 
 export type AppEvent = UserRegisteredEvent | UserEmailConfirmedEvent;

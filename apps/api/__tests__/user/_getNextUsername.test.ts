@@ -1,14 +1,22 @@
 import { _getNextUsername } from '../../src/contracts/user/_getNextUsername';
-import { resetDb } from '../helper';
-import { UserUsernameEntity } from '../../src/entities';
+import { resetDb, initDb } from '../helper';
+import { _createUser } from '../../src/contracts/user/_createUser';
 
-beforeEach(resetDb);
+beforeAll(async () => {
+  await initDb();
+});
+
+beforeEach(async () => {
+  await resetDb();
+});
 
 async function addUsername(username: string) {
-  await new UserUsernameEntity({
-    username,
-    userId: '123',
-  }).insert();
+  await _createUser({
+    email: username + '@example.com',
+    username: username,
+    password: 'password1',
+    isVerified: true,
+  });
 }
 
 it('returns original username if it is not taken', async () => {

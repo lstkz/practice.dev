@@ -1,35 +1,35 @@
+import * as R from 'remeda';
 import { S } from 'schema';
-import { createContract, createRpcBinding, createTransaction } from '../../lib';
+import { createContract, createRpcBinding } from '../../lib';
 import { exchangeCode, getUserData, GitHubUserData } from '../../common/github';
 import { _generateAuthData } from './_generateAuthData';
 import { AppError } from '../../common/errors';
 import { _createUser } from './_createUser';
 import { randomUniqString } from '../../common/helper';
 import { _getNextUsername } from './_getNextUsername';
-import { UserEmailEntity, UserEntity, GithubUserEntity } from '../../entities';
+import { UserCollection } from '../../collections/UserModel';
 
 async function _connectByEmail(githubData: GitHubUserData) {
-  const email = await UserEmailEntity.getByKeyOrNull({
-    email: githubData.email,
+  const user = await UserCollection.findOne({
+    email_lowered: githubData.email.toLowerCase(),
   });
-  if (!email) {
+  if (!user) {
     return null;
   }
-  const user = await UserEntity.getByKey({ userId: email.userId });
   if (user.githubId) {
     throw new AppError(
       `Cannot register a new user. Another user with email ${githubData.email} is already connected with different GitHub account.`
     );
   }
   user.githubId = githubData.id;
-  const githubUser = new GithubUserEntity({
-    userId: user.userId,
-    githubId: githubData.id,
-  });
-  const t = createTransaction();
-  t.insert(githubUser);
-  t.update(user, ['githubId']);
-  await t.commit();
+  await UserCollection.findOneAndUpdate(
+    {
+      _id: user._id,
+    },
+    {
+      $set: R.pick(user, ['githubId']),
+    }
+  );
   return user;
 }
 
@@ -41,13 +41,12 @@ export const authGithub = createContract('auth.authGithub')
   .fn(async code => {
     const accessToken = await exchangeCode(code);
     const githubData = await getUserData(accessToken);
-    const githubUser = await GithubUserEntity.getByKeyOrNull({
+    const user = await UserCollection.findOne({
       githubId: githubData.id,
     });
 
     // already connected
-    if (githubUser) {
-      const user = await UserEntity.getByKey({ userId: githubUser.userId });
+    if (user) {
       return _generateAuthData(user);
     }
 

@@ -1,7 +1,11 @@
 import { register } from '../../src/contracts/user/register';
-import { resetDb } from '../helper';
+import { resetDb, initDb } from '../helper';
 
 jest.mock('../../src/dispatch');
+
+beforeAll(async () => {
+  await initDb();
+});
 
 beforeEach(async () => {
   await resetDb();
@@ -61,9 +65,19 @@ it('register user successfully', async () => {
   });
 
   expect(token).toBeDefined();
-  expect(user.id).toBeDefined();
+  expect(user.id).toEqual(1);
   expect(user.email).toEqual('user1@example.com');
   expect(user.username).toEqual('user1');
+
+  const { user: user2, token: token2 } = await register({
+    email: 'user2@example.com',
+    username: 'user2',
+    password: 'password',
+  });
+  expect(token2).toBeDefined();
+  expect(user2.id).toEqual(2);
+  expect(user2.email).toEqual('user2@example.com');
+  expect(user2.username).toEqual('user2');
 });
 
 it('throw error if username is taken', async () => {

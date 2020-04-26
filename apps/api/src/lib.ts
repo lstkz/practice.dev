@@ -7,28 +7,28 @@ import { createBaseEntityProvider } from './orm/createBaseEntityProvider';
 
 export const sns = new AWS.SNS({});
 export const s3 = new AWS.S3({});
-export const dynamodb = new AWS.DynamoDB({
-  endpoint: process.env.MOCK_DB ? 'http://localhost:8000' : undefined,
-});
+// export const dynamodb = new AWS.DynamoDB({
+//   endpoint: process.env.MOCK_DB ? 'http://localhost:8000' : undefined,
+// });
 
-export const dynamoStream = new AWS.DynamoDBStreams({
-  endpoint: process.env.MOCK_DB ? 'http://localhost:8000' : undefined,
-});
+// export const dynamoStream = new AWS.DynamoDBStreams({
+//   endpoint: process.env.MOCK_DB ? 'http://localhost:8000' : undefined,
+// });
 
 export const ses = new AWS.SES({
   region: 'eu-west-1',
 });
 
-export const createTransaction = () => new Transaction(dynamodb);
+// export const createTransaction = () => new Transaction(dynamodb);
 
-export const createBaseEntity = createBaseEntityProvider({
-  dynamodb,
-  tableName: TABLE_NAME,
-  indexes: {
-    data: 'string',
-    data_n: 'number',
-  },
-});
+// export const createBaseEntity = createBaseEntityProvider({
+//   dynamodb,
+//   tableName: TABLE_NAME,
+//   indexes: {
+//     data: 'string',
+//     data_n: 'number',
+//   },
+// });
 
 export interface CreateRpcBindingOptions {
   verified?: true;

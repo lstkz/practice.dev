@@ -5,7 +5,7 @@ import { _createUser } from './_createUser';
 import { _getNextUsername } from './_getNextUsername';
 import { randomUniqString } from '../../common/helper';
 import { _generateAuthData } from './_generateAuthData';
-import { UserEmailEntity, UserEntity } from '../../entities';
+import { UserCollection } from '../../collections/UserModel';
 
 export const authGoogle = createContract('auth.authGoogle')
   .params('accessToken')
@@ -14,9 +14,10 @@ export const authGoogle = createContract('auth.authGoogle')
   })
   .fn(async accessToken => {
     const email = await getEmail(accessToken);
-    const userEmail = await UserEmailEntity.getByKeyOrNull({ email });
-    if (userEmail) {
-      const user = await UserEntity.getByKey({ userId: userEmail.userId });
+    const user = await UserCollection.findOne({
+      email_lowered: email.toLowerCase(),
+    });
+    if (user) {
       return _generateAuthData(user);
     }
     const createdUser = await _createUser({

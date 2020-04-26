@@ -4,7 +4,7 @@ export interface LoadMoreResult<T> {
 }
 
 export interface User {
-  id: string;
+  id: number;
   email: string;
   username: string;
   isVerified: boolean;
@@ -186,7 +186,7 @@ export interface PagedResult<T> {
 }
 
 export interface PublicUserProfile {
-  id: string;
+  id: number;
   username: string;
   country: string | null;
   avatarUrl: string | null;

@@ -1,11 +1,14 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding, ses } from '../../lib';
-import { _createUser } from './_createUser';
 import { _generateAuthData } from './_generateAuthData';
 import { AppError } from '../../common/errors';
 import { randomUniqString, getDuration } from '../../common/helper';
 import { BASE_URL, EMAIL_SENDER } from '../../config';
-import { ResetPasswordCodeEntity, UserEntity } from '../../entities';
+import { UserCollection } from '../../collections/UserModel';
+import {
+  ResetPasswordCollection,
+  ResetPasswordModel,
+} from '../../collections/ResetPassword';
 
 export const resetPassword = createContract('user.resetPassword')
   .params('emailOrUsername')
@@ -13,20 +16,27 @@ export const resetPassword = createContract('user.resetPassword')
     emailOrUsername: S.string().trim(),
   })
   .fn(async emailOrUsername => {
-    const user = await UserEntity.getUserByEmailOrUsernameOrNull(
-      emailOrUsername
-    );
+    const user = await UserCollection.findOne({
+      $or: [
+        {
+          username_lowered: emailOrUsername,
+        },
+        {
+          email_lowered: emailOrUsername,
+        },
+      ],
+    });
     if (!user) {
       throw new AppError('User not found');
     }
     const code = randomUniqString();
-    const resetPasswordCode = new ResetPasswordCodeEntity({
-      code,
-      userId: user.userId,
-      expireAt: Date.now() + getDuration(1, 'd'),
-    });
+    const resetPasswordCode: ResetPasswordModel = {
+      _id: code,
+      userId: user._id,
+      expireAt: new Date(Date.now() + getDuration(1, 'd')),
+    };
+    await ResetPasswordCollection.insertOne(resetPasswordCode);
 
-    await resetPasswordCode.insert();
     const url = `${BASE_URL}/reset-password/${code}`;
 
     await ses

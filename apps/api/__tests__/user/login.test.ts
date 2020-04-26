@@ -1,6 +1,10 @@
-import { resetDb } from '../helper';
+import { resetDb, initDb } from '../helper';
 import { login } from '../../src/contracts/user/login';
 import { registerSampleUsers } from '../seed-data';
+
+beforeAll(async () => {
+  await initDb();
+});
 
 beforeEach(async () => {
   await resetDb();

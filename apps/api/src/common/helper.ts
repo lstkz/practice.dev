@@ -2,8 +2,6 @@ import crypto from 'crypto';
 import { Response } from 'node-fetch';
 import * as R from 'remeda';
 import { AppError } from './errors';
-import { UserEntity } from '../entities';
-import { DynamoKey } from '../orm/types';
 
 const SECURITY = {
   SALT_LENGTH: 64,
@@ -83,8 +81,9 @@ export async function getResponseBody<T = any>(opName: string, res: Response) {
   }
   const body = await res.json();
   if (body.error) {
-    const msg = `${opName} failed with code: ${body.error_description ||
-      body.error}`;
+    const msg = `${opName} failed with code: ${
+      body.error_description || body.error
+    }`;
     console.error(msg, {
       body,
     });
@@ -124,11 +123,7 @@ export function safeKeys<T>(obj: T): Array<keyof T> {
 }
 
 function getEncHash(data: string) {
-  return crypto
-    .createHash('md5')
-    .update(data)
-    .digest('hex')
-    .substr(0, 10);
+  return crypto.createHash('md5').update(data).digest('hex').substr(0, 10);
 }
 
 export function encLastKey(key: DynamoKey | undefined | null) {
@@ -179,7 +174,7 @@ export function ignoreTransactionCanceled() {
 
 export function assertAuthorOrAdmin<T extends { userId: string }>(
   item: T,
-  user: UserEntity
+  user: any
 ) {
   if (item.userId !== user.userId && !user.isAdmin) {
     throw new AppError('No Permissions');

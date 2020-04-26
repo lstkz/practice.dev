@@ -1,8 +1,10 @@
 import { S } from 'schema';
-import { createContract, createRpcBinding, createTransaction } from '../../lib';
+import * as R from 'remeda';
+import { createContract, createRpcBinding } from '../../lib';
 import { AppError } from '../../common/errors';
 import { _generateAuthData } from './_generateAuthData';
-import { ConfirmCodeEntity, UserEntity } from '../../entities';
+import { ConfirmCodeCollection } from '../../collections/ConfirmCode';
+import { UserCollection } from '../../collections/UserModel';
 
 export const confirmEmail = createContract('user.confirmEmail')
   .params('code')
@@ -10,17 +12,21 @@ export const confirmEmail = createContract('user.confirmEmail')
     code: S.string(),
   })
   .fn(async code => {
-    const confirmCode = await ConfirmCodeEntity.getByKeyOrNull({ code });
+    const confirmCode = await ConfirmCodeCollection.findOne({ _id: code });
     if (!confirmCode) {
       throw new AppError('Invalid code');
     }
-    const user = await UserEntity.getByKey({ userId: confirmCode.userId });
-    user.isVerified = true;
-    const t = createTransaction();
-    t.update(user, ['isVerified']);
-    t.delete(confirmCode);
-    await t.commit();
-
+    const user = await UserCollection.findOneOrThrow({
+      _id: confirmCode.userId,
+    });
+    await UserCollection.findOneAndUpdate(
+      {
+        _id: confirmCode.userId,
+      },
+      {
+        $set: R.pick(user, ['isVerified']),
+      }
+    );
     return _generateAuthData(user);
   });
 
