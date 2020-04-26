@@ -119,7 +119,16 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
           <Title data-test="title">{solution.title}</Title>
         )}
         <By>
-          By <VoidLink data-test="author">@{solution.user.username}</VoidLink>
+          By{' '}
+          <Link
+            href={createUrl({
+              name: 'profile',
+              username: solution.user.username,
+            })}
+            testId="author"
+          >
+            @{solution.user.username}
+          </Link>
         </By>
         <Url data-test="url" href={solution.url} target="_blank">
           {solution.url}

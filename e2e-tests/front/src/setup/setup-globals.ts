@@ -245,7 +245,13 @@ export function $(selector: string) {
               if (elements.length !== 1) {
                 return { error: 'multiple', count: elements.length };
               }
-              return { text: elements[0].textContent.trim() };
+              const element = elements[0];
+              return {
+                text:
+                  element.tagName.toLowerCase() === 'input'
+                    ? element.value
+                    : element.textContent,
+              };
             },
             handle,
             input

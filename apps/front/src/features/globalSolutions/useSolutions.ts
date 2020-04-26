@@ -12,3 +12,8 @@ export function useSolution(id: string) {
   const { solutionMap } = getGlobalSolutionsState.useState();
   return solutionMap[id]!;
 }
+
+export function useSolutionOrNull(id: string) {
+  const { solutionMap } = getGlobalSolutionsState.useState();
+  return solutionMap[id] ? solutionMap[id] : null;
+}

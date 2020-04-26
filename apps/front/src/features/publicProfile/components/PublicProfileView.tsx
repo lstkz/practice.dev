@@ -14,6 +14,8 @@ import { useActions } from 'typeless';
 import { ProfileInfo } from './ProfileInfo';
 import { OverviewContent } from './OverviewContent';
 import { ProfileInfoLoader, ProfileContentLoader } from './PublicProfileLoader';
+import { SolutionsTab, useSolutionsModule } from './SolutionsTab';
+import { SolutionModal } from 'src/features/solution/components/SolutionModal';
 
 const Wrapper = styled.div`
   margin-top: 30px;
@@ -40,6 +42,8 @@ const Right = styled.div`
 
 export function PublicProfileView() {
   usePublicProfileModule();
+  useSolutionsModule();
+
   const { isLoaded, tab, profile } = getPublicProfileState.useState();
   const { changeTab } = useActions(PublicProfileActions);
 
@@ -58,6 +62,7 @@ export function PublicProfileView() {
     }
     return (
       <Wrapper>
+        <SolutionModal />
         <Left>
           <ProfileInfo />
         </Left>
@@ -74,7 +79,7 @@ export function PublicProfileView() {
               title={`Solutions (${profile.solutionsCount})`}
               name="solutions"
             >
-              Solutions
+              <SolutionsTab />
             </Tab>
             <Tab
               testId="likes-tab"

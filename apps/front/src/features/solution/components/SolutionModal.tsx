@@ -8,6 +8,7 @@ import { SolutionForm } from './SolutionForm';
 import { ViewSolution } from './ViewSolution';
 import { Spinner } from 'ui';
 import styled from 'styled-components';
+import { useSolutionOrNull } from 'src/features/globalSolutions/useSolutions';
 
 const SpinnerWrapper = styled.div`
   display: flex;
@@ -17,14 +18,16 @@ const SpinnerWrapper = styled.div`
 `;
 
 interface SolutionModalProps {
-  onTagClick(tag: string): void;
+  visibleChallengeId?: number;
+  onTagClick?(tag: string): void;
 }
 
 export function SolutionModal(props: SolutionModalProps) {
-  const { onTagClick } = props;
+  const { onTagClick, visibleChallengeId } = props;
   useSolutionModule();
   const { close, showViewMode } = useActions(SolutionActions);
   const { isOpened, mode, solutionId, isLoading } = getSolutionState.useState();
+  const solution = useSolutionOrNull(solutionId!);
 
   return (
     <Modal
@@ -55,13 +58,19 @@ export function SolutionModal(props: SolutionModalProps) {
           }
         >
           {mode === 'edit' ? (
-            <SolutionForm />
+            <SolutionForm
+              challengeId={solution?.challengeId ?? visibleChallengeId ?? 0}
+            />
           ) : (
             <ViewSolution
-              onTagClick={tag => {
-                close();
-                onTagClick(tag);
-              }}
+              onTagClick={
+                onTagClick
+                  ? tag => {
+                      close();
+                      onTagClick(tag);
+                    }
+                  : undefined
+              }
             />
           )}
         </FormModalContent>

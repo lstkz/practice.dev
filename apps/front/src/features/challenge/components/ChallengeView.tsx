@@ -48,7 +48,10 @@ export function ChallengeView() {
   return (
     <Dashboard>
       <SubmitModal />
-      <SolutionModal onTagClick={showSolutionsWithTag} />
+      <SolutionModal
+        visibleChallengeId={challenge?.id}
+        onTagClick={showSolutionsWithTag}
+      />
       <Container>
         <Breadcrumb
           icon={<ChallengesIcon />}

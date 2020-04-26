@@ -71,7 +71,7 @@ const _SolutionInfo = (props: SolutionInfoProps) => {
                 name: 'profile',
                 username: solution.user.username,
               })}
-              data-test="author"
+              testId="author"
             >
               @{solution.user.username}
             </Link>

@@ -17,7 +17,7 @@ import { GlobalSolutionsActions } from '../globalSolutions/interface';
 import { GlobalActions } from '../global/interface';
 import { confirmDeleteSolution } from 'src/common/solution';
 import { RouterActions, getRouterState } from 'typeless-router';
-import { createUrl } from 'src/common/url';
+import { createUrl, isRoute } from 'src/common/url';
 
 handle
   .epic()
@@ -30,7 +30,7 @@ handle
       Rx.of(SolutionActions.setIsSubmitting(true)),
       Rx.defer(() => {
         const updateValues = {
-          challengeId: getChallengeState().challenge.id,
+          challengeId: 0,
           tags: values.tags.map(x => x.value),
           title: values.title,
           slug: values.slug,
@@ -41,6 +41,7 @@ handle
           delete updateValues.challengeId;
           return api.solution_updateSolution(solutionId, updateValues);
         } else {
+          updateValues.challengeId = getChallengeState().challenge.id;
           return api.solution_createSolution(updateValues);
         }
       }).pipe(
@@ -63,7 +64,11 @@ handle
               })
             );
           } else {
-            if (search !== getRouterState().location?.search) {
+            const shouldRedirect = isRoute('challenge');
+            if (
+              shouldRedirect &&
+              search !== getRouterState().location?.search
+            ) {
               actions.push(
                 RouterActions.replace({
                   pathname: pathname,

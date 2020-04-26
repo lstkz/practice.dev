@@ -86,11 +86,14 @@ export function getRouteParams(
 }
 
 export function isRoute(
-  name: 'challenges' | 'register' | 'login' | 'reset-password',
+  name: 'challenges' | 'register' | 'login' | 'reset-password' | 'challenge',
   location?: RouterLocation | null
 ): boolean {
   const { pathname } = location || getRouterState().location!;
   switch (name) {
+    case 'challenge': {
+      return pathname.startsWith('/challenges/');
+    }
     default: {
       return pathname === createUrl({ name });
     }
