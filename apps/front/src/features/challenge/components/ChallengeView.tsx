@@ -1,7 +1,6 @@
 import React from 'react';
 import { useChallengeModule } from '../module';
 import { Dashboard } from 'src/components/Dashboard';
-import { ConfirmEmailWarning } from 'src/components/ConfirmEmailWarning';
 import { createUrl } from 'src/common/url';
 import { Breadcrumb } from 'src/components/Breadcrumb';
 import { ChallengesIcon } from 'src/icons/ChallengesIcon';
@@ -49,8 +48,10 @@ export function ChallengeView() {
   return (
     <Dashboard>
       <SubmitModal />
-      <SolutionModal onTagClick={showSolutionsWithTag} />
-      <ConfirmEmailWarning />
+      <SolutionModal
+        visibleChallengeId={challenge?.id}
+        onTagClick={showSolutionsWithTag}
+      />
       <Container>
         <Breadcrumb
           icon={<ChallengesIcon />}

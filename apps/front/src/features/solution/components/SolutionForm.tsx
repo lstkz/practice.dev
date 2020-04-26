@@ -4,7 +4,6 @@ import {
   SolutionFormActions,
   getSolutionFormState,
 } from '../solution-form';
-import { getChallengeState } from 'src/features/challenge/interface';
 import { getSolutionState, SolutionActions } from '../interface';
 import { useActions, useMappedState } from 'typeless';
 import { Alert } from 'src/components/Alert';
@@ -34,15 +33,19 @@ const ShareWrapper = styled.div`
   display: flex;
 `;
 
-export function SolutionForm() {
-  const { challenge } = getChallengeState.useState();
+interface SolutionFormProps {
+  challengeId: number;
+}
+
+export function SolutionForm(props: SolutionFormProps) {
+  const { challengeId } = props;
   const { error, isSubmitting } = getSolutionState.useState();
   const { submit } = useActions(SolutionFormActions);
   const { searchTags } = useActions(SolutionActions);
   const slug = useMappedState([getSolutionFormState], x => x.values.slug || '');
 
   const shareUrl = slug
-    ? `${document.location.origin}/challenges/${challenge.id}?s=${slug}`
+    ? `${document.location.origin}/challenges/${challengeId}?s=${slug}`
     : '-';
 
   return (

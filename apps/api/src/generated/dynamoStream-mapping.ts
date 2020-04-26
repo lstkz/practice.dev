@@ -21,6 +21,10 @@ export const dynamoStreamMapping: DynamoStreamMapping = {
       import(
         /* webpackChunkName: "solutionTag_updateSolutionTagCount"*/ '../contracts/solutionTag/updateSolutionTagCount'
       ).then(x => x['handleSolution']),
+    user_updateUserStats_handleSolution: () =>
+      import(
+        /* webpackChunkName: "user_updateUserStats"*/ '../contracts/user/updateUserStats'
+      ).then(x => x['handleSolution']),
   },
   SubmissionEntity: {
     challenge_updateSolutionStats_handleSubmission: () =>
@@ -30,6 +34,10 @@ export const dynamoStreamMapping: DynamoStreamMapping = {
     submission_indexSubmission_handleSubmission: () =>
       import(
         /* webpackChunkName: "submission_indexSubmission"*/ '../contracts/submission/indexSubmission'
+      ).then(x => x['handleSubmission']),
+    user_updateUserStats_handleSubmission: () =>
+      import(
+        /* webpackChunkName: "user_updateUserStats"*/ '../contracts/user/updateUserStats'
       ).then(x => x['handleSubmission']),
   },
   ChallengeSolvedEntity: {
@@ -42,6 +50,10 @@ export const dynamoStreamMapping: DynamoStreamMapping = {
     solution_indexSolutionVote_handleSolutionVote: () =>
       import(
         /* webpackChunkName: "solution_indexSolutionVote"*/ '../contracts/solution/indexSolutionVote'
+      ).then(x => x['handleSolutionVote']),
+    user_updateUserStats_handleSolutionVote: () =>
+      import(
+        /* webpackChunkName: "user_updateUserStats"*/ '../contracts/user/updateUserStats'
       ).then(x => x['handleSolutionVote']),
   },
 };

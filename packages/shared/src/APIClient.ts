@@ -14,6 +14,7 @@ import {
   Submission,
   AuthData,
   User,
+  PublicUserProfile,
 } from './types';
 // IMPORTS END
 
@@ -156,6 +157,9 @@ export class APIClient {
   }
   user_getMe(): Rx.Observable<User> {
     return this.call('user.getMe');
+  }
+  user_getPublicProfile(username: string): Rx.Observable<PublicUserProfile> {
+    return this.call('user.getPublicProfile', username);
   }
   user_login(values: {
     password: string;

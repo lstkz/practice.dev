@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { Tabs, Tab } from 'src/components/Tabs';
 import styled from 'styled-components';
 import ContentLoader from 'react-content-loader';
 import { TabContent } from './TabContent';
+import { Theme } from 'ui';
 
 interface ChallengeLoaderProps {
   className?: string;
 }
-
-const primaryColor = '#DDDEE4';
-const secondaryColor = '#ccc';
 
 const Header = styled.div`
   height: 117px;
@@ -45,8 +42,8 @@ function DetailsLoader() {
       width={600}
       height={110}
       viewBox="0 0 600 110"
-      primaryColor={primaryColor}
-      secondaryColor={secondaryColor}
+      primaryColor={Theme.loaderPrimary}
+      secondaryColor={Theme.loaderSecondary}
     >
       <rect x="0" y="0" rx="5" ry="5" width="120" height="26" />
       <rect x="0" y="38" rx="5" ry="5" width="600" height="26" />
@@ -62,8 +59,8 @@ function SidebarLoader() {
       width={240}
       height={100}
       viewBox="0 0 240 100"
-      primaryColor={primaryColor}
-      secondaryColor={secondaryColor}
+      primaryColor={Theme.loaderPrimary}
+      secondaryColor={Theme.loaderSecondary}
     >
       <rect x="0" y="0" rx="5" ry="5" width="120" height="26" />
       <rect x="0" y="38" rx="5" ry="5" width="240" height="26" />
@@ -80,51 +77,37 @@ const _ChallengeLoader = (props: ChallengeLoaderProps) => {
           width={400}
           height={100}
           viewBox="0 0 400 100"
-          primaryColor={primaryColor}
-          secondaryColor={secondaryColor}
+          primaryColor={Theme.loaderPrimary}
+          secondaryColor={Theme.loaderSecondary}
         >
           <rect x="20" y="20" rx="5" ry="5" width="40" height="40" />
           <rect x="80" y="20" rx="5" ry="5" width="220" height="26" />
           <rect x="80" y="66" rx="5" ry="5" width="120" height="26" />
         </ContentLoader>
       </Header>
-      <Tabs
-        selectedTab="details"
-        onIndexChange={() => {
-          //
-        }}
-      >
-        <Tab title="Details" name="details">
-          <TabContent
-            left={
-              <SvgWrapperCol1>
-                <DetailsLoader />
-                <DetailsLoader />
-                <DetailsLoader />
-              </SvgWrapperCol1>
-            }
-            right={
-              <SvgWrapperCol2>
-                <SidebarLoader />
-                <SidebarLoader />
-              </SvgWrapperCol2>
-            }
-          />
-        </Tab>
-        <Tab title="Test Suite" name="testSuite">
-          .
-        </Tab>
-        <Tab title="Solutions" name="solutions">
-          .
-        </Tab>
-        <Tab title="Discussion" name="discussion">
-          .
-        </Tab>
-      </Tabs>
+
+      <TabContent
+        left={
+          <SvgWrapperCol1>
+            <DetailsLoader />
+            <DetailsLoader />
+            <DetailsLoader />
+          </SvgWrapperCol1>
+        }
+        right={
+          <SvgWrapperCol2>
+            <SidebarLoader />
+            <SidebarLoader />
+          </SvgWrapperCol2>
+        }
+      />
     </div>
   );
 };
 
 export const ChallengeLoader = styled(_ChallengeLoader)`
   display: block;
+  ${TabContent} {
+    margin-top: 50px;
+  }
 `;

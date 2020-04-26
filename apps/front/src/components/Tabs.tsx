@@ -10,6 +10,7 @@ interface TabsProps {
     | Array<React.ReactElement<TabProps> | false | null | undefined>;
   selectedTab: any;
   onIndexChange: (index: any) => any;
+  flex?: boolean;
 }
 
 interface TabProps {
@@ -55,6 +56,12 @@ function _Tabs(props: TabsProps) {
   );
 }
 
+export const Tab = styled((props: TabProps) => (
+  <div className={props.className}>{props.children}</div>
+))`
+  background: white;
+`;
+
 export const Tabs = styled(_Tabs)`
   > ul {
     width: 100%;
@@ -66,12 +73,16 @@ export const Tabs = styled(_Tabs)`
     padding-left: 80px;
     border-bottom: 1px solid ${Theme.grayLight};
   }
-`;
 
-export const Tab = styled((props: TabProps) => (
-  <div className={props.className}>{props.children}</div>
-))`
-  background: white;
+  ${props =>
+    props.flex &&
+    css`
+      display: flex;
+      flex-direction: column;
+      ${Tab} {
+        flex: 1 0 auto;
+      }
+    `}
 `;
 
 const TabTitle = styled.li<{ active: boolean }>`

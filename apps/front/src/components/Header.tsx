@@ -137,7 +137,12 @@ const _Header = (props: HeaderProps) => {
                 dropdown={
                   <Dropdown>
                     <MenuItem>
-                      <Link href={createUrl({ name: 'challenges' })}>
+                      <Link
+                        href={createUrl({
+                          name: 'profile',
+                          username: user.username,
+                        })}
+                      >
                         My Profile
                       </Link>
                     </MenuItem>

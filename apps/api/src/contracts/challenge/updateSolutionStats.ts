@@ -4,7 +4,6 @@ import {
   createTransaction,
 } from '../../lib';
 import { S } from 'schema';
-import { ignoreTransactionCanceled } from '../../common/helper';
 import {
   EventEntity,
   SolutionEntity,
@@ -34,7 +33,9 @@ export const updateChallengeStats = createContract(
         ':inc': add,
       },
     });
-    await t.commit().catch(ignoreTransactionCanceled());
+    await t.commit({
+      ignoreTransactionCanceled: true,
+    });
   });
 
 export const handleSolution = createDynamoStreamBinding<SolutionEntity>({

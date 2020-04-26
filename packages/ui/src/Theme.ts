@@ -12,6 +12,7 @@ export const Theme = {
   bgLightGray6: '#E1E2E6',
   bgLightGray7: '#FAFBFD',
   bgLightGray8: '#EAECF0',
+  bgLightGray9: '#F7F9FE',
   border: '#8590A3',
   grayLight: '#D4D6DB',
   gray: '#8590A3',
@@ -43,4 +44,6 @@ export const Theme = {
   pinkTagBg: '#EDD7F8',
   orangeTag: '#FFAC28',
   orangeTagBg: '#FFF4D8',
+  loaderPrimary: '#DDDEE4',
+  loaderSecondary: '#ccc',
 };

@@ -86,6 +86,10 @@ export const apiMapping: ApiMapping = {
     import(/* webpackChunkName: "user.getMe"*/ '../contracts/user/getMe').then(
       x => x['getMeRpc']
     ),
+  'user.getPublicProfile': () =>
+    import(
+      /* webpackChunkName: "user.getPublicProfile"*/ '../contracts/user/getPublicProfile'
+    ).then(x => x['getPublicProfileRpc']),
   'user.login': () =>
     import(/* webpackChunkName: "user.login"*/ '../contracts/user/login').then(
       x => x['loginRpc']

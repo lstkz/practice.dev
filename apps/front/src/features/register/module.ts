@@ -47,7 +47,7 @@ function authWith(
 }
 
 function getIsActive() {
-  return getRegisterState().isSubmitting || isRoute('register');
+  return getRegisterState().isModalOpen || isRoute('register');
 }
 
 handle

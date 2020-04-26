@@ -9,7 +9,7 @@ import { useUser } from 'src/hooks/useUser';
 
 interface ViewSolutionProps {
   className?: string;
-  onTagClick(tag: string): void;
+  onTagClick?(tag: string): void;
 }
 
 const _ViewSolution = (props: ViewSolutionProps) => {

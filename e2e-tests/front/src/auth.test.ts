@@ -193,6 +193,30 @@ describe('register', () => {
     await $('@current-username').expect.toMatch('user1');
     await $('@register-form').expect.toBeHidden();
   });
+
+  it('register with google in modal', async () => {
+    engine.mock('user_authGoogle', (values, count) => {
+      expect(values).toEqual<typeof values>('foo');
+      if (count === 1) {
+        throw new MockError('social error');
+      }
+      return authData1;
+    });
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    await page.goto(WEBSITE_URL + '/challenges');
+    await $('@header-register-btn').click();
+    await $('@social-google-btn').expect.toBeVisible();
+    await page.evaluate(() => {
+      (window as any).googleCallback('foo');
+    });
+    await $('@register-error').expect.toMatch('social error');
+    await page.evaluate(() => {
+      (window as any).googleCallback('foo');
+    });
+    await $('@challenges-page').expect.toBeVisible();
+  });
 });
 
 describe('login', () => {
@@ -346,6 +370,30 @@ describe('login', () => {
     await $('@login-submit').click();
     await $('@login-form').expect.toBeHidden();
     await $('@challenge_1 @solved-tag').expect.toBeVisible();
+  });
+
+  it('login with google in modal', async () => {
+    engine.mock('user_authGoogle', (values, count) => {
+      expect(values).toEqual<typeof values>('foo');
+      if (count === 1) {
+        throw new MockError('social error');
+      }
+      return authData1;
+    });
+    engine.mock('challenge_searchChallenges', () => {
+      return emptyChallenges;
+    });
+    await page.goto(WEBSITE_URL + '/challenges');
+    await $('@header-login-btn').click();
+    await $('@social-google-btn').expect.toBeVisible();
+    await page.evaluate(() => {
+      (window as any).googleCallback('foo');
+    });
+    await $('@login-error').expect.toMatch('social error');
+    await page.evaluate(() => {
+      (window as any).googleCallback('foo');
+    });
+    await $('@challenges-page').expect.toBeVisible();
   });
 });
 

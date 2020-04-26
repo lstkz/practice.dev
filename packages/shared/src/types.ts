@@ -184,3 +184,19 @@ export interface PagedResult<T> {
   pageNumber: number;
   totalPages: number;
 }
+
+export interface PublicUserProfile {
+  id: string;
+  username: string;
+  country: string | null;
+  avatarUrl: string | null;
+  name: string;
+  url: string;
+  bio: string;
+  isFollowed: boolean;
+  submissionsCount: number;
+  solutionsCount: number;
+  likesCount: number;
+  followersCount: number;
+  followingCount: number;
+}
