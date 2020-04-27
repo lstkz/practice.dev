@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { Response } from 'node-fetch';
 import * as R from 'remeda';
 import { AppError } from './errors';
+import { UserCollection } from '../collections/UserModel';
 
 const SECURITY = {
   SALT_LENGTH: 64,
@@ -123,7 +124,11 @@ export function safeKeys<T>(obj: T): Array<keyof T> {
 }
 
 function getEncHash(data: string) {
-  return crypto.createHash('md5').update(data).digest('hex').substr(0, 10);
+  return crypto
+    .createHash('md5')
+    .update(data + '9fkbmzbahgjho')
+    .digest('hex')
+    .substr(0, 10);
 }
 
 export function encLastKey(key: DynamoKey | undefined | null) {
@@ -183,4 +188,13 @@ export function assertAuthorOrAdmin<T extends { userId: string }>(
 
 export function doFn<T>(fn: () => T) {
   return fn();
+}
+
+export async function getUsersByIds(ids: number[]) {
+  if (!ids.length) {
+    return [];
+  }
+  return UserCollection.find({
+    _id: { $in: R.uniq(ids) },
+  }).toArray();
 }

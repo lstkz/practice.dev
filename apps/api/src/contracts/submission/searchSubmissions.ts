@@ -1,14 +1,11 @@
+import * as R from 'remeda';
 import { createContract, createRpcBinding } from '../../lib';
-import { S, ValidationError } from 'schema';
-import { UnreachableCaseError } from '../../common/errors';
-import {
-  SubmissionEntity,
-  UserUsernameEntity,
-  UserEntity,
-} from '../../entities';
-import { doFn, decLastKey, encLastKey } from '../../common/helper';
-import { SearchResult, BaseSearchCriteria } from '../../orm/types';
+import { S } from 'schema';
+import { decLastKey, encLastKey, getUsersByIds } from '../../common/helper';
 import { LoadMoreResult, Submission } from 'shared';
+import { UserCollection } from '../../collections/UserModel';
+import { SubmissionCollection } from '../../collections/Submission';
+import { mapToSubmissionMany } from '../../common/mapper';
 
 export const searchSubmissions = createContract('submission.searchSubmissions')
   .params('criteria')
@@ -17,64 +14,48 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
       challengeId: S.number().optional(),
       username: S.string().optional(),
       limit: S.pageSize(),
-      cursor: S.string()
-        .optional()
-        .nullable(),
+      cursor: S.string().optional().nullable(),
     }),
   })
   .fn(async criteria => {
-    const { challengeId, username } = criteria;
-    if (!challengeId && !username) {
-      throw new ValidationError(
-        'challengeId or username must be both defined',
-        []
-      );
+    const { challengeId, username, cursor, limit } = criteria;
+    const user = username
+      ? await UserCollection.findOne({
+          username_lowered: username.toLowerCase(),
+        })
+      : null;
+
+    if (username && !user) {
+      return {
+        items: [],
+        cursor: null,
+      } as LoadMoreResult<Submission>;
     }
+    const mongoCriteria: any = {};
+    if (challengeId) {
+      mongoCriteria.challengeId = challengeId;
+    }
+    if (user) {
+      mongoCriteria.userId = user._id;
+    }
+    if (cursor) {
+      const lastId = decLastKey(cursor);
+      mongoCriteria._id = { $lt: lastId };
+    }
+    const submissions = await SubmissionCollection.find(mongoCriteria)
+      .limit(limit!)
+      .sort({
+        _id: -1,
+      })
+      .toArray();
 
-    const { lastKey, items } = await doFn(async () => {
-      const userId = username
-        ? await UserUsernameEntity.getUserIdOrNull(username)
-        : null;
+    const users = await getUsersByIds(submissions.map(x => x.userId));
 
-      if (username && !userId) {
-        return {
-          items: [],
-          lastKey: null,
-        } as SearchResult<SubmissionEntity>;
-      }
-      const baseCriteria: BaseSearchCriteria = {
-        limit: criteria.limit,
-        sort: 'desc',
-        lastKey: decLastKey(criteria.cursor),
-      };
-      if (userId && challengeId) {
-        return SubmissionEntity.searchByUserChallenge({
-          ...baseCriteria,
-          challengeId,
-          userId,
-        });
-      }
-      if (userId) {
-        return SubmissionEntity.searchByUser({
-          ...baseCriteria,
-          userId,
-        });
-      }
-      if (challengeId) {
-        return SubmissionEntity.searchByChallenge({
-          ...baseCriteria,
-          challengeId,
-        });
-      }
-      throw new UnreachableCaseError('' as never);
-    });
-
-    const users = await UserEntity.getByIds(items.map(x => x.userId));
-    const submissions = SubmissionEntity.toSubmissionMany(items, users);
-    return {
-      items: submissions,
-      cursor: encLastKey(lastKey),
-    } as LoadMoreResult<Submission>;
+    const ret: LoadMoreResult<Submission> = {
+      items: mapToSubmissionMany(submissions, users),
+      cursor: encLastKey(R.last(submissions)?._id),
+    };
+    return ret;
   });
 
 export const searchSubmissionsRpc = createRpcBinding({

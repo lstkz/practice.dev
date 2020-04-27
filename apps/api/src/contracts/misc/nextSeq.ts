@@ -1,8 +1,6 @@
 import { S } from 'schema';
-import { Converter } from 'aws-sdk/clients/dynamodb';
-import { createContract, dynamodb } from '../../lib';
-import { TABLE_NAME } from '../../config';
-import { SequenceEntity } from '../../entities';
+import { createContract } from '../../lib';
+import { SeqCollection } from '../../collections/SeqModel';
 
 export const nexSeq = createContract('misc.nextSeq')
   .params('name')
@@ -10,24 +8,22 @@ export const nexSeq = createContract('misc.nextSeq')
     name: S.string(),
   })
   .fn(async name => {
-    const ret = await dynamodb
-      .updateItem({
-        ReturnValues: 'UPDATED_NEW',
-        Key: Converter.marshall(
-          SequenceEntity.createKey({
-            name,
-          })
-        ),
-        TableName: TABLE_NAME,
-        UpdateExpression: 'SET #value = if_not_exists(#value, :zero) + :incr',
-        ExpressionAttributeValues: Converter.marshall({
-          ':incr': 1,
-          ':zero': 0,
-        }),
-        ExpressionAttributeNames: {
-          '#value': 'value',
+    const ret = await SeqCollection.findOneAndUpdate(
+      {
+        _id: name,
+      },
+      {
+        $inc: {
+          seq: 1,
         },
-      })
-      .promise();
-    return Converter.unmarshall(ret.Attributes!).value as number;
+      },
+      {
+        upsert: true,
+        returnOriginal: false,
+      }
+    );
+    if (!ret.value) {
+      throw new Error('Expected value to be defined');
+    }
+    return ret.value.seq;
   });

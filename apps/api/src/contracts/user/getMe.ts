@@ -1,6 +1,7 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
-import { UserEntity } from '../../entities';
+import { UserCollection } from '../../collections/UserModel';
+import { mapToUser } from '../../common/mapper';
 
 export const getMe = createContract('user.getMe')
   .params('userId')
@@ -8,8 +9,8 @@ export const getMe = createContract('user.getMe')
     userId: S.string(),
   })
   .fn(async userId => {
-    const user = await UserEntity.getByKey({ userId });
-    return user.toUser();
+    const user = await UserCollection.findOneOrThrow({ userId });
+    return mapToUser(user);
   });
 
 export const getMeRpc = createRpcBinding({

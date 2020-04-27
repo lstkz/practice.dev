@@ -2,11 +2,15 @@ import { createContract, createRpcBinding, sns } from '../../lib';
 import { rateLimit } from '../misc/rateLimit';
 import { getDuration } from '../../common/helper';
 import { S } from 'schema';
-import uuid from 'uuid';
 import { SubmissionStatus, TesterMessage } from 'shared';
 import { TESTER_TOPIC_ARN } from '../../config';
 import { AppError } from '../../common/errors';
-import { SubmissionEntity, ChallengeEntity } from '../../entities';
+import { ChallengeCollection } from '../../collections/Challenge';
+import {
+  SubmissionModel,
+  SubmissionCollection,
+} from '../../collections/Submission';
+import { nexSeq } from '../misc/nextSeq';
 
 const RATE_LIMIT_PER_DAY = 1000;
 const RATE_LIMIT_PER_HOUR = 100;
@@ -14,7 +18,7 @@ const RATE_LIMIT_PER_HOUR = 100;
 export const submit = createContract('submission.submit')
   .params('userId', 'values')
   .schema({
-    userId: S.string(),
+    userId: S.number(),
     values: S.object().keys({
       challengeId: S.number(),
       testUrl: S.string().regex(
@@ -23,8 +27,8 @@ export const submit = createContract('submission.submit')
     }),
   })
   .fn(async (userId, values) => {
-    const challenge = await ChallengeEntity.getByKeyOrNull({
-      challengeId: values.challengeId,
+    const challenge = await ChallengeCollection.findOne({
+      _id: values.challengeId,
     });
     if (!challenge) {
       throw new AppError('Challenge not found');
@@ -42,16 +46,16 @@ export const submit = createContract('submission.submit')
         RATE_LIMIT_PER_HOUR
       ),
     ]);
-    const id = uuid();
-    const submission = new SubmissionEntity({
-      submissionId: id,
+    const id = await nexSeq('submission_id');
+    const submission: SubmissionModel = {
+      _id: id,
       challengeId: values.challengeId,
       userId,
       status: SubmissionStatus.Queued,
-      createdAt: Date.now(),
+      createdAt: new Date(),
       testUrl: values.testUrl,
-    });
-    await submission.insert();
+    };
+    await SubmissionCollection.insertOne(submission);
     const testerMessage: TesterMessage = {
       id,
       challengeId: values.challengeId,

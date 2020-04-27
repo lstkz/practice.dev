@@ -2,15 +2,15 @@ import { createContract } from '../../lib';
 import { S } from 'schema';
 import { SubmissionStatus } from 'shared';
 import { markSolved } from '../challenge/markSolved';
-import { SubmissionEntity } from '../../entities';
 import { AppError } from '../../common/errors';
+import { SubmissionCollection } from '../../collections/Submission';
 
 export const updateSubmissionStatus = createContract(
   'submission.updateSubmissionStatus'
 )
   .params('submissionId', 'values')
   .schema({
-    submissionId: S.string(),
+    submissionId: S.number(),
     values: S.object().keys({
       status: S.enum().values<SubmissionStatus>(
         Object.values(SubmissionStatus)
@@ -19,18 +19,20 @@ export const updateSubmissionStatus = createContract(
     }),
   })
   .fn(async (submissionId, values) => {
-    const submission = await SubmissionEntity.getByKeyOrNull({ submissionId });
+    const submission = await SubmissionCollection.findOne({
+      _id: submissionId,
+    });
     if (!submission) {
       throw new AppError('Submission not found');
     }
     submission.status = values.status;
     submission.result = values.result;
-    await submission.update(['status', 'result']);
+    await SubmissionCollection.update(submission, ['status', 'result']);
     if (values.status === SubmissionStatus.Pass) {
       await markSolved({
         challengeId: submission.challengeId,
         userId: submission.userId,
-        solvedAt: Date.now(),
+        solvedAt: new Date(),
       });
     }
   });

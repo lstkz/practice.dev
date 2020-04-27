@@ -12,7 +12,7 @@ export interface User {
 }
 
 export interface PublicUser {
-  id: string;
+  id: number;
   username: string;
 }
 
@@ -72,7 +72,7 @@ export enum SubmissionStatus {
 }
 
 export interface Submission {
-  id: string;
+  id: number;
   challengeId: number;
   user: PublicUser;
   status: SubmissionStatus;
@@ -90,11 +90,11 @@ export interface ChallengeTag {
 }
 
 export interface TesterMessage {
-  id: string;
+  id: number;
   challengeId: number;
   testUrl: string;
   tests: string;
-  userId: string;
+  userId: number;
   type: 'frontend' | 'backend';
 }
 

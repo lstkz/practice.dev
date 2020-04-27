@@ -1,6 +1,6 @@
 import { randomSalt, createPasswordHash } from '../../common/helper';
-import { SeqCollection } from '../../collections/SeqModel';
 import { UserModel, UserCollection } from '../../collections/UserModel';
+import { nexSeq } from '../misc/nextSeq';
 
 interface CreateUserValues {
   email: string;
@@ -10,30 +10,12 @@ interface CreateUserValues {
   githubId?: number;
 }
 
-export async function getNextUserId() {
-  const ret = await SeqCollection.findOneAndUpdate(
-    {
-      _id: 'user_id',
-    },
-    {
-      $inc: {
-        seq: 1,
-      },
-    },
-    {
-      upsert: true,
-      returnOriginal: false,
-    }
-  );
-  return ret.value!.seq;
-}
-
 export async function _createUser(values: CreateUserValues) {
   const salt = await randomSalt();
   const password = await createPasswordHash(values.password, salt);
 
   const user: UserModel = {
-    _id: await getNextUserId(),
+    _id: await nexSeq('user_id'),
     ...values,
     salt: salt,
     password: password,

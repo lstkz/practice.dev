@@ -6,20 +6,18 @@ import {
 } from '../src/collections/Challenge';
 
 export async function registerSampleUsers() {
-  await Promise.all([
-    _createUser({
-      email: 'user1@example.com',
-      username: 'user1',
-      password: 'password1',
-      isVerified: true,
-    }).then(() => createToken(1, 'user1_token')),
-    _createUser({
-      email: 'user2@example.com',
-      username: 'user2',
-      password: 'password2',
-      isVerified: true,
-    }).then(() => createToken(2, 'user2_token')),
-  ]);
+  await _createUser({
+    email: 'user1@example.com',
+    username: 'user1',
+    password: 'password1',
+    isVerified: true,
+  }).then(() => createToken(1, 'user1_token'));
+  await _createUser({
+    email: 'user2@example.com',
+    username: 'user2',
+    password: 'password2',
+    isVerified: true,
+  }).then(() => createToken(2, 'user2_token'));
 }
 
 export async function addSampleChallenges() {

@@ -5,6 +5,7 @@ import { TokenCollection } from '../src/collections/TokenModel';
 import { ConfirmCodeCollection } from '../src/collections/ConfirmCode';
 import { ResetPasswordCollection } from '../src/collections/ResetPassword';
 import { ChallengeCollection } from '../src/collections/Challenge';
+import { SubmissionCollection } from '../src/collections/Submission';
 
 const collections = [
   SeqCollection,
@@ -13,6 +14,7 @@ const collections = [
   ConfirmCodeCollection,
   ResetPasswordCollection,
   ChallengeCollection,
+  SubmissionCollection,
 ];
 
 export async function initDb() {

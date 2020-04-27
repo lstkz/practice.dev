@@ -1,9 +1,13 @@
-import { resetDb } from '../helper';
+import { resetDb, initDb } from '../helper';
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { submit } from '../../src/contracts/submission/submit';
 import { sns } from '../../src/lib';
 
-const userId = '1';
+const userId = 1;
+
+beforeAll(async () => {
+  await initDb();
+});
 
 beforeEach(async () => {
   await resetDb();

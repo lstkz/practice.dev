@@ -1,66 +1,82 @@
-import { resetDb } from '../helper';
+import { resetDb, initDb } from '../helper';
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
-import { SubmissionStatus, Submission } from 'shared';
+import { SubmissionStatus } from 'shared';
 import { searchSubmissions } from '../../src/contracts/submission/searchSubmissions';
-import { SubmissionEntity } from '../../src/entities';
-import { MockStream } from '../MockStream';
+import { SubmissionCollection } from '../../src/collections/Submission';
 
-const mockStream = new MockStream();
+beforeAll(async () => {
+  await initDb();
+});
 
 beforeEach(async () => {
   await resetDb();
-  await mockStream.init();
   await Promise.all([registerSampleUsers(), addSampleChallenges()]);
 
-  const submissions = [
-    new SubmissionEntity({
-      submissionId: 's1',
-      userId: '1',
-      createdAt: 1,
+  await SubmissionCollection.insertMany([
+    {
+      _id: 1,
+      userId: 1,
+      createdAt: new Date(1),
       challengeId: 1,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
-    }),
-    new SubmissionEntity({
-      submissionId: 's2',
-      userId: '1',
-      createdAt: 3,
+    },
+    {
+      _id: 2,
+      userId: 1,
+      createdAt: new Date(2),
       challengeId: 1,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
-    }),
-    new SubmissionEntity({
-      submissionId: 's3',
-      userId: '2',
-      createdAt: 2,
+    },
+    {
+      _id: 3,
+      userId: 2,
+      createdAt: new Date(3),
       challengeId: 2,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
-    }),
-    new SubmissionEntity({
-      submissionId: 's4',
-      userId: '1',
-      createdAt: 4,
+    },
+    {
+      _id: 4,
+      userId: 1,
+      createdAt: new Date(4),
       challengeId: 2,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
-    }),
-  ];
-  await Promise.all(submissions.map(item => item.insert()));
-  await mockStream.process();
+    },
+  ]);
 });
-
-function mapToTimestamps(items: Submission[]) {
-  return items.map(item => new Date(item.createdAt).getTime());
-}
 
 it('search by challengeId', async () => {
   const { items } = await searchSubmissions({
     challengeId: 1,
     limit: 10,
   });
-
-  expect(mapToTimestamps(items)).toEqual([3, 1]);
+  expect(items).toMatchInlineSnapshot(`
+    Array [
+      Object {
+        "challengeId": 1,
+        "createdAt": "1970-01-01T00:00:00.002Z",
+        "id": 2,
+        "status": "QUEUED",
+        "user": Object {
+          "id": 1,
+          "username": "user1",
+        },
+      },
+      Object {
+        "challengeId": 1,
+        "createdAt": "1970-01-01T00:00:00.001Z",
+        "id": 1,
+        "status": "QUEUED",
+        "user": Object {
+          "id": 1,
+          "username": "user1",
+        },
+      },
+    ]
+  `);
 });
 
 it('search by username', async () => {
@@ -68,8 +84,20 @@ it('search by username', async () => {
     username: 'user2',
     limit: 10,
   });
-
-  expect(mapToTimestamps(items)).toEqual([2]);
+  expect(items).toMatchInlineSnapshot(`
+    Array [
+      Object {
+        "challengeId": 2,
+        "createdAt": "1970-01-01T00:00:00.003Z",
+        "id": 3,
+        "status": "QUEUED",
+        "user": Object {
+          "id": 2,
+          "username": "user2",
+        },
+      },
+    ]
+  `);
 });
 
 it('search by username and challengeId', async () => {
@@ -79,7 +107,20 @@ it('search by username and challengeId', async () => {
     limit: 10,
   });
 
-  expect(mapToTimestamps(items)).toEqual([4]);
+  expect(items).toMatchInlineSnapshot(`
+    Array [
+      Object {
+        "challengeId": 2,
+        "createdAt": "1970-01-01T00:00:00.004Z",
+        "id": 4,
+        "status": "QUEUED",
+        "user": Object {
+          "id": 1,
+          "username": "user1",
+        },
+      },
+    ]
+  `);
 });
 
 it('should paginate properly', async () => {
@@ -88,11 +129,44 @@ it('should paginate properly', async () => {
     limit: 1,
   });
 
-  expect(mapToTimestamps(ret.items)).toEqual([3]);
+  expect(ret).toMatchInlineSnapshot(`
+    Object {
+      "cursor": "Mg==.4678ba2fff",
+      "items": Array [
+        Object {
+          "challengeId": 1,
+          "createdAt": "1970-01-01T00:00:00.002Z",
+          "id": 2,
+          "status": "QUEUED",
+          "user": Object {
+            "id": 1,
+            "username": "user1",
+          },
+        },
+      ],
+    }
+  `);
+
   const ret2 = await searchSubmissions({
     challengeId: 1,
     limit: 1,
     cursor: ret.cursor,
   });
-  expect(mapToTimestamps(ret2.items)).toEqual([1]);
+  expect(ret2).toMatchInlineSnapshot(`
+    Object {
+      "cursor": "MQ==.73596befbc",
+      "items": Array [
+        Object {
+          "challengeId": 1,
+          "createdAt": "1970-01-01T00:00:00.001Z",
+          "id": 1,
+          "status": "QUEUED",
+          "user": Object {
+            "id": 1,
+            "username": "user1",
+          },
+        },
+      ],
+    }
+  `);
 });

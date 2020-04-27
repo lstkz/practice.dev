@@ -1,9 +1,4 @@
-import {
-  ChallengeStats,
-  ChallengeDomain,
-  ChallengeDifficulty,
-  Challenge,
-} from 'shared';
+import { ChallengeStats, ChallengeDomain, ChallengeDifficulty } from 'shared';
 import { createCollection } from '../db';
 
 export interface ChallengeModel {

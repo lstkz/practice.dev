@@ -1,3 +1,4 @@
+import * as R from 'remeda';
 import { MONGO_URL, MONGO_DB_NAME } from './config';
 import {
   MongoClient,
@@ -123,6 +124,7 @@ interface DbCollection<T> {
     filter: FilterQuery<T>,
     options?: CommonOptions
   ): Promise<DeleteWriteOpResultObject>;
+  update(model: T, fields: Array<keyof T>): Promise<void>;
 }
 
 export function createCollection<T>(
@@ -181,6 +183,19 @@ export function createCollection<T>(
     },
     deleteOne(...args) {
       return _getCollection().deleteOne(...args);
+    },
+    async update(model: any, fields) {
+      if (model._id == null) {
+        throw new Error('_id not defined');
+      }
+      await this.findOneAndUpdate(
+        {
+          _id: model._id,
+        },
+        {
+          $set: R.pick(model, fields),
+        }
+      );
     },
   };
 

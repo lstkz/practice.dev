@@ -19,7 +19,7 @@ module.exports = function generate(plop) {
       },
     ],
   });
-  plop.setGenerator('entity', {
+  plop.setGenerator('collection', {
     prompts: [
       {
         type: 'input',
@@ -31,9 +31,9 @@ module.exports = function generate(plop) {
     actions: [
       {
         type: 'addMany',
-        destination: path.join(__dirname, 'apps/api/src/entities2'),
-        base: '.blueprints/entity',
-        templateFiles: '.blueprints/entity/**/**',
+        destination: path.join(__dirname, 'apps/api/src/collections'),
+        base: '.blueprints/collection',
+        templateFiles: '.blueprints/collection/**/**',
       },
     ],
   });

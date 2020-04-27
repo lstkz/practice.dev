@@ -1,27 +1,24 @@
-import { createContract, createTransaction } from '../../lib';
+import { createContract } from '../../lib';
 import { S } from 'schema';
-import { ChallengeSolvedEntity } from '../../entities';
+import { ChallengeSolvedCollection } from '../../collections/ChallengeSolved';
 
 export const markSolved = createContract('challenge.markSolved')
   .params('values')
   .schema({
     values: S.object().keys({
-      userId: S.string(),
+      userId: S.number(),
       challengeId: S.number(),
-      solvedAt: S.number(),
+      solvedAt: S.date(),
     }),
   })
   .fn(async values => {
-    const solved = new ChallengeSolvedEntity(values);
-    const t = createTransaction();
-    t.insert(solved, {
-      conditionExpression: 'attribute_not_exists(pk)',
-    });
-    await t.commit().catch(e => {
-      // ignore if already solved
-      if (e.code === 'TransactionCanceledException') {
-        return;
+    await ChallengeSolvedCollection.findOneAndUpdate(
+      {
+        userId: values.userId,
+        challengeId: values.challengeId,
+      },
+      {
+        $setOnInsert: values,
       }
-      throw e;
-    });
+    );
   });
