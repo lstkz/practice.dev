@@ -12,7 +12,7 @@ interface UpdateRawOptions {
   expressionNames?: Record<string, string>;
 }
 
-interface CommitOptions {
+export interface CommitOptions {
   ignoreTransactionCanceled?: boolean;
 }
 

@@ -1,6 +1,6 @@
 import util from 'util';
 import uuid from 'uuid';
-import { APIGatewayProxyEvent, ALBEvent } from '../types';
+import { APIGatewayProxyEvent, ALBEvent, APIHttpEvent } from '../types';
 import { handler as rpcHandler } from '../handler';
 
 const baseHeaders = {
@@ -9,19 +9,41 @@ const baseHeaders = {
   'Content-Type': 'application/json',
 };
 
-export async function handler(event: APIGatewayProxyEvent | ALBEvent) {
+function _isAPIHttpEvent(
+  event: APIGatewayProxyEvent | ALBEvent | APIHttpEvent
+): event is APIHttpEvent {
+  return 'http' in event.requestContext;
+}
+
+function _getHttpParams(event: APIGatewayProxyEvent | ALBEvent | APIHttpEvent) {
+  if (_isAPIHttpEvent(event)) {
+    return {
+      httpMethod: event.requestContext.http.method,
+      path: event.requestContext.http.path,
+    };
+  }
+  return {
+    httpMethod: event.httpMethod,
+    path: event.path,
+  };
+}
+
+export async function handler(
+  event: APIGatewayProxyEvent | ALBEvent | APIHttpEvent
+) {
   try {
-    const exec = /\/rpc\/(.+)/.exec(event.path);
+    const { path, httpMethod } = _getHttpParams(event);
+    const exec = /\/rpc\/(.+)/.exec(path);
     if (!exec) {
       throw new Error('Invalid url');
     }
-    if (event.httpMethod === 'OPTIONS') {
+    if (httpMethod === 'OPTIONS') {
       return {
         statusCode: 200,
         headers: baseHeaders,
       };
     }
-    if (event.httpMethod !== 'POST') {
+    if (httpMethod !== 'POST') {
       throw new Error('Method must be POST');
     }
     let params: any[];

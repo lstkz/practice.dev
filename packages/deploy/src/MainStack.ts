@@ -7,7 +7,6 @@ import { TesterLambda } from './resources/TesterLambda';
 import { MainTopic } from './resources/MainTopic';
 import { TesterTopic } from './resources/TesterTopic';
 import { MainBucket } from './resources/MainBucket';
-import { GatewayApi } from './resources/GatewayApi';
 
 if (!process.env.STACK_NAME) {
   throw new Error('STACK_NAME is not set');
@@ -36,7 +35,6 @@ export class MainStack extends cdk.Stack {
       mainBucket,
       mainTable,
     });
-    new GatewayApi(this, { apiLambda });
     new Socket(this, { apiLambda });
     new WebSiteDist(this, initOnly, {
       mainBucket,
@@ -44,7 +42,7 @@ export class MainStack extends cdk.Stack {
   }
 }
 
-(async function() {
+(async function () {
   const app = new cdk.App();
   const stack = new MainStack(app, process.env.STACK_NAME!);
   await stack.create();

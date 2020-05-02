@@ -1,15 +1,10 @@
-import { createContract, createRpcBinding, createTransaction } from '../../lib';
+import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
-import { _createSolution } from './_createSolution';
 import { solutionUserInput } from './_solutionSchema';
-import {
-  normalizeTags,
-  rethrowTransactionCanceled,
-  safeKeys,
-  safeAssign,
-} from '../../common/helper';
+import { normalizeTags } from '../../common/helper';
 import { _getSolutionWithPermissionCheck } from './_getSolutionWithCheck';
-import { SolutionEntity, UserEntity } from '../../entities';
+import { UserEntity } from '../../entities';
+import { updateSolutionCUD } from '../../cud/solution';
 
 export const updateSolution = createContract('solution.updateSolution')
   .params('userId', 'solutionId', 'values')
@@ -19,28 +14,17 @@ export const updateSolution = createContract('solution.updateSolution')
     values: S.object().keys(solutionUserInput),
   })
   .fn(async (userId, solutionId, values) => {
-    const solution = await _getSolutionWithPermissionCheck(userId, solutionId);
-    safeAssign(solution, values);
+    const oldSolution = await _getSolutionWithPermissionCheck(
+      userId,
+      solutionId
+    );
     values.tags = normalizeTags(values.tags);
-
-    const slug = new SolutionEntity(solution, { type: 'slug' });
-    const t = createTransaction();
-    t.update(solution, safeKeys(solutionUserInput));
-    t.insert(slug, {
-      conditionExpression:
-        'attribute_not_exists(pk) OR (attribute_exists(pk) AND solutionId = :solutionId)',
-      expressionValues: {
-        ':solutionId': solutionId,
-      },
-    });
-
-    const [solutionAuthor] = await Promise.all([
+    const [solutionAuthor, solution] = await Promise.all([
       UserEntity.getById(userId),
-      t
-        .commit()
-        .catch(
-          rethrowTransactionCanceled('Duplicated slug for this challenge')
-        ),
+      updateSolutionCUD(oldSolution, {
+        ...oldSolution.getProps(),
+        ...values,
+      }),
     ]);
     return solution.toSolution(solutionAuthor);
   });

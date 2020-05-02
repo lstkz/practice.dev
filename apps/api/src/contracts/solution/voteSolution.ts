@@ -1,7 +1,12 @@
-import { createContract, createRpcBinding, createTransaction } from '../../lib';
+import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
 import { AppError } from '../../common/errors';
-import { SolutionVoteEntity, SolutionEntity } from '../../entities';
+import { SolutionEntity, SolutionVoteProps } from '../../entities';
+import {
+  createSolutionVoteCUD,
+  removeSolutionVoteCUD,
+} from '../../cud/solutionVote';
+import { doFn } from '../../common/helper';
 
 export const voteSolution = createContract('solution.voteSolution')
   .params('userId', 'values')
@@ -13,29 +18,26 @@ export const voteSolution = createContract('solution.voteSolution')
     }),
   })
   .fn(async (userId, values) => {
-    const solution = await SolutionEntity.getByIdOrNull(values.solutionId);
+    const solution = await SolutionEntity.getByKeyOrNull({
+      solutionId: values.solutionId,
+    });
     if (!solution) {
       throw new AppError('Solution not found');
     }
-
-    const vote = new SolutionVoteEntity({
+    const voteProps: SolutionVoteProps = {
       createdAt: Date.now(),
       solutionId: solution.solutionId,
       challengeId: solution.challengeId,
       userId,
-    });
-    const t = createTransaction();
-    if (values.like) {
-      await t.insert(vote, {
-        conditionExpression: 'attribute_not_exists(pk)',
-      });
-    } else {
-      await t.delete(vote, {
-        conditionExpression: 'attribute_exists(pk)',
-      });
-    }
-    const changed = await t
-      .commit()
+    };
+
+    const changed = await doFn(async () => {
+      if (values.like) {
+        await createSolutionVoteCUD(voteProps);
+      } else {
+        await removeSolutionVoteCUD(voteProps);
+      }
+    })
       .then(() => true)
       .catch((e: any) => {
         // ignore duplicate votes
@@ -44,6 +46,7 @@ export const voteSolution = createContract('solution.voteSolution')
         }
         throw e;
       });
+
     if (!changed) {
       return solution.likes;
     }

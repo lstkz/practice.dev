@@ -8,6 +8,15 @@ export interface UserKey {
   userId: string;
 }
 
+export interface UserStats {
+  solutions: number;
+  likes: number;
+  solved: number;
+  followers: number;
+  following: number;
+  submissions: number;
+}
+
 export interface UserProps extends UserKey {
   email: string;
   username: string;
@@ -21,13 +30,7 @@ export interface UserProps extends UserKey {
   url?: string;
   avatarUrl?: string;
   bio?: string;
-  stats: {
-    solutions: number;
-    likes: number;
-    followers: number;
-    following: number;
-    submissions: number;
-  };
+  stats: UserStats;
 }
 
 const BaseEntity = createBaseEntity()
@@ -40,6 +43,7 @@ export class UserEntity extends BaseEntity {
     if (!props.stats) {
       props.stats = {
         solutions: 0,
+        solved: 0,
         likes: 0,
         followers: 0,
         following: 0,

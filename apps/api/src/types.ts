@@ -87,6 +87,16 @@ export interface APIGatewayProxyEvent {
   resource: string;
 }
 
+export interface APIHttpEvent {
+  body: string | null;
+  headers: { [name: string]: string };
+  isBase64Encoded: boolean;
+  requestContext: {
+    http: { method: string; path: string };
+    requestId: string;
+  };
+}
+
 export interface AuthResponseContext {
   [name: string]: any;
 }

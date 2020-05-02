@@ -3,10 +3,10 @@ import { S } from 'schema';
 import { getChallengeById } from '../challenge/getChallengeById';
 import { AppError } from '../../common/errors';
 import uuid from 'uuid';
-import { _createSolution } from './_createSolution';
 import { solutionUserInput } from './_solutionSchema';
 import { normalizeTags } from '../../common/helper';
 import { UserEntity, ChallengeSolvedEntity } from '../../entities';
+import { createSolutionCUD } from '../../cud/solution';
 
 export const createSolution = createContract('solution.createSolution')
   .params('userId', 'values')
@@ -31,10 +31,10 @@ export const createSolution = createContract('solution.createSolution')
         'Cannot create a solution if the challenge is not solved'
       );
     }
-    const id = uuid();
+    const solutionId = uuid();
     values.tags = normalizeTags(values.tags);
-    const dbSolution = await _createSolution({
-      id,
+    const dbSolution = await createSolutionCUD({
+      solutionId,
       userId: userId,
       createdAt: Date.now(),
       likes: 0,
