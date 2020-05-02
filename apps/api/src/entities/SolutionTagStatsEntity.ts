@@ -10,7 +10,7 @@ export interface SolutionTagStatsProps extends SolutionTagStatsKey {
   count: number;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('SolutionTagStats')
   .props<SolutionTagStatsProps>()
   .key<SolutionTagStatsKey>(
     key => `SOLUTION_TAG_STATS:${key.challengeId}:${key.tag.toLowerCase()}`

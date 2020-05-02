@@ -9,7 +9,7 @@ export interface SolutionSlugProps extends SolutionSlugKey {
   solutionId: string;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('SolutionSlug')
   .props<SolutionSlugProps>()
   .key<SolutionSlugKey>(key => `SOLUTION_SLUG:${key.challengeId}:${key.slug}`)
   .build();

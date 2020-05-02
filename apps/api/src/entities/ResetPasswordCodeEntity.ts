@@ -9,7 +9,7 @@ export interface ResetPasswordCodeProps extends ResetPasswordCodeKey {
   expireAt: number;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('ResetPasswordCode')
   .props<ResetPasswordCodeProps>()
   .key<ResetPasswordCodeKey>(key => `RESET_PASSWORD_CODE:${key.code}`)
   .build();

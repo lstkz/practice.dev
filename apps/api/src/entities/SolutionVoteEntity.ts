@@ -12,7 +12,7 @@ export interface SolutionVoteProps extends SolutionVoteKey {
   createdAt: number;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('SolutionVote')
   .props<SolutionVoteProps>()
   .key<SolutionVoteKey>(key => ({
     pk: `SOLUTION_VOTE:${key.solutionId}:${key.userId}`,

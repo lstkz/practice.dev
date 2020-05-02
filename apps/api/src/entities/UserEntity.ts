@@ -33,7 +33,7 @@ export interface UserProps extends UserKey {
   stats: UserStats;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('User')
   .props<UserProps>()
   .key<UserKey>(key => `USER:${key.userId}`)
   .build();

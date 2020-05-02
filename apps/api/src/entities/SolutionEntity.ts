@@ -22,7 +22,7 @@ export interface SolutionKey {
   solutionId: string;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('Solution')
   .props<SolutionProps>()
   .key<SolutionKey>(key => `SOLUTION:${key.solutionId}`)
   .build();

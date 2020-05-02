@@ -12,7 +12,7 @@ export interface ChallengeSolvedProps extends ChallengeSolvedKey {
   solvedAt: number;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('ChallengeSolved')
   .props<ChallengeSolvedProps>()
   .key<ChallengeSolvedKey>(
     key => `CHALLENGE_SOLVED:${key.challengeId}:${key.userId}`

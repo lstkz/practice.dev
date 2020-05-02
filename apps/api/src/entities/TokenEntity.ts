@@ -8,7 +8,7 @@ export interface TokenProps extends TokenKey {
   userId: string;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('Token')
   .props<TokenProps>()
   .key<TokenKey>(key => `TOKEN:${key.token}`)
   .build();

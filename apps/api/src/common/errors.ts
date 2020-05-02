@@ -12,3 +12,8 @@ export class UnreachableCaseError extends Error {
     );
   }
 }
+export class ElasticError extends Error {
+  constructor(public details: any) {
+    super(details.reason);
+  }
+}

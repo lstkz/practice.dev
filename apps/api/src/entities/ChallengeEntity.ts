@@ -23,7 +23,7 @@ export interface ChallengeProps extends ChallengeKey {
   testCase: string;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('Challenge')
   .props<ChallengeProps>()
   .key<ChallengeKey>(key => ({
     pk: `CHALLENGE:${key.challengeId}`,

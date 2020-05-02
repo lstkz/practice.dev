@@ -1,11 +1,14 @@
 import fetch from 'node-fetch';
+import * as R from 'remeda';
+import { ES_USERNAME, ES_PASSWORD, ES_URL } from '../config';
+import { decLastKey, encLastKey } from './helper';
+import { ElasticError } from './errors';
 
 function _getHeaders() {
-  const username = process.env.ES_USERNAME!;
-  const password = process.env.ES_PASSWORD!;
   return {
     Authorization:
-      `Basic ` + Buffer.from(`${username}:${password}`).toString('base64'),
+      `Basic ` +
+      Buffer.from(`${ES_USERNAME}:${ES_PASSWORD}`).toString('base64'),
     'Content-Type': 'application/json',
   };
 }
@@ -15,8 +18,7 @@ export async function esPutItem<T>(
   id: string,
   content: any
 ): Promise<T> {
-  const url = process.env.ES_URL!;
-  const res = await fetch(url + `/${name}/_doc/` + id, {
+  const res = await fetch(ES_URL + `/${name}/_doc/` + id, {
     method: 'PUT',
     headers: _getHeaders(),
     body: JSON.stringify(content),
@@ -24,13 +26,45 @@ export async function esPutItem<T>(
   return res.json();
 }
 
-export async function esSearch<T>(name: string, criteria: any): Promise<T> {
-  const url = process.env.ES_URL!;
-  console.log(JSON.stringify(criteria, null, 2));
-  const res = await fetch(url + `/${name}/_search`, {
+export interface EsSearchCriteria {
+  query?: any;
+  limit: number;
+  cursor?: string | null;
+  sort: Array<Record<string, 'asc' | 'desc'>>;
+}
+
+export interface SearchResult<T> {
+  items: T[];
+  lastKey: string | null;
+}
+
+export async function esSearch<
+  T extends {
+    entityType: string;
+    new (...args: any[]): any;
+  }
+>(
+  Entity: T,
+  criteria: EsSearchCriteria
+): Promise<SearchResult<InstanceType<T>>> {
+  const res = await fetch(ES_URL + `/${Entity.entityType}/_search`, {
     method: 'POST',
     headers: _getHeaders(),
-    body: JSON.stringify(criteria),
+    body: JSON.stringify({
+      query: criteria.query,
+      sort: criteria.sort,
+      search_after: criteria.cursor ? decLastKey(criteria.cursor) : undefined,
+    }),
   });
-  return res.json();
+  const body: any = res.json();
+  if (body.error) {
+    throw new ElasticError(body.error);
+  }
+  const hits: any[] = body.hits.hits;
+  const items = hits.map((x: any) => x._source);
+  const lastSort = R.last(hits)?.sort;
+  return {
+    items: items.map(props => new Entity(props)),
+    lastKey: lastSort ? encLastKey(lastSort) : null,
+  };
 }

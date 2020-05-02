@@ -128,7 +128,7 @@ function getEncHash(data: string) {
   return crypto.createHash('md5').update(data).digest('hex').substr(0, 10);
 }
 
-export function encLastKey(key: DynamoKey | undefined | null) {
+export function encLastKey(key: any | undefined | null) {
   if (!key) {
     return null;
   }
@@ -136,7 +136,7 @@ export function encLastKey(key: DynamoKey | undefined | null) {
   return data + '.' + getEncHash(data);
 }
 
-export function decLastKey(key: string | undefined | null): DynamoKey | null {
+export function decLastKey(key: string | undefined | null): any | null {
   if (!key) {
     return null;
   }

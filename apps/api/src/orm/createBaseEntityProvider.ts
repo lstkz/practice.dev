@@ -33,7 +33,10 @@ class Builder {
   private createKey!: CreateKeyHandler<any>;
   private colMapping: ColumnMapping<any> = {};
 
-  constructor(private options: CreateBaseEntityProviderOptions<any>) {}
+  constructor(
+    public entityType: string,
+    private options: CreateBaseEntityProviderOptions<any>
+  ) {}
 
   props() {
     return this;
@@ -64,8 +67,9 @@ class Builder {
     };
 
     function BaseEntity(this: any, props: any) {
-      Object.assign(this, props);
+      Object.assign(this, { ...props, entityType: this.entityType });
     }
+    BaseEntity.entityType = this.entityType;
 
     const instance: InstanceMethods<any> = {
       async insert(options) {
@@ -275,7 +279,9 @@ class Builder {
     return BaseEntity;
   }
 }
-export type CreateBaseEntityBuilder = () => {
+export type CreateBaseEntityBuilder = (
+  entityType: string
+) => {
   props<TProps>(): {
     key<TKey>(fn: CreateKeyHandler<TKey>): CreateBaseEntity<TProps, TKey>;
   };
@@ -284,5 +290,5 @@ export type CreateBaseEntityBuilder = () => {
 export function createBaseEntityProvider<
   TIndexes extends Record<string, 'string' | 'number'>
 >(options: CreateBaseEntityProviderOptions<TIndexes>): CreateBaseEntityBuilder {
-  return () => new Builder(options) as any;
+  return (entityType: string) => new Builder(entityType, options) as any;
 }

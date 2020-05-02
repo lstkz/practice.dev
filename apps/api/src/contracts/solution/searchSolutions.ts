@@ -41,55 +41,40 @@ export const searchSolutions = createContract('solution.searchSolutions')
           lastKey: null,
         } as SearchResult<SolutionEntity>;
       }
-      const criteria: any[] = [];
+      const esCriteria: any[] = [];
       if (challengeId) {
-        criteria.push({
+        esCriteria.push({
           match: { challengeId },
         });
       }
       if (userId) {
-        criteria.push({
+        esCriteria.push({
           match: { userId },
         });
       }
-      let terms = undefined;
       if (tags && tags.length) {
-        // terms = {
-        //   tags: tags,
-        //   // minimum_should_match: 1,
-        // };
         tags.forEach(tag => {
-          criteria.push({
+          esCriteria.push({
             term: {
               tags: tag,
             },
           });
         });
-        // criteria.push({
-        //   terms: {
-        //     tags: tags,
-        //     execution: 'and',
-        //   },
-        // });
       }
-      const ret: any = await esSearch('solution', {
+      return await esSearch(SolutionEntity, {
         query: {
-          // filter: {
-          //   terms,
-          // },
           bool: {
-            must: criteria,
+            must: esCriteria,
           },
         },
+        sort: [
+          {
+            [sortBy]: sortDesc ? 'desc' : 'asc',
+          },
+        ],
+        limit: criteria.limit!,
+        cursor: criteria.cursor,
       });
-      console.log(ret);
-      const items: SolutionEntity[] = ret.hits.hits.map(
-        x => new SolutionEntity(x._source)
-      );
-      return {
-        items,
-        lastKey: null,
-      };
     });
 
     // const { items, lastKey } = await doFn(async () => {
