@@ -14,9 +14,10 @@ export interface ChallengeSolvedProps extends ChallengeSolvedKey {
 
 const BaseEntity = createBaseEntity('ChallengeSolved')
   .props<ChallengeSolvedProps>()
-  .key<ChallengeSolvedKey>(
-    key => `CHALLENGE_SOLVED:${key.challengeId}:${key.userId}`
-  )
+  .key<ChallengeSolvedKey>(key => ({
+    pk: `CHALLENGE_SOLVED:${key.userId}`,
+    sk: `CHALLENGE_SOLVED:${key.challengeId}:${key.userId}`,
+  }))
   .build();
 
 export class ChallengeSolvedEntity extends BaseEntity {
