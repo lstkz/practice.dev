@@ -62,6 +62,7 @@ export async function esSearch<T extends BaseEntityClass>(
     body: requestBody,
   });
   const body: any = await res.json();
+
   if (body.error) {
     console.error(
       'esSearch fail',
@@ -141,7 +142,10 @@ export async function esClearIndex(indexName: string) {
     }),
   });
   const body: any = await res.json();
-  if (body.error) {
+  if (
+    body.error &&
+    !(body.error.reason as string).startsWith('no such index')
+  ) {
     console.error(
       'esClearIndex fail',
       JSON.stringify({

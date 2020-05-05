@@ -36,6 +36,7 @@ function _addTagStats(
       updateExpression: [
         'SET #count = if_not_exists(#count, :zero) + :incr',
         'challengeId = :challengeId',
+        'entityType = :entityType',
         '#tag = :tag',
       ].join(', '),
       expressionNames: {
@@ -47,6 +48,7 @@ function _addTagStats(
         ':zero': 0,
         ':challengeId': challengeId,
         ':tag': tag,
+        ':entityType': SolutionTagStatsEntity.entityType,
       },
     });
   });
@@ -84,7 +86,7 @@ export async function removeSolutionCUD(solution: SolutionEntity) {
     conditionExpression: 'attribute_exists(pk)',
   });
   t.insert(solution);
-  _addTagStats(t, solution.challengeId, solution.tags, []);
+  _addTagStats(t, solution.challengeId, [], solution.tags);
   updateUserStats(t, solution.userId, 'solutions', -1);
   updateChallengeStats(t, solution.challengeId, 'solutions', -1);
   await t.commit();

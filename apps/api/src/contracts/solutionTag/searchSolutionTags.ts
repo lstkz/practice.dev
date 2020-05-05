@@ -1,8 +1,8 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
 import { SolutionTagStatsEntity } from '../../entities';
-import { decLastKey, encLastKey } from '../../common/helper';
 import { LoadMoreResult, SolutionTag } from 'shared';
+import { esSearch } from '../../common/elastic';
 
 export const searchSolutionTags = createContract('solutionTags.searchSolutions')
   .params('criteria')
@@ -15,18 +15,50 @@ export const searchSolutionTags = createContract('solutionTags.searchSolutions')
     }),
   })
   .fn(async criteria => {
-    throw new Error('Todo');
-    // const { items, lastKey } = await SolutionTagStatsEntity.searchSolutionTags({
-    //   challengeId: criteria.challengeId,
-    //   keyword: criteria.keyword,
-    //   limit: criteria.limit,
-    //   lastKey: decLastKey(criteria.cursor),
-    //   sort: 'asc',
-    // });
-    // return {
-    //   items: items.map(x => x.toSolutionTag()),
-    //   cursor: encLastKey(lastKey),
-    // } as LoadMoreResult<SolutionTag>;
+    const { challengeId, keyword } = criteria;
+    const esCriteria: any[] = [
+      {
+        range: {
+          count: {
+            gt: 0,
+          },
+        },
+      },
+    ];
+    if (keyword) {
+      esCriteria.push({
+        prefix: {
+          tag: keyword,
+        },
+      });
+    }
+    if (challengeId) {
+      esCriteria.push({
+        match: { challengeId },
+      });
+    }
+
+    const { items, lastKey } = await esSearch(SolutionTagStatsEntity, {
+      query: {
+        bool: {
+          must: esCriteria,
+        },
+      },
+      sort: [
+        {
+          count: 'desc',
+        },
+        {
+          _id: 'asc',
+        },
+      ],
+      limit: criteria.limit!,
+      cursor: criteria.cursor,
+    });
+    return {
+      items: items.map(x => x.toSolutionTag()),
+      cursor: lastKey,
+    } as LoadMoreResult<SolutionTag>;
   });
 
 export const searchSolutionsRpc = createRpcBinding({
