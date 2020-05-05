@@ -1,7 +1,7 @@
 import { resetDb } from '../helper';
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { createSolution } from '../../src/contracts/solution/createSolution';
-import { markSolved } from '../../src/contracts/challenge/markSolved';
+import { createChallengeSolvedCUD } from '../../src/cud/challengeSolved';
 
 const userId = '1';
 
@@ -126,7 +126,7 @@ it('throw an error if solution is not solved', async () => {
 });
 
 it('should create a solution', async () => {
-  await markSolved({
+  await createChallengeSolvedCUD({
     challengeId: 1,
     solvedAt: 1,
     userId: '1',
@@ -145,7 +145,7 @@ it('should create a solution', async () => {
 });
 
 it('throw an error if slug is duplicated', async () => {
-  await markSolved({
+  await createChallengeSolvedCUD({
     challengeId: 1,
     solvedAt: 1,
     userId: '1',
@@ -166,7 +166,7 @@ it('throw an error if slug is duplicated', async () => {
 });
 
 it('should create two solutions with different slug', async () => {
-  await markSolved({
+  await createChallengeSolvedCUD({
     challengeId: 1,
     solvedAt: 1,
     userId: '1',

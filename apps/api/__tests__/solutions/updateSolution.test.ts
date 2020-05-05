@@ -1,10 +1,8 @@
-import { resetDb, mapToTimestamps } from '../helper';
+import { resetDb } from '../helper';
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
-import { _createSolution } from '../../src/contracts/solution/_createSolution';
 import { updateSolution } from '../../src/contracts/solution/updateSolution';
 import { getSolutionById } from '../../src/contracts/solution/getSolutionById';
-import { searchSolutions } from '../../src/contracts/solution/searchSolutions';
-import { MockStream } from '../MockStream';
+import { createSolutionCUD } from '../../src/cud/solution';
 
 const userId = '1';
 
@@ -20,18 +18,14 @@ const sampleValues = {
   challengeId: 1,
 };
 
-const mockStream = new MockStream();
-
 beforeEach(async () => {
   await resetDb();
-  await mockStream.init();
   await Promise.all([registerSampleUsers(), addSampleChallenges()]);
 
-  await _createSolution({
+  await createSolutionCUD({
     ...sampleValues,
-    id: '1',
+    solutionId: '1',
   });
-  await mockStream.process();
 });
 
 it('throw error if solution not found', async () => {
@@ -86,12 +80,11 @@ it('change slug', async () => {
     url: 'https://github.com/repo-edited',
   });
   expect(ret.slug).toEqual('new-slug');
-  await mockStream.process();
 
   // new slug should be reserved
   await expect(
-    _createSolution({
-      id: '2',
+    createSolutionCUD({
+      solutionId: '2',
       ...sampleValues,
       slug: 'new-slug',
     })
@@ -99,8 +92,8 @@ it('change slug', async () => {
 
   // new old slug should be reserved
   await expect(
-    _createSolution({
-      id: '3',
+    createSolutionCUD({
+      solutionId: '3',
       ...sampleValues,
     })
   ).resolves.not.toThrow();
@@ -115,15 +108,6 @@ it('add tag', async () => {
     url: 'https://github.com/repo-edited',
   });
   expect(ret.tags).toEqual(['a', 'b', 'c', 'd', 'x']);
-  await mockStream.process();
-  const { items } = await searchSolutions(undefined, {
-    challengeId: 1,
-    tags: ['x'],
-    limit: 10,
-    sortBy: 'date',
-    sortDesc: false,
-  });
-  expect(mapToTimestamps(items)).toEqual([1]);
 });
 
 it('remove tag', async () => {
@@ -134,14 +118,5 @@ it('remove tag', async () => {
     description: 'desc-edited',
     url: 'https://github.com/repo-edited',
   });
-  await mockStream.process();
   expect(ret.tags).toEqual(['a', 'b']);
-  const { items } = await searchSolutions(undefined, {
-    challengeId: 1,
-    tags: ['c'],
-    limit: 10,
-    sortBy: 'date',
-    sortDesc: false,
-  });
-  expect(mapToTimestamps(items)).toEqual([]);
 });

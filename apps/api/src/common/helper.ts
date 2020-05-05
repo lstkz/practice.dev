@@ -157,8 +157,6 @@ export function normalizeTags(tags: string[]) {
 
 export function rethrowTransactionCanceled(msg: string) {
   return (e: any) => {
-    console.log(e);
-    console.log(JSON.stringify(e, null, 2));
     if (e.code === 'TransactionCanceledException') {
       throw new AppError(msg);
     }
