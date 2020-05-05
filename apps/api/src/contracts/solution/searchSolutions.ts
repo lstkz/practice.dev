@@ -1,7 +1,6 @@
 import { S } from 'schema';
 import { createContract, createRpcBinding } from '../../lib';
-import { UnreachableCaseError, AppError } from '../../common/errors';
-import { doFn, decLastKey, encLastKey } from '../../common/helper';
+import { doFn } from '../../common/helper';
 import {
   SolutionEntity,
   UserUsernameEntity,
@@ -69,77 +68,25 @@ export const searchSolutions = createContract('solution.searchSolutions')
         },
         sort: [
           {
-            [sortBy]: sortDesc ? 'desc' : 'asc',
+            [sortBy === 'date' ? 'createdAt' : 'likes']: sortDesc
+              ? 'desc'
+              : 'asc',
+          },
+          {
+            _id: 'asc',
           },
         ],
         limit: criteria.limit!,
         cursor: criteria.cursor,
       });
     });
-
-    // const { items, lastKey } = await doFn(async () => {
-    //   if (tags?.length && !challengeId) {
-    //     throw new AppError(
-    //       'Cannot search by tags if challengeId is not defined'
-    //     );
-    //   }
-    //   if (!challengeId && !username) {
-    //     throw new AppError('challengeId or username is required');
-    //   }
-    //   const userId = username
-    //     ? await UserUsernameEntity.getByKeyOrNull({ username }).then(
-    //         x => x?.userId
-    //       )
-    //     : null;
-    //   if (username && !userId) {
-    //     return {
-    //       items: [],
-    //       lastKey: null,
-    //     } as SearchResult<SolutionEntity>;
-    //   }
-    //   const baseCriteria: BaseSolutionSearchCriteria = {
-    //     lastKey: decLastKey(criteria.cursor),
-    //     sort: sortDesc ? 'desc' : 'asc',
-    //     limit: criteria.limit!,
-    //     sortBy,
-    //   };
-    //   if (tags?.length) {
-    //     return SolutionEntity.searchByTags({
-    //       ...baseCriteria,
-    //       challengeId: challengeId!,
-    //       userId,
-    //       tags,
-    //     });
-    //   }
-    //   if (userId && challengeId) {
-    //     return SolutionEntity.searchByChallengeUser({
-    //       ...baseCriteria,
-    //       challengeId: challengeId,
-    //       userId,
-    //     });
-    //   }
-    //   if (userId) {
-    //     return SolutionEntity.searchByUser({
-    //       ...baseCriteria,
-    //       userId,
-    //     });
-    //   }
-    //   if (challengeId) {
-    //     return SolutionEntity.searchByChallenge({
-    //       ...baseCriteria,
-    //       challengeId,
-    //     });
-    //   }
-    //   throw new UnreachableCaseError('Unhandled query condition' as never);
-    // });
-
     const [users, votes] = await Promise.all([
       UserEntity.getByIds(items.map(x => x.userId)),
       SolutionVoteEntity.getUserSolutionVotes(userId, items),
     ]);
     return {
       items: SolutionEntity.toSolutionMany(items, users, votes),
-      cursor: encLastKey(lastKey),
+      cursor: lastKey,
     } as LoadMoreResult<Solution>;
   });
 

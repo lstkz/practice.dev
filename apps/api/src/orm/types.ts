@@ -66,12 +66,12 @@ export interface BaseEntityClass<TProps, TKey>
 
 export interface SearchResult<T> {
   items: T[];
-  lastKey: number | null;
+  lastKey: string | null;
 }
 
 export interface QueryOptions extends QueryAllOptions {
   limit?: number;
-  lastKey?: DynamoKey | null;
+  lastKey?: string | null;
 }
 
 export type QueryOperator = '=' | '!=' | 'begins_with';
@@ -104,6 +104,6 @@ export interface QueryAllOptions {
 
 export interface BaseSearchCriteria {
   limit?: number;
-  lastKey?: DynamoKey | null;
+  lastKey?: string | null;
   sort: 'asc' | 'desc';
 }

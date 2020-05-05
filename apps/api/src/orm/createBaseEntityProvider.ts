@@ -17,6 +17,7 @@ import {
   getIndexName,
 } from './helper';
 import { DynamodbWrapper } from './DynamodbWrapper';
+import { encLastKey, decLastKey } from '../common/helper';
 
 export interface CreateBaseEntityProviderOptions<TIndexes> {
   dynamodb: AWS.DynamoDB;
@@ -54,6 +55,7 @@ class Builder {
     const dynamodb = new DynamodbWrapper(this.options.dynamodb);
     const colMapping = this.colMapping;
     const createKey = this.createKey;
+    const entityType = this.entityType;
     const getDynamoKey = (key: string | DynamoKey) => {
       const value = createKey(key);
       if (typeof value === 'string') {
@@ -67,7 +69,7 @@ class Builder {
     };
 
     function BaseEntity(this: any, props: any) {
-      Object.assign(this, { ...props, entityType: this.entityType });
+      Object.assign(this, { ...props, entityType: entityType });
     }
     BaseEntity.entityType = this.entityType;
 
@@ -212,7 +214,7 @@ class Builder {
           ExpressionAttributeValues: Converter.marshall(expressionValues),
           Limit: options.limit,
           ExclusiveStartKey: options.lastKey
-            ? Converter.marshall(options.lastKey)
+            ? Converter.marshall(decLastKey(options.lastKey))
             : undefined,
         });
         return {
@@ -220,7 +222,7 @@ class Builder {
             this.fromDynamo(item)
           ) as Array<InstanceType<any>>,
           lastKey: result.LastEvaluatedKey
-            ? (Converter.unmarshall(result.LastEvaluatedKey) as DynamoKey)
+            ? encLastKey(Converter.unmarshall(result.LastEvaluatedKey))
             : null,
         };
       },

@@ -47,9 +47,15 @@ export const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 export const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 export const TESTER_TOPIC_ARN = process.env.TESTER_TOPIC_ARN;
 export const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
-export const ES_URL = process.env.ES_URL;
+
+export const ES_URL = process.env.JEST_WORKER_ID
+  ? 'http://localhost:9200'
+  : process.env.ES_URL;
 export const ES_USERNAME = process.env.ES_USERNAME;
 export const ES_PASSWORD = process.env.ES_PASSWORD;
+export const ES_INDEX_PREFIX = process.env.JEST_WORKER_ID
+  ? process.env.JEST_WORKER_ID + '_'
+  : '';
 
 export const EMAIL_SENDER = 'Practice.dev <no-reply@practice.dev>';
 

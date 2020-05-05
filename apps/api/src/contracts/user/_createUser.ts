@@ -44,6 +44,7 @@ export async function _createUser(values: CreateUserValues) {
       likes: 0,
       solutions: 0,
       submissions: 0,
+      solved: 0,
     },
   });
 

@@ -1,68 +1,76 @@
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { resetDb, mapToTimestamps } from '../helper';
-import { _createSolution } from '../../src/contracts/solution/_createSolution';
 import { searchSolutions } from '../../src/contracts/solution/searchSolutions';
 import { voteSolution } from '../../src/contracts/solution/voteSolution';
-import { MockStream } from '../MockStream';
-
-const mockStream = new MockStream();
+import { SolutionEntity } from '../../src/entities';
+import { exIndexBulk, esClearIndex } from '../../src/common/elastic';
+import { createSolutionCUD } from '../../src/cud/solution';
 
 beforeEach(async () => {
   await resetDb();
-  await mockStream.init();
   await Promise.all([registerSampleUsers(), addSampleChallenges()]);
   const getBaseProps = (id: number) => ({
-    id: String(id),
+    solutionId: String(id),
     createdAt: id,
     title: 's' + id,
     slug: 's' + id,
     url: 'url',
   });
-  await Promise.all([
-    _createSolution({
+
+  await esClearIndex(SolutionEntity.entityType);
+  const solutions = [
+    new SolutionEntity({
       ...getBaseProps(1),
       likes: 25,
       tags: ['a', 'b', 'c', 'd'],
       userId: '1',
       challengeId: 1,
     }),
-    _createSolution({
+    new SolutionEntity({
       ...getBaseProps(2),
       likes: 14,
       tags: ['a', 'b', 'c', 'd'],
       userId: '1',
       challengeId: 1,
     }),
-    _createSolution({
+    new SolutionEntity({
       ...getBaseProps(3),
       likes: 5,
       tags: ['a', 'b', 'd'],
       userId: '1',
       challengeId: 1,
     }),
-    _createSolution({
+    new SolutionEntity({
       ...getBaseProps(4),
       likes: 0,
       tags: ['d'],
       userId: '1',
       challengeId: 2,
     }),
-    _createSolution({
+    new SolutionEntity({
       ...getBaseProps(5),
       likes: 1,
       tags: ['e'],
       userId: '1',
       challengeId: 3,
     }),
-    _createSolution({
+    new SolutionEntity({
       ...getBaseProps(6),
       likes: 30,
       tags: ['a'],
       userId: '2',
       challengeId: 1,
     }),
+  ];
+  await Promise.all<any>([
+    exIndexBulk(
+      solutions.map(item => ({
+        type: 'index',
+        entity: item.serialize() as any,
+      }))
+    ),
+    ...solutions.map(item => createSolutionCUD(item.getProps())),
   ]);
-  await mockStream.process();
 });
 
 it('search by challengeId sort by DATE ASC', async () => {
@@ -204,37 +212,11 @@ it('search by username and challengeId and 2 tags', async () => {
   expect(mapToTimestamps(items)).toEqual([1, 2]);
 });
 
-it('searching by tags throws an error', async () => {
-  await expect(
-    searchSolutions(undefined, {
-      limit: 10,
-      tags: ['a', 'c'],
-      sortBy: 'date',
-      sortDesc: false,
-    })
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"Cannot search by tags if challengeId is not defined"`
-  );
-});
-
-it('search without params', async () => {
-  await expect(
-    searchSolutions(undefined, {
-      limit: 10,
-      sortBy: 'date',
-      sortDesc: false,
-    })
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"challengeId or username is required"`
-  );
-});
-
 it('should populate isLiked', async () => {
   await voteSolution('1', {
     like: true,
     solutionId: '2',
   });
-  await mockStream.process();
   const { items } = await searchSolutions('1', {
     challengeId: 1,
     limit: 10,
