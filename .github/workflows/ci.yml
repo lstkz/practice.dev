@@ -25,5 +25,6 @@ jobs:
           node-version: 12.x
 
       - run: yarn install --frozen-lockfile
-      - run: cd apps/api
-      - run: yarn test
+      - run: |
+          cd apps/api
+          yarn test
