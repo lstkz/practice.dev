@@ -1,9 +1,7 @@
 import * as R from 'remeda';
 import { createBaseEntity } from '../lib';
-import { DbKey } from '../types';
 import { ChallengeSolved } from 'shared';
 import { UserEntity } from './UserEntity';
-import { BaseSearchCriteria } from '../orm/types';
 
 export interface ChallengeSolvedKey {
   userId: string;
@@ -14,23 +12,12 @@ export interface ChallengeSolvedProps extends ChallengeSolvedKey {
   solvedAt: number;
 }
 
-interface SearchSolvedByUserIdCriteria extends BaseSearchCriteria {
-  userId: string;
-}
-
-interface SearchSolvedByChallengeIdCriteria extends BaseSearchCriteria {
-  challengeId: number;
-}
-
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('ChallengeSolved')
   .props<ChallengeSolvedProps>()
   .key<ChallengeSolvedKey>(key => ({
     pk: `CHALLENGE_SOLVED:${key.userId}`,
-    sk: `CHALLENGE_SOLVED:${key.challengeId}`,
+    sk: `CHALLENGE_SOLVED:${key.challengeId}:${key.userId}`,
   }))
-  .mapping({
-    solvedAt: 'data_n',
-  })
   .build();
 
 export class ChallengeSolvedEntity extends BaseEntity {
@@ -73,37 +60,5 @@ export class ChallengeSolvedEntity extends BaseEntity {
   ) {
     const userMap = R.indexBy(users, x => x.userId);
     return items.map(item => item.toChallengeSolved(userMap[item.userId]));
-  }
-
-  static isEntityKey(key: DbKey) {
-    return key.pk.startsWith('CHALLENGE_SOLVED:');
-  }
-
-  static searchSolvedByUserId(criteria: SearchSolvedByUserIdCriteria) {
-    const { pk } = this.createKey({
-      challengeId: -1,
-      userId: criteria.userId,
-    });
-    return this.query({
-      key: { pk },
-      lastKey: criteria.lastKey,
-      limit: criteria.limit,
-      sort: criteria.sort,
-    });
-  }
-
-  static searchSolvedByChallengeId(
-    criteria: SearchSolvedByChallengeIdCriteria
-  ) {
-    const { sk } = this.createKey({
-      challengeId: criteria.challengeId,
-      userId: '-1',
-    });
-    return this.query({
-      key: { sk, data_n: null },
-      lastKey: criteria.lastKey,
-      limit: criteria.limit,
-      sort: criteria.sort,
-    });
   }
 }

@@ -8,7 +8,7 @@ export interface SequenceProps extends SequenceKey {
   value: number;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('Sequence')
   .props<SequenceProps>()
   .key<SequenceKey>(key => `SEQUENCE:${key.name}`)
   .build();

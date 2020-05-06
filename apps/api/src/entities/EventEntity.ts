@@ -7,7 +7,7 @@ export interface EventKey {
 
 export interface EventProps extends EventKey {}
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('Event')
   .props<EventProps>()
   .key<EventKey>(key => `EVENT:${key.eventId}`)
   .build();

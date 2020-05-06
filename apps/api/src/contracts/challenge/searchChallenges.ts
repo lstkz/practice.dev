@@ -12,20 +12,12 @@ export const searchChallenges = createContract('challenge.searchChallenges')
       sortBy: S.enum()
         .literal('created', 'likes', 'solved', 'submissions')
         .optional(),
-      sortOrder: S.enum()
-        .literal('desc', 'asc')
-        .optional(),
+      sortOrder: S.enum().literal('desc', 'asc').optional(),
       pageSize: S.pageSize(),
       pageNumber: S.pageNumber(),
-      tags: S.array()
-        .items(S.string())
-        .optional(),
-      domains: S.array()
-        .items(S.string())
-        .optional(),
-      difficulties: S.array()
-        .items(S.string())
-        .optional(),
+      tags: S.array().items(S.string()).optional(),
+      domains: S.array().items(S.string()).optional(),
+      difficulties: S.array().items(S.string()).optional(),
       statuses: S.array()
         .items(S.enum().literal('solved', 'unsolved'))
         .optional(),

@@ -10,7 +10,7 @@ export async function _getSolutionWithPermissionCheck(
     UserEntity.getByKey({
       userId,
     }),
-    SolutionEntity.getByIdOrNull(solutionId),
+    SolutionEntity.getByKeyOrNull({ solutionId }),
   ]);
   if (!solution) {
     throw new AppError('Solution not found');

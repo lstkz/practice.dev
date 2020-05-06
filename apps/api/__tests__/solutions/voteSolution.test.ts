@@ -1,19 +1,15 @@
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { resetDb } from '../helper';
-import { _createSolution } from '../../src/contracts/solution/_createSolution';
 import { voteSolution } from '../../src/contracts/solution/voteSolution';
-import { MockStream } from '../MockStream';
 import { getSolutionById } from '../../src/contracts/solution/getSolutionById';
-
-const mockStream = new MockStream();
+import { createSolutionCUD } from '../../src/cud/solution';
 
 beforeEach(async () => {
   await resetDb();
-  await mockStream.init();
   await Promise.all([registerSampleUsers(), addSampleChallenges()]);
 
-  await _createSolution({
-    id: '1',
+  await createSolutionCUD({
+    solutionId: '1',
     createdAt: 1,
     title: 'solution',
     slug: 's1',
@@ -23,7 +19,6 @@ beforeEach(async () => {
     userId: '1',
     challengeId: 1,
   });
-  await mockStream.process();
 });
 
 it('throw error if solution not found', async () => {
@@ -37,7 +32,6 @@ it('throw error if solution not found', async () => {
 
 it('should like and unlike solution', async () => {
   const getLikes = async () => {
-    await mockStream.process();
     const solution = await getSolutionById('1', '1');
     return solution.likes;
   };

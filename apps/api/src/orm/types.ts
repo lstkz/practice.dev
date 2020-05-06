@@ -61,16 +61,17 @@ export interface BaseEntityStatic<TProps, TKey> {
 export interface BaseEntityClass<TProps, TKey>
   extends BaseEntityStatic<TProps, TKey> {
   new (props: TProps): Instance<TProps>;
+  entityType: string;
 }
 
 export interface SearchResult<T> {
   items: T[];
-  lastKey: DynamoKey | null;
+  lastKey: string | null;
 }
 
 export interface QueryOptions extends QueryAllOptions {
   limit?: number;
-  lastKey?: DynamoKey | null;
+  lastKey?: string | null;
 }
 
 export type QueryOperator = '=' | '!=' | 'begins_with';
@@ -103,6 +104,6 @@ export interface QueryAllOptions {
 
 export interface BaseSearchCriteria {
   limit?: number;
-  lastKey?: DynamoKey | null;
+  lastKey?: string | null;
   sort: 'asc' | 'desc';
 }

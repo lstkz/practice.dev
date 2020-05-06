@@ -8,7 +8,7 @@ export interface UserEmailProps extends UserEmailKey {
   userId: string;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('UserEmail')
   .props<UserEmailProps>()
   .key<UserEmailKey>(key => `USER_EMAIL:${key.email.toLowerCase()}`)
   .build();

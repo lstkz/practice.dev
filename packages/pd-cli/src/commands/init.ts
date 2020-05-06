@@ -19,14 +19,22 @@ export function init() {
       const env = getEnvSettings({ prod, stage });
 
       await cpToPromise(
-        spawn('cdk', ['deploy'], {
-          env: {
-            ...process.env,
-            ...env,
-            INIT_STACK: '1',
-          },
-          ...getSpawnOptions('deploy'),
-        })
+        spawn(
+          'cdk',
+          [
+            'deploy',
+            '--app',
+            '"yarn workspace deploy run ts-node -T src/MainStack"',
+          ],
+          {
+            env: {
+              ...process.env,
+              ...env,
+              INIT_STACK: '1',
+            },
+            ...getSpawnOptions('deploy'),
+          }
+        )
       );
       const stack = await getStack(env.STACK_NAME);
       const getOutput = (name: string) => {

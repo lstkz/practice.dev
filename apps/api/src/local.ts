@@ -4,7 +4,6 @@ import { handler } from './handler';
 import chokidar from 'chokidar';
 import { s3 } from './lib';
 import { S3_BUCKET_NAME } from './config';
-// import { MockStream } from '../__tests__/MockStream';
 
 const watcher = chokidar.watch(__dirname);
 
@@ -18,26 +17,6 @@ watcher.on('ready', function () {
     });
   });
 });
-
-// const mockStream = new MockStream();
-
-// (async () => {
-//   let count = 0;
-//   await mockStream.init();
-//   const check = async () => {
-//     count++;
-//     if (count > 2 * 60 * 60 * 3) {
-//       // don't allow running this process for more than 3h to avoid dynamodb stream costs
-//       console.log('max count exceeded in mock stream');
-//       process.exit(-1);
-//     }
-//     await mockStream.process().catch(e => {
-//       console.error(e);
-//     });
-//     setTimeout(check, 500);
-//   };
-//   check();
-// })();
 
 function _getBody(req: http.IncomingMessage) {
   const body: any[] = [];

@@ -1,7 +1,7 @@
 import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
-import { _createSolution } from './_createSolution';
 import { _getSolutionWithPermissionCheck } from './_getSolutionWithCheck';
+import { removeSolutionCUD } from '../../cud/solution';
 
 export const removeSolution = createContract('solution.removeSolution')
   .params('userId', 'solutionId')
@@ -11,7 +11,7 @@ export const removeSolution = createContract('solution.removeSolution')
   })
   .fn(async (userId, solutionId) => {
     const solution = await _getSolutionWithPermissionCheck(userId, solutionId);
-    await solution.delete();
+    await removeSolutionCUD(solution);
   });
 
 export const removeSolutionRpc = createRpcBinding({

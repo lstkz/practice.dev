@@ -9,7 +9,7 @@ export interface SocketConnectionProps extends SocketConnectionKey {
   createdAt: number;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('SocketConnection')
   .props<SocketConnectionProps>()
   .key<SocketConnectionKey>(key => ({
     pk: `SOCKET_CONNECTION:${key.connectionId}`,

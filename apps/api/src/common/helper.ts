@@ -3,7 +3,6 @@ import { Response } from 'node-fetch';
 import * as R from 'remeda';
 import { AppError } from './errors';
 import { UserEntity } from '../entities';
-import { DynamoKey } from '../orm/types';
 
 const SECURITY = {
   SALT_LENGTH: 64,
@@ -83,8 +82,9 @@ export async function getResponseBody<T = any>(opName: string, res: Response) {
   }
   const body = await res.json();
   if (body.error) {
-    const msg = `${opName} failed with code: ${body.error_description ||
-      body.error}`;
+    const msg = `${opName} failed with code: ${
+      body.error_description || body.error
+    }`;
     console.error(msg, {
       body,
     });
@@ -124,14 +124,10 @@ export function safeKeys<T>(obj: T): Array<keyof T> {
 }
 
 function getEncHash(data: string) {
-  return crypto
-    .createHash('md5')
-    .update(data)
-    .digest('hex')
-    .substr(0, 10);
+  return crypto.createHash('md5').update(data).digest('hex').substr(0, 10);
 }
 
-export function encLastKey(key: DynamoKey | undefined | null) {
+export function encLastKey(key: any | undefined | null) {
   if (!key) {
     return null;
   }
@@ -139,7 +135,7 @@ export function encLastKey(key: DynamoKey | undefined | null) {
   return data + '.' + getEncHash(data);
 }
 
-export function decLastKey(key: string | undefined | null): DynamoKey | null {
+export function decLastKey(key: string | undefined | null): any | null {
   if (!key) {
     return null;
   }
@@ -158,7 +154,9 @@ export function normalizeTags(tags: string[]) {
   return R.uniq(tags.map(x => x.toLowerCase().trim()));
 }
 
-export function rethrowTransactionCanceled(msg: string) {
+export function rethrowTransactionCanceled(
+  msg: string = 'Conflict. Please try again.'
+) {
   return (e: any) => {
     if (e.code === 'TransactionCanceledException') {
       throw new AppError(msg);

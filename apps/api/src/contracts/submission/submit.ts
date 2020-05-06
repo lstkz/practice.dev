@@ -6,7 +6,8 @@ import uuid from 'uuid';
 import { SubmissionStatus, TesterMessage } from 'shared';
 import { TESTER_TOPIC_ARN } from '../../config';
 import { AppError } from '../../common/errors';
-import { SubmissionEntity, ChallengeEntity } from '../../entities';
+import { ChallengeEntity } from '../../entities';
+import { createSubmissionCUD } from '../../cud/submission';
 
 const RATE_LIMIT_PER_DAY = 1000;
 const RATE_LIMIT_PER_HOUR = 100;
@@ -43,7 +44,7 @@ export const submit = createContract('submission.submit')
       ),
     ]);
     const id = uuid();
-    const submission = new SubmissionEntity({
+    const submission = await createSubmissionCUD({
       submissionId: id,
       challengeId: values.challengeId,
       userId,

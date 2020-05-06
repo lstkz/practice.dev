@@ -1,9 +1,9 @@
 import { createContract } from '../../lib';
 import { S } from 'schema';
 import { SubmissionStatus } from 'shared';
-import { markSolved } from '../challenge/markSolved';
 import { SubmissionEntity } from '../../entities';
 import { AppError } from '../../common/errors';
+import { createChallengeSolvedCUD } from '../../cud/challengeSolved';
 
 export const updateSubmissionStatus = createContract(
   'submission.updateSubmissionStatus'
@@ -27,10 +27,15 @@ export const updateSubmissionStatus = createContract(
     submission.result = values.result;
     await submission.update(['status', 'result']);
     if (values.status === SubmissionStatus.Pass) {
-      await markSolved({
-        challengeId: submission.challengeId,
-        userId: submission.userId,
-        solvedAt: Date.now(),
-      });
+      await createChallengeSolvedCUD(
+        {
+          challengeId: submission.challengeId,
+          userId: submission.userId,
+          solvedAt: Date.now(),
+        },
+        {
+          ignoreTransactionCanceled: true,
+        }
+      );
     }
   });

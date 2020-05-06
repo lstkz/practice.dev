@@ -3,6 +3,7 @@ import { Converter } from 'aws-sdk/clients/dynamodb';
 import { ChallengeStats } from 'shared';
 import { TABLE_NAME } from '../src/config';
 import { ChallengeEntity } from '../src/entities';
+import { esClearIndex, exIndexBulk } from '../src/common/elastic';
 
 export async function resetDb() {
   const deleteNext = async () => {
@@ -53,4 +54,26 @@ export async function setChallengeStats(id: number, stats: ChallengeStats) {
 
 export function mapToTimestamps<T extends { createdAt: string }>(items: T[]) {
   return items.map(item => new Date(item.createdAt).getTime());
+}
+
+export async function esReIndexFromDynamo(entityType: string) {
+  const ret = await dynamodb
+    .scan(
+      {
+        TableName: TABLE_NAME,
+        FilterExpression: `entityType = :entityType`,
+        ExpressionAttributeValues: {
+          ':entityType': { S: entityType },
+        },
+      },
+      undefined
+    )
+    .promise();
+  await esClearIndex(entityType);
+  await exIndexBulk(
+    ret!.Items!.map(item => ({
+      type: 'index',
+      entity: Converter.unmarshall(item) as any,
+    }))
+  );
 }

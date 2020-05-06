@@ -1,47 +1,41 @@
-import { _createSolution } from '../../src/contracts/solution/_createSolution';
-import { resetDb } from '../helper';
+import { resetDb, esReIndexFromDynamo } from '../helper';
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { searchSolutionTags } from '../../src/contracts/solutionTag/searchSolutionTags';
 import { removeSolution } from '../../src/contracts/solution/removeSolution';
 import { updateSolution } from '../../src/contracts/solution/updateSolution';
-import { MockStream } from '../MockStream';
+import { SolutionTagStatsEntity } from '../../src/entities';
+import { createSolutionCUD } from '../../src/cud/solution';
 
 const userId = '1';
 
-const mockStream = new MockStream();
-
 const getBaseProps = (id: number) => ({
-  id: String(id),
+  solutionId: String(id),
   createdAt: id,
   title: 's' + id,
   slug: 's' + id,
   url: 'https://github.com/foo/a',
 });
 
-beforeAll(async () => {
-  await mockStream.prepare();
-});
-
 beforeEach(async () => {
   await resetDb();
-  await mockStream.init();
   await Promise.all([registerSampleUsers(), addSampleChallenges()]);
+
   await Promise.all([
-    _createSolution({
+    createSolutionCUD({
       ...getBaseProps(1),
       likes: 25,
       tags: ['a', 'ab', 'c', 'd'],
       userId: '1',
       challengeId: 1,
     }),
-    _createSolution({
+    createSolutionCUD({
       ...getBaseProps(2),
       likes: 25,
       tags: ['a', 'ab'],
       userId: '2',
       challengeId: 1,
     }),
-    _createSolution({
+    createSolutionCUD({
       ...getBaseProps(3),
       likes: 0,
       tags: ['a'],
@@ -49,7 +43,7 @@ beforeEach(async () => {
       challengeId: 2,
     }),
   ]);
-  await mockStream.process();
+  await esReIndexFromDynamo(SolutionTagStatsEntity.entityType);
 });
 
 it('return tags for challenge 1', async () => {
@@ -164,7 +158,7 @@ it('return tags for challenge 2', async () => {
 
 it('remove solution', async () => {
   await removeSolution(userId, '1');
-  await mockStream.process();
+  await esReIndexFromDynamo(SolutionTagStatsEntity.entityType);
   const { items } = await searchSolutionTags({
     challengeId: 1,
   });
@@ -190,7 +184,7 @@ it('update solution', async () => {
     url: 'https://github.com/foo/a',
     tags: ['a', 'e', 'f'],
   });
-  await mockStream.process();
+  await esReIndexFromDynamo(SolutionTagStatsEntity.entityType);
   const { items } = await searchSolutionTags({
     challengeId: 1,
   });

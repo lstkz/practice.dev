@@ -3,7 +3,7 @@ import { updateChallenge } from '../../src/contracts/challenge/updateChallenge';
 import { registerSampleUsers } from '../seed-data';
 import { searchChallenges } from '../../src/contracts/challenge/searchChallenges';
 import { PagedResult, Challenge } from 'shared';
-import { markSolved } from '../../src/contracts/challenge/markSolved';
+import { createChallengeSolvedCUD } from '../../src/cud/challengeSolved';
 
 const userId = '1';
 
@@ -68,7 +68,7 @@ async function insertSampleData() {
     likes: 10,
   });
 
-  await markSolved({
+  await createChallengeSolvedCUD({
     userId: '1',
     challengeId: 2,
     solvedAt: 1,

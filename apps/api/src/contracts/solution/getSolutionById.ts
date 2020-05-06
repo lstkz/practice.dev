@@ -11,7 +11,9 @@ export const getSolutionById = createContract('solution.getSolutionById')
     id: S.string(),
   })
   .fn(async (userId, id) => {
-    const solution = await SolutionEntity.getByIdOrNull(id);
+    const solution = await SolutionEntity.getByKeyOrNull({
+      solutionId: id,
+    });
     if (!solution) {
       throw new AppError('Solution not found');
     }

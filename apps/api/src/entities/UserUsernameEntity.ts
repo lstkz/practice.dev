@@ -8,7 +8,7 @@ export interface UserUsernameProps extends UserUsernameKey {
   userId: string;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('UserUsername')
   .props<UserUsernameProps>()
   .key<UserUsernameKey>(key => `USER_USERNAME:${key.username.toLowerCase()}`)
   .build();

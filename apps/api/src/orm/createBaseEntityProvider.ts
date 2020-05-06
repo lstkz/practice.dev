@@ -17,6 +17,7 @@ import {
   getIndexName,
 } from './helper';
 import { DynamodbWrapper } from './DynamodbWrapper';
+import { encLastKey, decLastKey } from '../common/helper';
 
 export interface CreateBaseEntityProviderOptions<TIndexes> {
   dynamodb: AWS.DynamoDB;
@@ -33,7 +34,10 @@ class Builder {
   private createKey!: CreateKeyHandler<any>;
   private colMapping: ColumnMapping<any> = {};
 
-  constructor(private options: CreateBaseEntityProviderOptions<any>) {}
+  constructor(
+    public entityType: string,
+    private options: CreateBaseEntityProviderOptions<any>
+  ) {}
 
   props() {
     return this;
@@ -51,6 +55,7 @@ class Builder {
     const dynamodb = new DynamodbWrapper(this.options.dynamodb);
     const colMapping = this.colMapping;
     const createKey = this.createKey;
+    const entityType = this.entityType;
     const getDynamoKey = (key: string | DynamoKey) => {
       const value = createKey(key);
       if (typeof value === 'string') {
@@ -64,8 +69,9 @@ class Builder {
     };
 
     function BaseEntity(this: any, props: any) {
-      Object.assign(this, props);
+      Object.assign(this, { ...props, entityType: entityType });
     }
+    BaseEntity.entityType = this.entityType;
 
     const instance: InstanceMethods<any> = {
       async insert(options) {
@@ -208,7 +214,7 @@ class Builder {
           ExpressionAttributeValues: Converter.marshall(expressionValues),
           Limit: options.limit,
           ExclusiveStartKey: options.lastKey
-            ? Converter.marshall(options.lastKey)
+            ? Converter.marshall(decLastKey(options.lastKey))
             : undefined,
         });
         return {
@@ -216,7 +222,7 @@ class Builder {
             this.fromDynamo(item)
           ) as Array<InstanceType<any>>,
           lastKey: result.LastEvaluatedKey
-            ? (Converter.unmarshall(result.LastEvaluatedKey) as DynamoKey)
+            ? encLastKey(Converter.unmarshall(result.LastEvaluatedKey))
             : null,
         };
       },
@@ -275,7 +281,9 @@ class Builder {
     return BaseEntity;
   }
 }
-export type CreateBaseEntityBuilder = () => {
+export type CreateBaseEntityBuilder = (
+  entityType: string
+) => {
   props<TProps>(): {
     key<TKey>(fn: CreateKeyHandler<TKey>): CreateBaseEntity<TProps, TKey>;
   };
@@ -284,5 +292,5 @@ export type CreateBaseEntityBuilder = () => {
 export function createBaseEntityProvider<
   TIndexes extends Record<string, 'string' | 'number'>
 >(options: CreateBaseEntityProviderOptions<TIndexes>): CreateBaseEntityBuilder {
-  return () => new Builder(options) as any;
+  return (entityType: string) => new Builder(entityType, options) as any;
 }

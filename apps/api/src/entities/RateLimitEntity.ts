@@ -10,7 +10,7 @@ export interface RateLimitProps extends RateLimitKey {
   version: number;
 }
 
-const BaseEntity = createBaseEntity()
+const BaseEntity = createBaseEntity('RateLimit')
   .props<RateLimitProps>()
   .key<RateLimitKey>(key => `RATE_LIMIT:${key.name}`)
   .build();

@@ -146,59 +146,6 @@ ${entries.join('\n')}
     )
   );
 }
-function createDynamoStreamBinding() {
-  const entries: string[] = [];
-  const dynamoStreamMap: { [x: string]: string[] } = {};
-
-  contracts.forEach(contract => {
-    if (
-      !contract.binding.isBinding ||
-      contract.binding.type !== 'dynamoStream'
-    ) {
-      return;
-    }
-    const { file, key, binding } = contract;
-    const relativePath = Path.relative(
-      Path.join(__dirname, '../src'),
-      file
-    ).replace(/.ts$/, '');
-    const chunkName = R.drop(relativePath.split('/'), 1).join('_');
-    const type = binding.options.type;
-    if (!dynamoStreamMap[type]) {
-      dynamoStreamMap[type] = [];
-    }
-    dynamoStreamMap[type].push(
-      `'${chunkName}_${key}':() => import(/* webpackChunkName: "${chunkName}"*/ '../${relativePath}').then(x => x['${key}']),`
-    );
-  });
-  Object.keys(dynamoStreamMap).forEach(type => {
-    entries.push(`'${type}': {
-      ${dynamoStreamMap[type].join('\n')}
-    }`);
-  });
-
-  fs.writeFileSync(
-    Path.join(__dirname, '../src/generated/dynamoStream-mapping.ts'),
-    prettier.format(
-      `
-import { createDynamoStreamBinding } from '../lib';
-
-type BindingResult = ReturnType<typeof createDynamoStreamBinding>;
-
-interface DynamoStreamMapping {
-  [x: string]: {
-    [x: string]: () => Promise<BindingResult>;
-  }
-}
-export const dynamoStreamMapping: DynamoStreamMapping = {
-${entries.join(',\n')}
-}
-`,
-      { ...require('../../../prettier.config'), parser: 'typescript' }
-    )
-  );
-}
 
 createRpcBinding();
 createEventBinding();
-createDynamoStreamBinding();
