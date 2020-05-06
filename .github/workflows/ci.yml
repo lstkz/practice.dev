@@ -41,3 +41,4 @@ jobs:
           TOPIC_ARN: dummy
           S3_BUCKET_NAME: dummy
           SOCKET_ENDPOINT: dummy
+          AWS_REGION: eu-central-1
