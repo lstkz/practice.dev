@@ -20,7 +20,7 @@ export const searchSolved = createContract('challenge.searchSolved')
       cursor: S.string().optional(),
     }),
   })
-  .fn(async criteria => {
+  .fn(async () => {
     throw new Error('todo');
     // const { challengeId, username } = criteria;
     // if (!challengeId && !username) {
