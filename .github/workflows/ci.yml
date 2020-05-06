@@ -13,11 +13,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
       - name: Setup DynamoDB Local
         uses: rrainn/dynamodb-action@v2.0.0
         with:
           port: 8000
-          cors: "*"
+          cors: '*'
 
       - name: Use Node.js 12
         uses: actions/setup-node@v1
@@ -41,4 +48,3 @@ jobs:
           TOPIC_ARN: dummy
           S3_BUCKET_NAME: dummy
           SOCKET_ENDPOINT: dummy
-          AWS_REGION: eu-central-1
