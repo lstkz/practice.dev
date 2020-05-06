@@ -16,6 +16,7 @@ export interface SolutionProps {
   tags: string[];
   likes: number;
   createdAt: number;
+  version?: number;
 }
 
 export interface SolutionKey {
@@ -28,6 +29,13 @@ const BaseEntity = createBaseEntity('Solution')
   .build();
 
 export class SolutionEntity extends BaseEntity {
+  constructor(props: SolutionProps) {
+    super(props);
+    if (!this.version) {
+      this.version = 1;
+    }
+  }
+
   toSolution(user: UserEntity, vote?: SolutionVoteEntity | null): Solution {
     return {
       id: this.solutionId,

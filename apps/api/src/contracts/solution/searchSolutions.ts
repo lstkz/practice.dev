@@ -30,9 +30,7 @@ export const searchSolutions = createContract('solution.searchSolutions')
 
     const { items, lastKey } = await doFn(async () => {
       const userId = username
-        ? await UserUsernameEntity.getByKeyOrNull({ username }).then(
-            x => x?.userId
-          )
+        ? await UserUsernameEntity.getUserIdOrNull(username)
         : null;
       if (username && !userId) {
         return {

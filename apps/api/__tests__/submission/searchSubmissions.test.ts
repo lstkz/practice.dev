@@ -1,19 +1,16 @@
-import { resetDb } from '../helper';
+import { resetDb, esReIndexFromDynamo } from '../helper';
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { SubmissionStatus, Submission } from 'shared';
 import { searchSubmissions } from '../../src/contracts/submission/searchSubmissions';
 import { SubmissionEntity } from '../../src/entities';
-import { MockStream } from '../MockStream';
-
-const mockStream = new MockStream();
+import { createSubmissionCUD } from '../../src/cud/submission';
 
 beforeEach(async () => {
   await resetDb();
-  await mockStream.init();
   await Promise.all([registerSampleUsers(), addSampleChallenges()]);
 
-  const submissions = [
-    new SubmissionEntity({
+  await Promise.all([
+    createSubmissionCUD({
       submissionId: 's1',
       userId: '1',
       createdAt: 1,
@@ -21,7 +18,7 @@ beforeEach(async () => {
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
     }),
-    new SubmissionEntity({
+    createSubmissionCUD({
       submissionId: 's2',
       userId: '1',
       createdAt: 3,
@@ -29,7 +26,7 @@ beforeEach(async () => {
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
     }),
-    new SubmissionEntity({
+    createSubmissionCUD({
       submissionId: 's3',
       userId: '2',
       createdAt: 2,
@@ -37,7 +34,7 @@ beforeEach(async () => {
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
     }),
-    new SubmissionEntity({
+    createSubmissionCUD({
       submissionId: 's4',
       userId: '1',
       createdAt: 4,
@@ -45,9 +42,8 @@ beforeEach(async () => {
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
     }),
-  ];
-  await Promise.all(submissions.map(item => item.insert()));
-  await mockStream.process();
+  ]);
+  await esReIndexFromDynamo(SubmissionEntity.entityType);
 });
 
 function mapToTimestamps(items: Submission[]) {

@@ -1,5 +1,4 @@
 import fetch from 'node-fetch';
-import * as R from 'remeda';
 import { ES_USERNAME, ES_PASSWORD, ES_URL, ES_INDEX_PREFIX } from '../config';
 import { decLastKey, encLastKey } from './helper';
 import { ElasticError } from './errors';
@@ -64,6 +63,12 @@ export async function esSearch<T extends BaseEntityClass>(
   const body: any = await res.json();
 
   if (body.error) {
+    if (body.error.type === 'index_not_found_exception') {
+      return {
+        items: [],
+        lastKey: null,
+      };
+    }
     console.error(
       'esSearch fail',
       JSON.stringify({

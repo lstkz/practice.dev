@@ -1,17 +1,13 @@
 import { resetDb } from '../helper';
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { getPublicProfile } from '../../src/contracts/user/getPublicProfile';
-import { _createSolution } from '../../src/contracts/solution/_createSolution';
-import { MockStream } from '../MockStream';
 import { SubmissionStatus } from 'shared';
-import { SubmissionEntity } from '../../src/entities';
 import { voteSolution } from '../../src/contracts/solution/voteSolution';
-
-const mockStream = new MockStream();
+import { createSolutionCUD } from '../../src/cud/solution';
+import { createSubmissionCUD } from '../../src/cud/submission';
 
 beforeEach(async () => {
   await resetDb();
-  await mockStream.init();
   await Promise.all([addSampleChallenges(), registerSampleUsers()]);
 });
 
@@ -21,6 +17,7 @@ it('return user without stats', async () => {
     Object {
       "avatarUrl": null,
       "bio": "",
+      "country": null,
       "followersCount": 0,
       "followingCount": 0,
       "id": "1",
@@ -36,8 +33,8 @@ it('return user without stats', async () => {
 });
 
 it('return user with stats', async () => {
-  const entities = [
-    new SubmissionEntity({
+  await Promise.all<any>([
+    createSubmissionCUD({
       submissionId: 's1',
       userId: '1',
       createdAt: 1,
@@ -45,7 +42,7 @@ it('return user with stats', async () => {
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
     }),
-    new SubmissionEntity({
+    createSubmissionCUD({
       submissionId: 's2',
       userId: '1',
       createdAt: 1,
@@ -54,7 +51,7 @@ it('return user with stats', async () => {
       status: SubmissionStatus.Queued,
     }),
     // solution by user 2
-    new SubmissionEntity({
+    createSubmissionCUD({
       submissionId: 's3',
       userId: '2',
       createdAt: 1,
@@ -62,13 +59,10 @@ it('return user with stats', async () => {
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
     }),
-  ];
-  await Promise.all<any>([
-    ...entities.map(item => item.insert()),
-    _createSolution({
+    createSolutionCUD({
       challengeId: 1,
       createdAt: 1,
-      id: 's1',
+      solutionId: 's1',
       likes: 0,
       slug: 's1',
       tags: ['a'],
@@ -76,10 +70,10 @@ it('return user with stats', async () => {
       url: 's',
       userId: '1',
     }),
-    _createSolution({
+    createSolutionCUD({
       challengeId: 1,
       createdAt: 1,
-      id: 's2',
+      solutionId: 's2',
       likes: 0,
       slug: 's2',
       tags: ['a'],
@@ -92,12 +86,12 @@ it('return user with stats', async () => {
     voteSolution('1', { like: true, solutionId: 's1' }),
     voteSolution('1', { like: true, solutionId: 's2' }),
   ]);
-  await mockStream.process();
   const user = await getPublicProfile(undefined, 'user1');
   expect(user).toMatchInlineSnapshot(`
     Object {
       "avatarUrl": null,
       "bio": "",
+      "country": null,
       "followersCount": 0,
       "followingCount": 0,
       "id": "1",

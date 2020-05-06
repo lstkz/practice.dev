@@ -22,10 +22,17 @@ beforeEach(async () => {
   await resetDb();
   await Promise.all([registerSampleUsers(), addSampleChallenges()]);
 
-  await createSolutionCUD({
-    ...sampleValues,
-    solutionId: '1',
-  });
+  await Promise.all([
+    createSolutionCUD({
+      ...sampleValues,
+      solutionId: '1',
+    }),
+    createSolutionCUD({
+      ...sampleValues,
+      slug: 's2',
+      solutionId: '2',
+    }),
+  ]);
 });
 
 it('throw error if solution not found', async () => {
@@ -38,6 +45,20 @@ it('throw error if solution not found', async () => {
       url: 'https://github.com/repo-edited',
     })
   ).rejects.toThrowErrorMatchingInlineSnapshot(`"Solution not found"`);
+});
+
+it('throw error if duplicated slug', async () => {
+  await expect(
+    updateSolution(userId, '2', {
+      slug: 's1',
+      tags: ['a', 'b', 'c', 'd'],
+      title: 'solution-edited',
+      description: 'desc-edited',
+      url: 'https://github.com/repo-edited',
+    })
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `"Duplicated slug for this challenge"`
+  );
 });
 
 it('throw error if not author', async () => {

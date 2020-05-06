@@ -71,7 +71,7 @@ export class UserEntity extends BaseEntity {
     if (!userId) {
       return null;
     }
-    return this.getById(userId);
+    return this.getByIdOrNull(userId);
   }
   static async getUserIdUsernameOrNull(emailOrUsername: string) {
     if (emailOrUsername.includes('@')) {

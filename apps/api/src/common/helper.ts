@@ -154,7 +154,9 @@ export function normalizeTags(tags: string[]) {
   return R.uniq(tags.map(x => x.toLowerCase().trim()));
 }
 
-export function rethrowTransactionCanceled(msg: string) {
+export function rethrowTransactionCanceled(
+  msg: string = 'Conflict. Please try again.'
+) {
   return (e: any) => {
     if (e.code === 'TransactionCanceledException') {
       throw new AppError(msg);

@@ -6,6 +6,7 @@ import {
 import { createTransaction } from '../lib';
 import { Transaction } from '../orm/Transaction';
 import { TABLE_NAME } from '../config';
+import { updateUserStats } from './user';
 
 export function updateSolutionVoteStats(
   t: Transaction,
@@ -29,6 +30,7 @@ export async function createSolutionVoteCUD(props: SolutionVoteProps) {
     conditionExpression: 'attribute_not_exists(pk)',
   });
   updateSolutionVoteStats(t, props.solutionId, 1);
+  updateUserStats(t, props.userId, 'likes', 1);
   await t.commit();
 }
 
@@ -39,5 +41,6 @@ export async function removeSolutionVoteCUD(props: SolutionVoteProps) {
     conditionExpression: 'attribute_exists(pk)',
   });
   updateSolutionVoteStats(t, props.solutionId, -1);
+  updateUserStats(t, props.userId, 'likes', -1);
   await t.commit();
 }

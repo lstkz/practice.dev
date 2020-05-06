@@ -1,14 +1,14 @@
 import { createContract, createRpcBinding } from '../../lib';
-import { S, ValidationError } from 'schema';
-import { UnreachableCaseError } from '../../common/errors';
+import { S } from 'schema';
 import {
   SubmissionEntity,
   UserUsernameEntity,
   UserEntity,
 } from '../../entities';
-import { doFn, decLastKey, encLastKey } from '../../common/helper';
-import { SearchResult, BaseSearchCriteria } from '../../orm/types';
+import { doFn } from '../../common/helper';
+import { SearchResult } from '../../orm/types';
 import { LoadMoreResult, Submission } from 'shared';
+import { esSearch } from '../../common/elastic';
 
 export const searchSubmissions = createContract('submission.searchSubmissions')
   .params('criteria')
@@ -17,19 +17,11 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
       challengeId: S.number().optional(),
       username: S.string().optional(),
       limit: S.pageSize(),
-      cursor: S.string()
-        .optional()
-        .nullable(),
+      cursor: S.string().optional().nullable(),
     }),
   })
   .fn(async criteria => {
     const { challengeId, username } = criteria;
-    if (!challengeId && !username) {
-      throw new ValidationError(
-        'challengeId or username must be both defined',
-        []
-      );
-    }
 
     const { lastKey, items } = await doFn(async () => {
       const userId = username
@@ -42,38 +34,41 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
           lastKey: null,
         } as SearchResult<SubmissionEntity>;
       }
-      const baseCriteria: BaseSearchCriteria = {
-        limit: criteria.limit,
-        sort: 'desc',
-        lastKey: decLastKey(criteria.cursor),
-      };
-      if (userId && challengeId) {
-        return SubmissionEntity.searchByUserChallenge({
-          ...baseCriteria,
-          challengeId,
-          userId,
-        });
-      }
+      const esCriteria: any[] = [];
       if (userId) {
-        return SubmissionEntity.searchByUser({
-          ...baseCriteria,
-          userId,
+        esCriteria.push({
+          match: { userId },
         });
       }
       if (challengeId) {
-        return SubmissionEntity.searchByChallenge({
-          ...baseCriteria,
-          challengeId,
+        esCriteria.push({
+          match: { challengeId },
         });
       }
-      throw new UnreachableCaseError('' as never);
+      return await esSearch(SubmissionEntity, {
+        query: {
+          bool: {
+            must: esCriteria,
+          },
+        },
+        sort: [
+          {
+            createdAt: 'desc',
+          },
+          {
+            _id: 'asc',
+          },
+        ],
+        limit: criteria.limit!,
+        cursor: criteria.cursor,
+      });
     });
 
     const users = await UserEntity.getByIds(items.map(x => x.userId));
     const submissions = SubmissionEntity.toSubmissionMany(items, users);
     return {
       items: submissions,
-      cursor: encLastKey(lastKey),
+      cursor: lastKey,
     } as LoadMoreResult<Submission>;
   });
 

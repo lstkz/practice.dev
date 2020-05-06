@@ -15,6 +15,7 @@ import { Transaction } from '../orm/Transaction';
 import { TABLE_NAME } from '../config';
 import { updateUserStats } from './user';
 import { updateChallengeStats } from './challenge';
+import { AppError } from '../common/errors';
 
 function _addTagStats(
   t: Transaction,
@@ -97,11 +98,19 @@ export async function updateSolutionCUD(
   solution: SolutionEntity,
   newProps: SolutionProps
 ) {
+  const currentVersion = solution.version!;
   const t = createTransaction();
   const removedTags = R.difference(solution.tags, newProps.tags);
   const newTags = R.difference(newProps.tags, solution.tags);
   _addTagStats(t, solution.challengeId, newTags, removedTags);
   if (solution.slug !== newProps.slug) {
+    const existing = await SolutionSlugEntity.getByKeyOrNull({
+      slug: newProps.slug,
+      challengeId: newProps.challengeId,
+    });
+    if (existing) {
+      throw new AppError('Duplicated slug for this challenge');
+    }
     const newSlug = new SolutionSlugEntity({
       solutionId: solution.solutionId,
       challengeId: newProps.challengeId,
@@ -120,9 +129,13 @@ export async function updateSolutionCUD(
     });
   }
   safeAssign(solution, newProps);
-  t.update(solution, safeKeys(newProps));
-  await t
-    .commit()
-    .catch(rethrowTransactionCanceled('Duplicated slug for this challenge'));
+  solution.version = currentVersion + 1;
+  t.update(solution, safeKeys(newProps), {
+    conditionExpression: 'version = :currentVersion',
+    expressionValues: {
+      ':currentVersion': currentVersion,
+    },
+  });
+  await t.commit().catch(rethrowTransactionCanceled());
   return solution;
 }
