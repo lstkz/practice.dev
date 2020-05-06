@@ -43,8 +43,11 @@ jobs:
         with:
           node-version: 12.x
 
-      - run: yarn install --frozen-lockfile
-      - run: |
+      - name: install yarn
+        run: yarn install --frozen-lockfile
+
+      - name: test api
+        run: |
           cd apps/api
           yarn test
         env:
