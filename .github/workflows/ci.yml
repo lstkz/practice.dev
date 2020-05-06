@@ -28,3 +28,16 @@ jobs:
       - run: |
           cd apps/api
           yarn test
+        env:
+          TABLE: dummy
+          GITHUB_CLIENT_ID: dummy
+          GITHUB_CLIENT_SECRET: dummy
+          GOOGLE_CLIENT_ID: dummy
+          GOOGLE_CLIENT_SECRET: dummy
+          ES_URL: http://localhost:9200
+          ES_USERNAME: dummy
+          ES_PASSWORD: dummy
+          TESTER_TOPIC_ARN: dummy
+          TOPIC_ARN: dummy
+          S3_BUCKET_NAME: dummy
+          SOCKET_ENDPOINT: dummy
