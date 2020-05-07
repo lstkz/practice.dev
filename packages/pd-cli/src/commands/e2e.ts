@@ -198,13 +198,27 @@ async function runTests({
     console.log(`cost test: $${testCost}`);
     console.log(`cost total: $${testCost + wrapperCost}`);
   }
+  let anyPass = false;
+  let anyFail = false;
   Object.keys(stats).forEach(fileName => {
     const data = stats[fileName];
     console.log(chalk.white(fileName));
     console.log(`Total: ${data.total}`);
     console.log(chalk.green(`Passed: ${data.passed}`));
     console.log(chalk.red(`Failed: ${data.failed}`));
+    if (data.failed) {
+      anyFail = true;
+    }
+    if (data.passed) {
+      anyPass = true;
+    }
   });
+  if (anyPass && !anyFail) {
+    console.log(chalk.green(`OK`));
+  } else {
+    console.log(chalk.red(`FAIL`));
+    process.exit(1);
+  }
 }
 
 async function uploadS3(bucketName: string) {
