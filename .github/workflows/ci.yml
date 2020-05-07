@@ -72,7 +72,7 @@ jobs:
           SOCKET_URL: /
           API_URL: /
           BUNDLE_BASE_URL: /
-          SOCKET_ENDPOINT: /
+          SOCKET_ENDPOINT: /socket
           ES_URL: http://localhost:9200
           ES_USERNAME: dummy
           ES_PASSWORD: dummy
