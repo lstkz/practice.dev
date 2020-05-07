@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v1
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - name: install yarn
+        run: yarn install --frozen-lockfile
+
+      - name: install yarn tester-layer
+        run: |
+          cd packages/deploy/tester-layer/nodejs
+          yarn install --frozen-lockfile
+
+      - name: deploy
+        run: |
+          npm i -g aws-cdk
+          touch .env
+          cd packages/pd-cli
+          npm i -g .
+          cd ../..
+          pd deploy
+        env:
+          STACK_NAME: pd-production
+          E2E_STACK_NAME: pd-ci-testing
+          NODE_ENV: production
+          GITHUB_CLIENT_ID: ${{ secrets.PROD_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.PROD_GITHUB_CLIENT_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.PROD_GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.PROD_GOOGLE_CLIENT_SECRET }}
+          ES_URL: ${{ secrets.PROD_ES_URL }}
+          ES_USERNAME: ${{ secrets.PROD_ES_USERNAME }}
+          ES_PASSWORD: ${{ secrets.PROD_ES_PASSWORD }}
+          SOCKET_URL: wss://socket.practice.dev/
+          API_URL: https://api.practice.dev/
+          BUNDLE_BASE_URL: /
+          SOCKET_ENDPOINT: https://socket.practice.dev/
+          TESTER_TOPIC_ARN: dummy
+          TOPIC_ARN: dummy
