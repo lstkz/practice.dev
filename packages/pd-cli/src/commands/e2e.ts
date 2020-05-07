@@ -252,7 +252,7 @@ export function init() {
     .option('--check-cost', 'print cost info')
     .action(async ({ update, checkCost }) => {
       const env = getEnvSettings({});
-      console.log(env);
+
       const resources = await cf
         .describeStackResources({
           StackName: env.E2E_STACK_NAME || process.env.E2E_STACK_NAME!,
