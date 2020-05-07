@@ -19,7 +19,7 @@ export function init() {
         spawn(
           'cdk',
           [
-            'bootstrap',
+            'deploy',
             '--app',
             '"yarn workspace deploy run ts-node -T src/E2EStack"',
           ],
