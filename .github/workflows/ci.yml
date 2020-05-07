@@ -48,7 +48,6 @@ jobs:
       - name: test front
         run: |
           npm i -g aws-cdk
-          yarn workspace deploy run ts-node -T src/MainStack
           touch .env
           cd packages/pd-cli
           npm i -g .
