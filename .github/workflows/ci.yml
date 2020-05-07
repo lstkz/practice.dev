@@ -51,6 +51,10 @@ jobs:
           touch .env
           cd packages/pd-cli
           npm i -g .
+          cd ../..
+          pd build api
+          pd build front
+          yarn workspace deploy run ts-node -T src/MainStack
           pd e2e-deploy --update-env
           pd e2e
         env:
