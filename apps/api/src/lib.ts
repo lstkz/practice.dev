@@ -71,7 +71,6 @@ export const { createContract } = initialize({
 type MapEvents<T> = T extends { type: string }
   ? { type: T['type']; handler: (event: T) => Promise<any> }
   : never;
-
 export type CreateEventBindingOptions = MapEvents<AppEvent>;
 
 export function createEventBinding(options: CreateEventBindingOptions) {

@@ -6,6 +6,7 @@ import {
   cpToPromise,
   getStack,
   getStackOutput,
+  updateEnvSettings,
 } from '../helper';
 
 export function init() {
@@ -33,12 +34,15 @@ export function init() {
         )
       );
       if (updateEnv) {
-        const stack = await getStack(env.E2E_STACK_NAME);
+        const stack = await getStack(
+          env.E2E_STACK_NAME || process.env.E2E_STACK_NAME!
+        );
         const getOutput = (name: string) => {
           return getStackOutput(stack, name);
         };
         env.E2E_WEBSITE_URL = getOutput('e2eWebsiteUrl');
         env.E2E_BUCKET_NAME = getOutput('e2eBucketName');
+        updateEnvSettings({}, env);
       }
     });
 }

@@ -10,7 +10,7 @@ export const getPublicProfile = createContract('user.getPublicProfile')
     userId: S.string().optional(),
     username: S.string(),
   })
-  .fn(async (userId, username) => {
+  .fn(async (_, username) => {
     const usernameEntity = await UserUsernameEntity.getByKeyOrNull({
       username,
     });

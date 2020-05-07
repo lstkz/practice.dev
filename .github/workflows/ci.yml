@@ -1,0 +1,138 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  front:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v1
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - name: install yarn
+        run: yarn install --frozen-lockfile
+
+      - name: install yarn layer
+        run: |
+          cd packages/deploy/src/e2e-layer/nodejs
+          yarn install --frozen-lockfile
+
+      - name: install yarn tester-layer
+        run: |
+          cd packages/deploy/tester-layer/nodejs
+          yarn install --frozen-lockfile
+
+      - name: test front
+        run: |
+          npm i -g aws-cdk
+          touch .env
+          cd packages/pd-cli
+          npm i -g .
+          cd ../..
+          pd build api
+          pd build front
+          pd e2e-deploy --update-env
+          pd e2e
+        env:
+          STACK_NAME: pd-dev
+          E2E_STACK_NAME: pd-ci-testing
+          NODE_ENV: production
+          GITHUB_CLIENT_ID: dummy
+          GITHUB_CLIENT_SECRET: dummy
+          GOOGLE_CLIENT_ID: dummy
+          GOOGLE_CLIENT_SECRET: dummy
+          SOCKET_URL: /socket
+          API_URL: /
+          BUNDLE_BASE_URL: /
+          SOCKET_ENDPOINT: /
+          ES_URL: http://localhost:9200
+          ES_USERNAME: dummy
+          ES_PASSWORD: dummy
+          TESTER_TOPIC_ARN: dummy
+          TOPIC_ARN: dummy
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Setup DynamoDB Local
+        uses: rrainn/dynamodb-action@v2.0.0
+        with:
+          port: 8000
+          cors: '*'
+      - name: Configure sysctl limits
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: 7.6.0
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: install yarn
+        run: yarn install --frozen-lockfile
+      - name: test api
+        run: |
+          cd apps/api
+          yarn test
+        env:
+          TABLE: dummy
+          GITHUB_CLIENT_ID: dummy
+          GITHUB_CLIENT_SECRET: dummy
+          GOOGLE_CLIENT_ID: dummy
+          GOOGLE_CLIENT_SECRET: dummy
+          ES_URL: http://localhost:9200
+          ES_USERNAME: dummy
+          ES_PASSWORD: dummy
+          TESTER_TOPIC_ARN: dummy
+          TOPIC_ARN: dummy
+          S3_BUCKET_NAME: dummy
+          SOCKET_ENDPOINT: dummy

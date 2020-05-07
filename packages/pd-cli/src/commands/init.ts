@@ -8,7 +8,6 @@ import {
   getStack,
   getStackOutput,
 } from '../helper';
-import AWS from 'aws-sdk';
 
 export function init() {
   program
