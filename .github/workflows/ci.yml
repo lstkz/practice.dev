@@ -69,10 +69,10 @@ jobs:
           GITHUB_CLIENT_SECRET: dummy
           GOOGLE_CLIENT_ID: dummy
           GOOGLE_CLIENT_SECRET: dummy
-          SOCKET_URL: /
+          SOCKET_URL: /socket
           API_URL: /
           BUNDLE_BASE_URL: /
-          SOCKET_ENDPOINT: /socket
+          SOCKET_ENDPOINT: /
           ES_URL: http://localhost:9200
           ES_USERNAME: dummy
           ES_PASSWORD: dummy
