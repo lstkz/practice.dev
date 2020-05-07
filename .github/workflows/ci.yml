@@ -59,7 +59,7 @@ jobs:
           cd ../..
           pd build api
           pd build front
-          yarn workspace deploy run ts-node -T src/MainStack
+          yarn workspace deploy run ts-node -T src/E2EStack
           # pd e2e-deploy --update-env
           # pd e2e
         env:
