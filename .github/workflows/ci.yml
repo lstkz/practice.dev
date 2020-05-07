@@ -42,6 +42,7 @@ jobs:
 
       - name: test front
         run: |
+          npm i -g aws-cdk
           touch .env
           cd packages/pd-cli
           npm i -g .
