@@ -60,11 +60,11 @@ jobs:
           pd build api
           pd build front
           pd e2e-deploy --update-env
-          # pd e2e
+          pd e2e --no-update
         env:
           AWS_SDK_LOAD_CONFIG: true
           STACK_NAME: pd-dev
-          E2E_STACK_NAME: pd-testing
+          E2E_STACK_NAME: pd-ci-testing
           NODE_ENV: production
           GITHUB_CLIENT_ID: dummy
           GITHUB_CLIENT_SECRET: dummy
