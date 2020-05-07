@@ -60,8 +60,8 @@ jobs:
           pd build api
           pd build front
           yarn workspace deploy run ts-node -T src/MainStack
-          pd e2e-deploy --update-env
-          pd e2e
+          # pd e2e-deploy --update-env
+          # pd e2e
         env:
           AWS_SDK_LOAD_CONFIG: true
           STACK_NAME: pd-dev
