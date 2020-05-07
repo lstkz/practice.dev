@@ -48,13 +48,15 @@ jobs:
       - name: test front
         run: |
           npm i -g aws-cdk
-          cdk bootstrap
           touch .env
           cd packages/pd-cli
           npm i -g .
           pd e2e-deploy --update-env
           pd e2e
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS-REGION: eu-central-1
           E2E_STACK_NAME: pd-testing
           NODE_ENV: production
           GITHUB_CLIENT_ID: dummy
