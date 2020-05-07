@@ -240,7 +240,7 @@ export function init() {
       const env = getEnvSettings({});
       const resources = await cf
         .describeStackResources({
-          StackName: env.E2E_STACK_NAME,
+          StackName: env.E2E_STACK_NAME || process.env.E2E_STACK_NAME!,
         })
         .promise();
       const testLambda = resources.StackResources!.find(

@@ -33,7 +33,9 @@ export function init() {
         )
       );
       if (updateEnv) {
-        const stack = await getStack(env.E2E_STACK_NAME);
+        const stack = await getStack(
+          env.E2E_STACK_NAME || process.env.E2E_STACK_NAME!
+        );
         const getOutput = (name: string) => {
           return getStackOutput(stack, name);
         };
