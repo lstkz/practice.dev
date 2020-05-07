@@ -49,6 +49,7 @@ jobs:
           pd e2e-deploy --update-env
           pd e2e
         env:
+          E2E_STACK_NAME: pd-testing
           NODE_ENV: production
           GITHUB_CLIENT_ID: dummy
           GOOGLE_CLIENT_ID: dummy
