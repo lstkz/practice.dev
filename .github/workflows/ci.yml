@@ -53,7 +53,6 @@ jobs:
       - name: test front
         run: |
           npm i -g aws-cdk
-          cdk bootstrap aws://${{ secrets.AWS_ACCESS_KEY_ID }}/eu-central-1
           touch .env
           cd packages/pd-cli
           npm i -g .
@@ -64,6 +63,7 @@ jobs:
           pd e2e-deploy --update-env
           pd e2e
         env:
+          AWS_SDK_LOAD_CONFIG: true
           STACK_NAME: pd-dev
           E2E_STACK_NAME: pd-testing
           NODE_ENV: production
