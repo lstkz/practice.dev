@@ -40,6 +40,11 @@ jobs:
       - name: install yarn
         run: yarn install --frozen-lockfile
 
+      - name: install yarn layer
+        run: |
+          cd packages/deploy/src/e2e-layer/nodejs
+          yarn install --frozen-lockfile
+
       - name: test front
         run: |
           npm i -g aws-cdk
