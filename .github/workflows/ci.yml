@@ -53,6 +53,7 @@ jobs:
       - name: test front
         run: |
           npm i -g aws-cdk
+          cdk bootstrap aws://${{ secrets.AWS_ACCESS_KEY_ID }}/eu-central-1
           touch .env
           cd packages/pd-cli
           npm i -g .
