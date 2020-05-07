@@ -42,6 +42,7 @@ jobs:
 
       - name: test front
         run: |
+          touch .env
           cd packages/pd-cli
           npm i -g .
           pd e2e-deploy --update-env
