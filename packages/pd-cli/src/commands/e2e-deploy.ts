@@ -6,6 +6,7 @@ import {
   cpToPromise,
   getStack,
   getStackOutput,
+  updateEnvSettings,
 } from '../helper';
 
 export function init() {
@@ -41,6 +42,7 @@ export function init() {
         };
         env.E2E_WEBSITE_URL = getOutput('e2eWebsiteUrl');
         env.E2E_BUCKET_NAME = getOutput('e2eBucketName');
+        updateEnvSettings({}, env);
       }
     });
 }
