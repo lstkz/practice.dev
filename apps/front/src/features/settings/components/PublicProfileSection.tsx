@@ -5,7 +5,11 @@ import { createModule, useActions } from 'typeless';
 import { S } from 'schema';
 import { SettingsSection } from './SettingsSection';
 import { createForm } from 'typeless-form';
-import { validate, handleAppError } from 'src/common/helper';
+import {
+  validate,
+  handleAppError,
+  countryListItemToOption,
+} from 'src/common/helper';
 import { SelectOption } from 'src/types';
 import { FormInput } from 'src/components/FormInput';
 import { FormSelect } from 'src/components/FormSelect';
@@ -13,7 +17,6 @@ import { countryList, urlRegex } from 'shared';
 import { Button } from 'ui';
 import { api } from 'src/services/api';
 import { Alert } from 'src/components/Alert';
-import { SuccessIcon } from 'src/icons/SuccessIcon';
 import { SuccessFilledIcon } from 'src/icons/SuccessFilledIcon';
 
 export const [
@@ -41,7 +44,7 @@ export interface PublicProfileFormValues {
   name: string;
   bio: string;
   url: string;
-  country: SelectOption;
+  country: SelectOption | null;
 }
 
 export const [
@@ -89,6 +92,9 @@ handle.epic().on(PublicProfileFormActions.setSubmitSucceeded, () => {
 
 handle
   .reducer(initialState)
+  .on(PublicProfileFormActions.setSubmitSucceeded, state => {
+    state.isDone = false;
+  })
   .on(PublicProfileSectionActions.setIsDone, (state, { isDone }) => {
     state.isDone = isDone;
   })
@@ -106,10 +112,7 @@ export function PublicProfileSection() {
   const { submit } = useActions(PublicProfileFormActions);
 
   const countryOptions = React.useMemo(() => {
-    return countryList.map(item => ({
-      value: item.code,
-      label: `${item.emoji} ${item.name}`,
-    }));
+    return countryList.map(countryListItemToOption);
   }, [countryList]);
   return (
     <SettingsSection title="Public Profile">
@@ -134,7 +137,6 @@ export function PublicProfileSection() {
             id="bio"
             name="bio"
             label="Bio"
-            multiline
           />
           <FormInput
             maxLength={60}

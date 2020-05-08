@@ -10,12 +10,13 @@ export const updatePublicProfile = createContract('user.updatePublicProfile')
   .schema({
     userId: S.string(),
     values: S.object().keys({
-      name: S.string().optional().nullEmpty().max(40),
-      bio: S.string().optional().nullEmpty().max(200),
+      name: S.string().optional().nullable().nullEmpty().max(40),
+      bio: S.string().optional().nullable().nullEmpty().max(200),
       country: S.enum()
         .optional()
+        .nullable()
         .literal(...countryList.map(x => x.code)),
-      url: S.string().regex(urlRegex).optional().nullEmpty().max(60),
+      url: S.string().nullable().regex(urlRegex).optional().nullEmpty().max(60),
     }),
   })
   .fn(async (userId, values) => {
