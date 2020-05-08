@@ -1,8 +1,10 @@
-import { resetDb } from '../helper';
+import { resetDb, esReIndexFromDynamo } from '../helper';
 import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { getSolutionById } from '../../src/contracts/solution/getSolutionById';
 import { removeSolution } from '../../src/contracts/solution/removeSolution';
 import { createSolutionCUD } from '../../src/cud/solution';
+import { SolutionEntity } from '../../src/entities';
+import { searchSolutions } from '../../src/contracts/solution/searchSolutions';
 
 const userId = '1';
 
@@ -42,4 +44,13 @@ it('throw error if not author', async () => {
 it('remove solution', async () => {
   await removeSolution(userId, '1');
   expect(getSolutionById(userId, 'id')).rejects.toThrowError();
+  await esReIndexFromDynamo(SolutionEntity.entityType);
+  const ret = await searchSolutions(undefined, {
+    sortBy: 'date',
+    sortDesc: true,
+  });
+  expect(ret).toEqual<typeof ret>({
+    items: [],
+    cursor: null,
+  });
 });

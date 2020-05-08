@@ -86,7 +86,7 @@ export async function removeSolutionCUD(solution: SolutionEntity) {
   t.delete(solutionSlug, {
     conditionExpression: 'attribute_exists(pk)',
   });
-  t.insert(solution);
+  t.delete(solution);
   _addTagStats(t, solution.challengeId, [], solution.tags);
   updateUserStats(t, solution.userId, 'solutions', -1);
   updateChallengeStats(t, solution.challengeId, 'solutions', -1);
