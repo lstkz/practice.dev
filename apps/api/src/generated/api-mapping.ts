@@ -118,4 +118,8 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "user.resetPassword"*/ '../contracts/user/resetPassword'
     ).then(x => x['resetPasswordRpc']),
+  'user.updatePublicProfile': () =>
+    import(
+      /* webpackChunkName: "user.updatePublicProfile"*/ '../contracts/user/updatePublicProfile'
+    ).then(x => x['updatePublicProfileRpc']),
 };

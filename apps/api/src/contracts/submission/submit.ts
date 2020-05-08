@@ -3,7 +3,7 @@ import { rateLimit } from '../misc/rateLimit';
 import { getDuration } from '../../common/helper';
 import { S } from 'schema';
 import uuid from 'uuid';
-import { SubmissionStatus, TesterMessage } from 'shared';
+import { SubmissionStatus, TesterMessage, urlRegex } from 'shared';
 import { TESTER_TOPIC_ARN } from '../../config';
 import { AppError } from '../../common/errors';
 import { ChallengeEntity } from '../../entities';
@@ -18,9 +18,7 @@ export const submit = createContract('submission.submit')
     userId: S.string(),
     values: S.object().keys({
       challengeId: S.number(),
-      testUrl: S.string().regex(
-        /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%_\+.~#?&//=]{1,256}\.[a-z]{1,10}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?$/
-      ),
+      testUrl: S.string().regex(urlRegex),
     }),
   })
   .fn(async (userId, values) => {

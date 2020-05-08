@@ -4,6 +4,7 @@ import { getPublicProfileState } from '../interface';
 import { Theme } from 'ui';
 import { LinkIcon } from 'src/icons/LinkIcon';
 import { countryList } from 'shared';
+import { getAvatarUrl } from 'src/common/helper';
 
 interface ProfileInfoProps {
   className?: string;
@@ -13,7 +14,12 @@ const Avatar = styled.div`
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  background: #ccc;
+  background: ${Theme.gray4};
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
 `;
 
 const Name = styled.div`
@@ -60,7 +66,11 @@ const _ProfileInfo = (props: ProfileInfoProps) => {
   }, [profile]);
   return (
     <div className={className} data-test="profile-info">
-      <Avatar />
+      <Avatar>
+        {profile.avatarUrl && (
+          <img src={getAvatarUrl(profile.avatarUrl, 'lg')!} />
+        )}
+      </Avatar>
       <Name data-test="name">{profile.name || profile.username}</Name>
       {country && (
         <Country data-test="country">

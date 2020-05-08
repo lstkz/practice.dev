@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { Theme } from 'ui';
 import { PictureSection } from './PictureSection';
 import { PageLoader } from 'src/components/PageLoader';
+import { PublicProfileSection } from './PublicProfileSection';
 
 const Wrapper = styled.div`
   margin-top: 30px;
@@ -47,6 +48,7 @@ export function SettingsView() {
           <Tab title="Profile" name="profile" testId="profile-tab">
             <TabContent>
               <PictureSection />
+              <PublicProfileSection />
             </TabContent>
           </Tab>
           <Tab title="Account" name="account" testId="account-tab">

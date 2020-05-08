@@ -188,6 +188,14 @@ export class APIClient {
   user_resetPassword(emailOrUsername: string): Rx.Observable<void> {
     return this.call('user.resetPassword', emailOrUsername);
   }
+  user_updatePublicProfile(values: {
+    url?: string | undefined;
+    country?: string | undefined;
+    name?: string | undefined;
+    bio?: string | undefined;
+  }): Rx.Observable<void> {
+    return this.call('user.updatePublicProfile', values);
+  }
   // SIGNATURES END
   private call(name: string, ...params: any[]): any {
     const token = this.getToken();
