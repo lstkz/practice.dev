@@ -1,6 +1,6 @@
 import { Engine, MockError } from './lib/Engine';
 import { WEBSITE_URL } from './config';
-import { solutions, authData2Verified } from './test-data';
+import { solutions, authData2Verified, authData1Verified } from './test-data';
 
 let engine: Engine = null!;
 
@@ -9,7 +9,7 @@ beforeEach(async () => {
   await engine.setup();
 
   engine.mock('user_getMe', () => {
-    return authData2Verified.user;
+    return authData1Verified.user;
   });
   engine.mock('user_getPublicProfile', () => {
     return {
@@ -50,6 +50,9 @@ it('should handle not found user', async () => {
 });
 
 it('should navigate between profiles', async () => {
+  engine.mock('user_getMe', () => {
+    return authData2Verified.user;
+  });
   engine.mock('user_getPublicProfile', (params, count) => {
     if (count === 1) {
       return {
