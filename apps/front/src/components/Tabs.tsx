@@ -11,6 +11,7 @@ interface TabsProps {
   selectedTab: any;
   onIndexChange: (index: any) => any;
   flex?: boolean;
+  paddingLeft?: 'default' | 'small' | 'md';
 }
 
 interface TabProps {
@@ -70,7 +71,12 @@ export const Tabs = styled(_Tabs)`
     border: none;
     box-shadow: none;
     display: flex;
-    padding-left: 80px;
+    padding-left: ${props =>
+      props.paddingLeft === 'small'
+        ? 30
+        : props.paddingLeft === 'md'
+        ? 50
+        : 80}px;
     border-bottom: 1px solid ${Theme.grayLight};
   }
 

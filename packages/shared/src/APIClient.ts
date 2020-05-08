@@ -12,6 +12,7 @@ import {
   SolutionTag,
   Submission,
   AuthData,
+  PresignedPost,
   User,
   PublicUserProfile,
 } from './types';
@@ -147,6 +148,9 @@ export class APIClient {
   user_authGoogle(accessToken: string): Rx.Observable<AuthData> {
     return this.call('user.authGoogle', accessToken);
   }
+  user_completeAvatarUpload(): Rx.Observable<{ avatarUrl: string }> {
+    return this.call('user.completeAvatarUpload');
+  }
   user_confirmEmail(code: string): Rx.Observable<AuthData> {
     return this.call('user.confirmEmail', code);
   }
@@ -155,6 +159,12 @@ export class APIClient {
     newPassword: string
   ): Rx.Observable<AuthData> {
     return this.call('user.confirmResetPassword', code, newPassword);
+  }
+  user_deleteAvatar(): Rx.Observable<void> {
+    return this.call('user.deleteAvatar');
+  }
+  user_getAvatarUploadUrl(): Rx.Observable<PresignedPost> {
+    return this.call('user.getAvatarUploadUrl');
   }
   user_getMe(): Rx.Observable<User> {
     return this.call('user.getMe');

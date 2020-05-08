@@ -28,7 +28,7 @@ export interface UserProps extends UserKey {
   isAdmin?: boolean;
   name?: string;
   url?: string;
-  avatarUrl?: string;
+  avatarUrl?: string | null;
   bio?: string;
   stats: UserStats;
 }
@@ -110,6 +110,7 @@ export class UserEntity extends BaseEntity {
       username: this.username,
       isVerified: this.isVerified,
       isAdmin: this.isAdmin,
+      avatarUrl: this.avatarUrl ?? null,
     };
   }
 
@@ -117,6 +118,7 @@ export class UserEntity extends BaseEntity {
     return {
       id: this.userId,
       username: this.username,
+      avatarUrl: this.avatarUrl ?? null,
     };
   }
 

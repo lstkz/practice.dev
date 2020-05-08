@@ -21,6 +21,7 @@ export const [handle, GlobalActions, getGlobalState] = createModule(
       payload: { error, requestId },
     }),
     hideAppError: null,
+    avatarUpdated: (avatarUrl: string | null) => ({ payload: { avatarUrl } }),
   })
   .withState<GlobalState>();
 

@@ -113,6 +113,7 @@ export const Button = styled(React.forwardRef(_Button))`
   border-radius: 5px;
   background-color: transparent;
   position: relative;
+  white-space: nowrap;
   // transition: all 0.2s ease;
   width: ${props => (props.block ? '100%' : null)};
   font: inherit;

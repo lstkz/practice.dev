@@ -15,6 +15,7 @@ import { getRouterState } from 'typeless-router';
 import { Button } from 'ui';
 import { LoginActions } from 'src/features/login/interface';
 import { RegisterActions } from 'src/features/register/interface';
+import { getAvatarUrl } from 'src/common/helper';
 
 interface HeaderProps {
   className?: string;
@@ -88,8 +89,13 @@ const Avatar = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #ccc;
+  background: ${Theme.gray4};
   border: 1px solid ${Theme.gray3};
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+  }
 `;
 
 const Buttons = styled.div`
@@ -148,7 +154,10 @@ const _Header = (props: HeaderProps) => {
                       </Link>
                     </MenuItem>
                     <MenuItem>
-                      <Link href={createUrl({ name: 'challenges' })}>
+                      <Link
+                        testId="settings-link"
+                        href={createUrl({ name: 'settings' })}
+                      >
                         Settings
                       </Link>
                     </MenuItem>
@@ -162,7 +171,11 @@ const _Header = (props: HeaderProps) => {
                 }
               >
                 <UserInfo>
-                  <Avatar />
+                  <Avatar>
+                    {user.avatarUrl && (
+                      <img src={getAvatarUrl(user.avatarUrl, 'sm')!} />
+                    )}
+                  </Avatar>
                   <Username data-test="current-username">
                     {user.username}
                   </Username>

@@ -1,7 +1,7 @@
 import * as Rx from 'src/rx';
 import * as R from 'remeda';
 import { GlobalActions, GlobalState, handle } from './interface';
-import { RouterActions, getRouterState } from 'typeless-router';
+import { RouterActions } from 'typeless-router';
 import {
   setAccessToken,
   getAccessToken,
@@ -59,6 +59,9 @@ handle
   })
   .on(GlobalActions.hideAppError, state => {
     state.appError = null;
+  })
+  .on(GlobalActions.avatarUpdated, (state, { avatarUrl }) => {
+    state.user!.avatarUrl = avatarUrl;
   });
 
 // --- Module ---
