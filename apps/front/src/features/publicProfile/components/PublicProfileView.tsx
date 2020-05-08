@@ -16,6 +16,7 @@ import { OverviewContent } from './OverviewContent';
 import { ProfileInfoLoader, ProfileContentLoader } from './PublicProfileLoader';
 import { SolutionsTab, useSolutionsModule } from './SolutionsTab';
 import { SolutionModal } from 'src/features/solution/components/SolutionModal';
+import { LikesTab, useLikesModule } from './LikesTab';
 
 const Wrapper = styled.div`
   margin-top: 30px;
@@ -40,14 +41,34 @@ const Right = styled.div`
   }
 `;
 
+const NotExistsWrapper = styled(Wrapper)`
+  min-height: 0;
+  text-align: center;
+  display: block;
+  padding: 30px;
+`;
+
 export function PublicProfileView() {
   usePublicProfileModule();
   useSolutionsModule();
+  useLikesModule();
 
-  const { isLoaded, tab, profile } = getPublicProfileState.useState();
+  const {
+    isLoaded,
+    tab,
+    profile,
+    isNotFound,
+  } = getPublicProfileState.useState();
   const { changeTab } = useActions(PublicProfileActions);
 
   const renderContent = () => {
+    if (isNotFound) {
+      return (
+        <NotExistsWrapper data-test="user-not-found">
+          User doesn't exist
+        </NotExistsWrapper>
+      );
+    }
     if (!isLoaded) {
       return (
         <Wrapper>
@@ -86,7 +107,7 @@ export function PublicProfileView() {
               title={`Likes (${profile.likesCount})`}
               name="likes"
             >
-              Likes
+              <LikesTab />
             </Tab>
             {/* <Tab
               testId="followers-tab"

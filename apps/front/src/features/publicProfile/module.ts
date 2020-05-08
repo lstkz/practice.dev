@@ -1,13 +1,10 @@
 import * as Rx from 'src/rx';
-import {
-  PublicProfileActions,
-  PublicProfileState,
-  handle,
-  getPublicProfileState,
-} from './interface';
+import { PublicProfileActions, PublicProfileState, handle } from './interface';
 import { getRouteParams } from 'src/common/url';
 import { api } from 'src/services/api';
-import { handleAppError, getSolutionsSortCriteria } from 'src/common/helper';
+import { handleAppError, getErrorMessage } from 'src/common/helper';
+import { SolutionsTabActions } from './components/SolutionsTab';
+import { LikesTabActions } from './components/LikesTab';
 
 // --- Epic ---
 handle
@@ -17,51 +14,31 @@ handle
 
     return api.user_getPublicProfile(username).pipe(
       Rx.map(ret => PublicProfileActions.profileLoaded(ret)),
+      Rx.catchError(e => {
+        if (getErrorMessage(e) === 'User not found') {
+          return Rx.of(PublicProfileActions.setNotFound());
+        }
+        throw e;
+      }),
       handleAppError()
     );
   })
   .on(PublicProfileActions.changeTab, ({ tab }) => {
-    if (tab === 'solutions' && !getPublicProfileState().solutions.isLoaded) {
-      return PublicProfileActions.loadSolutions(false);
+    if (tab === 'solutions') {
+      return SolutionsTabActions.load(false);
+    }
+    if (tab === 'likes') {
+      return LikesTabActions.load(false);
     }
     return Rx.empty();
-  })
-  .on(PublicProfileActions.loadSolutions, ({ loadMore }, { action$ }) => {
-    const { username } = getRouteParams('profile');
-    const { solutions } = getPublicProfileState();
-
-    const search = () =>
-      api
-        .solution_searchSolutions({
-          username,
-          ...getSolutionsSortCriteria(solutions.sortOrder.value),
-        })
-        .pipe(
-          Rx.map(ret => PublicProfileActions.solutionsLoaded(loadMore, ret)),
-          handleAppError(),
-          Rx.takeUntil(
-            action$.pipe(Rx.waitForType(PublicProfileActions.loadSolutions))
-          )
-        );
-
-    return loadMore ? Rx.concatObs(search()) : search();
   });
 
 // --- Reducer ---
 const initialState: PublicProfileState = {
+  isNotFound: false,
   isLoaded: false,
   profile: null!,
   tab: 'overview',
-  solutions: {
-    sortOrder: {
-      label: 'Most Likes',
-      value: 'likes',
-    },
-    isLoaded: false,
-    isLoading: false,
-    items: [],
-    cursor: null,
-  },
 };
 
 handle
@@ -75,6 +52,9 @@ handle
   })
   .on(PublicProfileActions.changeTab, (stats, { tab }) => {
     stats.tab = tab;
+  })
+  .on(PublicProfileActions.setNotFound, stats => {
+    stats.isNotFound = true;
   });
 
 // --- Module ---

@@ -7,9 +7,8 @@ import {
   Challenge,
   ChallengeTag,
   PagedResult,
-  LoadMoreResult,
-  ChallengeSolved,
   Solution,
+  LoadMoreResult,
   SolutionTag,
   Submission,
   AuthData,
@@ -46,13 +45,8 @@ export class APIClient {
   }): Rx.Observable<PagedResult<Challenge>> {
     return this.call('challenge.searchChallenges', criteria);
   }
-  challenge_searchSolved(criteria: {
-    challengeId?: number | undefined;
-    username?: string | undefined;
-    limit?: number | undefined;
-    cursor?: string | undefined;
-  }): Rx.Observable<LoadMoreResult<ChallengeSolved>> {
-    return this.call('challenge.searchSolved', criteria);
+  challenge_searchSolved(): Rx.Observable<never> {
+    return this.call('challenge.searchSolved');
   }
   challenge_updateChallenge(values: {
     id: number;
@@ -88,6 +82,13 @@ export class APIClient {
   }
   solution_removeSolution(solutionId: string): Rx.Observable<void> {
     return this.call('solution.removeSolution', solutionId);
+  }
+  solution_searchLikesSolutions(criteria: {
+    username: string;
+    limit?: number | undefined;
+    cursor?: string | null | undefined;
+  }): Rx.Observable<LoadMoreResult<Solution>> {
+    return this.call('solution.searchLikesSolutions', criteria);
   }
   solution_searchSolutions(criteria: {
     sortBy: 'date' | 'likes';

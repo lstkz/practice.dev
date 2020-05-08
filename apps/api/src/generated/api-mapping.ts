@@ -42,6 +42,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "solution.removeSolution"*/ '../contracts/solution/removeSolution'
     ).then(x => x['removeSolutionRpc']),
+  'solution.searchLikesSolutions': () =>
+    import(
+      /* webpackChunkName: "solution.searchLikesSolutions"*/ '../contracts/solution/searchLikesSolutions'
+    ).then(x => x['searchSolutionsRpc']),
   'solution.searchSolutions': () =>
     import(
       /* webpackChunkName: "solution.searchSolutions"*/ '../contracts/solution/searchSolutions'

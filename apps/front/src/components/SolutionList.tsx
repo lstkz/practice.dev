@@ -27,6 +27,8 @@ interface SolutionListProp {
   load(loadMore: boolean): void;
   remove(id: string): void;
   onTagClick?(tag: string): void;
+  emptyText?: string;
+  noAutoLoad?: boolean;
 }
 
 export function SolutionList(props: SolutionListProp) {
@@ -38,16 +40,18 @@ export function SolutionList(props: SolutionListProp) {
     load,
     remove,
     onTagClick,
+    emptyText,
+    noAutoLoad,
   } = props;
   const user = useUser();
   const { show } = useActions(SolutionActions);
   const solutions = useSolutions(items);
   const { voteSolution } = useActions(GlobalSolutionsActions);
   React.useEffect(() => {
-    if (!isLoaded) {
+    if (!isLoaded && !noAutoLoad) {
       load(false);
     }
-  }, [isLoaded]);
+  }, [isLoaded, noAutoLoad]);
   if (!isLoaded) {
     return (
       <>
@@ -58,7 +62,9 @@ export function SolutionList(props: SolutionListProp) {
     );
   }
   if (!items.length) {
-    return <NoData data-test="no-solutions">No Solutions</NoData>;
+    return (
+      <NoData data-test="no-solutions">{emptyText || 'No Solutions'}</NoData>
+    );
   }
   return (
     <div>
