@@ -57,7 +57,7 @@ export function SolutionForm(props: SolutionFormProps) {
         }}
       >
         {error && (
-          <Alert data-test="solution-error" type="error">
+          <Alert testId="solution-error" type="error">
             {error}
           </Alert>
         )}

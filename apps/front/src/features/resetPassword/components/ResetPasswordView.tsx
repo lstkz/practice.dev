@@ -74,7 +74,7 @@ export function ResetPasswordView(props?: ResetPasswordViewProps) {
           }}
         >
           {error && (
-            <Alert data-test="reset-password-error" type="error">
+            <Alert testId="reset-password-error" type="error">
               {error}
             </Alert>
           )}

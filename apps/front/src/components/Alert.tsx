@@ -6,11 +6,16 @@ interface AlertProps {
   className?: string;
   children: React.ReactNode;
   type: 'success' | 'error';
+  testId?: string;
 }
 
 const _Alert = (props: AlertProps) => {
-  const { className, children } = props;
-  return <div className={className}>{children}</div>;
+  const { className, children, testId } = props;
+  return (
+    <div className={className} data-test={testId}>
+      {children}
+    </div>
+  );
 };
 
 export const Alert = styled(_Alert)`

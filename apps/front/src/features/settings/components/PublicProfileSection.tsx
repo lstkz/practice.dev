@@ -137,6 +137,7 @@ export function PublicProfileSection() {
             id="bio"
             name="bio"
             label="Bio"
+            multiline
           />
           <FormInput
             maxLength={60}

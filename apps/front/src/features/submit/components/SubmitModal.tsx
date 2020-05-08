@@ -32,7 +32,7 @@ export function SubmitModal() {
             }}
           >
             {error && (
-              <Alert data-test="submit-error" type="error">
+              <Alert testId="submit-error" type="error">
                 {error}
               </Alert>
             )}
