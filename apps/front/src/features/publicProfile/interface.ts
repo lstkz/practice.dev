@@ -1,7 +1,7 @@
-import { RouteConfig, SelectOption, LoadMoreResult } from 'src/types';
+import { RouteConfig } from 'src/types';
 import { createModule } from 'typeless';
 import { PublicProfileSymbol } from './symbol';
-import { PublicUserProfile, Solution } from 'shared';
+import { PublicUserProfile } from 'shared';
 
 // --- Actions ---
 export const [
@@ -12,14 +12,12 @@ export const [
   .withActions({
     $init: null,
     $mounted: null,
+    load: null,
     profileLoaded: (profile: PublicUserProfile) => ({
       payload: { profile },
     }),
     changeTab: (tab: ProfileTab) => ({ payload: { tab } }),
-    loadSolutions: (loadMore: boolean) => ({ payload: { loadMore } }),
-    solutionsLoaded: (loadMore: boolean, result: LoadMoreResult<Solution>) => ({
-      payload: { loadMore, result },
-    }),
+    setNotFound: null,
   })
   .withState<PublicProfileState>();
 
@@ -36,16 +34,10 @@ export const routeConfig: RouteConfig = {
 
 // --- Types ---
 export interface PublicProfileState {
+  isNotFound: boolean;
   profile: PublicUserProfile;
   isLoaded: boolean;
   tab: ProfileTab;
-  solutions: {
-    isLoaded: boolean;
-    isLoading: boolean;
-    items: Solution[];
-    cursor: string | null;
-    sortOrder: SelectOption<'likes' | 'newest' | 'oldest'>;
-  };
 }
 
 export type ProfileTab =

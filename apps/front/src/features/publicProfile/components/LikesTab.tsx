@@ -1,5 +1,5 @@
 import { createModule, useActions } from 'typeless';
-import { SolutionsTabSymbol } from '../symbol';
+import { LikesTabSymbol } from '../symbol';
 import {
   BaseSolutionsActions,
   SolutionsState,
@@ -10,8 +10,8 @@ import { getPublicProfileState } from '../interface';
 import React from 'react';
 import { SolutionList } from 'src/components/SolutionList';
 
-export const [handle, SolutionsTabActions, getSolutionsTabState] = createModule(
-  SolutionsTabSymbol
+export const [handle, LikesTabActions, getLikesTabState] = createModule(
+  LikesTabSymbol
 )
   .withActions({
     ...BaseSolutionsActions,
@@ -20,27 +20,24 @@ export const [handle, SolutionsTabActions, getSolutionsTabState] = createModule(
 
 solutionsMixin({
   handle,
-  Actions: SolutionsTabActions,
-  getState: getSolutionsTabState,
+  Actions: LikesTabActions,
+  getState: getLikesTabState,
   searchSolutions: criteria =>
-    api.solution_searchSolutions({
-      ...criteria,
+    api.solution_searchLikesSolutions({
+      limit: criteria.limit,
+      cursor: criteria.cursor,
       username: getPublicProfileState().profile.username,
     }),
 });
 
-export function SolutionsTab() {
-  const { load, remove } = useActions(SolutionsTabActions);
-  const {
-    isLoaded,
-    cursor,
-    items,
-    isLoading,
-  } = getSolutionsTabState.useState();
+export function LikesTab() {
+  const { load, remove } = useActions(LikesTabActions);
+  const { isLoaded, cursor, items, isLoading } = getLikesTabState.useState();
   return (
     <SolutionList
       noAutoLoad
       noLink
+      emptyText="No liked solutions"
       isLoaded={isLoaded}
       cursor={cursor}
       items={items}
@@ -50,6 +47,6 @@ export function SolutionsTab() {
     />
   );
 }
-export const useSolutionsModule = () => {
+export const useLikesModule = () => {
   handle();
 };
