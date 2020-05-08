@@ -22,7 +22,7 @@ it('should delete avatar', async () => {
         };
       },
     } as any);
-  s3.putObject = () =>
+  s3.upload = () =>
     ({
       promise: async () => {},
     } as any);

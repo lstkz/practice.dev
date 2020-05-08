@@ -51,7 +51,7 @@ it('should complete upload', async () => {
         };
       },
     } as any);
-  s3.putObject = () =>
+  s3.upload = () =>
     ({
       promise: async () => {},
     } as any);
