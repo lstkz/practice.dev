@@ -15,9 +15,7 @@ export const dynamoStream = new AWS.DynamoDBStreams({
   endpoint: process.env.MOCK_DB ? 'http://localhost:8000' : undefined,
 });
 
-export const ses = new AWS.SES({
-  region: 'eu-west-1',
-});
+export const ses = new AWS.SES({});
 
 export const createTransaction = () => new Transaction(dynamodb);
 
