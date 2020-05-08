@@ -36,6 +36,7 @@ export function LikesTab() {
   return (
     <SolutionList
       noAutoLoad
+      noLink
       emptyText="No liked solutions"
       isLoaded={isLoaded}
       cursor={cursor}

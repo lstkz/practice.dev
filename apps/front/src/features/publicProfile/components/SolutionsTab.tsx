@@ -40,6 +40,7 @@ export function SolutionsTab() {
   return (
     <SolutionList
       noAutoLoad
+      noLink
       isLoaded={isLoaded}
       cursor={cursor}
       items={items}

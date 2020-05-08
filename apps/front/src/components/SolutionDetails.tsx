@@ -21,6 +21,7 @@ interface SolutionDetailsProps {
   canEdit: boolean;
   borderBottom?: boolean;
   onTagClick?(tag: string): void;
+  onShow?(): void;
 }
 
 const Left = styled.div`
@@ -99,6 +100,7 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
     onMenu,
     link,
     onTagClick,
+    onShow,
   } = props;
   return (
     <div className={className} data-test={`solution-details-${solution.id}`}>
@@ -116,7 +118,9 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
             {solution.title}
           </Title>
         ) : (
-          <Title data-test="title">{solution.title}</Title>
+          <Title onClick={onShow} data-test="title">
+            {solution.title}
+          </Title>
         )}
         <By>
           By{' '}

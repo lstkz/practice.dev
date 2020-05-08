@@ -29,6 +29,7 @@ interface SolutionListProp {
   onTagClick?(tag: string): void;
   emptyText?: string;
   noAutoLoad?: boolean;
+  noLink?: boolean;
 }
 
 export function SolutionList(props: SolutionListProp) {
@@ -42,6 +43,7 @@ export function SolutionList(props: SolutionListProp) {
     onTagClick,
     emptyText,
     noAutoLoad,
+    noLink,
   } = props;
   const user = useUser();
   const { show } = useActions(SolutionActions);
@@ -70,7 +72,7 @@ export function SolutionList(props: SolutionListProp) {
     <div>
       {solutions.map(solution => (
         <SolutionDetails
-          link
+          link={!noLink}
           borderBottom
           canEdit={user && solution.user.id === user.id}
           solution={solution}
@@ -85,6 +87,7 @@ export function SolutionList(props: SolutionListProp) {
           }}
           voteSolution={voteSolution}
           onTagClick={onTagClick}
+          onShow={noLink ? () => show('view', solution) : undefined}
         />
       ))}
       {cursor && (
