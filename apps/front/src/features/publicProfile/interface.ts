@@ -12,6 +12,7 @@ export const [
   .withActions({
     $init: null,
     $mounted: null,
+    load: null,
     profileLoaded: (profile: PublicUserProfile) => ({
       payload: { profile },
     }),

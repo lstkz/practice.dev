@@ -1,6 +1,6 @@
 import { Engine, MockError } from './lib/Engine';
 import { WEBSITE_URL } from './config';
-import { authData1Verified, solutions } from './test-data';
+import { solutions, authData2Verified } from './test-data';
 
 let engine: Engine = null!;
 
@@ -9,7 +9,7 @@ beforeEach(async () => {
   await engine.setup();
 
   engine.mock('user_getMe', () => {
-    return authData1Verified.user;
+    return authData2Verified.user;
   });
   engine.mock('user_getPublicProfile', () => {
     return {
@@ -47,6 +47,50 @@ it('should handle not found user', async () => {
   });
   await page.goto(WEBSITE_URL + '/profile/user123');
   await $('@user-not-found').expect.toMatch("User doesn't exist");
+});
+
+it('should navigate between profiles', async () => {
+  engine.mock('user_getPublicProfile', (params, count) => {
+    if (count === 1) {
+      return {
+        avatarUrl: '',
+        bio: 'My bio',
+        country: 'PL',
+        followersCount: 0,
+        followingCount: 0,
+        id: 'u1',
+        isFollowed: false,
+        likesCount: 10,
+        name: 'John Doe',
+        solutionsCount: 5,
+        submissionsCount: 20,
+        url: 'https://my-link',
+        username: 'user1',
+      };
+    } else {
+      return {
+        avatarUrl: '',
+        bio: 'My bio',
+        country: 'DE',
+        followersCount: 0,
+        followingCount: 0,
+        id: 'u2',
+        isFollowed: false,
+        likesCount: 10,
+        name: 'other user',
+        solutionsCount: 5,
+        submissionsCount: 20,
+        url: 'https://my-link',
+        username: 'user2',
+      };
+    }
+  });
+  engine.setToken('t2');
+  await page.goto(WEBSITE_URL + '/profile/user1');
+  await $('@current-username').click();
+  await $('@my-profile-link').click();
+  await $('@profile-info @name').expect.toMatch('other user');
+  await $('@profile-info @country').expect.toMatch('🇩🇪 Germany');
 });
 
 describe('solutions tab', () => {

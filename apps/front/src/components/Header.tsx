@@ -138,6 +138,7 @@ const _Header = (props: HeaderProps) => {
                   <Dropdown>
                     <MenuItem>
                       <Link
+                        testId="my-profile-link"
                         href={createUrl({
                           name: 'profile',
                           username: user.username,

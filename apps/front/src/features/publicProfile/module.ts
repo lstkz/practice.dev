@@ -1,15 +1,32 @@
 import * as Rx from 'src/rx';
-import { PublicProfileActions, PublicProfileState, handle } from './interface';
-import { getRouteParams } from 'src/common/url';
+import {
+  PublicProfileActions,
+  PublicProfileState,
+  handle,
+  getPublicProfileState,
+} from './interface';
+import { getRouteParams, isRoute } from 'src/common/url';
 import { api } from 'src/services/api';
 import { handleAppError, getErrorMessage } from 'src/common/helper';
 import { SolutionsTabActions } from './components/SolutionsTab';
 import { LikesTabActions } from './components/LikesTab';
+import { RouterActions, getRouterState } from 'typeless-router';
 
 // --- Epic ---
 handle
   .epic()
-  .on(PublicProfileActions.$mounted, () => {
+  .on(RouterActions.locationChange, () => {
+    const { location, prevLocation } = getRouterState();
+    if (location && prevLocation && isRoute('profile', location)) {
+      const newUsername = getRouteParams('profile').username;
+      if (getPublicProfileState().profile?.username !== newUsername) {
+        return PublicProfileActions.load();
+      }
+    }
+    return null;
+  })
+  .on(PublicProfileActions.$mounted, () => PublicProfileActions.load())
+  .on(PublicProfileActions.load, () => {
     const { username } = getRouteParams('profile');
 
     return api.user_getPublicProfile(username).pipe(
