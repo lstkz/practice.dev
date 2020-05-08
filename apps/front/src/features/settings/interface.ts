@@ -24,6 +24,7 @@ export const routeConfig: RouteConfig = {
   path: '/settings',
   component: () =>
     import('./components/SettingsView').then(x => x.SettingsView),
+  waitForAction: SettingsActions.profileLoaded,
 };
 
 // --- Types ---

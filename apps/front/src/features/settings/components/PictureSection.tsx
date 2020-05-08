@@ -10,6 +10,8 @@ import { CropModal } from './CropModal';
 import { api } from 'src/services/api';
 import { getAvatarUrl } from 'src/common/helper';
 import { GlobalActions } from 'src/features/global/interface';
+import { ConfirmModalActions } from 'src/features/confirmModal/interface';
+import { DeleteType } from 'src/types';
 
 export const [
   handle,
@@ -70,10 +72,32 @@ handle
       Rx.of(PictureSectionActions.setIsUpdating(false))
     );
   })
-  .on(PictureSectionActions.deleteAvatar, () =>
+  .on(PictureSectionActions.deleteAvatar, (_, { action$ }) =>
     Rx.concatObs(
-      GlobalActions.avatarUpdated(null),
-      api.user_deleteAvatar().pipe(Rx.ignoreElements())
+      Rx.of(
+        ConfirmModalActions.show(
+          'Confirm',
+          'Are you sure to delete profile picture?',
+          [
+            { text: 'Delete', type: 'danger', value: 'delete' as DeleteType },
+            { text: 'Cancel', type: 'secondary', value: 'close' as DeleteType },
+          ]
+        )
+      ),
+      action$.pipe(
+        Rx.waitForType(ConfirmModalActions.onResult),
+        Rx.mergeMap(({ payload }) => {
+          const result = payload.result as DeleteType;
+          if (result !== 'delete') {
+            return Rx.of(ConfirmModalActions.close());
+          }
+          return Rx.concatObs(
+            Rx.of(ConfirmModalActions.close()),
+            Rx.of(GlobalActions.avatarUpdated(null)),
+            api.user_deleteAvatar().pipe(Rx.ignoreElements())
+          );
+        })
+      )
     )
   );
 
@@ -135,7 +159,7 @@ export function PictureSection() {
   const { profile } = getSettingsState.useState();
   const [fileKey, setFileKey] = React.useState(1);
   const inputRef = useRef<HTMLInputElement>(null!);
-  const { showCrop } = useActions(PictureSectionActions);
+  const { showCrop, deleteAvatar } = useActions(PictureSectionActions);
   const avatarUrl = getAvatarUrl(profile.avatarUrl, 'lg');
   return (
     <SettingsSection title="Profile Picture">
@@ -163,7 +187,11 @@ export function PictureSection() {
           <Button type="primary" onClick={() => inputRef.current.click()}>
             UPDATE PHOTO
           </Button>
-          <Button type="danger" disabled={!profile.avatarUrl}>
+          <Button
+            type="danger"
+            onClick={deleteAvatar}
+            disabled={!profile.avatarUrl}
+          >
             DELETE
           </Button>
         </Buttons>
