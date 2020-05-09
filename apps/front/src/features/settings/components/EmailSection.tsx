@@ -101,6 +101,9 @@ handle
   })
   .on(EmailSectionActions.setIsSubmitting, (state, { isSubmitting }) => {
     state.isSubmitting = isSubmitting;
+  })
+  .on(EmailSectionActions.setError, (state, { error }) => {
+    state.error = error;
   });
 
 export function EmailSection() {

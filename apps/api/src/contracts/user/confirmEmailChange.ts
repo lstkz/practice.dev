@@ -21,6 +21,10 @@ export const confirmEmailChange = createContract('user.confirmEmailChange')
     }
     const user = await UserEntity.getById(changeEmail.userId);
     const updated = await updateEmailCUD(user, changeEmail.email);
+    if (!updated.isVerified) {
+      updated.isVerified = true;
+      await updated.update(['isVerified']);
+    }
     await changeEmail.delete();
     return _generateAuthData(updated);
   });

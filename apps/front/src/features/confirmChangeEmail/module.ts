@@ -10,7 +10,7 @@ import { GlobalActions } from '../global/interface';
 handle.epic().on(ConfirmChangeEmailActions.$mounted, () => {
   const { code } = getRouteParams('confirm-change-email');
   return api.user_confirmEmailChange(code).pipe(
-    Rx.map(auth => GlobalActions.auth(auth)),
+    Rx.map(auth => GlobalActions.auth(auth, true)),
     handleAppError(),
     Rx.concat(
       Rx.of(

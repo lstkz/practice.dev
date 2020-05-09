@@ -103,6 +103,9 @@ handle
   })
   .on(PasswordSectionActions.setIsSubmitting, (state, { isSubmitting }) => {
     state.isSubmitting = isSubmitting;
+  })
+  .on(PasswordSectionActions.setError, (state, { error }) => {
+    state.error = error;
   });
 
 export function PasswordSection() {

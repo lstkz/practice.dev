@@ -2,7 +2,7 @@ import Path from 'path';
 import fs from 'fs';
 import { Engine, MockError } from './lib/Engine';
 import { WEBSITE_URL } from './config';
-import { authData1Verified } from './test-data';
+import { authData1Verified, authData1 } from './test-data';
 
 let engine: Engine = null!;
 
@@ -202,4 +202,107 @@ it('update existing fields', async () => {
   await $('@name-input').type('x');
   await $('@profile-submit').click();
   await $('@update-success').expect.toMatch('Updated Successfully');
+});
+
+it('should navigate between tabs', async () => {
+  await page.goto(WEBSITE_URL + '/settings');
+  await $('@account-tab').click();
+  await $('@email-input').expect.toBeVisible();
+  expect(page.url().endsWith('/settings?tab=account')).toBeTruthy();
+  await $('@profile-tab').click();
+  await $('@name-input').expect.toBeVisible();
+  expect(page.url().endsWith('/settings')).toBeTruthy();
+});
+
+it('should change email', async () => {
+  engine.mock('user_changeEmail', (params, count) => {
+    if (count === 1) {
+      throw new MockError('Err');
+    }
+    expect(params).toEqual<typeof params>('x@g.com');
+  });
+  await page.goto(WEBSITE_URL + '/settings?tab=account');
+  await $('@email-input').clear();
+  await $('@email-input').type('x@g.com');
+  await $('@change-email-submit').click();
+  await $('@email-update-error').expect.toMatch('Err');
+  await $('@change-email-submit').click();
+  await $('@email-update-error').expect.toBeHidden();
+  await $('@email-update-success').expect.toMatch(
+    'Please check "x@g.com" to confirm your new email.'
+  );
+});
+
+it('should change password', async () => {
+  engine.mock('user_changePassword', (params, count) => {
+    if (count === 1) {
+      throw new MockError('Err');
+    }
+    expect(params).toEqual<typeof params>('12345');
+  });
+  await page.goto(WEBSITE_URL + '/settings?tab=account');
+  await $('@password-input').type('123');
+  await $('@confirmPassword-input').type('12');
+  await $('@password-input_error').expect.toMatch(
+    'Length must be at least 5 characters long'
+  );
+  await $('@password-input').type('45');
+  await $('@confirmPassword-input_error').expect.toMatch(
+    'Passwords do not match'
+  );
+  await $('@confirmPassword-input').type('345');
+  await $('@change-password-submit').click();
+  await $('@password-update-error').expect.toMatch('Err');
+  await $('@change-password-submit').click();
+  await $('@password-update-error').expect.toBeHidden();
+  await $('@password-update-success').expect.toMatch(
+    'Password changed successfully.'
+  );
+});
+
+it('confirm email change - error', async () => {
+  engine.mock('user_confirmEmailChange', () => {
+    throw new MockError('Invalid code');
+  });
+  await page.goto(WEBSITE_URL + '/confirm-email/123');
+  await $('@app-error').expect.toMatch('Invalid code');
+  expect(page.url().endsWith('/settings?tab=account')).toBeTruthy();
+});
+
+it('confirm email change - success (not logged)', async () => {
+  engine.setToken(null);
+  engine.mock('user_getMe', () => {
+    throw new MockError('Not expected');
+  });
+  engine.mock('user_confirmEmailChange', () => {
+    return {
+      ...authData1,
+      user: {
+        ...authData1.user,
+        isVerified: true,
+        email: 'new-email@g.com',
+      },
+    };
+  });
+  await page.goto(WEBSITE_URL + '/confirm-email/123');
+  await $('@email-input').expect.toMatch('new-email@g.com');
+  expect(page.url().endsWith('/settings?tab=account')).toBeTruthy();
+  await $('@app-error').expect.toBeHidden();
+});
+
+it('confirm email change - success', async () => {
+  engine.mock('user_confirmEmailChange', () => {
+    return {
+      ...authData1,
+      user: {
+        ...authData1.user,
+        isVerified: true,
+        email: 'new-email@g.com',
+      },
+    };
+  });
+  await page.goto(WEBSITE_URL + '/confirm-email/123');
+  await $('@email-input').expect.toMatch('new-email@g.com');
+  expect(page.url().endsWith('/settings?tab=account')).toBeTruthy();
+  await $('@app-error').expect.toBeHidden();
 });

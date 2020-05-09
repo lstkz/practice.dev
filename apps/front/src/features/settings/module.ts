@@ -37,9 +37,6 @@ handle
     stats.isLoaded = true;
     stats.profile = profile;
   })
-  .on(SettingsActions.changeTab, (state, { tab }) => {
-    state.tab = tab;
-  })
   .on(GlobalActions.avatarUpdated, (state, { avatarUrl }) => {
     state.profile.avatarUrl = avatarUrl;
   });

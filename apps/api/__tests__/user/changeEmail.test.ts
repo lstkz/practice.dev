@@ -10,7 +10,7 @@ let code: string = '';
 
 beforeEach(async () => {
   await resetDb();
-  await Promise.all([registerSampleUsers()]);
+  await Promise.all([registerSampleUsers(false)]);
   const sendEmailMock: any = (params: SES.Types.SendEmailRequest) => ({
     promise: () => {
       code = /confirm-email\/([^"]+)/.exec(params.Message.Body.Html!.Data)![1];
@@ -31,6 +31,7 @@ it('should change email and confirm it', async () => {
   expect(code).toBeDefined();
   const ret = await confirmEmailChange(code);
   expect(ret.user.email).toEqual('new@example.com');
+  expect(ret.user.isVerified).toEqual(true);
   const loginRet = await login({
     emailOrUsername: 'new@example.com',
     password: 'password1',

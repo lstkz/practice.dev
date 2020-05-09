@@ -10,7 +10,7 @@ import { GlobalActions } from '../global/interface';
 handle.epic().on(ConfirmActions.$mounted, () => {
   const { code } = getRouteParams('confirm');
   return api.user_confirmEmail(code).pipe(
-    Rx.map(auth => GlobalActions.auth(auth)),
+    Rx.map(auth => GlobalActions.auth(auth, true)),
     handleAppError(),
     Rx.concat(Rx.of(RouterActions.push(createUrl({ name: 'challenges' }))))
   );
