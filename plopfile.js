@@ -31,7 +31,7 @@ module.exports = function generate(plop) {
     actions: [
       {
         type: 'addMany',
-        destination: path.join(__dirname, 'apps/api/src/entities2'),
+        destination: path.join(__dirname, 'apps/api/src/entities'),
         base: '.blueprints/entity',
         templateFiles: '.blueprints/entity/**/**',
       },
