@@ -1,11 +1,11 @@
 import { resetDb } from '../helper';
-import { registerSampleUsers, addSampleChallenges } from '../seed-data';
+import { registerSampleUsers } from '../seed-data';
 import { getPublicProfile } from '../../src/contracts/user/getPublicProfile';
 import { updatePublicProfile } from '../../src/contracts/user/updatePublicProfile';
 
 beforeEach(async () => {
   await resetDb();
-  await Promise.all([addSampleChallenges(), registerSampleUsers()]);
+  await Promise.all([registerSampleUsers()]);
 });
 
 it('update profile', async () => {

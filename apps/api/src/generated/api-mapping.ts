@@ -78,6 +78,14 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "user.authGoogle"*/ '../contracts/user/authGoogle'
     ).then(x => x['authGoogleRpc']),
+  'user.changeEmail': () =>
+    import(
+      /* webpackChunkName: "user.changeEmail"*/ '../contracts/user/changeEmail'
+    ).then(x => x['changeEmailRpc']),
+  'user.changePassword': () =>
+    import(
+      /* webpackChunkName: "user.changePassword"*/ '../contracts/user/changePassword'
+    ).then(x => x['changePasswordRpc']),
   'user.completeAvatarUpload': () =>
     import(
       /* webpackChunkName: "user.completeAvatarUpload"*/ '../contracts/user/completeAvatarUpload'
@@ -86,6 +94,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "user.confirmEmail"*/ '../contracts/user/confirmEmail'
     ).then(x => x['confirmEmailRpc']),
+  'user.confirmEmailChange': () =>
+    import(
+      /* webpackChunkName: "user.confirmEmailChange"*/ '../contracts/user/confirmEmailChange'
+    ).then(x => x['confirmEmailChangeRpc']),
   'user.confirmResetPassword': () =>
     import(
       /* webpackChunkName: "user.confirmResetPassword"*/ '../contracts/user/confirmResetPassword'

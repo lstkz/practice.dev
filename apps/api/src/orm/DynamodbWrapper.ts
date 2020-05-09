@@ -17,9 +17,6 @@ class DynamodbError extends Error {
 function wrapError(message: string, params: any) {
   const err = new Error();
   return (e: Error) => {
-    if (process.env.NODE_ENV === 'test') {
-      console.error('dynamo error', JSON.stringify(params, null, 2));
-    }
     throw new DynamodbError(err.stack, message, e, params);
   };
 }

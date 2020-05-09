@@ -54,14 +54,21 @@ export function createUrl(options: UrlOptions) {
 export function getRouteParams(name: 'reset-password'): { code: string };
 export function getRouteParams(name: 'challenge'): { id: number };
 export function getRouteParams(name: 'confirm'): { code: string };
+export function getRouteParams(name: 'confirm-change-email'): { code: string };
 export function getRouteParams(name: 'profile'): { username: string };
 export function getRouteParams(
-  name: 'reset-password' | 'challenge' | 'confirm' | 'profile'
+  name:
+    | 'reset-password'
+    | 'challenge'
+    | 'confirm'
+    | 'profile'
+    | 'confirm-change-email'
 ): any {
   const location = getRouterState().location!;
   const getLast = () => R.last(location.pathname.split('/'));
   switch (name) {
     case 'confirm':
+    case 'confirm-change-email':
     case 'reset-password': {
       return {
         code: getLast(),

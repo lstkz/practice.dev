@@ -71,3 +71,32 @@ export async function createUserCUD(props: UserProps) {
   await t.commit();
   return user;
 }
+
+export async function updateEmailCUD(user: UserEntity, newEmail: string) {
+  const t = createTransaction();
+  if (user.email.toLowerCase() !== newEmail.toLowerCase()) {
+    await UserEmailEntity.getIsTaken(newEmail).then(isTaken => {
+      if (isTaken) {
+        throw new AppError('Email is already registered');
+      }
+    });
+    const oldUserEmail = new UserEmailEntity({
+      userId: user.userId,
+      email: user.email,
+    });
+    const newUserEmail = new UserEmailEntity({
+      userId: user.userId,
+      email: newEmail,
+    });
+    t.delete(oldUserEmail, {
+      conditionExpression: 'attribute_exists(pk)',
+    });
+    t.insert(newUserEmail, {
+      conditionExpression: 'attribute_not_exists(pk)',
+    });
+  }
+  user.email = newEmail;
+  t.update(user, ['email']);
+  await t.commit();
+  return user;
+}

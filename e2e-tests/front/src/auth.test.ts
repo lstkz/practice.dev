@@ -68,7 +68,7 @@ describe('register', () => {
     await $('@email-input').type('1@g.com');
     await $('@password-input').type('1');
     await $('@password-input_error').expect.toMatch(
-      'Length must be at least 4 characters long'
+      'Length must be at least 5 characters long'
     );
     await $('@password-input').type('2345');
     await $('@confirm-password-input').type('1');

@@ -31,7 +31,6 @@ export const routeConfig: RouteConfig = {
 export interface SettingsState {
   isLoaded: boolean;
   profile: PublicUserProfile;
-  tab: SettingsTab;
 }
 
 export type SettingsTab = 'profile' | 'account';

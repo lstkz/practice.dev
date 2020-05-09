@@ -9,7 +9,8 @@ const userId = '1';
 
 beforeEach(async () => {
   await resetDb();
-  await Promise.all([registerSampleUsers(), insertSampleData()]);
+  await registerSampleUsers();
+  await insertSampleData();
 });
 
 async function insertSampleData() {

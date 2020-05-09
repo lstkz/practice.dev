@@ -1,43 +1,30 @@
 import * as Rx from 'src/rx';
 import { api } from 'src/services/api';
 import { SettingsActions, SettingsState, handle } from './interface';
-import { handleAppError, countryListItemToOption } from 'src/common/helper';
+import { handleAppError } from 'src/common/helper';
 import { getGlobalState, GlobalActions } from '../global/interface';
-import { PublicProfileFormActions } from './components/PublicProfileSection';
-import { countryList } from 'shared';
-
-function _getCountryOption(code: string | null) {
-  if (!code) {
-    return null;
-  }
-  const item = countryList.find(x => x.code === code);
-  if (!item) {
-    return null;
-  }
-  return countryListItemToOption(item);
-}
+import { RouterActions } from 'typeless-router';
+import { createUrl } from 'src/common/url';
 
 // --- Epic ---
-handle.epic().on(SettingsActions.$mounted, () =>
-  api.user_getPublicProfile(getGlobalState().user!.username).pipe(
-    Rx.mergeMap(ret => [
-      SettingsActions.profileLoaded(ret),
-      PublicProfileFormActions.reset(),
-      PublicProfileFormActions.changeMany({
-        bio: ret.bio,
-        name: ret.name,
-        url: ret.url,
-        country: _getCountryOption(ret.country),
-      }),
-    ]),
-    handleAppError()
+handle
+  .epic()
+  .on(SettingsActions.$mounted, () =>
+    api.user_getPublicProfile(getGlobalState().user!.username).pipe(
+      Rx.mergeMap(ret => [SettingsActions.profileLoaded(ret)]),
+      handleAppError()
+    )
   )
-);
+  .on(SettingsActions.changeTab, ({ tab }) => {
+    return RouterActions.push({
+      pathname: createUrl({ name: 'settings' }),
+      search: tab === 'profile' ? '' : 'tab=' + tab,
+    });
+  });
 
 // --- Reducer ---
 const initialState: SettingsState = {
   isLoaded: false,
-  tab: 'profile',
   profile: null!,
 };
 
@@ -49,9 +36,6 @@ handle
   .on(SettingsActions.profileLoaded, (stats, { profile }) => {
     stats.isLoaded = true;
     stats.profile = profile;
-  })
-  .on(SettingsActions.changeTab, (state, { tab }) => {
-    state.tab = tab;
   })
   .on(GlobalActions.avatarUpdated, (state, { avatarUrl }) => {
     state.profile.avatarUrl = avatarUrl;

@@ -10,6 +10,10 @@ import { Theme } from 'ui';
 import { PictureSection } from './PictureSection';
 import { PageLoader } from 'src/components/PageLoader';
 import { PublicProfileSection } from './PublicProfileSection';
+import { EmailSection } from './EmailSection';
+import { PasswordSection } from './PasswordSection';
+import { getRouterState } from 'typeless-router';
+import { parseQueryString } from 'src/common/url';
 
 const Wrapper = styled.div`
   margin-top: 30px;
@@ -32,8 +36,16 @@ const TabContent = styled.div`
 
 export function SettingsView() {
   useSettingsModule();
-  const { tab, isLoaded } = getSettingsState.useState();
+  const { isLoaded } = getSettingsState.useState();
   const { changeTab } = useActions(SettingsActions);
+  const { location } = getRouterState.useState();
+  const tab = React.useMemo(() => {
+    const qs = parseQueryString(location?.search);
+    if (qs.tab === 'account') {
+      return 'account' as SettingsTab;
+    }
+    return 'profile' as SettingsTab;
+  }, [location]);
   const renderContent = () => {
     if (!isLoaded) {
       return <PageLoader />;
@@ -52,7 +64,10 @@ export function SettingsView() {
             </TabContent>
           </Tab>
           <Tab title="Account" name="account" testId="account-tab">
-            <TabContent>content a</TabContent>
+            <TabContent>
+              <EmailSection />
+              <PasswordSection />
+            </TabContent>
           </Tab>
         </Tabs>
       </Wrapper>
