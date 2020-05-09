@@ -18,6 +18,7 @@ import { Button } from 'ui';
 import { api } from 'src/services/api';
 import { Alert } from 'src/components/Alert';
 import { SuccessFilledIcon } from 'src/icons/SuccessFilledIcon';
+import { getSettingsState } from '../interface';
 
 export const [
   handle,
@@ -25,6 +26,8 @@ export const [
   getPublicProfileSectionState,
 ] = createModule(PublicProfileSectionSymbol)
   .withActions({
+    $init: null,
+    $mounted: null,
     setIsSubmitting: (isSubmitting: boolean) => ({ payload: { isSubmitting } }),
     setIsDone: (isDone: boolean) => ({ payload: { isDone } }),
   })
@@ -71,27 +74,55 @@ export const [
   },
 });
 
-handle.epic().on(PublicProfileFormActions.setSubmitSucceeded, () => {
-  const { values } = getPublicProfileFormState();
-  return Rx.concatObs(
-    Rx.of(PublicProfileSectionActions.setIsSubmitting(true)),
-    api
-      .user_updatePublicProfile({
-        bio: values.bio ?? null,
-        name: values.name ?? null,
-        url: values.url ?? null,
-        country: values.country?.value ?? null,
-      })
-      .pipe(
-        Rx.map(() => PublicProfileSectionActions.setIsDone(true)),
-        handleAppError()
-      ),
-    Rx.of(PublicProfileSectionActions.setIsSubmitting(false))
-  );
-});
+function _getCountryOption(code: string | null) {
+  if (!code) {
+    return null;
+  }
+  const item = countryList.find(x => x.code === code);
+  if (!item) {
+    return null;
+  }
+  return countryListItemToOption(item);
+}
+
+handle
+  .epic()
+  .on(PublicProfileSectionActions.$mounted, () => {
+    const { profile } = getSettingsState();
+    return [
+      PublicProfileFormActions.reset(),
+      PublicProfileFormActions.changeMany({
+        bio: profile.bio,
+        name: profile.name,
+        url: profile.url,
+        country: _getCountryOption(profile.country),
+      }),
+    ];
+  })
+  .on(PublicProfileFormActions.setSubmitSucceeded, () => {
+    const { values } = getPublicProfileFormState();
+    return Rx.concatObs(
+      Rx.of(PublicProfileSectionActions.setIsSubmitting(true)),
+      api
+        .user_updatePublicProfile({
+          bio: values.bio ?? null,
+          name: values.name ?? null,
+          url: values.url ?? null,
+          country: values.country?.value ?? null,
+        })
+        .pipe(
+          Rx.map(() => PublicProfileSectionActions.setIsDone(true)),
+          handleAppError()
+        ),
+      Rx.of(PublicProfileSectionActions.setIsSubmitting(false))
+    );
+  });
 
 handle
   .reducer(initialState)
+  .on(PublicProfileSectionActions.$init, state => {
+    Object.assign(state, initialState);
+  })
   .on(PublicProfileFormActions.setSubmitSucceeded, state => {
     state.isDone = false;
   })

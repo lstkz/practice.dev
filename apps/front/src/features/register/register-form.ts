@@ -2,6 +2,7 @@ import { createForm } from 'typeless-form';
 import { S } from 'schema';
 import { RegisterFormSymbol } from './symbol';
 import { validate } from '../../common/helper';
+import { getPasswordSchema, getUsernameSchema } from 'shared';
 
 export interface RegisterFormValues {
   username: string;
@@ -22,13 +23,9 @@ export const [
       errors,
       values,
       S.object().keys({
-        username: S.string()
-          .min(3)
-          .max(20),
-        email: S.string()
-          .max(50)
-          .email(),
-        password: S.string().min(4),
+        username: getUsernameSchema(),
+        email: S.string().email(),
+        password: getPasswordSchema(),
         confirmPassword: S.string(),
       })
     );

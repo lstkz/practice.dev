@@ -88,7 +88,7 @@ export async function updateEmailCUD(user: UserEntity, newEmail: string) {
       userId: user.userId,
       email: newEmail,
     });
-    t.insert(oldUserEmail, {
+    t.delete(oldUserEmail, {
       conditionExpression: 'attribute_exists(pk)',
     });
     t.insert(newUserEmail, {

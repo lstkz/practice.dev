@@ -148,11 +148,20 @@ export class APIClient {
   user_authGoogle(accessToken: string): Rx.Observable<AuthData> {
     return this.call('user.authGoogle', accessToken);
   }
+  user_changeEmail(email: string): Rx.Observable<void> {
+    return this.call('user.changeEmail', email);
+  }
+  user_changePassword(newPassword: string): Rx.Observable<void> {
+    return this.call('user.changePassword', newPassword);
+  }
   user_completeAvatarUpload(): Rx.Observable<{ avatarUrl: string }> {
     return this.call('user.completeAvatarUpload');
   }
   user_confirmEmail(code: string): Rx.Observable<AuthData> {
     return this.call('user.confirmEmail', code);
+  }
+  user_confirmEmailChange(code: string): Rx.Observable<AuthData> {
+    return this.call('user.confirmEmailChange', code);
   }
   user_confirmResetPassword(
     code: string,
@@ -190,7 +199,7 @@ export class APIClient {
   }
   user_updatePublicProfile(values: {
     url?: string | undefined;
-    country?: string | undefined;
+    country?: string | null | undefined;
     name?: string | undefined;
     bio?: string | undefined;
   }): Rx.Observable<void> {

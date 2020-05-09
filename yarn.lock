@@ -9963,20 +9963,20 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typeless-form@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/typeless-form/-/typeless-form-1.5.0.tgz#1ab2f088c55a14cc3899e446f80596651d34a1bd"
-  integrity sha512-yq2HuQNzy2OQyon98HBKYHYE7275lxDV2FiRYcaulsUGtJ48rY62rFBOEK7cp44CK236DPpX1vhDSwliDp2Swg==
+typeless-form@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/typeless-form/-/typeless-form-1.6.0.tgz#b13f045657883fe1e2f4c29ff3533ddd09468e84"
+  integrity sha512-wZr7tSQix/wFNwB0geUjPKaJmf5JZSsR36EMISWPi+JWoPuAIxFfIGecoNiSNxsVUxlM7t9PgEEKp32Z335sHA==
 
-typeless-router@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/typeless-router/-/typeless-router-1.5.0.tgz#966e8ed210b233f4b91440226e4485457ae1c0b4"
-  integrity sha512-lnf1Mb0qLsZ8cL1Xk1GoCDW6WkS/bxHx8uQBssOTankmA3BWQJEDRpkFGFE6wbrAuo11MiobaUoV56pEIsl7AQ==
+typeless-router@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/typeless-router/-/typeless-router-1.6.0.tgz#0124d783bcd13ab368b85fca9b2c54452a6df62b"
+  integrity sha512-D7ANlBNUyEG9FWbHmebI2z4tWbRWfKA07a59WTE4Za1N5zz4ZzbRiw5h9Nv6Ik9gKSdhDjfvERrjxPQfS/0Bgg==
 
-typeless@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/typeless/-/typeless-1.5.0.tgz#a232f1c9eb431e54bace2144acdb8b7939b00c5c"
-  integrity sha512-SDNtE5BZkxgBud9TOwWeO6MaweeiqioMF9/qN2praXtIZVhWCgLY9gnYFnOa1ZMybIbF51LBQZ8Z039IUax2Gw==
+typeless@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/typeless/-/typeless-1.6.0.tgz#1dd58d0784055a41cbec65e1fb8e3d33402e16a0"
+  integrity sha512-vHXep7cLQ4Fnuv6Vy71wY/DCU6LfvWySxME8mzdA7e8gy0ebO3/B19Rx2YZWNRdj0BXB+5/jqqFk33EGb7K9Ig==
   dependencies:
     immer "^5.0.0"
 

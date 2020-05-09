@@ -40,3 +40,14 @@ it('should change email and confirm it', async () => {
     'Email is already taken'
   );
 });
+
+it('change email and change back to original', async () => {
+  await changeEmail('1', 'new@example.com');
+  await confirmEmailChange(code);
+  await changeEmail('1', 'user1@example.com');
+  await confirmEmailChange(code);
+  await login({
+    emailOrUsername: 'user1@example.com',
+    password: 'password1',
+  });
+});

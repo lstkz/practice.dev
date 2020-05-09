@@ -82,6 +82,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "user.changeEmail"*/ '../contracts/user/changeEmail'
     ).then(x => x['changeEmailRpc']),
+  'user.changePassword': () =>
+    import(
+      /* webpackChunkName: "user.changePassword"*/ '../contracts/user/changePassword'
+    ).then(x => x['changePasswordRpc']),
   'user.completeAvatarUpload': () =>
     import(
       /* webpackChunkName: "user.completeAvatarUpload"*/ '../contracts/user/completeAvatarUpload'
