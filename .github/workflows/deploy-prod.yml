@@ -69,4 +69,4 @@ jobs:
           TESTER_TOPIC_ARN: dummy
           TOPIC_ARN: dummy
           DOMAIN: practice.dev
-          DOMAIN_CERT: arn:aws:acm:eu-central-1:509716765000:certificate/4e5fa334-99cb-4d1e-8330-f9f28c549de2
+          DOMAIN_CERT: arn:aws:acm:us-east-1:509716765000:certificate/aea0ab9c-3e8c-4168-bee0-0f08bcffb4b8
