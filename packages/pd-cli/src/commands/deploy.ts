@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 import program from 'commander';
-import { getSpawnOptions, getEnvSettings } from '../helper';
+import { getSpawnOptions, getEnvSettings, cpToPromise } from '../helper';
 import { build as buildApp } from './build';
 
 export function init() {
@@ -19,20 +19,22 @@ export function init() {
       }
       const env = getEnvSettings({ prod, stage });
 
-      spawn(
-        'cdk',
-        [
-          'deploy',
-          '--app',
-          '"yarn workspace deploy run ts-node -T src/MainStack"',
-        ],
-        {
-          env: {
-            ...process.env,
-            ...env,
-          },
-          ...getSpawnOptions('deploy'),
-        }
+      await cpToPromise(
+        spawn(
+          'cdk',
+          [
+            'deploy',
+            '--app',
+            '"yarn workspace deploy run ts-node -T src/MainStack"',
+          ],
+          {
+            env: {
+              ...process.env,
+              ...env,
+            },
+            ...getSpawnOptions('deploy'),
+          }
+        )
       );
     });
 }
