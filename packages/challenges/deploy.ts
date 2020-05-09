@@ -1,6 +1,9 @@
 import path from 'path';
+import * as R from 'remeda';
 import fs from 'fs-extra';
 import AWS from 'aws-sdk';
+import crypto from 'crypto';
+import yaml from 'js-yaml';
 import { ChallengeInfo } from './_common/types';
 import { APIClient, TestInfo } from 'shared';
 import { XMLHttpRequest } from 'xmlhttprequest';
@@ -30,6 +33,10 @@ if (!S3_BUCKET_NAME) {
 const api = new APIClient(API_URL, () => API_TOKEN, createXHR);
 
 const s3 = new AWS.S3();
+
+function md5(data: string) {
+  return crypto.createHash('md5').update(data).digest('hex');
+}
 
 function getJSFiles(dir: string) {
   return fs
@@ -65,10 +72,11 @@ function addFiles(distName: string, prop: 'testFile' | 'detailsFile') {
 addFiles('details', 'detailsFile');
 addFiles('tests', 'testFile');
 
-async function uploadFile(file: string, prefix: string) {
-  const basename = path.basename(file);
-  const s3Key = `${prefix}/${basename}`;
-
+async function uploadS3(
+  content: string | Buffer,
+  contentType: string,
+  s3Key: string
+) {
   const exists = await s3
     .headObject({
       Bucket: S3_BUCKET_NAME,
@@ -86,19 +94,24 @@ async function uploadFile(file: string, prefix: string) {
     );
 
   if (!exists) {
-    const content = await fs.readFile(file);
     await s3
       .upload({
         Bucket: S3_BUCKET_NAME,
         Key: s3Key,
         Body: content,
-        ContentType: 'text/javascript',
+        ContentType: contentType,
         ContentLength: content.length,
       })
       .promise();
   }
 
   return s3Key;
+}
+
+async function uploadJSFile(file: string, prefix: string) {
+  const basename = path.basename(file);
+  const s3Key = `${prefix}/${basename}`;
+  return uploadS3(await fs.readFile(file), 'text/javascript', s3Key);
 }
 
 fs.readdirSync(path.join(__dirname)).forEach(name => {
@@ -179,23 +192,52 @@ function getTests(info: ChallengeInfo, testFile: string) {
   }
 }
 
+async function getAssets(name: string, info: ChallengeInfo) {
+  if (!info.hasSwagger) {
+    return null;
+  }
+  const swaggerPath = path.join(__dirname, name, 'details', 'swagger.yaml');
+  const content = fs.readFileSync(swaggerPath, 'utf8');
+  const hash = md5(content);
+  const uploadNameBase = 'assets/' + `${name}-${hash.substr(0, 8)}-swagger`;
+  await Promise.all([
+    uploadS3(content, 'text/yaml', uploadNameBase + '.yaml'),
+    uploadS3(
+      JSON.stringify(yaml.load(content)),
+      'application/json',
+      uploadNameBase + '.json'
+    ),
+  ]);
+  return {
+    swagger: uploadNameBase,
+  };
+}
+
 Object.values(packageMap).forEach(async pkg => {
   const { name, info, testFile, detailsFile } = pkg;
 
   try {
     const tests = await getTests(info!, testFile!);
-
-    const [detailsS3Key, testsS3Key] = await Promise.all([
-      uploadFile(detailsFile!, 'bundle'),
-      uploadFile(testFile!, 'tests'),
+    const [detailsS3Key, testsS3Key, assets] = await Promise.all([
+      uploadJSFile(detailsFile!, 'bundle'),
+      uploadJSFile(testFile!, 'tests'),
+      getAssets(name, info!),
     ]);
 
     await api
       .challenge_updateChallenge({
-        ...info!,
+        ...R.pick(info!, [
+          'id',
+          'title',
+          'description',
+          'tags',
+          'domain',
+          'difficulty',
+        ]),
         testCase: JSON.stringify(tests),
-        detailsBundleS3Key: detailsS3Key,
-        testsBundleS3Key: testsS3Key,
+        detailsBundleS3Key: detailsS3Key!,
+        testsBundleS3Key: testsS3Key!,
+        assets,
       })
       .toPromise();
   } catch (e) {

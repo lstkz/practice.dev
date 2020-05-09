@@ -116,4 +116,11 @@ export class ObjectSchema<
   as<T>() {
     return (this as any) as ObjectSchema<TReq, TNull, T>;
   }
+  optional() {
+    return (super.optional() as any) as ObjectSchema<false, TNull, TKeys>;
+  }
+
+  nullable() {
+    return (super.nullable() as any) as ObjectSchema<TReq, true, TKeys>;
+  }
 }

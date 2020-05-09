@@ -48,6 +48,7 @@ it('create and update a challenge', async () => {
       solved: 0,
       likes: 0,
     },
+    assets: null,
   });
 
   // update stats
@@ -68,6 +69,9 @@ it('create and update a challenge', async () => {
     domain: 'fullstack',
     difficulty: 'hard',
     testCase: 'b',
+    assets: {
+      a: 'b',
+    },
   });
 
   const challenge2 = await getChallengeById(userId, 1);
@@ -87,6 +91,9 @@ it('create and update a challenge', async () => {
       solutions: 2,
       solved: 3,
       likes: 4,
+    },
+    assets: {
+      a: 'b',
     },
   });
 });

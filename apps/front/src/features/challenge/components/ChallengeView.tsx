@@ -25,6 +25,7 @@ import { SolutionModal } from 'src/features/solution/components/SolutionModal';
 import { FavoriteSolutions } from './FavoriteSolutions';
 import { SidebarStack } from './SidebarStack';
 import { useSolutionsModule, SolutionsTab } from './SolutionsTab';
+import { ApiSpecTab, useApiSpecModule } from './ApiSpecTab';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
@@ -36,6 +37,7 @@ const Wrapper = styled.div`
 export function ChallengeView() {
   useChallengeModule();
   useSolutionsModule();
+  useApiSpecModule();
 
   const {
     challenge,
@@ -81,6 +83,11 @@ export function ChallengeView() {
                     }
                   />
                 </Tab>
+                {challenge.assets?.swagger ? (
+                  <Tab title="API Spec" name="apiSpec">
+                    <ApiSpecTab />
+                  </Tab>
+                ) : null}
                 <Tab title="Test Suite" name="testSuite">
                   <TabContent
                     left={<TestSuite />}
