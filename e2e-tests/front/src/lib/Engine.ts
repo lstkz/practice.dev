@@ -1,6 +1,7 @@
 import { Page, Request } from 'puppeteer';
 import type { APIClient } from 'shared';
 import type { Observable } from 'rxjs';
+import Url from 'url';
 
 type GetParams<T> = T extends () => any
   ? null
@@ -44,6 +45,10 @@ function tryParse(str: string) {
 
 export class Engine {
   private mocks: Record<string, (params: any, count: number) => any> = {};
+  private rawMocks: Record<
+    string,
+    (request: Request, count: number) => any
+  > = {};
   private requestCount: Record<string, number> = {};
   private onRequest: (request: Request) => Promise<void> = null!;
 
@@ -62,6 +67,14 @@ export class Engine {
     this.isTokenSet = false;
   }
 
+  private incCount(name: string) {
+    if (!this.requestCount[name]) {
+      this.requestCount[name] = 0;
+    }
+    this.requestCount[name]++;
+    return this.requestCount[name];
+  }
+
   async setup() {
     if (page.url() !== 'about:blank') {
       await page.goto('about:blank');
@@ -74,6 +87,14 @@ export class Engine {
         'appcache,cache_storage,cookies,indexeddb,local_storage,service_workers,websql',
     });
     this.onRequest = async request => {
+      const rawMockName = `${request.method()} ${
+        Url.parse(request.url()).pathname
+      }`;
+      const rawMock = this.rawMocks[rawMockName];
+      if (rawMock) {
+        rawMock(request, this.incCount(rawMockName));
+        return;
+      }
       if (this.mockedBundle && request.url().endsWith('/bundle.js')) {
         request.respond({
           body: `
@@ -121,16 +142,13 @@ export class Engine {
         );
         return;
       }
-      if (!this.requestCount[name]) {
-        this.requestCount[name] = 0;
-      }
-      this.requestCount[name]++;
+
       try {
         const mock = this.mocks[name];
         const body: any[] = tryParse(request.postData()) || [];
         const ret = mock(
           body.length === 0 ? null : body.length === 1 ? body[0] : body,
-          this.requestCount[name]
+          this.incCount(name)
         );
         await request.respond(createResponse(ret, 200));
       } catch (e) {
@@ -161,5 +179,13 @@ export class Engine {
     ) => GetResult<APIClient[TName]>
   ) {
     this.mocks[name] = response;
+  }
+
+  rawMock(
+    method: 'POST' | 'GET' | 'PUT',
+    url: string,
+    response: (request: Request, count: number) => void
+  ) {
+    this.rawMocks[`${method} ${url}`] = response;
   }
 }

@@ -78,6 +78,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "user.authGoogle"*/ '../contracts/user/authGoogle'
     ).then(x => x['authGoogleRpc']),
+  'user.completeAvatarUpload': () =>
+    import(
+      /* webpackChunkName: "user.completeAvatarUpload"*/ '../contracts/user/completeAvatarUpload'
+    ).then(x => x['completeAvatarUploadRpc']),
   'user.confirmEmail': () =>
     import(
       /* webpackChunkName: "user.confirmEmail"*/ '../contracts/user/confirmEmail'
@@ -86,6 +90,14 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "user.confirmResetPassword"*/ '../contracts/user/confirmResetPassword'
     ).then(x => x['confirmResetPasswordRpc']),
+  'user.deleteAvatar': () =>
+    import(
+      /* webpackChunkName: "user.deleteAvatar"*/ '../contracts/user/deleteAvatar'
+    ).then(x => x['deleteAvatarRpc']),
+  'user.getAvatarUploadUrl': () =>
+    import(
+      /* webpackChunkName: "user.getAvatarUploadUrl"*/ '../contracts/user/getAvatarUploadUrl'
+    ).then(x => x['getAvatarUploadUrlRpc']),
   'user.getMe': () =>
     import(/* webpackChunkName: "user.getMe"*/ '../contracts/user/getMe').then(
       x => x['getMeRpc']
@@ -106,4 +118,8 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "user.resetPassword"*/ '../contracts/user/resetPassword'
     ).then(x => x['resetPasswordRpc']),
+  'user.updatePublicProfile': () =>
+    import(
+      /* webpackChunkName: "user.updatePublicProfile"*/ '../contracts/user/updatePublicProfile'
+    ).then(x => x['updatePublicProfileRpc']),
 };

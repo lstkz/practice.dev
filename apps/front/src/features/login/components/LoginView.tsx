@@ -66,7 +66,7 @@ export function LoginView(props?: LoginViewProps) {
           }}
         >
           {error && (
-            <Alert data-test="login-error" type="error">
+            <Alert testId="login-error" type="error">
               {error}
             </Alert>
           )}

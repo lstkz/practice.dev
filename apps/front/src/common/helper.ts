@@ -6,6 +6,7 @@ import { AsyncResult } from 'react-select-async-paginate';
 import { api } from 'src/services/api';
 import { AuthData } from 'shared';
 import { RouterActions } from 'typeless-router';
+import { BUNDLE_BASE_URL } from 'src/config';
 
 function fixErrorMessage(message: string) {
   if (message === 'is required') {
@@ -116,4 +117,32 @@ export function getSolutionsSortCriteria(
         sortBy: 'likes' as const,
         sortDesc: true,
       };
+}
+
+export function getAvatarUrl(
+  avatarUrl: string | null,
+  size: 'sm' | 'lg' = 'sm'
+) {
+  if (!avatarUrl) {
+    return null;
+  }
+  return (
+    BUNDLE_BASE_URL +
+    `avatars/${avatarUrl}-${size == 'sm' ? '40x40' : '140x140'}.png`
+  );
+}
+
+export function countryListItemToOption({
+  code,
+  name,
+  emoji,
+}: {
+  code: string;
+  name: string;
+  emoji: string;
+}) {
+  return {
+    value: code,
+    label: `${emoji} ${name}`,
+  };
 }

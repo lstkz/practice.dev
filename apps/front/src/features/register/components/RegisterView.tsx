@@ -67,7 +67,7 @@ export function RegisterView(props?: RegisterViewProps) {
           }}
         >
           {error && (
-            <Alert data-test="register-error" type="error">
+            <Alert testId="register-error" type="error">
               {error}
             </Alert>
           )}

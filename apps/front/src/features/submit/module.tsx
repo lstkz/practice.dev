@@ -64,6 +64,7 @@ handle
       ws.onmessage = event => {
         const data = JSON.parse(event.data);
         const items: SocketMessage[] = Array.isArray(data) ? data : [data];
+        const started = new Date();
         items.forEach(item => {
           if (item.type === 'TEST_INFO') {
             subject.next(SubmitActions.started());
@@ -74,12 +75,12 @@ handle
           subject.next(SubmitActions.socketMessages([item]));
           if (item.type === 'RESULT') {
             subject.next(SubmitActions.testingDone(item.payload.success));
-            const { submissionId, started } = getSubmitState();
+            const { submissionId } = getSubmitState();
             subject.next(
               ChallengeActions.addRecentSubmission({
                 challengeId: getChallengeState().challenge.id,
                 id: submissionId!,
-                createdAt: started!.toISOString(),
+                createdAt: started.toISOString(),
                 user: null!,
                 status: item.payload.success
                   ? SubmissionStatus.Pass

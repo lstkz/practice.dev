@@ -187,3 +187,7 @@ export function assertAuthorOrAdmin<T extends { userId: string }>(
 export function doFn<T>(fn: () => T) {
   return fn();
 }
+
+export function getUserAvatarUploadKey(userId: string) {
+  return `upload-avatar/${userId}`;
+}

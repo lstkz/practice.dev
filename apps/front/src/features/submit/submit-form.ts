@@ -2,6 +2,7 @@ import { createForm } from 'typeless-form';
 import { S } from 'schema';
 import { validate } from '../../common/helper';
 import { SubmitFormSymbol } from './symbol';
+import { urlRegex } from 'shared';
 
 export interface SubmitFormValues {
   url: string;
@@ -19,9 +20,7 @@ export const [
       errors,
       values,
       S.object().keys({
-        url: S.string().regex(
-          /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%_\+.~#?&//=]{1,256}\.[a-z]{1,10}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?$/
-        ),
+        url: S.string().regex(urlRegex),
       })
     );
     if (errors.url?.includes('Must match regex')) {

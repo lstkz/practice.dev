@@ -28,18 +28,13 @@ export type UrlOptions =
   | {
       name: 'profile';
       username: string;
+    }
+  | {
+      name: 'settings';
     };
 
 export function createUrl(options: UrlOptions) {
   switch (options.name) {
-    case 'login':
-      return '/login';
-    case 'register':
-      return '/register';
-    case 'reset-password':
-      return '/reset-password';
-    case 'challenges':
-      return '/challenges';
     case 'challenge': {
       let url = '/challenges/' + options.id;
       if (options.solutionSlug) {
@@ -47,12 +42,12 @@ export function createUrl(options: UrlOptions) {
       }
       return url;
     }
-    case 'projects':
-      return '/projects';
     case 'home':
       return '/challenges';
     case 'profile':
       return '/profile/' + options.username;
+    default:
+      return '/' + options.name;
   }
 }
 

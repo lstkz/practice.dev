@@ -13,10 +13,10 @@ import { Tabs, Tab } from 'src/components/Tabs';
 import { useActions } from 'typeless';
 import { ProfileInfo } from './ProfileInfo';
 import { OverviewContent } from './OverviewContent';
-import { ProfileInfoLoader, ProfileContentLoader } from './PublicProfileLoader';
 import { SolutionsTab, useSolutionsModule } from './SolutionsTab';
 import { SolutionModal } from 'src/features/solution/components/SolutionModal';
 import { LikesTab, useLikesModule } from './LikesTab';
+import { PageLoader } from 'src/components/PageLoader';
 
 const Wrapper = styled.div`
   margin-top: 30px;
@@ -24,7 +24,7 @@ const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
   display: flex;
   min-height: 500px;
-  background: ${Theme.bgLightGray7};
+  background: ${Theme.bgLightGray10};
 `;
 
 const Left = styled.div`
@@ -70,16 +70,7 @@ export function PublicProfileView() {
       );
     }
     if (!isLoaded) {
-      return (
-        <Wrapper>
-          <Left>
-            <ProfileInfoLoader />
-          </Left>
-          <Right>
-            <ProfileContentLoader />
-          </Right>
-        </Wrapper>
-      );
+      return <PageLoader />;
     }
     return (
       <Wrapper>
@@ -89,6 +80,7 @@ export function PublicProfileView() {
         </Left>
         <Right>
           <Tabs
+            paddingLeft="md"
             selectedTab={tab}
             onIndexChange={(value: ProfileTab) => changeTab(value)}
           >
