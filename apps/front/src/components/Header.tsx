@@ -171,7 +171,7 @@ const _Header = (props: HeaderProps) => {
                 }
               >
                 <UserInfo>
-                  <Avatar>
+                  <Avatar data-test="header-avatar">
                     {user.avatarUrl && (
                       <img src={getAvatarUrl(user.avatarUrl, 'sm')!} />
                     )}

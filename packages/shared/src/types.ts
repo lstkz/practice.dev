@@ -9,13 +9,13 @@ export interface User {
   username: string;
   isVerified: boolean;
   isAdmin?: boolean;
-  avatarUrl: string | null;
+  avatarUrl?: string | null;
 }
 
 export interface PublicUser {
   id: string;
   username: string;
-  avatarUrl: string | null;
+  avatarUrl?: string | null;
 }
 
 export interface AuthData {

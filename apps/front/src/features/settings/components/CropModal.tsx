@@ -328,9 +328,14 @@ function ModalContent() {
           crop={crop}
           onChange={c => setCrop(c)}
         />
-        {uploadError && <Alert type="error">{uploadError}</Alert>}
+        {uploadError && (
+          <Alert type="error" testId="upload-error">
+            {uploadError}
+          </Alert>
+        )}
         <Buttons>
           <Button
+            testId="update-crop-btn"
             disabled={!crop.width || !crop.height}
             type="primary"
             onClick={() => {
@@ -353,7 +358,13 @@ export function CropModal() {
   return (
     <>
       <CropStyles />
-      <Modal noBackgroundClose size="sm" isOpen={isCropOpen} close={hideCrop}>
+      <Modal
+        testId="crop-modal"
+        noBackgroundClose
+        size="sm"
+        isOpen={isCropOpen}
+        close={hideCrop}
+      >
         <ModalContent />
       </Modal>
     </>

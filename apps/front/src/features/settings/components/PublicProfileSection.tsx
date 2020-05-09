@@ -59,10 +59,10 @@ export const [
       errors,
       values,
       S.object().keys({
-        name: S.string().optional(),
-        bio: S.string().optional(),
-        url: S.string().regex(urlRegex).optional(),
-        country: S.any().optional(),
+        name: S.string().optional().nullable(),
+        bio: S.string().optional().nullable(),
+        url: S.string().regex(urlRegex).optional().nullable(),
+        country: S.any().optional().nullable(),
       })
     );
     if (errors.url?.includes('Must match regex')) {
@@ -130,7 +130,12 @@ export function PublicProfileSection() {
             name="name"
             label="Name"
           />
-          <FormSelect label="Country" name="country" options={countryOptions} />
+          <FormSelect
+            testId="country"
+            label="Country"
+            name="country"
+            options={countryOptions}
+          />
           <FormInput
             maxLength={200}
             testId="bio-input"
@@ -148,7 +153,7 @@ export function PublicProfileSection() {
           />
 
           {isDone && (
-            <Alert type="success">
+            <Alert type="success" testId="update-success">
               <SuccessFilledIcon />
               Updated Successfully
             </Alert>

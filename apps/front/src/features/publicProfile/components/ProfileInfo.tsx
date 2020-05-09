@@ -66,7 +66,7 @@ const _ProfileInfo = (props: ProfileInfoProps) => {
   }, [profile]);
   return (
     <div className={className} data-test="profile-info">
-      <Avatar>
+      <Avatar data-test="avatar">
         {profile.avatarUrl && (
           <img src={getAvatarUrl(profile.avatarUrl, 'lg')!} />
         )}
@@ -100,4 +100,5 @@ export const ProfileInfo = styled(_ProfileInfo)`
   height: 100%;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
+  word-break: break-word;
 `;

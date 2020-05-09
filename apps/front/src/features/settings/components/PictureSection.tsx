@@ -140,8 +140,8 @@ const Avatar = styled.div`
   border-radius: 50%;
   background: ${Theme.gray4};
   img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
   }
 `;
@@ -182,12 +182,19 @@ export function PictureSection() {
         }}
       />
       <Wrapper>
-        <Avatar>{avatarUrl && <img src={avatarUrl} />}</Avatar>
+        <Avatar data-test="avatar">
+          {avatarUrl && <img src={avatarUrl} />}
+        </Avatar>
         <Buttons>
-          <Button type="primary" onClick={() => inputRef.current.click()}>
+          <Button
+            testId="update-photo-btn"
+            type="primary"
+            onClick={() => inputRef.current.click()}
+          >
             UPDATE PHOTO
           </Button>
           <Button
+            testId="delete-photo-btn"
             type="danger"
             onClick={deleteAvatar}
             disabled={!profile.avatarUrl}

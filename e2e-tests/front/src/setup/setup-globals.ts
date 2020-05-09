@@ -113,9 +113,12 @@ export function $(selector: string) {
       await page.$eval(input, (e: any) => e.blur());
     },
     async uploadFile(path: string) {
-      await page.waitForSelector(input, { timeout: defaultTimeout });
-      const file = await page.$(input);
-      await file.uploadFile(path);
+      await page.waitForSelector(input, defaultWaitOptions);
+      const [fileChooser] = await Promise.all([
+        page.waitForFileChooser({ timeout: defaultTimeout }),
+        page.click(input),
+      ]);
+      await fileChooser.accept([path]);
     },
     expect: {
       async toBeVisible() {
