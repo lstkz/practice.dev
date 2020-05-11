@@ -2,9 +2,13 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Theme } from 'ui';
 import { SwaggerMenu } from './SwaggerMenu';
+import { SwaggerSpec } from 'src/types';
+import { getDisplayGroups } from './utils';
+import { SwaggerDisplayGroup } from './SwaggerDisplayGroup';
 
 interface SwaggerViewerProps {
   className?: string;
+  spec: SwaggerSpec;
 }
 
 const Left = styled.div`
@@ -19,13 +23,18 @@ const Right = styled.div`
 `;
 
 const _SwaggerViewer = (props: SwaggerViewerProps) => {
-  const { className } = props;
+  const { className, spec } = props;
+  const displayGroups = React.useMemo(() => getDisplayGroups(spec), [spec]);
   return (
     <div className={className}>
       <Left>
-        <SwaggerMenu />
+        <SwaggerMenu spec={spec} />
       </Left>
-      <Right></Right>
+      <Right>
+        {displayGroups.map(item => (
+          <SwaggerDisplayGroup key={item.tag.name} group={item} />
+        ))}
+      </Right>
     </div>
   );
 };

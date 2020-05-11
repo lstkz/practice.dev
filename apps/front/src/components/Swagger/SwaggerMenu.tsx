@@ -1,10 +1,13 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { Theme } from 'ui';
-import { VoidLink } from '../VoidLink';
+import { VoidLink, VoidLinkProps } from '../VoidLink';
+import { SwaggerSpec } from 'src/types';
+import { getDisplayGroups } from './utils';
 
 interface SwaggerMenuProps {
   className?: string;
+  spec: SwaggerSpec;
 }
 
 const Group = styled.div`
@@ -16,10 +19,11 @@ const Title = styled.div`
   margin-bottom: 4px;
 `;
 
-interface ItemProps {
+interface ItemProps extends VoidLinkProps {
   active?: boolean;
 }
-const Item = styled(VoidLink)`
+
+const Item = styled(({ active, ...props }) => <VoidLink {...props} />)`
   display: block;
   padding: 3px 0 3px 15px;
   border-left: 3px solid ${Theme.bgLightGray2};
@@ -35,23 +39,55 @@ const Item = styled(VoidLink)`
   margin-bottom: 1px;
 `;
 
+interface MenuGroupItem {
+  text: string;
+  value: string;
+  type: 'endpoint' | 'schema';
+}
+
+interface MenuGroup {
+  title: string;
+  items: MenuGroupItem[];
+}
+
 const _SwaggerMenu = (props: SwaggerMenuProps) => {
-  const { className } = props;
+  const { className, spec } = props;
+  const menuGroups = React.useMemo(() => {
+    const displayGroups = getDisplayGroups(spec);
+    const ret: MenuGroup[] = [];
+    displayGroups.forEach(group => {
+      ret.push({
+        title: group.tag.name,
+        items: group.items.map(item => ({
+          text: item.def.operationId,
+          value: item.def.operationId,
+          type: 'endpoint',
+        })),
+      });
+    });
+    ret.push({
+      title: 'Schema',
+      items: Object.keys(spec.components.schemas).map(name => ({
+        text: name,
+        value: name,
+        type: 'schema',
+      })),
+    });
+    return ret;
+  }, [spec]);
+  const activeValue = menuGroups[0]?.items[0]?.value;
   return (
     <div className={className}>
-      <Group>
-        <Title>PET</Title>
-        <Item active>Get All Pets</Item>
-        <Item>Get Pet</Item>
-        <Item>Update Pet</Item>
-        <Item>Delete Pet</Item>
-      </Group>
-      <Group>
-        <Title>SCHEMA</Title>
-        <Item>Pet</Item>
-        <Item>New Pet</Item>
-        <Item>Error</Item>
-      </Group>
+      {menuGroups.map((group, i) => (
+        <Group key={i}>
+          <Title>{group.title}</Title>
+          {group.items.map(item => (
+            <Item key={item.value} active={item.value === activeValue}>
+              {item.text}
+            </Item>
+          ))}
+        </Group>
+      ))}
     </div>
   );
 };

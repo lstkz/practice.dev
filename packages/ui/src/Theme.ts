@@ -48,4 +48,12 @@ export const Theme = {
   orangeTagBg: '#FFF4D8',
   loaderPrimary: '#DDDEE4',
   loaderSecondary: '#ccc',
+  httpGetLight: '#DBF0FF',
+  httpGetDark: '#33A9FF',
+  httpPostDark: '#86C640',
+  httpPostLight: '#E6F5D8',
+  httpPutDark: '#FFAC28',
+  httpPutLight: '#FFF4D8',
+  httpDeleteDark: '#FF2C4D',
+  httpDeleteLight: '#FFDFE3',
 };

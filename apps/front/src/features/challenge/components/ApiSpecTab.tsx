@@ -8,6 +8,7 @@ import { BUNDLE_BASE_URL } from 'src/config';
 import { getChallengeState } from '../interface';
 import { handleAppError } from 'src/common/helper';
 import { SwaggerViewer } from 'src/components/Swagger/SwaggerViewer';
+import { exampleSwagger1 } from 'src/components/Swagger/examples';
 
 export const [handle, ApiSpecActions, getApiSpecState] = createModule(
   ApiSpecSymbol
@@ -60,7 +61,7 @@ const LoaderWrapper = styled.div`
 `;
 
 export function ApiSpecTab() {
-  const { isLoaded, spec } = getApiSpecState.useState();
+  const { isLoaded } = getApiSpecState.useState();
   const { load } = useActions(ApiSpecActions);
   React.useEffect(() => {
     if (!isLoaded) {
@@ -78,7 +79,7 @@ export function ApiSpecTab() {
 
   return (
     <div>
-      <SwaggerViewer />
+      <SwaggerViewer spec={exampleSwagger1} />
     </div>
   );
 }

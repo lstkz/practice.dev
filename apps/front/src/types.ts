@@ -18,3 +18,59 @@ export interface SelectOption<T = any> {
 }
 
 export type DeleteType = 'delete' | 'close';
+
+export interface SchemaRef {
+  schema: { $ref: string };
+}
+
+export interface SwaggerResponse {
+  description: string;
+  content: Record<string, SchemaRef>;
+}
+
+export interface SwaggerMethod {
+  operationId: string;
+  description: string;
+  tags: string[];
+  requestBody: {
+    required: boolean;
+    content: Record<string, SchemaRef>;
+  };
+  responses: Record<string, SwaggerResponse>;
+}
+
+export type SwaggerType =
+  | SwaggerObjectType
+  | SwaggerStringType
+  | SwaggerBooleanType;
+
+export interface SwaggerObjectType {
+  type: 'object';
+  required?: string[];
+  properties: Record<string, SwaggerType>;
+}
+
+export interface SwaggerStringType {
+  type: 'string';
+}
+export interface SwaggerBooleanType {
+  type: 'boolean';
+}
+
+export interface SwaggerTag {
+  name: string;
+  description?: string;
+}
+
+export interface SwaggerSpec {
+  openapi: string;
+  info: {
+    title: string;
+    version: string;
+  };
+  tags: SwaggerTag[];
+  paths: Record<string, Record<string, SwaggerMethod>>;
+  components: {
+    schemas: Record<string, SwaggerObjectType>;
+  };
+}
