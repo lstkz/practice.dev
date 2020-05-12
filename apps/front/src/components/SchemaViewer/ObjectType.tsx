@@ -3,11 +3,14 @@ import styled from 'styled-components';
 import { SwaggerObjectType } from 'src/types';
 import { Caret } from './Caret';
 import { VoidLink } from '../VoidLink';
+import { SwitchType } from './SwitchType';
 
 interface ObjectTypeProps {
   className?: string;
-  name: string;
-  obj: SwaggerObjectType;
+  name?: string;
+  schema: SwaggerObjectType;
+  schemas: Record<string, SwaggerObjectType>;
+  depth: number;
 }
 
 const Content = styled.div`
@@ -15,8 +18,8 @@ const Content = styled.div`
 `;
 
 const Top = styled(VoidLink)`
+  display: inline-flex;
   font-weight: bold;
-  display: flex;
   align-items: center;
   color: inherit;
   &:hover {
@@ -27,55 +30,58 @@ const Top = styled(VoidLink)`
   }
 `;
 const Bottom = styled.div`
+  display: inline-block;
+  padding-left: 3px;
   font-weight: bold;
 `;
 
 const FieldTable = styled.table`
   td {
-    padding: 3px 5px 3px 10px;
+    padding: 0px 5px 0px 10px;
+    vertical-align: top;
   }
   td:first-child {
     padding-right: 20px;
     font-weight: normal;
-    border-left: 1px solid rgb(73, 72, 62);
   }
 `;
 
-const _ObjectType = (props: ObjectTypeProps) => {
-  const { className, name, obj } = props;
-  const [isExpanded, setIsExpanded] = React.useState(true);
+export function ObjectType(props: ObjectTypeProps) {
+  const { name, schema, schemas, depth } = props;
+  const [isExpanded, setIsExpanded] = React.useState(depth < 2);
+
   if (isExpanded) {
     return (
-      <div className={className}>
+      <>
         <Top onClick={() => setIsExpanded(!isExpanded)}>
           <Caret dir={isExpanded ? 'bottom' : 'right'} /> {name} {'{'}
         </Top>
         <Content>
           <FieldTable>
             <tbody>
-              {Object.keys(obj.properties).map(key => (
+              {Object.keys(schema.properties).map(key => (
                 <tr key={key}>
                   <td>{key}:</td>
-                  <td>{obj.properties[key].type}</td>
+                  <td>
+                    <SwitchType
+                      depth={depth + 1}
+                      schemas={schemas}
+                      type={schema.properties[key]}
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>
           </FieldTable>
         </Content>
         <Bottom>}</Bottom>
-      </div>
+      </>
     );
   } else {
     return (
-      <div className={className}>
-        <Top onClick={() => setIsExpanded(!isExpanded)}>
-          <Caret dir={isExpanded ? 'bottom' : 'right'} /> {name} {'{...}'}
-        </Top>
-      </div>
+      <Top onClick={() => setIsExpanded(!isExpanded)}>
+        <Caret dir={isExpanded ? 'bottom' : 'right'} /> {name} {'{...}'}
+      </Top>
     );
   }
-};
-
-export const ObjectType = styled(_ObjectType)`
-  display: block;
-`;
+}

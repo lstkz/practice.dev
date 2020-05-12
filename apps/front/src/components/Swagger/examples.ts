@@ -32,6 +32,14 @@ export const exampleSwagger1: SwaggerSpec = {
               },
             },
           },
+          '400': {
+            description: 'The validation result.',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ValidationResult2' },
+              },
+            },
+          },
         },
       },
     },
@@ -43,10 +51,70 @@ export const exampleSwagger1: SwaggerSpec = {
         required: ['password'],
         properties: { password: { type: 'string' } },
       },
+      ValidationResult2: {
+        type: 'object',
+        required: ['isValid'],
+        properties: {
+          isValid: { type: 'boolean' },
+          pageNo: {
+            type: 'number',
+          },
+        },
+      },
       ValidationResult: {
         type: 'object',
         required: ['isValid'],
-        properties: { isValid: { type: 'boolean' } },
+        properties: {
+          isValid: { type: 'boolean' },
+          pageNo: {
+            type: 'number',
+          },
+          totalPages: {
+            type: 'integer',
+          },
+          nested: {
+            type: 'object',
+            properties: {
+              foo: { type: 'string' },
+            },
+          },
+          foo: {
+            type: 'string',
+          },
+          nestedRef: {
+            $ref: '#/components/schemas/PasswordValues',
+          },
+          strArray: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+          bar: {
+            type: 'string',
+          },
+          objArray: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                foo: { type: 'string' },
+                bar: { type: 'string' },
+                baz: { type: 'string' },
+              },
+            },
+          },
+          refArray: {
+            type: 'array',
+            items: {
+              $ref: '#/components/schemas/PasswordValues',
+            },
+          },
+
+          rec: {
+            $ref: '#/components/schemas/ValidationResult',
+          },
+        },
       },
     },
   },

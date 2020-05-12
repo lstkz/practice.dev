@@ -17,7 +17,7 @@ export const Caret = styled(_Caret)`
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-bottom: 5px solid ${Theme.blue};
+  border-bottom: 5px solid ${Theme.textDark};
   transition: transform 0.2s ease;
 
   ${props => {

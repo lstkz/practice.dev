@@ -2,12 +2,11 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { Theme } from 'ui';
 import { VoidLink, VoidLinkProps } from '../VoidLink';
-import { SwaggerSpec } from 'src/types';
 import { getDisplayGroups } from './utils';
+import { SwaggerContext } from './SwaggerContext';
 
 interface SwaggerMenuProps {
   className?: string;
-  spec: SwaggerSpec;
 }
 
 const Group = styled.div`
@@ -51,7 +50,8 @@ interface MenuGroup {
 }
 
 const _SwaggerMenu = (props: SwaggerMenuProps) => {
-  const { className, spec } = props;
+  const { className } = props;
+  const spec = React.useContext(SwaggerContext);
   const menuGroups = React.useMemo(() => {
     const displayGroups = getDisplayGroups(spec);
     const ret: MenuGroup[] = [];

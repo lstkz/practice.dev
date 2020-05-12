@@ -1,33 +1,29 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { SwaggerObjectType } from 'src/types';
-import { ObjectType } from './ObjectType';
+import { SwaggerObjectType, SwaggerType } from 'src/types';
+import { SwitchType } from './SwitchType';
 
 interface SchemaViewerProps {
   className?: string;
-  obj: SwaggerObjectType;
-  name: string;
+  type: SwaggerType;
+  schemas: Record<string, SwaggerObjectType>;
 }
 
 const _SchemaViewer = (props: SchemaViewerProps) => {
-  const { className, obj, name } = props;
+  const { className, type, schemas } = props;
 
-  const renderType = () => {
-    if (obj.type === 'object') {
-      return <ObjectType name={name} obj={obj} />;
-    }
-    return null;
-  };
-
-  return <div className={className}>{renderType()}</div>;
+  return (
+    <div className={className}>
+      <SwitchType depth={0} type={type} schemas={schemas} />
+    </div>
+  );
 };
 
 export const SchemaViewer = styled(_SchemaViewer)`
   font-family: Courier;
-  background-color: #272822;
+  background-color: #dddee4;
   position: relative;
-  padding: 10px;
+  padding: 20px;
   border-radius: 5px;
-  color: rgb(249, 248, 245);
-  font-weight: bold;
+  overflow: auto;
 `;

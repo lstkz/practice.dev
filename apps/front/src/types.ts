@@ -20,12 +20,12 @@ export interface SelectOption<T = any> {
 export type DeleteType = 'delete' | 'close';
 
 export interface SchemaRef {
-  schema: { $ref: string };
+  schema: SwaggerRefType;
 }
 
 export interface SwaggerResponse {
   description: string;
-  content: Record<string, SchemaRef>;
+  content: Record<string, SchemaRef> | SchemaRef;
 }
 
 export interface SwaggerMethod {
@@ -40,9 +40,13 @@ export interface SwaggerMethod {
 }
 
 export type SwaggerType =
+  | SwaggerRefType
   | SwaggerObjectType
+  | SwaggerArrayType
   | SwaggerStringType
-  | SwaggerBooleanType;
+  | SwaggerBooleanType
+  | SwaggerNumberType
+  | SwaggerIntegerType;
 
 export interface SwaggerObjectType {
   type: 'object';
@@ -50,11 +54,29 @@ export interface SwaggerObjectType {
   properties: Record<string, SwaggerType>;
 }
 
+export interface SwaggerRefType {
+  $ref: string;
+}
+
 export interface SwaggerStringType {
   type: 'string';
 }
+
 export interface SwaggerBooleanType {
   type: 'boolean';
+}
+
+export interface SwaggerNumberType {
+  type: 'number';
+}
+
+export interface SwaggerIntegerType {
+  type: 'integer';
+}
+
+export interface SwaggerArrayType {
+  type: 'array';
+  items: SwaggerType;
 }
 
 export interface SwaggerTag {
