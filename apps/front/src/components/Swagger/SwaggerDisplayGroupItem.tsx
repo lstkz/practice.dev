@@ -6,6 +6,7 @@ import { HttpTag } from './HttpTag';
 import { SwaggerSection } from './SwaggerSection';
 import { SwaggerResponses } from './SwaggerResponses';
 import { Markdown } from '../Markdown';
+import { IntersectionWrapper } from './IntersectionWrapper';
 
 interface SwaggerDisplayGroupItemProps {
   className?: string;
@@ -35,8 +36,9 @@ const Desc = styled.div`
 
 const _SwaggerDisplayGroupItem = (props: SwaggerDisplayGroupItemProps) => {
   const { className, item } = props;
+
   return (
-    <div className={className}>
+    <IntersectionWrapper id={item.def.operationId} className={className}>
       <Header>
         <HttpTag type={item.method} /> <Path>{item.path}</Path>
       </Header>
@@ -48,7 +50,7 @@ const _SwaggerDisplayGroupItem = (props: SwaggerDisplayGroupItemProps) => {
           <SwaggerResponses method={item.def} />
         </SwaggerSection>
       </Main>
-    </div>
+    </IntersectionWrapper>
   );
 };
 

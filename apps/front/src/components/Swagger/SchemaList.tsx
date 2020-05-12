@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Theme } from 'ui';
 import { SwaggerContext } from './SwaggerContext';
 import { SchemaViewer } from '../SchemaViewer/SchemaViewer';
+import { IntersectionWrapper } from './IntersectionWrapper';
 
 interface SchemaListProps {
   className?: string;
@@ -23,12 +24,13 @@ const _SchemaList = (props: SchemaListProps) => {
     <div className={className}>
       <Title>Schemas</Title>
       {Object.entries(spec.components.schemas).map(([name, schema]) => (
-        <SchemaViewer
-          key={name}
-          name={name}
-          type={schema}
-          schemas={spec.components.schemas}
-        />
+        <IntersectionWrapper key={name} id={'schema-' + name}>
+          <SchemaViewer
+            name={name}
+            type={schema}
+            schemas={spec.components.schemas}
+          />
+        </IntersectionWrapper>
       ))}
     </div>
   );
