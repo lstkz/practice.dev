@@ -33,11 +33,11 @@ export const HttpTag = styled(_HttpTag)`
         `;
       case 'put':
         return css`
-          background: ${Theme.httpPutLight};
+          background: ${Theme.httpPutDark};
         `;
       case 'delete':
         return css`
-          background: ${Theme.httpDeleteLight};
+          background: ${Theme.httpDeleteDark};
         `;
     }
   }}

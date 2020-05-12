@@ -99,22 +99,25 @@ const TabTitle = styled.li<{ active: boolean; type?: TabsType }>`
       }
     `}
 
+  ${props =>
+    props.type === 'minimal' &&
+    css`
+      color: ${Theme.textLight};
+      border: none;
+      border-radius: 5px 5px 0px 0px;
+      background: white;
+      margin: 0;
+      padding: 5px 25px;
+      margin-right: 5px;
+      background: ${props.active ? 'white' : 'rgba(0, 0, 0, 0.07)'};
+    `}
+    
   &:hover {
     cursor: pointer;
     ${VoidLink} {
       color: ${Theme.textDark};
     }
   }
-
-  ${props =>
-    props.type === 'minimal' &&
-    css`
-      border: none;
-      border-radius: 5px 5px 0px 0px;
-      background: white;
-      margin: 0;
-      padding: 5px 25px;
-    `}
 `;
 
 export const Tabs = styled(_Tabs)`

@@ -7,14 +7,15 @@ interface SchemaViewerProps {
   className?: string;
   type: SwaggerType;
   schemas: Record<string, SwaggerObjectType>;
+  name?: string;
 }
 
 const _SchemaViewer = (props: SchemaViewerProps) => {
-  const { className, type, schemas } = props;
+  const { className, type, schemas, name } = props;
 
   return (
     <div className={className}>
-      <SwitchType depth={0} type={type} schemas={schemas} />
+      <SwitchType name={name} depth={0} type={type} schemas={schemas} />
     </div>
   );
 };

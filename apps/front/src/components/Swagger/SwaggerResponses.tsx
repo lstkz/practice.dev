@@ -23,6 +23,10 @@ function getJsonSchemaResponse(
   return res.schema;
 }
 
+const Desc = styled.div`
+  margin-bottom: 10px;
+`;
+
 const _SwaggerResponses = (props: SwaggerResponsesProps) => {
   const { className, method } = props;
   const spec = React.useContext(SwaggerContext);
@@ -42,8 +46,8 @@ const _SwaggerResponses = (props: SwaggerResponsesProps) => {
         {codes.map(code => {
           const res = method.responses[code];
           return (
-            <Tab title={code.toString()}>
-              {res.description}
+            <Tab key={code} title={code.toString()}>
+              <Desc>{res.description}</Desc>
               <SchemaViewer
                 schemas={spec.components.schemas}
                 type={getJsonSchemaResponse(res.content)}

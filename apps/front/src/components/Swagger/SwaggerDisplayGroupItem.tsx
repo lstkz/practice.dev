@@ -56,7 +56,10 @@ export const SwaggerDisplayGroupItem = styled(_SwaggerDisplayGroupItem)`
   display: block;
   border-radius: 5px;
   border: 1px solid transparent;
-  background: ${Theme.httpGetLight};
+
+  & + & {
+    margin-top: 25px;
+  }
 
   ${props => {
     switch (props.item.method) {

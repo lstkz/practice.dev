@@ -6,6 +6,7 @@ import { SwaggerSpec } from 'src/types';
 import { getDisplayGroups } from './utils';
 import { SwaggerDisplayGroup } from './SwaggerDisplayGroup';
 import { SwaggerContext } from './SwaggerContext';
+import { SchemaList } from './SchemaList';
 
 interface SwaggerViewerProps {
   className?: string;
@@ -36,6 +37,7 @@ const _SwaggerViewer = (props: SwaggerViewerProps) => {
           {displayGroups.map(item => (
             <SwaggerDisplayGroup key={item.tag.name} group={item} />
           ))}
+          <SchemaList />
         </Right>
       </div>
     </SwaggerContext.Provider>

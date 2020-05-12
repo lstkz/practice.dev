@@ -9,10 +9,11 @@ interface SwitchTypeProps {
   type: SwaggerType;
   schemas: Record<string, SwaggerObjectType>;
   depth: number;
+  name?: string;
 }
 
 export function SwitchType(props: SwitchTypeProps) {
-  const { type, schemas, depth } = props;
+  const { type, schemas, depth, name } = props;
   if ('$ref' in type) {
     const { name, schema } = getRefType(type.$ref, schemas);
     return (
@@ -20,7 +21,9 @@ export function SwitchType(props: SwitchTypeProps) {
     );
   }
   if (type.type === 'object') {
-    return <ObjectType depth={depth} schemas={schemas} schema={type} />;
+    return (
+      <ObjectType name={name} depth={depth} schemas={schemas} schema={type} />
+    );
   }
   if (type.type === 'array') {
     return <ArrayType depth={depth} schemas={schemas} schema={type} />;
