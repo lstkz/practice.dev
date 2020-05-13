@@ -59,6 +59,7 @@ export class APIClient {
     testsBundleS3Key: string;
     tags: string[];
     testCase: string;
+    assets?: { [key: string]: any } | null | undefined;
   }): Rx.Observable<number> {
     return this.call('challenge.updateChallenge', values);
   }

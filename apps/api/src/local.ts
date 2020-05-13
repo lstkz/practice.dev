@@ -45,7 +45,11 @@ const server = http.createServer(async (req, res) => {
       res.end();
       return;
     }
-    if (req.url!.startsWith('/bundle/') || req.url!.startsWith('/avatars/')) {
+    if (
+      req.url!.startsWith('/bundle/') ||
+      req.url!.startsWith('/avatars/') ||
+      req.url!.startsWith('/assets/')
+    ) {
       const obj = await s3
         .getObject({
           Bucket: S3_BUCKET_NAME,

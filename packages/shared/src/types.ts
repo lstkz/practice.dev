@@ -35,6 +35,7 @@ export interface Challenge {
   stats: ChallengeStats;
   difficulty: ChallengeDifficulty;
   domain: ChallengeDomain;
+  assets?: Record<string, string> | null;
 }
 
 export interface ChallengeStats {

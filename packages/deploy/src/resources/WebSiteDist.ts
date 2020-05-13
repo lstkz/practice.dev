@@ -121,6 +121,28 @@ export class WebSiteDist {
             },
           ],
         },
+        {
+          s3OriginSource: {
+            s3BucketSource: mainBucket.getS3Bucket(),
+            originAccessIdentity: cfIdentity,
+          },
+          originPath: '',
+          behaviors: [
+            {
+              pathPattern: '/assets/*',
+              forwardedValues: {
+                cookies: {
+                  forward: 'none',
+                },
+                queryString: false,
+              },
+
+              compress: true,
+              allowedMethods: cf.CloudFrontAllowedMethods.GET_HEAD_OPTIONS,
+              cachedMethods: cf.CloudFrontAllowedCachedMethods.GET_HEAD_OPTIONS,
+            },
+          ],
+        },
       ],
     });
 

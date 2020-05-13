@@ -17,9 +17,13 @@ export const updateChallenge = createContract('challenge.updateChallenge')
       domain: S.enum().literal('frontend', 'backend', 'fullstack', 'styling'),
       difficulty: S.enum().literal('easy', 'medium', 'hard'),
       tags: S.array().items(S.string()),
+      assets: S.object().unknown().optional().nullable(),
     }),
   })
   .fn(async values => {
+    if (!values.assets) {
+      values.assets = null;
+    }
     const challenge = await ChallengeEntity.getByKeyOrNull({
       challengeId: values.id,
     });

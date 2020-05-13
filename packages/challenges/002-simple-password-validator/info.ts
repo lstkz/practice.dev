@@ -8,4 +8,5 @@ export const info: ChallengeInfo = {
   tags: ['validation'],
   difficulty: 'easy',
   domain: 'backend',
+  hasSwagger: true,
 };

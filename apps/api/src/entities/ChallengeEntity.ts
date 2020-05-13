@@ -21,6 +21,7 @@ export interface ChallengeProps extends ChallengeKey {
   tags: string[];
   stats: ChallengeStats;
   testCase: string;
+  assets?: Record<string, string> | null | undefined;
 }
 
 const BaseEntity = createBaseEntity('Challenge')
@@ -48,6 +49,7 @@ export class ChallengeEntity extends BaseEntity {
       stats: this.stats,
       difficulty: this.difficulty,
       domain: this.domain,
+      assets: this.assets,
     };
   }
 

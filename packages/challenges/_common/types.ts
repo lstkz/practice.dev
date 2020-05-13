@@ -5,4 +5,5 @@ export interface ChallengeInfo {
   tags: string[];
   domain: 'frontend' | 'backend' | 'fullstack' | 'styling';
   difficulty: 'easy' | 'medium' | 'hard';
+  hasSwagger?: boolean;
 }
