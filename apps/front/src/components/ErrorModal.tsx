@@ -21,7 +21,7 @@ export function ErrorModal() {
       close={hideErrorModal}
     >
       <FormModalContent title="Error">
-        <Text>{message}</Text>
+        <Text data-test="error-msg">{message}</Text>
       </FormModalContent>
     </Modal>
   );
