@@ -3,8 +3,8 @@ import { S } from 'schema';
 import { solutionUserInput } from './_solutionSchema';
 import { normalizeTags } from '../../common/helper';
 import { _getSolutionWithPermissionCheck } from './_getSolutionWithCheck';
-import { UserEntity } from '../../entities';
 import { updateSolutionCUD } from '../../cud/solution';
+import { _populateSolution } from './_populateSolution';
 
 export const updateSolution = createContract('solution.updateSolution')
   .params('userId', 'solutionId', 'values')
@@ -19,14 +19,11 @@ export const updateSolution = createContract('solution.updateSolution')
       solutionId
     );
     values.tags = normalizeTags(values.tags);
-    const [solutionAuthor, solution] = await Promise.all([
-      UserEntity.getById(userId),
-      updateSolutionCUD(oldSolution, {
-        ...oldSolution.getProps(),
-        ...values,
-      }),
-    ]);
-    return solution.toSolution(solutionAuthor);
+    const solution = await updateSolutionCUD(oldSolution, {
+      ...oldSolution.getProps(),
+      ...values,
+    });
+    return _populateSolution(solution, userId);
   });
 
 export const updateSolutionRpc = createRpcBinding({

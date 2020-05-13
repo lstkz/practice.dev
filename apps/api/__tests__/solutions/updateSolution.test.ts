@@ -3,6 +3,7 @@ import { registerSampleUsers, addSampleChallenges } from '../seed-data';
 import { updateSolution } from '../../src/contracts/solution/updateSolution';
 import { getSolutionById } from '../../src/contracts/solution/getSolutionById';
 import { createSolutionCUD } from '../../src/cud/solution';
+import { createSolutionVoteCUD } from '../../src/cud/solutionVote';
 
 const userId = '1';
 
@@ -140,4 +141,24 @@ it('remove tag', async () => {
     url: 'https://github.com/repo-edited',
   });
   expect(ret.tags).toEqual(['a', 'b']);
+});
+
+it('isLiked should by populated correctly', async () => {
+  await createSolutionVoteCUD({
+    challengeId: 1,
+    createdAt: 1,
+    solutionId: '1',
+    userId: '1',
+  });
+
+  const ret = await updateSolution(userId, '1', {
+    slug: 's1',
+    tags: ['a', 'b', 'c', 'd'],
+    title: 'solution-edited',
+    description: 'desc-edited',
+    url: 'https://github.com/repo-edited',
+  });
+
+  expect(ret.title).toEqual('solution-edited');
+  expect(ret.isLiked).toEqual(true);
 });
