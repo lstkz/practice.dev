@@ -75,6 +75,7 @@ export function ContactUsView() {
                 placeholder="name@example.com"
               />
               <FormSelect
+                id="category"
                 testId="category"
                 label="Category"
                 name="category"
