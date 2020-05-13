@@ -53,10 +53,10 @@ export const completeAvatarUpload = createContract('user.completeAvatarUpload')
         await s3
           .upload({
             Bucket: S3_BUCKET_NAME,
-            Key: getPath('140x140'),
+            Key: getPath('280x280'),
             Body: await img
               .clone()
-              .resize(140, 140)
+              .resize(280, 280)
               .getBufferAsync('image/png'),
           })
           .promise();
@@ -65,8 +65,8 @@ export const completeAvatarUpload = createContract('user.completeAvatarUpload')
         await s3
           .upload({
             Bucket: S3_BUCKET_NAME,
-            Key: getPath('40x40'),
-            Body: await img.clone().resize(40, 40).getBufferAsync('image/png'),
+            Key: getPath('80x80'),
+            Body: await img.clone().resize(80, 80).getBufferAsync('image/png'),
           })
           .promise();
       }),

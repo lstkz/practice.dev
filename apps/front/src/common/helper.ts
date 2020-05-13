@@ -134,7 +134,7 @@ export function getAvatarUrl(
   }
   return (
     BUNDLE_BASE_URL +
-    `avatars/${avatarUrl}-${size == 'sm' ? '40x40' : '140x140'}.png`
+    `avatars/${avatarUrl}-${size == 'sm' ? '80x80' : '280x280'}.png`
   );
 }
 

@@ -63,8 +63,8 @@ it('update a picture and remove it', async () => {
       status: 200,
     });
   });
-  _mockFile('abc-40x40');
-  _mockFile('abc-140x140');
+  _mockFile('abc-80x80');
+  _mockFile('abc-280x280');
   await page.goto(WEBSITE_URL + '/settings');
   await $('@header-avatar').expect.toBeVisible();
   await $('@header-avatar img').expect.toBeHidden();
