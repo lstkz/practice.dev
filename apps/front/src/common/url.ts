@@ -23,6 +23,9 @@ export type UrlOptions =
       name: 'projects';
     }
   | {
+      name: 'contests';
+    }
+  | {
       name: 'home';
     }
   | {
