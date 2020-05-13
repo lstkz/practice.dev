@@ -12,7 +12,6 @@ import { handleAppError } from 'src/common/helper';
 handle
   .epic()
   .on(ContestsActions.$mounted, () => ContestsFormActions.reset())
-
   .on(ContestsFormActions.setSubmitSucceeded, () => {
     return Rx.concatObs(
       Rx.of(ContestsActions.setIsSubmitting(true)),

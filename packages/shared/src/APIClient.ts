@@ -63,6 +63,13 @@ export class APIClient {
   }): Rx.Observable<number> {
     return this.call('challenge.updateChallenge', values);
   }
+  contact_sendContact(values: {
+    email: string;
+    category: string;
+    message: string;
+  }): Rx.Observable<void> {
+    return this.call('contact.sendContact', values);
+  }
   featureSubscription_createFeatureSubscription(
     type: 'contest',
     email: string

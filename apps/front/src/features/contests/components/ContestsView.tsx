@@ -14,15 +14,7 @@ import { useActions } from 'typeless';
 import { getContestsState } from '../interface';
 import { SuccessFilledIcon } from 'src/icons/SuccessFilledIcon';
 import { Alert } from 'src/components/Alert';
-
-const Box = styled.div`
-  width: 420px;
-  padding: 40px 36px;
-  background: white;
-  border: 1px solid ${Theme.grayLight};
-  border-radius: 5px;
-  margin: 0 auto;
-`;
+import { Box } from 'src/components/Box';
 
 const TrophyWrapper = styled.div`
   text-align: center;

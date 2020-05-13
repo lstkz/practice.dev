@@ -58,5 +58,6 @@ export const ES_INDEX_PREFIX = process.env.JEST_WORKER_ID
   : '';
 
 export const EMAIL_SENDER = 'Practice.dev <no-reply@practice.dev>';
+export const CONTACT_EMAIL = 'contact@practice.dev';
 
 export const BASE_URL = process.env.BASE_URL || 'https://practice.dev';
