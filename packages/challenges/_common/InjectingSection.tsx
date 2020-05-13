@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const toggleLayersBtnSource = `
-<script src="https://practice.dev/toggle-layer.js"></script>`.trim();
+<script src="https://practice.dev/assets/toggle-layer.js"></script>`.trim();
 
 const ToggleLayersBtn = styled.button`
   display: inline-block;

@@ -22,7 +22,7 @@ export function Details() {
             <div>Initial application state</div>
             <IsolatedHtml
               height={200}
-              scripts={['https://diizugqfceez9.cloudfront.net/toggle-layer.js']}
+              scripts={['https://practice.dev/assets/toggle-layer.js']}
               css={exampleCss}
               html={exampleHTML}
             />
