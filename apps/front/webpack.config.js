@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin;
@@ -72,6 +73,8 @@ module.exports = {
       root: __dirname,
       verbose: false,
     }),
+
+    new CopyWebpackPlugin([{ from: path.join(__dirname, 'static') }]),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, './index.ejs'),
       hash: false,

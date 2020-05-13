@@ -7,13 +7,14 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
     />
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <% for (var chunk in htmlWebpackPlugin.files.css) { %>
     <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[chunk] %>" />
     <% } %>
   </head>
 
   <body>
-    <div id="root" style="height: 100%"></div>
+    <div id="root" style="height: 100%;"></div>
     <div id="portals"></div>
     <% for (var chunk in htmlWebpackPlugin.files.js) { %>
     <script src="<%= htmlWebpackPlugin.files.js[chunk] %>"></script>
