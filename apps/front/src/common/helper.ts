@@ -87,10 +87,16 @@ interface HandleAuthOptions {
 export function handleAuth(options: HandleAuthOptions) {
   const { authData, isModalOpen, hideModal, reset, action$ } = options;
   return Rx.mergeObs(
-    action$.pipe(
-      Rx.waitForType(RouterActions.locationChange),
-      Rx.map(() => reset())
-    ),
+    Rx.defer(() => {
+      if (isModalOpen) {
+        return Rx.of(reset());
+      } else {
+        return action$.pipe(
+          Rx.waitForType(RouterActions.locationChange),
+          Rx.map(() => reset())
+        );
+      }
+    }).pipe(Rx.delay(1000)),
     Rx.defer(() => {
       if (isModalOpen) {
         return [GlobalActions.auth(authData, true), hideModal()];
