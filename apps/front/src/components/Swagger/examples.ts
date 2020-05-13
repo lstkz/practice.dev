@@ -23,6 +23,35 @@ export const exampleSwagger1: SwaggerSpec = {
             },
           },
         },
+        parameters: [
+          {
+            in: 'path',
+            name: 'id',
+            required: true,
+            schema: {
+              type: 'integer',
+              minimum: 1,
+            },
+            description: 'The user ID',
+          },
+          {
+            in: 'query',
+            name: 'offset',
+            schema: {
+              type: 'integer',
+            },
+            description:
+              'The number of items to skip before starting to collect the result set',
+          },
+          {
+            in: 'query',
+            name: 'limit',
+            schema: {
+              type: 'integer',
+            },
+            description: 'The numbers of items to return',
+          },
+        ],
         responses: {
           '200': {
             description: 'The validation result.',

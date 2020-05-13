@@ -17,4 +17,12 @@ const _Markdown = (props: MarkdownProps) => {
 
 export const Markdown = styled(_Markdown)`
   display: block;
+  code {
+    font-size: 14px;
+    padding: 5px 7px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+    font-family: courier;
+  }
 `;

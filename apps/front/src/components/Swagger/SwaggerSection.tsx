@@ -8,7 +8,6 @@ interface SwaggerSectionProps {
 }
 
 const Title = styled.div`
-  margin-top: 25px;
   margin-bottom: 15px;
   font-weight: 500;
 `;
@@ -25,4 +24,5 @@ const _SwaggerSection = (props: SwaggerSectionProps) => {
 
 export const SwaggerSection = styled(_SwaggerSection)`
   display: block;
+  margin-top: 25px;
 `;

@@ -91,13 +91,14 @@ const _SwaggerMenu = (props: SwaggerMenuProps) => {
       }
       timerId = setTimeout(() => {
         timerId = null;
-        if (
-          window.innerHeight + window.scrollY >=
-          document.body.scrollHeight - OFFSET
-        ) {
-          setActiveItem(items[0].value);
-          return;
-        }
+        // TODO sometimes last item can't be focusable
+        // if (
+        //   window.innerHeight + window.scrollY >=
+        //   document.body.scrollHeight - OFFSET
+        // ) {
+        //   setActiveItem(items[0].value);
+        //   return;
+        // }
         for (let i = 0; i < items.length; i++) {
           const item = items[i];
           const node = document.getElementById(item.value)!;

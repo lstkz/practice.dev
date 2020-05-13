@@ -28,25 +28,31 @@ export interface SwaggerResponse {
   content: Record<string, SchemaRef> | SchemaRef;
 }
 
+export interface SwaggerRequestBody {
+  required: boolean;
+  content: Record<string, SchemaRef>;
+}
+
 export interface SwaggerMethod {
   operationId: string;
   description: string;
   tags: string[];
-  requestBody: {
-    required: boolean;
-    content: Record<string, SchemaRef>;
-  };
+  requestBody: SwaggerRequestBody;
+  parameters?: SwaggerParameter[];
   responses: Record<string, SwaggerResponse>;
 }
 
-export type SwaggerType =
-  | SwaggerRefType
-  | SwaggerObjectType
-  | SwaggerArrayType
+export type SwaggerPrimitiveType =
   | SwaggerStringType
   | SwaggerBooleanType
   | SwaggerNumberType
   | SwaggerIntegerType;
+
+export type SwaggerType =
+  | SwaggerPrimitiveType
+  | SwaggerRefType
+  | SwaggerObjectType
+  | SwaggerArrayType;
 
 export interface SwaggerObjectType {
   type: 'object';
@@ -72,6 +78,8 @@ export interface SwaggerNumberType {
 
 export interface SwaggerIntegerType {
   type: 'integer';
+  minimum?: number;
+  maximum?: number;
 }
 
 export interface SwaggerArrayType {
@@ -82,6 +90,14 @@ export interface SwaggerArrayType {
 export interface SwaggerTag {
   name: string;
   description?: string;
+}
+
+export interface SwaggerParameter {
+  in: 'path' | 'query';
+  name: string;
+  required?: boolean;
+  schema: SwaggerPrimitiveType;
+  description: string;
 }
 
 export interface SwaggerSpec {

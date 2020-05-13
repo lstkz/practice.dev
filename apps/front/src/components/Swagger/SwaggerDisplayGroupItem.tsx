@@ -7,6 +7,9 @@ import { SwaggerSection } from './SwaggerSection';
 import { SwaggerResponses } from './SwaggerResponses';
 import { Markdown } from '../Markdown';
 import { IntersectionWrapper } from './IntersectionWrapper';
+import { SchemaViewer } from '../SchemaViewer/SchemaViewer';
+import { SwaggerContext } from './SwaggerContext';
+import { SwaggerParameters } from './SwaggerParameters';
 
 interface SwaggerDisplayGroupItemProps {
   className?: string;
@@ -34,11 +37,22 @@ const Desc = styled.div`
   white-space: pre-line;
 `;
 
+const RequestBody = styled.div`
+  border-radius: 5px;
+  background: white;
+  padding: 20px;
+  ${SwaggerSection} {
+    margin-top: 0;
+  }
+`;
+
 const _SwaggerDisplayGroupItem = (props: SwaggerDisplayGroupItemProps) => {
   const { className, item } = props;
+  const spec = React.useContext(SwaggerContext);
+  const { operationId, parameters, requestBody } = item.def;
 
   return (
-    <IntersectionWrapper id={item.def.operationId} className={className}>
+    <IntersectionWrapper id={operationId} className={className}>
       <Header>
         <HttpTag type={item.method} /> <Path>{item.path}</Path>
       </Header>
@@ -46,6 +60,22 @@ const _SwaggerDisplayGroupItem = (props: SwaggerDisplayGroupItemProps) => {
         <Desc>
           <Markdown>{item.def.description}</Markdown>
         </Desc>
+        {parameters && parameters.length > 0 && (
+          <SwaggerSection title="Parameters">
+            <SwaggerParameters parameters={parameters} />
+          </SwaggerSection>
+        )}
+        {requestBody && (
+          <SwaggerSection title="Request body">
+            <RequestBody>
+              <SchemaViewer
+                schemas={spec.components.schemas}
+                type={requestBody.content['application/json'].schema}
+              />
+            </RequestBody>
+          </SwaggerSection>
+        )}
+
         <SwaggerSection title="Responses">
           <SwaggerResponses method={item.def} />
         </SwaggerSection>
