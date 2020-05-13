@@ -223,7 +223,6 @@ it('should open error popup if submitting as unverified', async () => {
     return authData1.user;
   });
   await page.goto(WEBSITE_URL + '/challenges/1');
-  await $('@create-solution-btn').expect.toBeHidden();
   await $('@submit-btn').click();
   await $('@error-modal').expect.toBeVisible();
   await $('@error-msg').expect.toMatch(
