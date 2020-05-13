@@ -177,7 +177,7 @@ it('should open login popup if clicking submit as anonymous', async () => {
     return challenges[0];
   });
   engine.mock('user_login', (values, count) => {
-    return authData1;
+    return authData1Verified;
   });
   await page.goto(WEBSITE_URL + '/challenges/1');
   await $('@create-solution-btn').expect.toBeHidden();
@@ -212,4 +212,42 @@ it('should open login popup if clicking like as anonymous', async () => {
   await page.goto(WEBSITE_URL + '/challenges/1');
   await $('@solution-s1 @like').click();
   await $('@login-form').expect.toBeVisible();
+});
+
+it('should open error popup if submitting as unverified', async () => {
+  engine.mock('challenge_getChallengeById', () => {
+    const challenges = getChallenges(true);
+    return challenges[0];
+  });
+  engine.mock('user_getMe', () => {
+    return authData1.user;
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  await $('@submit-btn').click();
+  await $('@error-modal').expect.toBeVisible();
+  await $('@error-msg').expect.toMatch(
+    'You must verify email to perform this action.'
+  );
+});
+
+it('should open error popup if liking as unverified', async () => {
+  engine.mock('challenge_getChallengeById', () => {
+    const challenges = getChallenges(true);
+    return challenges[0];
+  });
+  engine.mock('user_getMe', () => {
+    return authData1.user;
+  });
+  engine.mock('solution_searchSolutions', () => {
+    return {
+      cursor: null,
+      items: solutions.slice(0, 2),
+    };
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  await $('@solution-s1 @like').click();
+  await $('@error-modal').expect.toBeVisible();
+  await $('@error-msg').expect.toMatch(
+    'You must verify email to perform this action.'
+  );
 });

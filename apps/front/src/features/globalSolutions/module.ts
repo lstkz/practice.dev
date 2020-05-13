@@ -5,12 +5,16 @@ import {
 } from './interface';
 import * as Rx from 'src/rx';
 import { api } from 'src/services/api';
-import { getGlobalState } from '../global/interface';
+import { getGlobalState, GlobalActions } from '../global/interface';
 import { LoginActions } from '../login/interface';
 
 handle.epic().on(GlobalSolutionsActions.voteSolution, ({ id, like }) => {
-  if (!getGlobalState().user) {
+  const { user } = getGlobalState();
+  if (!user) {
     return LoginActions.showModal();
+  }
+  if (!user.isVerified) {
+    return GlobalActions.showVerifyEmailError();
   }
   return Rx.concatObs(
     Rx.of(GlobalSolutionsActions.commitVoteSolution(id, like)),
