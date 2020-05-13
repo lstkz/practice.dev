@@ -215,8 +215,8 @@ it('should open login popup if clicking like as anonymous', async () => {
 });
 
 it('should open error popup if submitting as unverified', async () => {
-  engine.mock('challenge_getChallengeById', (params, count) => {
-    const challenges = getChallenges(count === 2);
+  engine.mock('challenge_getChallengeById', () => {
+    const challenges = getChallenges(true);
     return challenges[0];
   });
   engine.mock('user_getMe', () => {
@@ -232,20 +232,20 @@ it('should open error popup if submitting as unverified', async () => {
 });
 
 it('should open error popup if liking as unverified', async () => {
-  engine.mock('challenge_getChallengeById', (params, count) => {
-    const challenges = getChallenges(count === 2);
+  engine.mock('challenge_getChallengeById', () => {
+    const challenges = getChallenges(true);
     return challenges[0];
   });
   engine.mock('user_getMe', () => {
     return authData1.user;
   });
-  await page.goto(WEBSITE_URL + '/challenges/1');
   engine.mock('solution_searchSolutions', () => {
     return {
       cursor: null,
       items: solutions.slice(0, 2),
     };
   });
+  await page.goto(WEBSITE_URL + '/challenges/1');
   await $('@solution-s1 @like').click();
   await $('@error-modal').expect.toBeVisible();
   await $('@error-msg').expect.toMatch(
