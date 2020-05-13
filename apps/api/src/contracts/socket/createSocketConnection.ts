@@ -45,7 +45,7 @@ export const createSocketConnection = createContract(
       LIMIT - 1
     );
     if (expired.length) {
-      Promise.all(expired.map(item => item.delete()));
+      await Promise.all(expired.map(item => item.delete()));
     }
     const connection = new SocketConnectionEntity({
       createdAt: Date.now(),

@@ -129,8 +129,8 @@ const _Header = (props: HeaderProps) => {
             <NavItem active={pathname === '/projects'}>
               <Link href={createUrl({ name: 'projects' })}>Projects</Link>
             </NavItem>
-            <NavItem>
-              <Link href={createUrl({ name: 'challenges' })}>Contests</Link>
+            <NavItem active={pathname === '/contests'}>
+              <Link href={createUrl({ name: 'contests' })}>Contests</Link>
             </NavItem>
             <NavItem>
               <Link href={createUrl({ name: 'challenges' })}>Forums</Link>

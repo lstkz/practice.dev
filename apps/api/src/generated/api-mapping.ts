@@ -26,6 +26,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "challenge.updateChallenge"*/ '../contracts/challenge/updateChallenge'
     ).then(x => x['updateChallengeRpc']),
+  'featureSubscription.createFeatureSubscription': () =>
+    import(
+      /* webpackChunkName: "featureSubscription.createFeatureSubscription"*/ '../contracts/featureSubscription/createFeatureSubscription'
+    ).then(x => x['confirmEmailRpc']),
   'solution.createSolution': () =>
     import(
       /* webpackChunkName: "solution.createSolution"*/ '../contracts/solution/createSolution'
