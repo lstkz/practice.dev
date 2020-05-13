@@ -34,6 +34,9 @@ export type UrlOptions =
     }
   | {
       name: 'settings';
+    }
+  | {
+      name: 'contact-us';
     };
 
 export function createUrl(options: UrlOptions) {

@@ -83,7 +83,7 @@ const _Footer = (props: FooterProps) => {
           {' | '}
           <Link
             href={createUrl({
-              name: 'home',
+              name: 'contact-us',
             })}
           >
             Contact us
