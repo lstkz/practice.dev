@@ -110,6 +110,9 @@ export const RouteResolver = () => {
     const id = ++loadIdRef.current;
     let isStarted = false;
     const startTimeout = setTimeout(() => {
+      if (loadIdRef.current !== id) {
+        return;
+      }
       isStarted = true;
       if (!routeConfig.noLoader) {
         loaderRef.current?.continuousStart();
