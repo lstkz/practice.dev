@@ -85,6 +85,7 @@ export function ContestsView() {
                 </Alert>
               )}
               <Button
+                testId="submit-btn"
                 loading={isSubmitting}
                 disabled={isSubmitted}
                 type="primary"
