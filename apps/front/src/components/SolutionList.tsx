@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import React from 'react';
-import { SolutionLoader } from './SolutionLoader';
 import { useSolutions } from 'src/features/globalSolutions/useSolutions';
 import { SolutionDetails } from './SolutionDetails';
 import { SolutionActions } from 'src/features/solution/interface';
@@ -8,6 +7,7 @@ import { useActions } from 'typeless';
 import { GlobalSolutionsActions } from 'src/features/globalSolutions/interface';
 import { useUser } from 'src/hooks/useUser';
 import { VoidLink } from './VoidLink';
+import { Loader } from './Loader';
 
 const NoData = styled.div`
   text-align: center;
@@ -57,9 +57,7 @@ export function SolutionList(props: SolutionListProp) {
   if (!isLoaded) {
     return (
       <>
-        <SolutionLoader />
-        <SolutionLoader />
-        <SolutionLoader />
+        <Loader center />
       </>
     );
   }

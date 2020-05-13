@@ -1,5 +1,5 @@
 import * as React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { Theme } from 'ui';
 
 const ripple = keyframes`  
@@ -21,32 +21,44 @@ const ripple = keyframes`
 
 interface LoaderProps {
   className?: string;
+  center?: boolean;
 }
+
+const Ripple = styled.div`
+  position: absolute;
+  border: 4px solid ${Theme.blue};
+  opacity: 1;
+  border-radius: 50%;
+  animation: ${ripple} 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+`;
+
+const Ripple2 = styled(Ripple)`
+  animation-delay: -0.5s;
+`;
+
+const Inner = styled.div`
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  position: relative;
+`;
 
 const _Loader = (props: LoaderProps) => {
   const { className } = props;
   return (
     <div className={className}>
-      <div></div>
-      <div></div>
+      <Inner>
+        <Ripple />
+        <Ripple2 />
+      </Inner>
     </div>
   );
 };
 
 export const Loader = styled(_Loader)`
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-
-  div {
-    position: absolute;
-    border: 4px solid ${Theme.blue};
-    opacity: 1;
-    border-radius: 50%;
-    animation: ${ripple} 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-  }
-  div:nth-child(2) {
-    animation-delay: -0.5s;
-  }
+  ${props =>
+    props.center &&
+    css`
+      text-align: center;
+    `}
 `;

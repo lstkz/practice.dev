@@ -10,7 +10,7 @@ import { createUrl } from 'src/common/url';
 import { ChallengesIcon } from 'src/icons/ChallengesIcon';
 import { ChallengeFilter } from './ChallengeFilter';
 import { Theme } from 'src/common/Theme';
-import { ChallengePlaceholder } from './ChallengePlaceholder';
+import { Loader } from 'src/components/Loader';
 
 const ChallengesCol = styled.div`
   flex-grow: 1;
@@ -56,11 +56,7 @@ export function ChallengesView() {
         <Wrapper>
           <ChallengesCol>
             {isLoading ? (
-              <>
-                <ChallengePlaceholder />
-                <ChallengePlaceholder />
-                <ChallengePlaceholder />
-              </>
+              <Loader center />
             ) : items.length === 0 ? (
               <NoData data-test="no-challenges">No Challenges</NoData>
             ) : (
