@@ -132,10 +132,14 @@ handle
     );
   })
   .on(SubmitActions.show, () => {
-    if (getGlobalState().user) {
-      return SubmitActions.commitShow();
+    const { user } = getGlobalState();
+    if (!user) {
+      return LoginActions.showModal();
     }
-    return [LoginActions.showModal()];
+    if (!user.isVerified) {
+      return GlobalActions.showVerifyEmailError();
+    }
+    return SubmitActions.commitShow();
   })
   .on(SubmitActions.commitShow, () => [
     SubmitFormActions.reset(),

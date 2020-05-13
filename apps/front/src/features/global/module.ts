@@ -43,6 +43,10 @@ const initialState: GlobalState = {
   isLoaded: false,
   user: null,
   appError: null,
+  errorModal: {
+    isOpen: false,
+    message: null,
+  },
 };
 
 handle
@@ -62,6 +66,21 @@ handle
   })
   .on(GlobalActions.avatarUpdated, (state, { avatarUrl }) => {
     state.user!.avatarUrl = avatarUrl;
+  })
+  .on(GlobalActions.showErrorModal, (state, { message }) => {
+    state.errorModal = {
+      isOpen: true,
+      message,
+    };
+  })
+  .on(GlobalActions.showVerifyEmailError, state => {
+    state.errorModal = {
+      isOpen: true,
+      message: 'You must verify email to perform this action.',
+    };
+  })
+  .on(GlobalActions.hideErrorModal, state => {
+    state.errorModal.isOpen = false;
   });
 
 // --- Module ---
