@@ -1,7 +1,16 @@
-import { APIGatewayProxyEvent, SNSEvent, DynamoDBStreamEvent } from '../types';
+import {
+  APIGatewayProxyEvent,
+  SNSEvent,
+  DynamoDBStreamEvent,
+  CloudWatchLogsEvent,
+} from '../types';
 import { TESTER_TOPIC_ARN } from '../config';
 
-type AWSEvent = SNSEvent | APIGatewayProxyEvent | DynamoDBStreamEvent;
+type AWSEvent =
+  | SNSEvent
+  | APIGatewayProxyEvent
+  | DynamoDBStreamEvent
+  | CloudWatchLogsEvent;
 
 function isSnsEvent(event: AWSEvent): event is SNSEvent {
   return (
@@ -35,6 +44,11 @@ export function handler(event: AWSEvent, _: any, __: any) {
         './event'
       ).then(module => module.handler(event));
     }
+  } else if ('awslogs' in event) {
+    return import(
+      /* webpackChunkName: "log" */
+      './log'
+    ).then(module => module.logHandler(event));
   } else if (event.requestContext.connectionId) {
     return import(
       /* webpackChunkName: "socket" */

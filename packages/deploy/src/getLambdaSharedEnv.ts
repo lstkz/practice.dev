@@ -47,5 +47,6 @@ export function getLambdaSharedEnv(options: GetLambdaSharedEnvOptions) {
     ES_URL: process.env.ES_URL,
     ES_USERNAME: process.env.ES_USERNAME,
     ES_PASSWORD: process.env.ES_PASSWORD,
+    SES_REGION: process.env.SES_REGION!,
   };
 }

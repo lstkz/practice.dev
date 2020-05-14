@@ -7,6 +7,7 @@ import { TesterLambda } from './resources/TesterLambda';
 import { MainTopic } from './resources/MainTopic';
 import { TesterTopic } from './resources/TesterTopic';
 import { MainBucket } from './resources/MainBucket';
+import { LogLambda } from './resources/LogLambda';
 
 if (!process.env.STACK_NAME) {
   throw new Error('STACK_NAME is not set');
@@ -29,12 +30,22 @@ export class MainStack extends cdk.Stack {
       mainBucket,
       mainTable,
     });
-    new TesterLambda(this, initOnly, {
+    const testerLambda = new TesterLambda(this, initOnly, {
       mainTopic,
       testerTopic,
       mainBucket,
       mainTable,
     });
+    if (process.env.REPORT_ERROR_EMAIL) {
+      new LogLambda(this, initOnly, {
+        apiLambda,
+        testerLambda,
+        mainTopic,
+        testerTopic,
+        mainBucket,
+        mainTable,
+      });
+    }
     new Socket(this, { apiLambda });
     new WebSiteDist(this, initOnly, {
       mainBucket,
