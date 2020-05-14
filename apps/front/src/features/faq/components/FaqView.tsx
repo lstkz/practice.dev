@@ -6,7 +6,7 @@ import { Dashboard } from 'src/components/Dashboard';
 import { Container } from 'src/components/Container';
 import { Breadcrumb } from 'src/components/Breadcrumb';
 import { FaqIcon } from 'src/icons/FaqIcon';
-import { createUrl, getRouteParams } from 'src/common/url';
+import { createUrl, getRouteParams, isRoute } from 'src/common/url';
 import { Theme } from 'ui';
 import { Link } from 'src/components/Link';
 import { TwoColLayout } from 'src/components/TwoColLayout';
@@ -38,12 +38,15 @@ const Desc = styled.div`
 export function FaqView() {
   useFaqModule();
   const { location } = getRouterState.useState();
-  const item = React.useMemo(() => {
-    const defaultItem = faqGroups[0].items[0];
-    if (!location) {
-      return defaultItem;
+  const [slug, setSlug] = React.useState<null | string>(null);
+
+  React.useEffect(() => {
+    if (location && isRoute('faq', location)) {
+      setSlug(getRouteParams('faq').slug);
     }
-    const { slug } = getRouteParams('faq');
+  }, [location]);
+
+  const item = React.useMemo(() => {
     if (slug) {
       for (const group of faqGroups) {
         for (const item of group.items) {
@@ -53,8 +56,8 @@ export function FaqView() {
         }
       }
     }
-    return defaultItem;
-  }, [location]);
+    return faqGroups[0].items[0];
+  }, [slug]);
 
   return (
     <Dashboard>

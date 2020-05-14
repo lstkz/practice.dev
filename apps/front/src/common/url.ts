@@ -117,7 +117,8 @@ export function isRoute(
     | 'login'
     | 'reset-password'
     | 'challenge'
-    | 'profile',
+    | 'profile'
+    | 'faq',
   location?: RouterLocation | null
 ): boolean {
   const { pathname } = location || getRouterState().location!;
@@ -127,6 +128,9 @@ export function isRoute(
     }
     case 'profile': {
       return pathname.startsWith('/profile/');
+    }
+    case 'faq': {
+      return pathname === '/faq' || pathname.startsWith('/faq/');
     }
     default: {
       return pathname === createUrl({ name });
