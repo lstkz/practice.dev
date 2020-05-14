@@ -37,6 +37,10 @@ export type UrlOptions =
     }
   | {
       name: 'contact-us';
+    }
+  | {
+      name: 'faq';
+      slug?: string;
     };
 
 export function createUrl(options: UrlOptions) {
@@ -52,6 +56,12 @@ export function createUrl(options: UrlOptions) {
       return '/challenges';
     case 'profile':
       return '/profile/' + options.username;
+    case 'faq': {
+      if (options.slug) {
+        return '/faq/' + options.slug;
+      }
+      return '/faq';
+    }
     default:
       return '/' + options.name;
   }
@@ -62,6 +72,7 @@ export function getRouteParams(name: 'challenge'): { id: number };
 export function getRouteParams(name: 'confirm'): { code: string };
 export function getRouteParams(name: 'confirm-change-email'): { code: string };
 export function getRouteParams(name: 'profile'): { username: string };
+export function getRouteParams(name: 'faq'): { slug: string | null };
 export function getRouteParams(
   name:
     | 'reset-password'
@@ -69,6 +80,7 @@ export function getRouteParams(
     | 'confirm'
     | 'profile'
     | 'confirm-change-email'
+    | 'faq'
 ): any {
   const location = getRouterState().location!;
   const getLast = () => R.last(location.pathname.split('/'));
@@ -88,6 +100,11 @@ export function getRouteParams(
     case 'profile': {
       return {
         username: getLast(),
+      };
+    }
+    case 'faq': {
+      return {
+        slug: location.pathname === '/faq' ? null : getLast(),
       };
     }
   }
