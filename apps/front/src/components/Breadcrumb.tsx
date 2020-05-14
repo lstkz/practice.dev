@@ -37,6 +37,7 @@ export const Breadcrumb = styled(_Breadcrumb)`
   display: flex;
   margin: 30px 0;
   padding-left: 5px;
+  align-items: center;
   svg {
     margin-right: 25px;
   }

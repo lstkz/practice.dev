@@ -11,6 +11,7 @@ import { MenuDropdown } from './MenuDropdown';
 import { Dropdown, MenuItem, MenuSeparator } from './DropdownPopup';
 import { createUrl } from 'src/common/url';
 import * as DateFns from 'date-fns';
+import { Title } from './Title';
 
 interface SolutionDetailsProps {
   className?: string;
@@ -32,12 +33,6 @@ const Right = styled.div`
   flex: 0 0 100px;
   padding-right: 20px;
   position: relative;
-`;
-
-const Title = styled(VoidLink)`
-  color: ${Theme.textDark};
-  font-size: 18px;
-  font-weight: 500;
 `;
 
 const By = styled.div`
@@ -108,7 +103,6 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
         {link ? (
           <Title
             data-test="title"
-            as={Link}
             href={createUrl({
               name: 'challenge',
               id: solution.challengeId,
@@ -118,7 +112,7 @@ const _SolutionDetails = (props: SolutionDetailsProps) => {
             {solution.title}
           </Title>
         ) : (
-          <Title onClick={onShow} data-test="title">
+          <Title link onClick={onShow} data-test="title">
             {solution.title}
           </Title>
         )}

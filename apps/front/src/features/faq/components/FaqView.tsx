@@ -7,12 +7,12 @@ import { Container } from 'src/components/Container';
 import { Breadcrumb } from 'src/components/Breadcrumb';
 import { FaqIcon } from 'src/icons/FaqIcon';
 import { createUrl, getRouteParams, isRoute } from 'src/common/url';
-import { Theme } from 'ui';
 import { Link } from 'src/components/Link';
 import { TwoColLayout } from 'src/components/TwoColLayout';
 import { FaqMenu } from './FaqMenu';
 import { getRouterState } from 'typeless-router';
 import { faqGroups } from '../faqList';
+import { Title } from 'src/components/Title';
 
 const Wrapper = styled(Box)`
   width: 100%;
@@ -23,12 +23,6 @@ const Top = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 30px;
-`;
-
-const Title = styled.div`
-  font-weight: 500;
-  font-size: 18px;
-  color: ${Theme.textDark};
 `;
 
 const Desc = styled.div`

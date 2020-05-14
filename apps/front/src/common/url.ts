@@ -41,6 +41,12 @@ export type UrlOptions =
   | {
       name: 'faq';
       slug?: string;
+    }
+  | {
+      name: 'tos';
+    }
+  | {
+      name: 'privacy';
     };
 
 export function createUrl(options: UrlOptions) {
@@ -54,6 +60,8 @@ export function createUrl(options: UrlOptions) {
     }
     case 'home':
       return '/challenges';
+    case 'tos':
+      return '/terms';
     case 'profile':
       return '/profile/' + options.username;
     case 'faq': {

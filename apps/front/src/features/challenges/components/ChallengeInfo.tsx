@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import ReactTooltip from 'react-tooltip';
 import { Button } from 'ui';
-import { Link } from 'typeless-router';
 import { Challenge } from 'shared';
 import { Theme } from 'src/common/Theme';
 import { FrontendIcon } from 'src/icons/FrontendIcon';
@@ -14,14 +13,11 @@ import { ChallengeCard } from './ChallengeCard';
 import { BackendIcon } from 'src/icons/BackendIcon';
 import { SolvedTag } from 'src/components/SolvedTag';
 import { ChallengeTags } from 'src/components/ChallengeTags';
+import { Title } from 'src/components/Title';
 
-const Title = styled.h3`
+const Top = styled.div`
   display: flex;
   align-items: center;
-  font-size: 18px;
-  line-height: 24px;
-  font-weight: 500;
-  margin: 0;
   a {
     color: ${Theme.textDark};
   }
@@ -95,18 +91,18 @@ export function ChallengeInfo(props: ChallengeInfoProps) {
         ) : null}
       </Col1>
       <Col2>
-        <Title>
+        <Top>
           {challenge.isSolved && <SolvedTag />}
-          <Link
+          <Title
             href={createUrl({
               name: 'challenge',
               id: challenge.id,
             })}
-            data-test="title"
+            testId="title"
           >
             {challenge.title}
-          </Link>
-        </Title>
+          </Title>
+        </Top>
         <Desc data-test="desc">{challenge.description}</Desc>
         <Tags>
           <ChallengeTags challenge={challenge} />

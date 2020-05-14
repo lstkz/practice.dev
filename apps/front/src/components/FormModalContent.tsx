@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Title } from './Title';
 
 interface FormModalContentProps {
   className?: string;
@@ -8,20 +8,15 @@ interface FormModalContentProps {
   children: React.ReactNode;
 }
 
-const Title = styled.div`
-  font-size: 18px;
-  line-height: 24px;
-  font-weight: 500;
-  margin-bottom: 20px;
-  text-align: center;
-  color: ${Theme.textDark};
-`;
-
 const _FormModalContent = (props: FormModalContentProps) => {
   const { className, title, children } = props;
   return (
     <div className={className}>
-      {title && <Title>{title}</Title>}
+      {title && (
+        <Title center mb="md">
+          {title}
+        </Title>
+      )}
       {children}
     </div>
   );

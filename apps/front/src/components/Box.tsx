@@ -1,8 +1,12 @@
 import styled from 'styled-components';
 import { Theme } from 'ui';
 
-export const Box = styled.div`
-  width: 420px;
+interface BoxProps {
+  full?: boolean;
+}
+
+export const Box = styled.div<BoxProps>`
+  width: ${props => (props.full ? '100%' : '420px')};
   padding: 40px 36px;
   background: white;
   border: 1px solid ${Theme.grayLight};

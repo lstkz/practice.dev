@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Title } from 'src/components/Title';
 
 interface OverviewSectionProps {
   className?: string;
@@ -8,19 +8,11 @@ interface OverviewSectionProps {
   title: string;
 }
 
-const Title = styled.div`
-  font-size: 18px;
-  line-height: 24px;
-  font-weight: 500;
-  margin-bottom: 20px;
-  color: ${Theme.textDark};
-`;
-
 const _OverviewSection = (props: OverviewSectionProps) => {
   const { className, title, children } = props;
   return (
     <div className={className}>
-      <Title>{title}</Title>
+      <Title mb="md">{title}</Title>
       {children}
     </div>
   );
