@@ -56,4 +56,7 @@ export class TesterLambda {
       value: this.testerLambda.functionArn,
     });
   }
+  getLambdaFunction() {
+    return this.testerLambda;
+  }
 }
