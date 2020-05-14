@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Title } from 'src/components/Title';
 
 interface SettingsSectionProps {
   className?: string;
@@ -8,18 +8,11 @@ interface SettingsSectionProps {
   children: React.ReactNode;
 }
 
-const Title = styled.div`
-  font-size: 18px;
-  font-weight: 500;
-  color: ${Theme.textDark};
-  margin-bottom: 20px;
-`;
-
 const _SettingsSection = (props: SettingsSectionProps) => {
   const { className, children, title } = props;
   return (
     <div className={className}>
-      <Title>{title}</Title>
+      <Title mb="md">{title}</Title>
       {children}
     </div>
   );

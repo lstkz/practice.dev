@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { Theme } from '../common/Theme';
 import { Logo } from './Logo';
 import { Modal } from './Modal';
+import { Title } from './Title';
 
 interface AuthFormProps {
   className?: string;
@@ -61,13 +62,6 @@ const Top = styled.div`
 
 const SubTitle = styled.div`
   margin-top: 10px;
-`;
-
-const Title = styled.h3`
-  font-size: 18px;
-  font-weight: 500;
-  margin: 0;
-  color: ${Theme.textDark};
 `;
 
 const Bottom = styled.div`

@@ -6,7 +6,7 @@ import { useActions } from 'typeless';
 import { createUrl } from 'src/common/url';
 import { Box } from 'src/components/Box';
 import { SuccessFilledIcon } from 'src/icons/SuccessFilledIcon';
-import { Button, Theme } from 'ui';
+import { Button } from 'ui';
 import { ContactUsFormActions, ContactUsFormProvider } from '../contactUs-form';
 import { Container } from 'src/components/Container';
 import { Breadcrumb } from 'src/components/Breadcrumb';
@@ -15,6 +15,7 @@ import { ContactUsIcon } from 'src/icons/ContactUsIcon';
 import { FormInput } from 'src/components/FormInput';
 import { FormSelect } from 'src/components/FormSelect';
 import styled from 'styled-components';
+import { Title } from 'src/components/Title';
 
 const Wrapper = styled(Box)`
   width: 460px;
@@ -24,13 +25,6 @@ const Wrapper = styled(Box)`
     max-width: 100%;
     min-width: 100%;
   }
-`;
-
-const Title = styled.div`
-  text-align: center;
-  font-size: 18px;
-  font-weight: 500;
-  color: ${Theme.textDark};
 `;
 
 const Desc = styled.div`
@@ -65,7 +59,7 @@ export function ContactUsView() {
               root="Contact Us"
             />
             <Wrapper>
-              <Title>Contact Us</Title>
+              <Title center>Contact Us</Title>
               <Desc>We are always here to help you!</Desc>
               <FormInput
                 testId="email-input"

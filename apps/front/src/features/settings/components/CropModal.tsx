@@ -6,9 +6,10 @@ import {
 } from './PictureSection';
 import { useActions } from 'typeless';
 import styled, { createGlobalStyle } from 'styled-components';
-import { Button, Theme } from 'ui';
+import { Button } from 'ui';
 import ReactCrop from 'react-image-crop';
 import { Alert } from 'src/components/Alert';
+import { Title } from 'src/components/Title';
 
 const CropStyles = createGlobalStyle`
   .ReactCrop {
@@ -246,16 +247,6 @@ const CropStyles = createGlobalStyle`
   }
 `;
 
-const Title = styled.div`
-  font-size: 18px;
-  line-height: 24px;
-  font-weight: 500;
-  margin-bottom: 20px;
-  margin-top: 40px;
-  text-align: center;
-  color: ${Theme.textDark};
-`;
-
 const Wrapper = styled.div`
   width: 100%;
   padding: 10px;
@@ -320,7 +311,9 @@ function ModalContent() {
   }, []);
   return (
     <>
-      <Title>Crop Image</Title>
+      <Title mt="lg" mb="md">
+        Crop Image
+      </Title>
       <Wrapper>
         <ReactCrop
           src={cropImage}

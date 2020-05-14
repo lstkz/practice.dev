@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'src/common/Theme';
+import { Title } from 'src/components/Title';
 
 interface BoxProps {
   className?: string;
@@ -16,13 +16,6 @@ const Left = styled.div`
 `;
 const Right = styled.div`
   margin-left: 30px;
-`;
-
-const Title = styled.div`
-  font-size: 18px;
-  line-height: 24px;
-  font-weight: 500;
-  color: ${Theme.textDark};
 `;
 
 const Desc = styled.div`
