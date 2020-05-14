@@ -7,16 +7,16 @@ import { Dashboard } from 'src/components/Dashboard';
 import { Breadcrumb } from 'src/components/Breadcrumb';
 import { Title } from 'src/components/Title';
 
-export function TosView() {
+export function PrivacyView() {
   return (
     <Dashboard>
-      <Container data-test="tos-page">
+      <Container data-test="privacy-page">
         <Breadcrumb
           icon={<TosIcon />}
-          url={createUrl({ name: 'tos' })}
-          root="Terms of Service"
+          url={createUrl({ name: 'privacy' })}
+          root="Privacy Policy"
         />
-        <Title mb="md">Terms of Service</Title>
+        <Title mb="md">Privacy Policy</Title>
         <Box full>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad

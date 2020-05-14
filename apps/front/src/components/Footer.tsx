@@ -99,7 +99,7 @@ const _Footer = (props: FooterProps) => {
           {' | '}
           <Link
             href={createUrl({
-              name: 'home',
+              name: 'privacy',
             })}
           >
             Privacy Policy

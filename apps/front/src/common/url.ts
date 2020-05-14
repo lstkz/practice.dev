@@ -44,6 +44,9 @@ export type UrlOptions =
     }
   | {
       name: 'tos';
+    }
+  | {
+      name: 'privacy';
     };
 
 export function createUrl(options: UrlOptions) {
