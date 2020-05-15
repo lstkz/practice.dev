@@ -70,6 +70,11 @@ export class APIClient {
   }): Rx.Observable<void> {
     return this.call('contact.sendContact', values);
   }
+  errorReporting_reportFrontendError(content: {
+    [key: string]: any;
+  }): Rx.Observable<void> {
+    return this.call('errorReporting.reportFrontendError', content);
+  }
   featureSubscription_createFeatureSubscription(
     type: 'contest',
     email: string
