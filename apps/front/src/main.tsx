@@ -4,10 +4,12 @@ import { setGlobalExport } from './global-exports';
 import { Hmr, startHmr, TypelessContext } from 'typeless';
 import { registry } from './registry';
 import { GlobalStyle } from 'ui';
+import { initErrorReporter } from './errorReporter';
 
 const MOUNT_NODE = document.getElementById('root')!;
 
 setGlobalExport();
+initErrorReporter();
 
 (window as any)._registry = registry;
 const render = () => {

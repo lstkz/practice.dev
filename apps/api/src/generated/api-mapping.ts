@@ -30,6 +30,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "contact.sendContact"*/ '../contracts/contact/sendContact'
     ).then(x => x['sendContactRpc']),
+  'errorReporting.reportFrontendError': () =>
+    import(
+      /* webpackChunkName: "errorReporting.reportFrontendError"*/ '../contracts/errorReporting/reportFrontendError'
+    ).then(x => x['reportFrontendErrorRpc']),
   'featureSubscription.createFeatureSubscription': () =>
     import(
       /* webpackChunkName: "featureSubscription.createFeatureSubscription"*/ '../contracts/featureSubscription/createFeatureSubscription'
