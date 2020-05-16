@@ -45,7 +45,7 @@
     "rxjs": "^6.3.3",
     "schema": "*",
     "style-loader": "^1.0.0",
-    "styled-components": "^5.1.0",
+    "styled-components": "^4.4.1",
     "ts-loader": "^6.2.1",
     "typed.js": "^2.0.10",
     "typeless": "^1.6.0",
