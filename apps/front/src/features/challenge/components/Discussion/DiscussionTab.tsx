@@ -237,7 +237,7 @@ export function DiscussionTab() {
 
   return (
     <Wrapper>
-      <AddComment showBanner />
+      {user && <AddComment showBanner />}
       {renderComment()}
     </Wrapper>
   );

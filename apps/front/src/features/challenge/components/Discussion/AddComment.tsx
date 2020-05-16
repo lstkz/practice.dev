@@ -13,6 +13,7 @@ import { api } from 'src/services/api';
 import { getChallengeState } from '../../interface';
 import { useActions } from 'typeless';
 import { DiscussionActions } from './DiscussionTab';
+import { GlobalActions } from 'src/features/global/interface';
 
 interface AddCommentProps {
   className?: string;
@@ -88,6 +89,7 @@ const _AddComment = (props: AddCommentProps) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState('');
   const { commentCreated } = useActions(DiscussionActions);
+  const { showVerifyEmailError } = useActions(GlobalActions);
 
   const mdText = React.useMemo(() => {
     if (!isPreview) {
@@ -128,6 +130,10 @@ const _AddComment = (props: AddCommentProps) => {
           </LinkWrapper>
           <Button
             onClick={async () => {
+              if (!user.isVerified) {
+                showVerifyEmailError();
+                return;
+              }
               setIsSubmitting(true);
               setError('');
               try {

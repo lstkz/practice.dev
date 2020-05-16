@@ -74,7 +74,7 @@ export function ObjectType(props: ObjectTypeProps) {
             </tbody>
           </FieldTable>
         </Content>
-        <Bottom>}</Bottom>
+        <Bottom>{'}'}</Bottom>
       </>
     );
   } else {

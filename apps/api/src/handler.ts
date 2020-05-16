@@ -28,6 +28,9 @@ export async function handler(
     if (options.admin && !user.isAdmin) {
       throw new AppError('Admin only');
     }
+    if (options.verified && !user.isVerified) {
+      throw new AppError('Account not verified');
+    }
     return user;
   };
   const user = await getUser();

@@ -11,7 +11,7 @@ export interface DiscussionCommentKey {
 export interface DiscussionCommentProps extends DiscussionCommentKey {
   userId: string;
   challengeId: number;
-  text: string;
+  text: string | null;
   isAnswered?: boolean;
   isAnswer?: boolean;
   isDeleted?: boolean;
@@ -69,7 +69,7 @@ export class DiscussionCommentEntity extends BaseEntity {
       parentCommentId: this.parentCommentId,
       user: user.toPublicUser(),
       challengeId: this.challengeId,
-      text: this.text,
+      text: this.text ?? '',
       isAnswered: this.isAnswered ?? false,
       isAnswer: this.isAnswer ?? false,
       isDeleted: this.isDeleted ?? false,
