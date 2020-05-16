@@ -147,6 +147,9 @@ class Builder {
     const statics: BaseEntityStatic<any, any> = {
       fromDynamo(rawValues: Record<string, any>) {
         const values = Converter.unmarshall(rawValues);
+        return this.fromJSON(values);
+      },
+      fromJSON(values: Record<string, any>) {
         const reverseMap: any = {};
         const props: any = {};
         Object.keys(colMapping).forEach(key => {

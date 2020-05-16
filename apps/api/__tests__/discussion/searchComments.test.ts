@@ -96,6 +96,7 @@ it('should search comments', async () => {
             Object {
               "challengeId": 1,
               "children": Array [],
+              "createdAt": "1970-01-01T00:00:00.101Z",
               "id": "101",
               "isAnswer": false,
               "isAnswered": false,
@@ -111,6 +112,7 @@ it('should search comments', async () => {
             Object {
               "challengeId": 1,
               "children": Array [],
+              "createdAt": "1970-01-01T00:00:00.102Z",
               "id": "102",
               "isAnswer": false,
               "isAnswered": false,
@@ -124,6 +126,7 @@ it('should search comments', async () => {
               },
             },
           ],
+          "createdAt": "1970-01-01T00:00:00.100Z",
           "id": "100",
           "isAnswer": false,
           "isAnswered": false,
@@ -142,6 +145,7 @@ it('should search comments', async () => {
             Object {
               "challengeId": 1,
               "children": Array [],
+              "createdAt": "1970-01-01T00:00:00.201Z",
               "id": "201",
               "isAnswer": false,
               "isAnswered": false,
@@ -155,6 +159,7 @@ it('should search comments', async () => {
               },
             },
           ],
+          "createdAt": "1970-01-01T00:00:00.200Z",
           "id": "200",
           "isAnswer": false,
           "isAnswered": false,

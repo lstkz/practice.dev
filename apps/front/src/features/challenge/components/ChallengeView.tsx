@@ -26,6 +26,7 @@ import { FavoriteSolutions } from './FavoriteSolutions';
 import { SidebarStack } from './SidebarStack';
 import { useSolutionsModule, SolutionsTab } from './SolutionsTab';
 import { ApiSpecTab, useApiSpecModule } from './ApiSpecTab';
+import { DiscussionTab, useDiscussionModule } from './Discussion/DiscussionTab';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
@@ -38,6 +39,7 @@ export function ChallengeView() {
   useChallengeModule();
   useSolutionsModule();
   useApiSpecModule();
+  useDiscussionModule();
 
   const {
     challenge,
@@ -98,7 +100,7 @@ export function ChallengeView() {
                   <SolutionsTab />
                 </Tab>
                 <Tab title="Discussion" name="discussion">
-                  Discussion content
+                  <DiscussionTab />
                 </Tab>
               </Tabs>
             </>

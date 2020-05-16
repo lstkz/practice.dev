@@ -34,9 +34,9 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "discussion.createComment"*/ '../contracts/discussion/createComment'
     ).then(x => x['loginRpc']),
-  'discussion.createComment': () =>
+  'discussion.deleteComment': () =>
     import(
-      /* webpackChunkName: "discussion.createComment"*/ '../contracts/discussion/deleteComment'
+      /* webpackChunkName: "discussion.deleteComment"*/ '../contracts/discussion/deleteComment'
     ).then(x => x['deleteCommentRpc']),
   'discussion.markAnswer': () =>
     import(

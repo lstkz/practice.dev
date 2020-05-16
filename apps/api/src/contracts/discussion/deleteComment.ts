@@ -31,6 +31,6 @@ export const deleteComment = createContract('discussion.deleteComment')
 export const deleteCommentRpc = createRpcBinding({
   verified: true,
   injectUser: true,
-  signature: 'discussion.createComment',
+  signature: 'discussion.deleteComment',
   handler: deleteComment,
 });

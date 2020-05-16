@@ -14,6 +14,7 @@ export const Theme = {
   bgLightGray8: '#EAECF0',
   bgLightGray9: '#F7F9FE',
   bgLightGray10: '#FAFBFF',
+  bgLightGray11: '#F8F9FB',
   border: '#8590A3',
   grayLight: '#D4D6DB',
   gray: '#8590A3',

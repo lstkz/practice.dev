@@ -58,6 +58,7 @@ export const searchComments = createContract('discussion.searchComments')
     ]).map(x => x.userId);
 
     const users = await UserEntity.getByIds(userIds);
+
     return {
       items: DiscussionCommentEntity.toDiscussionCommentMany(
         items,

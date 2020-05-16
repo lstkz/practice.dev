@@ -219,4 +219,5 @@ export interface DiscussionComment {
   isAnswer: boolean;
   isDeleted: boolean;
   children: DiscussionComment[];
+  createdAt: string;
 }

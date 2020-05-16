@@ -74,6 +74,7 @@ export class DiscussionCommentEntity extends BaseEntity {
       isAnswer: this.isAnswer ?? false,
       isDeleted: this.isDeleted ?? false,
       children,
+      createdAt: new Date(this.createdAt).toISOString(),
     };
   }
 
