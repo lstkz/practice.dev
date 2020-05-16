@@ -78,11 +78,11 @@ export class APIClient {
   }): Rx.Observable<DiscussionComment> {
     return this.call('discussion.createComment', values);
   }
-  discussion_createComment(id: string): Rx.Observable<void> {
-    return this.call('discussion.createComment', id);
+  discussion_deleteComment(id: string): Rx.Observable<void> {
+    return this.call('discussion.deleteComment', id);
   }
-  discussion_markAnswer(): Rx.Observable<void> {
-    return this.call('discussion.markAnswer');
+  discussion_markAnswer(id: string): Rx.Observable<void> {
+    return this.call('discussion.markAnswer', id);
   }
   discussion_searchComments(criteria: {
     challengeId: number;

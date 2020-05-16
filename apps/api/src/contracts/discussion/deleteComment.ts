@@ -24,8 +24,9 @@ export const deleteComment = createContract('discussion.deleteComment')
     if (comment.isDeleted) {
       throw new AppError('Already deleted');
     }
+    comment.text = '';
     comment.isDeleted = true;
-    await comment.update(['isDeleted']);
+    await comment.update(['isDeleted', 'text']);
   });
 
 export const deleteCommentRpc = createRpcBinding({

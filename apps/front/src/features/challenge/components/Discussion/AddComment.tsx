@@ -19,6 +19,7 @@ interface AddCommentProps {
   parentCommentId?: string;
   onCancel?: () => void;
   showBanner?: boolean;
+  onCommentCreated?: () => void;
 }
 
 const Top = styled.div`
@@ -74,7 +75,13 @@ const Bold = styled.strong`
 `;
 
 const _AddComment = (props: AddCommentProps) => {
-  const { className, parentCommentId, onCancel, showBanner } = props;
+  const {
+    className,
+    parentCommentId,
+    onCancel,
+    showBanner,
+    onCommentCreated,
+  } = props;
   const user = useUser();
   const [text, setText] = React.useState('');
   const [isPreview, setIsPreview] = React.useState(false);
@@ -134,6 +141,9 @@ const _AddComment = (props: AddCommentProps) => {
                 commentCreated(comment);
                 setText('');
                 setIsPreview(false);
+                if (onCommentCreated) {
+                  onCommentCreated();
+                }
               } catch (e) {
                 setError(getErrorMessage(e));
               }

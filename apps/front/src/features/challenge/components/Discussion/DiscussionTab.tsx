@@ -7,12 +7,14 @@ import styled from 'styled-components';
 import { AddComment } from './AddComment';
 import { api } from 'src/services/api';
 import { getChallengeState } from '../../interface';
-import { handleAppError } from 'src/common/helper';
+import { handleAppError, getErrorMessage } from 'src/common/helper';
 import { LoadMoreResult, DiscussionComment } from 'shared';
-import { SelectOption } from 'src/types';
+import { SelectOption, DeleteType } from 'src/types';
 import { SortOptions } from './SortOptions';
-import { Theme } from 'ui';
 import { CommentItem } from './CommentItem';
+import { ConfirmModalActions } from 'src/features/confirmModal/interface';
+import { useUser } from 'src/hooks/useUser';
+import { LoadMoreButton } from 'src/components/LoadMoreButton';
 
 export const [handle, DiscussionActions, getDiscussionState] = createModule(
   DiscussionSymbol
@@ -29,6 +31,9 @@ export const [handle, DiscussionActions, getDiscussionState] = createModule(
     updateSort: (sortBy: SelectOption<DiscussionSortBy>) => ({
       payload: { sortBy },
     }),
+    deleteComment: (comment: DiscussionComment) => ({ payload: { comment } }),
+    commentDeleted: (id: string) => ({ payload: { id } }),
+    markAsAnswer: (comment: DiscussionComment) => ({ payload: { comment } }),
   })
   .withState<ApiSpecState>();
 
@@ -44,22 +49,70 @@ interface ApiSpecState {
 export type DiscussionSortBy = 'newest' | 'oldest';
 
 // --- Epic ---
-handle.epic().on(DiscussionActions.load, ({ loadMore }) => {
-  return Rx.concatObs(
-    Rx.of(DiscussionActions.setIsLoading(true)),
-    api
-      .discussion_searchComments({
-        challengeId: getChallengeState().challenge.id,
-        sortDesc: true,
-        cursor: loadMore ? getDiscussionState().cursor : null,
-      })
-      .pipe(
-        Rx.map(ret => DiscussionActions.loaded(loadMore, ret)),
-        handleAppError()
+handle
+  .epic()
+  .on(DiscussionActions.load, ({ loadMore }) => {
+    return Rx.concatObs(
+      Rx.of(DiscussionActions.setIsLoading(true)),
+      api
+        .discussion_searchComments({
+          challengeId: getChallengeState().challenge.id,
+          sortDesc: getDiscussionState().sortBy.value === 'newest',
+          cursor: loadMore ? getDiscussionState().cursor : null,
+        })
+        .pipe(
+          Rx.map(ret => DiscussionActions.loaded(loadMore, ret)),
+          handleAppError()
+        ),
+      Rx.of(DiscussionActions.setIsLoading(false))
+    );
+  })
+  .on(DiscussionActions.updateSort, () => DiscussionActions.load(false))
+  .on(DiscussionActions.markAsAnswer, ({ comment }) => {
+    return Rx.concatObs(
+      Rx.of(DiscussionActions.setIsLoading(true)),
+      api
+        .discussion_markAnswer(comment.id)
+        .pipe(Rx.ignoreElements(), handleAppError()),
+      Rx.of(DiscussionActions.setIsLoading(false))
+    );
+  })
+  .on(DiscussionActions.deleteComment, ({ comment }, { action$ }) => {
+    return Rx.concatObs(
+      Rx.of(
+        ConfirmModalActions.show(
+          'Confirm',
+          'Are you sure to delete this comment?',
+          [
+            { text: 'Delete', type: 'danger', value: 'delete' as DeleteType },
+            { text: 'Cancel', type: 'secondary', value: 'close' as DeleteType },
+          ]
+        )
       ),
-    Rx.of(DiscussionActions.setIsLoading(false))
-  );
-});
+      action$.pipe(
+        Rx.waitForType(ConfirmModalActions.onResult),
+        Rx.mergeMap(({ payload }) => {
+          const result = payload.result as DeleteType;
+          if (result !== 'delete') {
+            return Rx.of(ConfirmModalActions.close());
+          }
+          return Rx.concatObs(
+            Rx.of(ConfirmModalActions.setIsLoading('delete' as DeleteType)),
+            api.discussion_deleteComment(comment.id).pipe(
+              Rx.mergeMap(() => [
+                DiscussionActions.commentDeleted(comment.id),
+                ConfirmModalActions.close(),
+              ]),
+              Rx.catchLog(e =>
+                Rx.of(ConfirmModalActions.setError(getErrorMessage(e)))
+              )
+            ),
+            Rx.of(ConfirmModalActions.setIsLoading(null))
+          );
+        })
+      )
+    );
+  });
 
 // --- Reducer ---
 const initialState: ApiSpecState = {
@@ -104,6 +157,32 @@ handle
     } else {
       state.items.unshift(comment);
     }
+  })
+  .on(DiscussionActions.commentDeleted, (state, { id }) => {
+    state.items.forEach(item => {
+      if (item.id === id) {
+        item.isDeleted = true;
+      } else {
+        item.children.forEach(sub => {
+          if (sub.id === id) {
+            sub.isDeleted = true;
+          }
+        });
+      }
+    });
+  })
+  .on(DiscussionActions.markAsAnswer, (state, { comment }) => {
+    state.items.forEach(item => {
+      item.children.forEach(sub => {
+        if (sub.id === comment.id) {
+          sub.isAnswer = true;
+          item.isAnswered = true;
+        }
+      });
+    });
+  })
+  .on(DiscussionActions.updateSort, (state, { sortBy }) => {
+    state.sortBy = sortBy;
   });
 
 const LoaderWrapper = styled.div`
@@ -120,14 +199,11 @@ const NoData = styled.div`
   margin-top: 40px;
 `;
 
-const CommentsWrapper = styled.div`
-  border-radius: 5px;
-  border: 1px solid ${Theme.grayLight};
-`;
-
 export function DiscussionTab() {
   const { isLoaded, items, isLoading, cursor } = getDiscussionState.useState();
   const { load } = useActions(DiscussionActions);
+  const user = useUser();
+
   React.useEffect(() => {
     if (!isLoaded) {
       load(false);
@@ -149,11 +225,12 @@ export function DiscussionTab() {
     return (
       <div>
         <SortOptions />
-        {/* <CommentsWrapper> */}
         {items.map(item => (
-          <CommentItem comment={item} key={item.id} />
+          <CommentItem user={user} comment={item} key={item.id} />
         ))}
-        {/* </CommentsWrapper> */}
+        {cursor && (
+          <LoadMoreButton isLoading={isLoading} onClick={() => load(true)} />
+        )}
       </div>
     );
   };

@@ -29,7 +29,6 @@ export const markAnswer = createContract('discussion.markAnswer')
 
 export const markAnswerRpc = createRpcBinding({
   admin: true,
-  injectUser: true,
   signature: 'discussion.markAnswer',
   handler: markAnswer,
 });

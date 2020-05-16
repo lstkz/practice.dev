@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { DiscussionComment } from 'shared';
+import { DiscussionComment, User } from 'shared';
 import * as DateFns from 'date-fns';
 import { Avatar } from 'src/components/Avatar';
 import { Link } from 'src/components/Link';
@@ -16,11 +16,14 @@ import {
   MenuSeparator,
 } from 'src/components/DropdownPopup';
 import { DotsIcon } from 'src/icons/DotsIcon';
+import { useActions } from 'typeless';
+import { DiscussionActions } from './DiscussionTab';
 
 interface CommentItemProps {
   className?: string;
   comment: DiscussionComment;
   isNested?: boolean;
+  user: User | null;
 }
 
 const Top = styled.div`
@@ -58,6 +61,14 @@ const MenuButton = styled(VoidLink)`
   }
 `;
 
+const AnsweredTag = styled.div`
+  color: ${Theme.green2};
+  margin-left: 10px;
+  background: ${Theme.lightGreen};
+  padding: 3px 10px;
+  border-radius: 3px;
+`;
+
 const Inner = styled.div`
   padding: 0 0 0 60px;
   position: relative;
@@ -68,28 +79,44 @@ const Inner = styled.div`
   }
 `;
 
-function CommentMenu() {
+interface CommentMenuProps {
+  comment: DiscussionComment;
+  user: User | null;
+}
+function CommentMenu(props: CommentMenuProps) {
+  const { comment, user } = props;
+  const { deleteComment, markAsAnswer } = useActions(DiscussionActions);
+  if (!user) {
+    return null;
+  }
+  if (!user.isAdmin && user.id !== comment.user.id) {
+    return null;
+  }
   return (
     <MenuDropdown
-      testId="solution-menu-btn"
+      testId="comment-menu-btn"
       dropdown={
         <Dropdown data-test="comment-menu" style={{ minWidth: 100 }}>
-          <MenuItem>
-            <VoidLink
-              data-test="set-answer-btn"
-              onClick={() => {
-                //
-              }}
-            >
-              Set as answer
-            </VoidLink>
-          </MenuItem>
-          <MenuSeparator />
+          {user?.isAdmin && comment.parentCommentId && (
+            <>
+              <MenuItem>
+                <VoidLink
+                  data-test="set-answer-btn"
+                  onClick={() => {
+                    markAsAnswer(comment);
+                  }}
+                >
+                  Set as answer
+                </VoidLink>
+              </MenuItem>
+              <MenuSeparator />
+            </>
+          )}
           <MenuItem red>
             <VoidLink
               data-test="delete-btn"
               onClick={() => {
-                //
+                deleteComment(comment);
               }}
             >
               Remove
@@ -116,7 +143,7 @@ const SubComments = styled.div`
 `;
 
 const _CommentItem = (props: CommentItemProps) => {
-  const { className, comment, isNested } = props;
+  const { className, comment, isNested, user } = props;
   const [isReplyVisible, setIsReplyVisible] = React.useState(false);
 
   const ago = React.useMemo(() => {
@@ -126,8 +153,11 @@ const _CommentItem = (props: CommentItemProps) => {
   }, [comment.createdAt]);
 
   const mdText = React.useMemo(() => {
+    if (comment.isDeleted) {
+      return '[Deleted]';
+    }
     return mdParse(comment.text);
-  }, [comment.text]);
+  }, [comment.isDeleted, comment.text]);
 
   return (
     <div
@@ -148,14 +178,15 @@ const _CommentItem = (props: CommentItemProps) => {
           </Link>
           <Toolbar>
             <Ago>{ago}</Ago>
-            <CommentMenu />
+            {comment.isAnswered && <AnsweredTag>Answered</AnsweredTag>}
+            <CommentMenu comment={comment} user={user} />
           </Toolbar>
         </Top>
         <Text dangerouslySetInnerHTML={{ __html: mdText }}></Text>
       </Inner>
       <SubComments>
         {comment.children.map(item => (
-          <CommentItem comment={item} key={item.id} isNested />
+          <CommentItem comment={item} user={user} key={item.id} isNested />
         ))}
       </SubComments>
       {!isNested && (
@@ -167,6 +198,9 @@ const _CommentItem = (props: CommentItemProps) => {
         <AddComment
           parentCommentId={comment.id}
           onCancel={() => setIsReplyVisible(false)}
+          onCommentCreated={() => {
+            setIsReplyVisible(false);
+          }}
         />
       )}
     </div>
@@ -183,10 +217,10 @@ export const CommentItem = styled(_CommentItem)`
     css`
       border: none;
       padding: 20px;
-      background: ${Theme.bgLightGray11};
+      background: ${props.comment.isAnswer
+        ? Theme.lightGreen
+        : Theme.bgLightGray11};
       border-radius: 5px;
       margin-bottom: 10px;
-      ${Inner} {
-      }
     `}
 `;

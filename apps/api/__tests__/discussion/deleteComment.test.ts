@@ -27,6 +27,7 @@ it('should delete comment', async () => {
   await deleteComment('1', '100');
   const comment = await DiscussionCommentEntity.getByIdOrNull('100');
   expect(comment?.isDeleted).toEqual(true);
+  expect(comment?.text).toEqual('');
 });
 
 it('should delete comment as admin', async () => {
@@ -34,6 +35,7 @@ it('should delete comment as admin', async () => {
   await deleteComment('2', '100');
   const comment = await DiscussionCommentEntity.getByIdOrNull('100');
   expect(comment?.isDeleted).toEqual(true);
+  expect(comment?.text).toEqual('');
 });
 
 it('should throw an error if not found', async () => {
