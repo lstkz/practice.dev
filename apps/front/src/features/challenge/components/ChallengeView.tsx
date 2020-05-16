@@ -99,7 +99,11 @@ export function ChallengeView() {
                 <Tab testId="solutions-tab" title="Solutions" name="solutions">
                   <SolutionsTab />
                 </Tab>
-                <Tab title="Discussion" name="discussion">
+                <Tab
+                  testId="discussion-tab"
+                  title="Discussion"
+                  name="discussion"
+                >
                   <DiscussionTab />
                 </Tab>
               </Tabs>

@@ -178,11 +178,16 @@ const _CommentItem = (props: CommentItemProps) => {
           </Link>
           <Toolbar>
             <Ago>{ago}</Ago>
-            {comment.isAnswered && <AnsweredTag>Answered</AnsweredTag>}
+            {comment.isAnswered && (
+              <AnsweredTag data-test="answered-tag">Answered</AnsweredTag>
+            )}
             <CommentMenu comment={comment} user={user} />
           </Toolbar>
         </Top>
-        <Text dangerouslySetInnerHTML={{ __html: mdText }}></Text>
+        <Text
+          data-test="text"
+          dangerouslySetInnerHTML={{ __html: mdText }}
+        ></Text>
       </Inner>
       <SubComments>
         {comment.children.map(item => (
@@ -191,7 +196,12 @@ const _CommentItem = (props: CommentItemProps) => {
       </SubComments>
       {!isNested && user && (
         <Bottom>
-          <VoidLink onClick={() => setIsReplyVisible(true)}>Reply</VoidLink>
+          <VoidLink
+            data-test="reply-btn"
+            onClick={() => setIsReplyVisible(true)}
+          >
+            Reply
+          </VoidLink>
         </Bottom>
       )}
       {isReplyVisible && (

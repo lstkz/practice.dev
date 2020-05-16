@@ -112,12 +112,17 @@ const _AddComment = (props: AddCommentProps) => {
         <Input
           style={{ display: isPreview ? 'none' : 'block' }}
           id="new-comment"
+          testId="new-comment-input"
           multiline
           value={text}
           onChange={e => setText(e.target.value || '')}
         />
       </CommentWrapper>
-      {error && <Alert type="error">{error}</Alert>}
+      {error && (
+        <Alert testId="add-comment-error" type="error">
+          {error}
+        </Alert>
+      )}
       <Bottom>
         <span>
           <Bold>Markdown</Bold> is supported
@@ -129,6 +134,7 @@ const _AddComment = (props: AddCommentProps) => {
             </VoidLink>
           </LinkWrapper>
           <Button
+            testId="post-comment-btn"
             onClick={async () => {
               if (!user.isVerified) {
                 showVerifyEmailError();
@@ -162,7 +168,11 @@ const _AddComment = (props: AddCommentProps) => {
             POST COMMENT
           </Button>
           {onCancel && (
-            <Button onClick={onCancel} type="secondary">
+            <Button
+              testId="cancel-comment-btn"
+              onClick={onCancel}
+              type="secondary"
+            >
               CANCEL
             </Button>
           )}
