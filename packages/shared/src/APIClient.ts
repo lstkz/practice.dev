@@ -7,8 +7,9 @@ import {
   Challenge,
   ChallengeTag,
   PagedResult,
-  Solution,
+  DiscussionComment,
   LoadMoreResult,
+  Solution,
   SolutionTag,
   Submission,
   AuthData,
@@ -69,6 +70,27 @@ export class APIClient {
     message: string;
   }): Rx.Observable<void> {
     return this.call('contact.sendContact', values);
+  }
+  discussion_createComment(values: {
+    challengeId: number;
+    text: string;
+    parentCommentId?: string | null | undefined;
+  }): Rx.Observable<DiscussionComment> {
+    return this.call('discussion.createComment', values);
+  }
+  discussion_createComment(id: string): Rx.Observable<void> {
+    return this.call('discussion.createComment', id);
+  }
+  discussion_markAnswer(): Rx.Observable<void> {
+    return this.call('discussion.markAnswer');
+  }
+  discussion_searchComments(criteria: {
+    challengeId: number;
+    sortDesc: boolean;
+    limit?: number | undefined;
+    cursor?: string | null | undefined;
+  }): Rx.Observable<LoadMoreResult<DiscussionComment>> {
+    return this.call('discussion.searchComments', criteria);
   }
   errorReporting_reportFrontendError(content: {
     [key: string]: any;
@@ -221,9 +243,9 @@ export class APIClient {
     return this.call('user.resetPassword', emailOrUsername);
   }
   user_updatePublicProfile(values: {
-    url?: string | undefined;
     country?: string | null | undefined;
     name?: string | undefined;
+    url?: string | undefined;
     bio?: string | undefined;
   }): Rx.Observable<void> {
     return this.call('user.updatePublicProfile', values);
