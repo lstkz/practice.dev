@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Select } from 'src/components/Select';
 import { getDiscussionState, DiscussionActions } from './DiscussionTab';
 import { useActions } from 'typeless';
-import { Theme } from 'ui';
 
 interface SortOptionsProps {
   className?: string;
@@ -50,7 +49,5 @@ const _SortOptions = (props: SortOptionsProps) => {
 
 export const SortOptions = styled(_SortOptions)`
   display: flex;
-  margin-top: 30px;
   padding: 20px 0;
-  border-top: 1px solid ${Theme.grayLight};
 `;

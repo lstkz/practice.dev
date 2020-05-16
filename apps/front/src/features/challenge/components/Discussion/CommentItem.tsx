@@ -189,7 +189,7 @@ const _CommentItem = (props: CommentItemProps) => {
           <CommentItem comment={item} user={user} key={item.id} isNested />
         ))}
       </SubComments>
-      {!isNested && (
+      {!isNested && user && (
         <Bottom>
           <VoidLink onClick={() => setIsReplyVisible(true)}>Reply</VoidLink>
         </Bottom>

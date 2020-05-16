@@ -48,5 +48,7 @@ it('should throw an error if not author', async () => {
 
 it('should throw an error if already deleted', async () => {
   await deleteComment('1', '100');
-  await expect(deleteComment('1', '100')).rejects.toThrow('Already deleted');
+  await expect(deleteComment('1', '100')).rejects.toThrow(
+    'Comment is already deleted'
+  );
 });

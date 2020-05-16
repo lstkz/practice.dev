@@ -22,7 +22,7 @@ export const deleteComment = createContract('discussion.deleteComment')
       throw new AppError('No permissions');
     }
     if (comment.isDeleted) {
-      throw new AppError('Already deleted');
+      throw new AppError('Comment is already deleted');
     }
     comment.text = null;
     comment.isDeleted = true;

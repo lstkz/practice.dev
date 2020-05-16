@@ -15,6 +15,8 @@ import { CommentItem } from './CommentItem';
 import { ConfirmModalActions } from 'src/features/confirmModal/interface';
 import { useUser } from 'src/hooks/useUser';
 import { LoadMoreButton } from 'src/components/LoadMoreButton';
+import { Theme } from 'ui';
+import { GlobalActions } from 'src/features/global/interface';
 
 export const [handle, DiscussionActions, getDiscussionState] = createModule(
   DiscussionSymbol
@@ -103,9 +105,10 @@ handle
                 DiscussionActions.commentDeleted(comment.id),
                 ConfirmModalActions.close(),
               ]),
-              Rx.catchLog(e =>
-                Rx.of(ConfirmModalActions.setError(getErrorMessage(e)))
-              )
+              Rx.catchLog(e => [
+                ConfirmModalActions.close(),
+                GlobalActions.showAppError(getErrorMessage(e)),
+              ])
             ),
             Rx.of(ConfirmModalActions.setIsLoading(null))
           );
@@ -199,6 +202,11 @@ const NoData = styled.div`
   margin-top: 40px;
 `;
 
+const Separator = styled.div`
+  border-top: 1px solid ${Theme.grayLight};
+  margin-top: 30px;
+`;
+
 export function DiscussionTab() {
   const { isLoaded, items, isLoading, cursor } = getDiscussionState.useState();
   const { load } = useActions(DiscussionActions);
@@ -237,7 +245,12 @@ export function DiscussionTab() {
 
   return (
     <Wrapper>
-      {user && <AddComment showBanner />}
+      {user && (
+        <>
+          <AddComment showBanner />
+          <Separator />
+        </>
+      )}
       {renderComment()}
     </Wrapper>
   );
