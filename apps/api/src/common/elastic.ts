@@ -42,6 +42,7 @@ export interface SearchResult<T> {
 export interface BaseEntityClass {
   entityType: string;
   new (...args: any[]): any;
+  fromJSON(values: Record<string, any>): any;
 }
 
 export async function esSearch<T extends BaseEntityClass>(
@@ -84,7 +85,7 @@ export async function esSearch<T extends BaseEntityClass>(
   const items = hits.map((x: any) => x._source);
   const lastSort = hasLast && hits[hits.length - 2]?.sort;
   return {
-    items: items.slice(0, criteria.limit).map(props => new Entity(props)),
+    items: items.slice(0, criteria.limit).map(props => Entity.fromJSON(props)),
     lastKey: lastSort ? encLastKey(lastSort) : null,
   };
 }

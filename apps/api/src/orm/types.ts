@@ -34,6 +34,10 @@ export interface BaseEntityStatic<TProps, TKey> {
     this: T,
     rawValues: Record<string, any>
   ): InstanceType<T>;
+  fromJSON<T extends BaseEntityClass<TProps, TKey>>(
+    this: T,
+    values: Record<string, any>
+  ): InstanceType<T>;
   getByKey<T extends BaseEntityClass<TProps, TKey>>(
     this: T,
     key: TKey

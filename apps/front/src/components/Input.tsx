@@ -25,6 +25,7 @@ export interface InputProps {
   multiline?: boolean;
   description?: React.ReactNode;
   testId?: string;
+  style?: object;
 }
 
 const Prepend = styled.div`

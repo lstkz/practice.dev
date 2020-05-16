@@ -17,7 +17,7 @@
   "devDependencies": {
     "@types/chalk": "^2.2.0",
     "@types/puppeteer": "^2.0.1",
-    "typescript": "3.8.3",
+    "typescript": "3.9.2",
     "jest": "^24.7.1",
     "tslint": "^5.16.0",
     "ts-jest": "^24.1.0",

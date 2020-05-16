@@ -6,17 +6,12 @@ import { SolutionActions } from 'src/features/solution/interface';
 import { useActions } from 'typeless';
 import { GlobalSolutionsActions } from 'src/features/globalSolutions/interface';
 import { useUser } from 'src/hooks/useUser';
-import { VoidLink } from './VoidLink';
 import { Loader } from './Loader';
+import { LoadMoreButton } from './LoadMoreButton';
 
 const NoData = styled.div`
   text-align: center;
   margin-top: 40px;
-`;
-
-const LoadMore = styled.div`
-  margin-top: 20px;
-  text-align: center;
 `;
 
 interface SolutionListProp {
@@ -89,15 +84,7 @@ export function SolutionList(props: SolutionListProp) {
         />
       ))}
       {cursor && (
-        <LoadMore>
-          {isLoading ? (
-            <VoidLink>Loading...</VoidLink>
-          ) : (
-            <VoidLink data-test="load-more-btn" onClick={() => load(true)}>
-              Load More
-            </VoidLink>
-          )}
-        </LoadMore>
+        <LoadMoreButton isLoading={isLoading} onClick={() => load(true)} />
       )}
     </div>
   );

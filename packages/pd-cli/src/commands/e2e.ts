@@ -227,21 +227,23 @@ async function uploadS3(bucketName: string) {
   const files = walk(buildDir);
 
   await Promise.all(
-    files.map(async filePath => {
-      const contentType = mime.lookup(filePath);
-      if (!contentType) {
-        throw new Error('no contentType for ' + filePath);
-      }
-      const file = Path.relative(buildDir, filePath);
-      await s3
-        .upload({
-          Bucket: bucketName,
-          Key: file.replace(/\\/g, '/'),
-          Body: await fs.readFile(filePath),
-          ContentType: contentType,
-        })
-        .promise();
-    })
+    files
+      .filter(path => !path.endsWith('.DS_Store'))
+      .map(async filePath => {
+        const contentType = mime.lookup(filePath);
+        if (!contentType) {
+          throw new Error('no contentType for ' + filePath);
+        }
+        const file = Path.relative(buildDir, filePath);
+        await s3
+          .upload({
+            Bucket: bucketName,
+            Key: file.replace(/\\/g, '/'),
+            Body: await fs.readFile(filePath),
+            ContentType: contentType,
+          })
+          .promise();
+      })
   );
 }
 

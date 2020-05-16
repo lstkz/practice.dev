@@ -30,6 +30,22 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "contact.sendContact"*/ '../contracts/contact/sendContact'
     ).then(x => x['sendContactRpc']),
+  'discussion.createComment': () =>
+    import(
+      /* webpackChunkName: "discussion.createComment"*/ '../contracts/discussion/createComment'
+    ).then(x => x['loginRpc']),
+  'discussion.deleteComment': () =>
+    import(
+      /* webpackChunkName: "discussion.deleteComment"*/ '../contracts/discussion/deleteComment'
+    ).then(x => x['deleteCommentRpc']),
+  'discussion.markAnswer': () =>
+    import(
+      /* webpackChunkName: "discussion.markAnswer"*/ '../contracts/discussion/markAnswer'
+    ).then(x => x['markAnswerRpc']),
+  'discussion.searchComments': () =>
+    import(
+      /* webpackChunkName: "discussion.searchComments"*/ '../contracts/discussion/searchComments'
+    ).then(x => x['searchCommentsRpc']),
   'errorReporting.reportFrontendError': () =>
     import(
       /* webpackChunkName: "errorReporting.reportFrontendError"*/ '../contracts/errorReporting/reportFrontendError'

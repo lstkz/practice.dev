@@ -67,4 +67,7 @@ export const AppErrorBanner = styled(_AppErrorBanner)`
   background: ${Theme.red};
   padding: 15px;
   position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 `;

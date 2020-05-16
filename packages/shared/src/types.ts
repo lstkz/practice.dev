@@ -208,3 +208,16 @@ export interface PresignedPost {
   url: string;
   fields: Record<string, string>;
 }
+
+export interface DiscussionComment {
+  id: string;
+  parentCommentId?: string | null;
+  user: PublicUser;
+  challengeId: number;
+  text: string;
+  isAnswered: boolean;
+  isAnswer: boolean;
+  isDeleted: boolean;
+  children: DiscussionComment[];
+  createdAt: string;
+}
