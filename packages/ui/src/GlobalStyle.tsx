@@ -2,9 +2,6 @@ import { createGlobalStyle } from 'styled-components';
 import { Theme } from './Theme';
 
 export const GlobalStyle = createGlobalStyle`
-@import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500,600);
-@import url('https://fonts.googleapis.com/css?family=Roboto+Mono:400,700&display=swap');
-
 *,
 *::before,
 *::after

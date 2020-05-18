@@ -7,6 +7,10 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
     />
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <style>
+      @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,600');
+      @import url('https://fonts.googleapis.com/css?family=Roboto+Mono:400,700&display=swap');
+    </style>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <% for (var chunk in htmlWebpackPlugin.files.css) { %>
     <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[chunk] %>" />
