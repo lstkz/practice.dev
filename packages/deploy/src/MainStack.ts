@@ -47,7 +47,7 @@ export class MainStack extends cdk.Stack {
       });
     }
     new Socket(this, { apiLambda });
-    new WebSiteDist(this, initOnly, {
+    new WebSiteDist(this, {
       mainBucket,
     });
   }

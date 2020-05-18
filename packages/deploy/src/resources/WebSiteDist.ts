@@ -1,21 +1,14 @@
 import cdk = require('@aws-cdk/core');
 import cf = require('@aws-cdk/aws-cloudfront');
 import s3 = require('@aws-cdk/aws-s3');
-import s3deploy = require('@aws-cdk/aws-s3-deployment');
-import Path from 'path';
 import { MainBucket } from './MainBucket';
-import { appsDir } from '../helper';
 
 interface WebSiteDistDeps {
   mainBucket: MainBucket;
 }
 
 export class WebSiteDist {
-  constructor(
-    scope: cdk.Construct,
-    initOnly: boolean,
-    { mainBucket }: WebSiteDistDeps
-  ) {
+  constructor(scope: cdk.Construct, { mainBucket }: WebSiteDistDeps) {
     const cfIdentity = new cf.OriginAccessIdentity(
       scope,
       'CloudFrontOriginAccessIdentity',
@@ -146,22 +139,8 @@ export class WebSiteDist {
       ],
     });
 
-    new s3deploy.BucketDeployment(scope, 'DeployS3', {
-      memoryLimit: 512,
-      sources: [
-        s3deploy.Source.asset(
-          initOnly
-            ? Path.join(__dirname, '../../website-placeholder')
-            : Path.join(appsDir, 'front/build')
-        ),
-      ],
-      destinationBucket: deployBucket,
-      distribution,
-      distributionPaths: ['/index.html'],
-    });
-
     new cdk.CfnOutput(scope, 'deployBucket', {
-      value: deployBucket.bucketDomainName,
+      value: deployBucket.bucketName,
     });
 
     new cdk.CfnOutput(scope, 'domainName', {
