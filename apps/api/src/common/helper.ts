@@ -191,3 +191,21 @@ export function doFn<T>(fn: () => T) {
 export function getUserAvatarUploadKey(userId: string) {
   return `upload-avatar/${userId}`;
 }
+
+export function differenceBy<T, K, R>(
+  items: T[],
+  other: K[],
+  fn: (item: T | K) => R
+) {
+  const set = new Set(other.map(fn));
+  return items.filter(x => !set.has(fn(x)));
+}
+
+export function intersectionBy<T, K, R>(
+  items: T[],
+  other: K[],
+  fn: (item: T | K) => R
+) {
+  const set = new Set(other.map(fn));
+  return items.filter(x => set.has(fn(x)));
+}

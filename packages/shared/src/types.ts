@@ -221,3 +221,36 @@ export interface DiscussionComment {
   children: DiscussionComment[];
   createdAt: string;
 }
+
+export type ProjectDomain = 'frontend' | 'backend' | 'fullstack' | 'styling';
+
+export interface Project {
+  id: number;
+  title: string;
+  solvedPercent: number;
+  createdAt: string;
+  stats: ProjectStats;
+  domain: ProjectDomain;
+}
+
+export interface ProjectStats {
+  submissions: number;
+  solved: number;
+}
+
+export interface ProjectChallenge {
+  id: number;
+  projectId: number;
+  title: string;
+  description: string;
+  detailsBundleS3Key: string;
+  testCase: string;
+  isSolved: boolean;
+  createdAt: string;
+  assets?: Record<string, string> | null;
+}
+
+export interface ProjectChallengeStats {
+  submissions: number;
+  solved: number;
+}

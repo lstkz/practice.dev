@@ -54,6 +54,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "featureSubscription.createFeatureSubscription"*/ '../contracts/featureSubscription/createFeatureSubscription'
     ).then(x => x['confirmEmailRpc']),
+  'project.updateProject': () =>
+    import(
+      /* webpackChunkName: "project.updateProject"*/ '../contracts/project/updateProject'
+    ).then(x => x['updateProjectRpc']),
   'solution.createSolution': () =>
     import(
       /* webpackChunkName: "solution.createSolution"*/ '../contracts/solution/createSolution'

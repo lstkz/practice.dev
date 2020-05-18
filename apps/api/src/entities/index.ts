@@ -17,3 +17,5 @@ export * from './SocketConnectionEntity';
 export * from './SolutionTagStatsEntity';
 export * from './SolutionSlugEntity';
 export * from './FeatureSubscriptionEntity';
+export * from './ProjectEntity';
+export * from './ProjectChallengeEntity';
