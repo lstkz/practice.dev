@@ -2,6 +2,8 @@ import util from 'util';
 import uuid from 'uuid';
 import { APIGatewayProxyEvent, ALBEvent, APIHttpEvent } from '../types';
 import { handler as rpcHandler } from '../handler';
+import { AppError } from '../common/errors';
+import { ValidationError } from 'schema';
 
 const baseHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -26,6 +28,16 @@ function _getHttpParams(event: APIGatewayProxyEvent | ALBEvent | APIHttpEvent) {
     httpMethod: event.httpMethod,
     path: event.path,
   };
+}
+
+function _isPublicError(e: any) {
+  const target = e.original instanceof Error ? e.original : e;
+  return target instanceof AppError || target instanceof ValidationError;
+}
+
+function _getPublicErrorMessage(e: any) {
+  const target = e.original instanceof Error ? e.original : e;
+  return target.message;
 }
 
 export async function handler(
@@ -69,13 +81,24 @@ export async function handler(
     const serialized = util.inspect(e, { depth: null });
     const requestId = event.requestContext?.requestId || uuid();
     console.error(requestId, serialized);
-    return {
-      statusCode: 400,
-      headers: baseHeaders,
-      body: JSON.stringify({
-        error: e.message,
-        requestId,
-      }),
-    };
+    if (_isPublicError(e)) {
+      return {
+        statusCode: 400,
+        headers: baseHeaders,
+        body: JSON.stringify({
+          error: _getPublicErrorMessage(e),
+          requestId,
+        }),
+      };
+    } else {
+      return {
+        statusCode: 500,
+        headers: baseHeaders,
+        body: JSON.stringify({
+          error: 'Internal server error',
+          requestId,
+        }),
+      };
+    }
   }
 }
