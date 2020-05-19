@@ -31,4 +31,21 @@ export class ProjectChallengeSolvedEntity extends BaseEntity {
     });
     return items;
   }
+
+  static async getProjectSolvedByUserId(
+    projectId: number,
+    userId: string | undefined
+  ) {
+    if (!userId) {
+      return [];
+    }
+    const items = await this.queryAll({
+      key: {
+        pk: `PROJECT_CHALLENGE_SOLVED:${userId}`,
+        sk: ['begins_with', `PROJECT_CHALLENGE_SOLVED:${projectId}`],
+      },
+      sort: 'asc',
+    });
+    return items;
+  }
 }

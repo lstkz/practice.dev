@@ -110,6 +110,7 @@ export const searchProjects = createContract('project.searchProjects')
 
 export const searchProjectsRpc = createRpcBinding({
   injectUser: true,
+  public: true,
   signature: 'project.searchProjects',
   handler: searchProjects,
 });
