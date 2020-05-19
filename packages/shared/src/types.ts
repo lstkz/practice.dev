@@ -237,11 +237,15 @@ export interface Project {
   domain: ProjectDomain;
 }
 
+export interface ProjectInfo {
+  id: number;
+  title: string;
+}
+
 export type ProjectStats = Record<string, number>;
 
 export interface ProjectChallenge {
   id: number;
-  projectId: number;
   title: string;
   description: string;
   detailsBundleS3Key: string;
@@ -249,6 +253,9 @@ export interface ProjectChallenge {
   isSolved: boolean;
   createdAt: string;
   assets?: Record<string, string> | null;
+  stats: ProjectChallengeStats;
+  isLocked: boolean;
+  project: ProjectInfo;
 }
 
 export interface ProjectChallengeStats {
