@@ -58,6 +58,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "project.getProjectById"*/ '../contracts/project/getProjectById'
     ).then(x => x['getProjectByIdRpc']),
+  'project.getProjectChallenge': () =>
+    import(
+      /* webpackChunkName: "project.getProjectChallenge"*/ '../contracts/project/getProjectChallenge'
+    ).then(x => x['getProjectChallengeRpc']),
   'project.searchProjects': () =>
     import(
       /* webpackChunkName: "project.searchProjects"*/ '../contracts/project/searchProjects'

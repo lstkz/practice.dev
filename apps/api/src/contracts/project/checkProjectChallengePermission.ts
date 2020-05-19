@@ -7,7 +7,7 @@ export const checkProjectChallengePermission = createContract(
 )
   .params('userId', 'values')
   .schema({
-    userId: S.string(),
+    userId: S.string().optional(),
     values: S.object().keys({
       projectId: S.number(),
       challengeId: S.number(),
@@ -16,6 +16,9 @@ export const checkProjectChallengePermission = createContract(
   .fn(async (userId, values) => {
     if (values.challengeId === 1) {
       return true;
+    }
+    if (!userId) {
+      return false;
     }
     const result = await ProjectChallengeSolvedEntity.getByKeyOrNull({
       userId,

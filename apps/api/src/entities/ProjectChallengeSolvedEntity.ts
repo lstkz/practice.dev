@@ -48,4 +48,19 @@ export class ProjectChallengeSolvedEntity extends BaseEntity {
     });
     return items;
   }
+
+  static async getIsSolved(
+    userId: string | undefined,
+    { challengeId, projectId }: { projectId: number; challengeId: number }
+  ) {
+    if (!userId) {
+      return false;
+    }
+    const solved = await this.getByKeyOrNull({
+      userId,
+      challengeId,
+      projectId,
+    });
+    return solved != null;
+  }
 }
