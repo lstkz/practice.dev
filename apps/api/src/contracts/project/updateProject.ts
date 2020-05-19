@@ -43,17 +43,15 @@ export const updateProject = createContract('project.updateProject')
     const t = createTransaction();
     if (project) {
       safeAssign(project, exactValues);
-      t.update(project, safeKeys(exactValues));
-      await project.update(safeKeys(exactValues));
+      project.challengeCount = challenges.length;
+      t.update(project, [...safeKeys(exactValues), 'challengeCount']);
     } else {
       const newProject = new ProjectEntity({
         ...exactValues,
         projectId: values.id,
         createdAt: Date.now(),
-        stats: {
-          solved: 0,
-          submissions: 0,
-        },
+        challengeCount: challenges.length,
+        stats: {},
       });
       t.insert(newProject);
     }

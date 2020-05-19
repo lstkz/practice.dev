@@ -102,6 +102,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "challenge.submit"*/ '../contracts/submission/submit'
     ).then(x => x['submitRpc']),
+  'submission.submitProject': () =>
+    import(
+      /* webpackChunkName: "submission.submitProject"*/ '../contracts/submission/submitProject'
+    ).then(x => x['submitProjectRpc']),
   'user.authGithub': () =>
     import(
       /* webpackChunkName: "user.authGithub"*/ '../contracts/user/authGithub'

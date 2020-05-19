@@ -17,6 +17,7 @@ beforeEach(async () => {
       challengeId: 1,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
+      type: 'challenge',
     }),
     createSubmissionCUD({
       submissionId: 's2',
@@ -25,6 +26,7 @@ beforeEach(async () => {
       challengeId: 1,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
+      type: 'challenge',
     }),
     createSubmissionCUD({
       submissionId: 's3',
@@ -33,6 +35,7 @@ beforeEach(async () => {
       challengeId: 2,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
+      type: 'challenge',
     }),
     createSubmissionCUD({
       submissionId: 's4',
@@ -41,6 +44,7 @@ beforeEach(async () => {
       challengeId: 2,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
+      type: 'challenge',
     }),
   ]);
   await esReIndexFromDynamo(SubmissionEntity.entityType);

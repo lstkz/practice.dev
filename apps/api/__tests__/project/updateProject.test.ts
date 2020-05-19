@@ -13,6 +13,17 @@ beforeEach(async () => {
   await makeAdmin(user!.id);
 });
 
+function _getChallenge(id: number) {
+  return {
+    id: id,
+    detailsBundleS3Key: 'a' + id,
+    description: 'b' + id,
+    testCase: 'c' + id,
+    testsBundleS3Key: 'd' + id,
+    title: 'e' + id,
+  };
+}
+
 it('create and update a project', async () => {
   Date.now = () => 123;
   const getLatest = () =>
@@ -32,15 +43,13 @@ it('create and update a project', async () => {
 
   expect(await getLatest()).toMatchInlineSnapshot(`
     ProjectEntity {
+      "challengeCount": 0,
       "createdAt": 123,
       "description": "desc",
       "domain": "frontend",
       "entityType": "Project",
       "projectId": 1,
-      "stats": Object {
-        "solved": 0,
-        "submissions": 0,
-      },
+      "stats": Object {},
       "title": "foo",
     }
   `);
@@ -56,15 +65,13 @@ it('create and update a project', async () => {
   );
   expect(await getLatest()).toMatchInlineSnapshot(`
     ProjectEntity {
+      "challengeCount": 0,
       "createdAt": 123,
       "description": "desc2",
       "domain": "fullstack",
       "entityType": "Project",
       "projectId": 1,
-      "stats": Object {
-        "solved": 0,
-        "submissions": 0,
-      },
+      "stats": Object {},
       "title": "foo2",
     }
   `);
@@ -80,24 +87,7 @@ it('create and update a project challenges', async () => {
     domain: 'frontend',
   } as const;
 
-  await updateProject(project, [
-    {
-      id: 1,
-      detailsBundleS3Key: 'a1',
-      description: 'b1',
-      testCase: 'c1',
-      testsBundleS3Key: 'd1',
-      title: 'e1',
-    },
-    {
-      id: 2,
-      detailsBundleS3Key: 'a2',
-      description: 'b2',
-      testCase: 'c2',
-      testsBundleS3Key: 'd2',
-      title: 'e2',
-    },
-  ]);
+  await updateProject(project, [_getChallenge(1), _getChallenge(2)]);
   expect(await getLatest()).toMatchInlineSnapshot(`
     Array [
       ProjectChallengeEntity {
@@ -139,14 +129,7 @@ it('create and update a project challenges', async () => {
         a: 1,
       },
     },
-    {
-      id: 2,
-      detailsBundleS3Key: 'a2',
-      description: 'b2',
-      testCase: 'c2',
-      testsBundleS3Key: 'd2',
-      title: 'e2',
-    },
+    _getChallenge(2),
   ]);
   expect(await getLatest()).toMatchInlineSnapshot(`
     Array [
@@ -179,24 +162,7 @@ it('create and update a project challenges', async () => {
     ]
   `);
 
-  await updateProject(project, [
-    {
-      id: 2,
-      detailsBundleS3Key: 'a2',
-      description: 'b2',
-      testCase: 'c2',
-      testsBundleS3Key: 'd2',
-      title: 'e2',
-    },
-    {
-      id: 3,
-      detailsBundleS3Key: 'a3',
-      description: 'b3',
-      testCase: 'c3',
-      testsBundleS3Key: 'd3',
-      title: 'e3',
-    },
-  ]);
+  await updateProject(project, [_getChallenge(2), _getChallenge(3)]);
   expect(await getLatest()).toMatchInlineSnapshot(`
     Array [
       ProjectChallengeEntity {
@@ -225,6 +191,31 @@ it('create and update a project challenges', async () => {
       },
     ]
   `);
+});
+
+it('should set challengeCount', async () => {
+  Date.now = () => 123;
+  const getLatest = () =>
+    ProjectEntity.getByKey({
+      projectId: 1,
+    }).then(x => x.challengeCount);
+  const project = {
+    id: 1,
+    title: 'foo',
+    description: 'desc',
+    domain: 'frontend',
+  } as const;
+
+  await updateProject(project, [_getChallenge(1), _getChallenge(2)]);
+  expect(await getLatest()).toEqual(2);
+  await updateProject(project, [
+    _getChallenge(1),
+    _getChallenge(2),
+    _getChallenge(3),
+  ]);
+  expect(await getLatest()).toEqual(3);
+  await updateProject(project, []);
+  expect(await getLatest()).toEqual(0);
 });
 
 it('should throw error if not admin', async () => {

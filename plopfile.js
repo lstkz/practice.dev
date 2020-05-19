@@ -37,4 +37,28 @@ module.exports = function generate(plop) {
       },
     ],
   });
+  plop.setGenerator('contract', {
+    prompts: [
+      {
+        type: 'input',
+        name: 'ns',
+        message: 'choose ns name in camelCase (e.g. user)',
+        basePath: '.',
+      },
+      {
+        type: 'input',
+        name: 'name',
+        message: 'choose contract name in camelCase (e.g. registerUser)',
+        basePath: '.',
+      },
+    ],
+    actions: [
+      {
+        type: 'addMany',
+        destination: path.join(__dirname, 'apps/api/src/contracts'),
+        base: '.blueprints/contract',
+        templateFiles: '.blueprints/contract/**/**',
+      },
+    ],
+  });
 };

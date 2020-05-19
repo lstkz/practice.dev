@@ -1,6 +1,6 @@
 import * as R from 'remeda';
 import { createBaseEntity } from '../lib';
-import { SubmissionStatus, Submission } from 'shared';
+import { SubmissionStatus, Submission, SubmissionType } from 'shared';
 import { UserEntity } from './UserEntity';
 
 export interface SubmissionKey {
@@ -11,16 +11,17 @@ export interface SubmissionProps {
   submissionId: string;
   createdAt: number;
   challengeId: number;
+  projectId?: number;
   userId: string;
   status: SubmissionStatus;
   result?: string;
   testUrl: string;
+  type: SubmissionType;
 }
 
 const BaseEntity = createBaseEntity('Submission')
   .props<SubmissionProps>()
   .key<SubmissionKey>(key => `SUBMISSION:${key.submissionId}`)
-
   .build();
 
 export class SubmissionEntity extends BaseEntity {
@@ -28,9 +29,11 @@ export class SubmissionEntity extends BaseEntity {
     return {
       id: this.submissionId,
       challengeId: this.challengeId,
+      projectId: this.projectId,
       user: user.toPublicUser(),
       status: this.status,
       createdAt: new Date(this.createdAt).toISOString(),
+      type: this.type,
     };
   }
 

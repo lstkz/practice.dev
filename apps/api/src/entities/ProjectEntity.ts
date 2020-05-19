@@ -11,6 +11,7 @@ export interface ProjectProps extends ProjectKey {
   createdAt: number;
   stats: ProjectStats;
   domain: ProjectDomain;
+  challengeCount: number;
 }
 
 const BaseEntity = createBaseEntity('Project')

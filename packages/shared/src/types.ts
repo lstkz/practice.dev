@@ -77,10 +77,14 @@ export enum SubmissionStatus {
 export interface Submission {
   id: string;
   challengeId: number;
+  projectId?: number;
   user: PublicUser;
   status: SubmissionStatus;
   createdAt: string;
+  type: SubmissionType;
 }
+
+export type SubmissionType = 'challenge' | 'project';
 
 export interface SolutionTag {
   name: string;
@@ -94,7 +98,6 @@ export interface ChallengeTag {
 
 export interface TesterMessage {
   id: string;
-  challengeId: number;
   testUrl: string;
   tests: string;
   userId: string;
@@ -234,8 +237,10 @@ export interface Project {
 }
 
 export interface ProjectStats {
-  submissions: number;
-  solved: number;
+  [x: number]: {
+    submissions: number;
+    solved: number;
+  };
 }
 
 export interface ProjectChallenge {

@@ -2,8 +2,9 @@ import { createContract } from '../../lib';
 import { S } from 'schema';
 import { SubmissionStatus } from 'shared';
 import { SubmissionEntity } from '../../entities';
-import { AppError } from '../../common/errors';
+import { AppError, UnreachableCaseError } from '../../common/errors';
 import { createChallengeSolvedCUD } from '../../cud/challengeSolved';
+import { createProjectChallengeSolvedCUD } from '../../cud/projectChallengeSolved';
 
 export const updateSubmissionStatus = createContract(
   'submission.updateSubmissionStatus'
@@ -26,16 +27,36 @@ export const updateSubmissionStatus = createContract(
     submission.status = values.status;
     submission.result = values.result;
     await submission.update(['status', 'result']);
+
     if (values.status === SubmissionStatus.Pass) {
-      await createChallengeSolvedCUD(
-        {
-          challengeId: submission.challengeId,
-          userId: submission.userId,
-          solvedAt: Date.now(),
-        },
-        {
-          ignoreTransactionCanceled: true,
-        }
-      );
+      switch (submission.type) {
+        case 'challenge':
+          await createChallengeSolvedCUD(
+            {
+              challengeId: submission.challengeId,
+              userId: submission.userId,
+              solvedAt: Date.now(),
+            },
+            {
+              ignoreTransactionCanceled: true,
+            }
+          );
+          break;
+        case 'project':
+          await createProjectChallengeSolvedCUD(
+            {
+              projectId: submission.projectId!,
+              challengeId: submission.challengeId,
+              userId: submission.userId,
+              solvedAt: Date.now(),
+            },
+            {
+              ignoreTransactionCanceled: true,
+            }
+          );
+          break;
+        default:
+          throw new UnreachableCaseError(submission.type);
+      }
     }
   });
