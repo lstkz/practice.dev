@@ -40,7 +40,7 @@ export async function testerHandler(event: SNSEvent) {
       Key: msg.tests,
     })
     .promise();
-  const testName = R.last(msg.tests.split('/'));
+  const testName = R.last(msg.tests.split('/'))!;
   const testPath = path.join('/tmp', testName);
   fs.writeFileSync(testPath, s3Object.Body);
 

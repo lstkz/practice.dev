@@ -36,7 +36,6 @@ export class ChallengeSolvedEntity extends BaseEntity {
     const items = await this.queryAll({
       key: {
         pk: `CHALLENGE_SOLVED:${userId}`,
-        data_n: null,
       },
       sort: 'asc',
     });

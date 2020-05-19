@@ -54,6 +54,22 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "featureSubscription.createFeatureSubscription"*/ '../contracts/featureSubscription/createFeatureSubscription'
     ).then(x => x['confirmEmailRpc']),
+  'project.getProjectById': () =>
+    import(
+      /* webpackChunkName: "project.getProjectById"*/ '../contracts/project/getProjectById'
+    ).then(x => x['getProjectByIdRpc']),
+  'project.getProjectChallenge': () =>
+    import(
+      /* webpackChunkName: "project.getProjectChallenge"*/ '../contracts/project/getProjectChallenge'
+    ).then(x => x['getProjectChallengeRpc']),
+  'project.searchProjects': () =>
+    import(
+      /* webpackChunkName: "project.searchProjects"*/ '../contracts/project/searchProjects'
+    ).then(x => x['searchProjectsRpc']),
+  'project.updateProject': () =>
+    import(
+      /* webpackChunkName: "project.updateProject"*/ '../contracts/project/updateProject'
+    ).then(x => x['updateProjectRpc']),
   'solution.createSolution': () =>
     import(
       /* webpackChunkName: "solution.createSolution"*/ '../contracts/solution/createSolution'
@@ -98,6 +114,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "challenge.submit"*/ '../contracts/submission/submit'
     ).then(x => x['submitRpc']),
+  'submission.submitProject': () =>
+    import(
+      /* webpackChunkName: "submission.submitProject"*/ '../contracts/submission/submitProject'
+    ).then(x => x['submitProjectRpc']),
   'user.authGithub': () =>
     import(
       /* webpackChunkName: "user.authGithub"*/ '../contracts/user/authGithub'

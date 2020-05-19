@@ -41,6 +41,7 @@ it('return user with stats', async () => {
       challengeId: 1,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
+      type: 'challenge',
     }),
     createSubmissionCUD({
       submissionId: 's2',
@@ -49,6 +50,7 @@ it('return user with stats', async () => {
       challengeId: 1,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
+      type: 'challenge',
     }),
     // solution by user 2
     createSubmissionCUD({
@@ -58,6 +60,7 @@ it('return user with stats', async () => {
       challengeId: 1,
       testUrl: 'https://example.org',
       status: SubmissionStatus.Queued,
+      type: 'challenge',
     }),
     createSolutionCUD({
       challengeId: 1,

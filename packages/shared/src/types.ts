@@ -77,10 +77,14 @@ export enum SubmissionStatus {
 export interface Submission {
   id: string;
   challengeId: number;
+  projectId?: number;
   user: PublicUser;
   status: SubmissionStatus;
   createdAt: string;
+  type: SubmissionType;
 }
+
+export type SubmissionType = 'challenge' | 'project';
 
 export interface SolutionTag {
   name: string;
@@ -94,7 +98,6 @@ export interface ChallengeTag {
 
 export interface TesterMessage {
   id: string;
-  challengeId: number;
   testUrl: string;
   tests: string;
   userId: string;
@@ -220,4 +223,42 @@ export interface DiscussionComment {
   isDeleted: boolean;
   children: DiscussionComment[];
   createdAt: string;
+}
+
+export type ProjectDomain = 'frontend' | 'backend' | 'fullstack' | 'styling';
+
+export interface Project {
+  id: number;
+  title: string;
+  description: string;
+  solvedPercent: number;
+  createdAt: string;
+  stats: ProjectStats;
+  domain: ProjectDomain;
+}
+
+export interface ProjectInfo {
+  id: number;
+  title: string;
+}
+
+export type ProjectStats = Record<string, number>;
+
+export interface ProjectChallenge {
+  id: number;
+  title: string;
+  description: string;
+  detailsBundleS3Key: string;
+  testCase: string;
+  isSolved: boolean;
+  createdAt: string;
+  assets?: Record<string, string> | null;
+  stats: ProjectChallengeStats;
+  isLocked: boolean;
+  project: ProjectInfo;
+}
+
+export interface ProjectChallengeStats {
+  submissions: number;
+  solved: number;
 }

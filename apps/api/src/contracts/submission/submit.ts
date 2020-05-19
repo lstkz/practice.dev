@@ -1,16 +1,10 @@
-import { createContract, createRpcBinding, sns } from '../../lib';
-import { rateLimit } from '../misc/rateLimit';
-import { getDuration } from '../../common/helper';
+import { createContract, createRpcBinding } from '../../lib';
 import { S } from 'schema';
-import uuid from 'uuid';
-import { SubmissionStatus, TesterMessage, urlRegex } from 'shared';
-import { TESTER_TOPIC_ARN } from '../../config';
+import { urlRegex } from 'shared';
 import { AppError } from '../../common/errors';
 import { ChallengeEntity } from '../../entities';
-import { createSubmissionCUD } from '../../cud/submission';
-
-const RATE_LIMIT_PER_DAY = 1000;
-const RATE_LIMIT_PER_HOUR = 100;
+import { _rateLimitSubmit } from './_rateLimitSubmit';
+import { _completeSubmit } from './_completeSubmit';
 
 export const submit = createContract('submission.submit')
   .params('userId', 'values')
@@ -28,50 +22,19 @@ export const submit = createContract('submission.submit')
     if (!challenge) {
       throw new AppError('Challenge not found');
     }
-
-    await Promise.all([
-      rateLimit(
-        `SUBMIT_days:${userId}`,
-        getDuration(1, 'd'),
-        RATE_LIMIT_PER_DAY
-      ),
-      rateLimit(
-        `SUBMIT_hours:${userId}`,
-        getDuration(1, 'h'),
-        RATE_LIMIT_PER_HOUR
-      ),
-    ]);
-    const id = uuid();
-    const submission = await createSubmissionCUD({
-      submissionId: id,
-      challengeId: values.challengeId,
-      userId,
-      status: SubmissionStatus.Queued,
-      createdAt: Date.now(),
-      testUrl: values.testUrl,
-    });
-    await submission.insert();
-    const testerMessage: TesterMessage = {
-      id,
-      challengeId: values.challengeId,
-      testUrl: values.testUrl,
-      userId,
+    const id = await _completeSubmit(userId, {
+      ...values,
       tests: challenge.testsBundleS3Key,
-      type: challenge.domain === 'backend' ? 'backend' : 'frontend',
-    };
-    await sns
-      .publish({
-        TopicArn: TESTER_TOPIC_ARN,
-        Message: JSON.stringify(testerMessage),
-      })
-      .promise();
-
+      testType: challenge.domain === 'backend' ? 'backend' : 'frontend',
+      type: 'challenge',
+    });
     return {
       id,
     };
   });
 
 export const submitRpc = createRpcBinding({
+  verified: true,
   injectUser: true,
   signature: 'challenge.submit',
   handler: submit,
