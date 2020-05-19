@@ -19,7 +19,8 @@ export const checkProjectChallengePermission = createContract(
     }
     const result = await ProjectChallengeSolvedEntity.getByKeyOrNull({
       userId,
-      ...values,
+      projectId: values.projectId,
+      challengeId: values.challengeId - 1,
     });
     return result != null;
   });

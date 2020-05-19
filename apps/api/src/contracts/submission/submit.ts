@@ -34,6 +34,7 @@ export const submit = createContract('submission.submit')
   });
 
 export const submitRpc = createRpcBinding({
+  verified: true,
   injectUser: true,
   signature: 'challenge.submit',
   handler: submit,

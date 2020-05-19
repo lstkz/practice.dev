@@ -12,7 +12,7 @@ export function updateProjectStats(
   t.updateRaw({
     tableName: TABLE_NAME,
     key: ProjectEntity.createKey({ projectId }),
-    updateExpression: `SET stats.${challengeId}.${name} = if_not_exists(stats.${challengeId}.${name}, :zero) + :inc`,
+    updateExpression: `SET stats.${name}_${challengeId} = if_not_exists(stats.${name}_${challengeId}, :zero) + :inc`,
     expressionValues: {
       ':inc': add,
       ':zero': 0,

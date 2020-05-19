@@ -42,7 +42,7 @@ export const submitProject = createContract('submission.submitProject')
       ...values,
       tests: challenge.testsBundleS3Key,
       testType: project.domain === 'backend' ? 'backend' : 'frontend',
-      type: 'challenge',
+      type: 'project',
     });
     return {
       id,
@@ -50,6 +50,7 @@ export const submitProject = createContract('submission.submitProject')
   });
 
 export const submitProjectRpc = createRpcBinding({
+  verified: true,
   injectUser: true,
   signature: 'submission.submitProject',
   handler: submitProject,

@@ -1,8 +1,8 @@
 import { dynamodb } from '../src/lib';
 import { Converter } from 'aws-sdk/clients/dynamodb';
-import { ChallengeStats } from 'shared';
+import { ChallengeStats, ProjectStats } from 'shared';
 import { TABLE_NAME } from '../src/config';
-import { ChallengeEntity } from '../src/entities';
+import { ChallengeEntity, ProjectEntity } from '../src/entities';
 import { esClearIndex, exIndexBulk } from '../src/common/elastic';
 
 export async function resetDb() {
@@ -44,6 +44,21 @@ export async function setChallengeStats(id: number, stats: ChallengeStats) {
       Key: Converter.marshall(
         ChallengeEntity.createKey({
           challengeId: id,
+        })
+      ),
+      UpdateExpression: 'SET stats = :stats',
+      ExpressionAttributeValues: Converter.marshall({ ':stats': stats }),
+    })
+    .promise();
+}
+
+export async function setProjectStats(id: number, stats: ProjectStats) {
+  await dynamodb
+    .updateItem({
+      TableName: TABLE_NAME,
+      Key: Converter.marshall(
+        ProjectEntity.createKey({
+          projectId: id,
         })
       ),
       UpdateExpression: 'SET stats = :stats',

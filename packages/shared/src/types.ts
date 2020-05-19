@@ -230,18 +230,14 @@ export type ProjectDomain = 'frontend' | 'backend' | 'fullstack' | 'styling';
 export interface Project {
   id: number;
   title: string;
+  description: string;
   solvedPercent: number;
   createdAt: string;
   stats: ProjectStats;
   domain: ProjectDomain;
 }
 
-export interface ProjectStats {
-  [x: number]: {
-    submissions: number;
-    solved: number;
-  };
-}
+export type ProjectStats = Record<string, number>;
 
 export interface ProjectChallenge {
   id: number;

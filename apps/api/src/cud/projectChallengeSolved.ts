@@ -1,6 +1,6 @@
 import {
-  ChallengeSolvedEntity,
   ProjectChallengeSolvedProps,
+  ProjectChallengeSolvedEntity,
 } from '../entities';
 import { createTransaction } from '../lib';
 import { CommitOptions } from '../orm/Transaction';
@@ -11,7 +11,7 @@ export async function createProjectChallengeSolvedCUD(
   props: ProjectChallengeSolvedProps,
   options?: CommitOptions
 ) {
-  const solved = new ChallengeSolvedEntity(props);
+  const solved = new ProjectChallengeSolvedEntity(props);
   const t = createTransaction();
   t.insert(solved, {
     conditionExpression: 'attribute_not_exists(pk)',

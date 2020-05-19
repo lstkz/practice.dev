@@ -1,6 +1,7 @@
 import { _createUser } from '../src/contracts/user/_createUser';
 import { createToken } from '../src/contracts/user/createToken';
 import { updateChallenge } from '../src/contracts/challenge/updateChallenge';
+import { updateProject } from '../src/contracts/project/updateProject';
 
 export async function registerSampleUsers(isVerified = true) {
   await Promise.all([
@@ -56,5 +57,88 @@ export async function addSampleChallenges() {
       tags: ['foo'],
       testCase: 'a',
     }),
+  ]);
+}
+
+export async function addSampleProjects() {
+  await Promise.all([
+    updateProject(
+      {
+        id: 1,
+        title: 'foo',
+        description: 'foo',
+        domain: 'frontend',
+      },
+      [
+        {
+          id: 1,
+          title: 'foo1',
+          description: 'foo1',
+          detailsBundleS3Key: 'http://example.org',
+          testsBundleS3Key: 'http://example.org/tests',
+          testCase: 'a',
+        },
+        {
+          id: 2,
+          title: 'foo2',
+          description: 'foo2',
+          detailsBundleS3Key: 'http://example.org',
+          testsBundleS3Key: 'http://example.org/tests',
+          testCase: 'a',
+        },
+        {
+          id: 3,
+          title: 'foo3',
+          description: 'foo3',
+          detailsBundleS3Key: 'http://example.org',
+          testsBundleS3Key: 'http://example.org/tests',
+          testCase: 'a',
+        },
+      ]
+    ),
+    updateProject(
+      {
+        id: 2,
+        title: 'bar',
+        description: 'bar',
+        domain: 'backend',
+      },
+      [
+        {
+          id: 1,
+          title: 'bar1',
+          description: 'bar1',
+          detailsBundleS3Key: 'http://example.org',
+          testsBundleS3Key: 'http://example.org/tests',
+          testCase: 'a',
+        },
+        {
+          id: 2,
+          title: 'bar',
+          description: 'bar',
+          detailsBundleS3Key: 'http://example.org',
+          testsBundleS3Key: 'http://example.org/tests',
+          testCase: 'a',
+        },
+      ]
+    ),
+    updateProject(
+      {
+        id: 3,
+        title: 'baz',
+        description: 'baz',
+        domain: 'fullstack',
+      },
+      [
+        {
+          id: 1,
+          title: 'baz1',
+          description: 'baz1',
+          detailsBundleS3Key: 'http://example.org',
+          testsBundleS3Key: 'http://example.org/tests',
+          testCase: 'a',
+        },
+      ]
+    ),
   ]);
 }

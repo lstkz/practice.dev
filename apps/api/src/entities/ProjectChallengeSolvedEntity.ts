@@ -18,4 +18,17 @@ const BaseEntity = createBaseEntity('ProjectChallengeSolved')
   }))
   .build();
 
-export class ProjectChallengeSolvedEntity extends BaseEntity {}
+export class ProjectChallengeSolvedEntity extends BaseEntity {
+  static async getAllByUserId(userId: string | undefined) {
+    if (!userId) {
+      return [];
+    }
+    const items = await this.queryAll({
+      key: {
+        pk: `PROJECT_CHALLENGE_SOLVED:${userId}`,
+      },
+      sort: 'asc',
+    });
+    return items;
+  }
+}
