@@ -8,7 +8,7 @@ export interface ConfirmCodeProps extends ConfirmCodeKey {
   userId: string;
 }
 
-const BaseEntity = createBaseEntity('ConfirmCodeE')
+const BaseEntity = createBaseEntity('ConfirmCode')
   .props<ConfirmCodeProps>()
   .key<ConfirmCodeKey>(key => `CONFIRM_CODE:${key.code}`)
   .build();

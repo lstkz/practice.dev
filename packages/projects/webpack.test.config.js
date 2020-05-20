@@ -1,7 +1,28 @@
 'use strict';
 
 const path = require('path');
+const fs = require('fs');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+
+/**@type {any} */
+const entry = {};
+const dir = fs.readdirSync(__dirname);
+
+dir
+  .filter(name => {
+    const stats = fs.statSync(path.join(__dirname, name));
+    return stats.isDirectory() && /^\d\d\d\-/.test(name);
+  })
+  .forEach(name => {
+    const dir = fs.readdirSync(path.join(__dirname, name));
+    dir.forEach(subName => {
+      const exec = /challenge-(\d+)/.exec(subName);
+      if (exec) {
+        const challengeId = exec[1];
+        entry[`${name}/${challengeId}`] = [`./${name}/${subName}/test-case.ts`];
+      }
+    });
+  });
 
 module.exports = {
   name: 'client',
@@ -12,14 +33,9 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js', '.json', 'json5'],
   },
-  entry: {
-    '001-counter': ['./001-counter/test-case.ts'],
-    '002-simple-password-validator': [
-      './002-simple-password-validator/test-case.ts',
-    ],
-  },
+  entry: entry,
   output: {
-    filename: '[name].[hash].js',
+    filename: '[name].js',
     libraryTarget: 'commonjs',
     path: path.join(__dirname, './dist/tests'),
     publicPath: '/',
