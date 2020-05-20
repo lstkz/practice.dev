@@ -9,6 +9,8 @@ import {
   PagedResult,
   DiscussionComment,
   LoadMoreResult,
+  Project,
+  ProjectChallenge,
   Solution,
   SolutionTag,
   Submission,
@@ -107,6 +109,46 @@ export class APIClient {
       email
     );
   }
+  project_getProjectById(
+    id: number
+  ): Rx.Observable<{ project: Project; challenges: ProjectChallenge[] }> {
+    return this.call('project.getProjectById', id);
+  }
+  project_getProjectChallenge(values: {
+    challengeId: number;
+    projectId: number;
+  }): Rx.Observable<ProjectChallenge> {
+    return this.call('project.getProjectChallenge', values);
+  }
+  project_searchProjects(criteria: {
+    sortBy?: 'created' | 'solved' | 'submissions' | undefined;
+    sortOrder?: 'desc' | 'asc' | undefined;
+    pageSize?: number | undefined;
+    pageNumber?: number | undefined;
+    domains?: string[] | undefined;
+    statuses?: ('solved' | 'unsolved' | 'partial')[] | undefined;
+  }): Rx.Observable<PagedResult<Project>> {
+    return this.call('project.searchProjects', criteria);
+  }
+  project_updateProject(
+    values: {
+      id: number;
+      title: string;
+      description: string;
+      domain: 'frontend' | 'backend' | 'fullstack' | 'styling';
+    },
+    challenges: {
+      id: number;
+      title: string;
+      description: string;
+      detailsBundleS3Key: string;
+      testsBundleS3Key: string;
+      testCase: string;
+      assets?: { [key: string]: any } | null | undefined;
+    }[]
+  ): Rx.Observable<void> {
+    return this.call('project.updateProject', values, challenges);
+  }
   solution_createSolution(values: {
     title: string;
     tags: string[];
@@ -186,6 +228,13 @@ export class APIClient {
     testUrl: string;
   }): Rx.Observable<{ id: string }> {
     return this.call('challenge.submit', values);
+  }
+  submission_submitProject(values: {
+    challengeId: number;
+    projectId: number;
+    testUrl: string;
+  }): Rx.Observable<{ id: string }> {
+    return this.call('submission.submitProject', values);
   }
   user_authGithub(code: string): Rx.Observable<AuthData> {
     return this.call('user.authGithub', code);
