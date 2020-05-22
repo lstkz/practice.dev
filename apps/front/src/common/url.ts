@@ -23,6 +23,10 @@ export type UrlOptions =
       name: 'projects';
     }
   | {
+      name: 'project';
+      id: number;
+    }
+  | {
       name: 'contests';
     }
   | {
@@ -56,6 +60,10 @@ export function createUrl(options: UrlOptions) {
       if (options.solutionSlug) {
         url += '?s=' + options.solutionSlug;
       }
+      return url;
+    }
+    case 'project': {
+      let url = '/project/' + options.id;
       return url;
     }
     case 'home':
@@ -126,7 +134,8 @@ export function isRoute(
     | 'reset-password'
     | 'challenge'
     | 'profile'
-    | 'faq',
+    | 'faq'
+    | 'projects',
   location?: RouterLocation | null
 ): boolean {
   const { pathname } = location || getRouterState().location!;
@@ -218,5 +227,32 @@ export function createChallengesUrl(params: ChallengesUrlParams) {
 
 export function createFullChallengesUrl(params: ChallengesUrlParams) {
   const { pathname, search } = createChallengesUrl(params);
+  return pathname + search;
+}
+
+interface ProjectsUrlParams {
+  statuses?: string[];
+  domains?: string[];
+  sortOrder?: string;
+}
+export function createProjectsUrl(params: ProjectsUrlParams) {
+  const query: any = {};
+  if (params.statuses?.length) {
+    query.status = params.statuses.join(',');
+  }
+  if (params.domains?.length) {
+    query.domain = params.domains.join(',');
+  }
+  if (params.sortOrder && params.sortOrder !== 'oldest') {
+    query.sortOrder = params.sortOrder;
+  }
+  return {
+    pathname: createUrl({ name: 'projects' }),
+    search: stringifyQueryString(query, true),
+  };
+}
+
+export function createFullProjectsUrl(params: ProjectsUrlParams) {
+  const { pathname, search } = createProjectsUrl(params);
   return pathname + search;
 }

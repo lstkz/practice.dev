@@ -4,13 +4,14 @@ import { Theme } from 'src/common/Theme';
 
 interface SolvedTagProps {
   className?: string;
+  percent?: number;
 }
 
 const _SolvedTag = (props: SolvedTagProps) => {
-  const { className } = props;
+  const { className, percent } = props;
   return (
     <div data-test="solved-tag" className={className}>
-      SOLVED
+      {percent && percent < 100 ? `${percent}%` : ''} SOLVED
     </div>
   );
 };

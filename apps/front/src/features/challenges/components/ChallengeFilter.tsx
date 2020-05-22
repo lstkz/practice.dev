@@ -15,13 +15,10 @@ import {
   getFilter,
 } from '../module';
 import { getRouterState } from 'typeless-router';
+import { capitalize, toggleMapValue } from 'src/common/helper';
 
 interface ChallengeFilterProps {
   className?: string;
-}
-
-function capitalize(str: string) {
-  return str[0].toUpperCase() + str.substr(1);
 }
 
 const _ChallengeFilter = (props: ChallengeFilterProps) => {
@@ -44,13 +41,10 @@ const _ChallengeFilter = (props: ChallengeFilterProps) => {
                 testId={`option-${item}`}
                 key={item}
                 onChange={() => {
-                  let copy = { ...filter.statuses };
-                  if (copy[item]) {
-                    delete copy[item];
-                  } else {
-                    copy[item] = item;
-                  }
-                  updateFilter('statuses', copy);
+                  updateFilter(
+                    'statuses',
+                    toggleMapValue(filter.statuses, item)
+                  );
                 }}
                 checked={!!filter.statuses[item]}
               >
@@ -67,13 +61,10 @@ const _ChallengeFilter = (props: ChallengeFilterProps) => {
               testId={`option-${item}`}
               key={item}
               onChange={() => {
-                let copy = { ...filter.difficulties };
-                if (copy[item]) {
-                  delete copy[item];
-                } else {
-                  copy[item] = item;
-                }
-                updateFilter('difficulties', copy);
+                updateFilter(
+                  'difficulties',
+                  toggleMapValue(filter.difficulties, item)
+                );
               }}
               checked={!!filter.difficulties[item]}
             >
@@ -89,13 +80,7 @@ const _ChallengeFilter = (props: ChallengeFilterProps) => {
               testId={`option-${item}`}
               key={item}
               onChange={() => {
-                let copy = { ...filter.domains };
-                if (copy[item]) {
-                  delete copy[item];
-                } else {
-                  copy[item] = item;
-                }
-                updateFilter('domains', copy);
+                updateFilter('domains', toggleMapValue(filter.domains, item));
               }}
               checked={!!filter.domains[item]}
             >

@@ -9,32 +9,8 @@ import { Breadcrumb } from 'src/components/Breadcrumb';
 import { createUrl } from 'src/common/url';
 import { ChallengesIcon } from 'src/icons/ChallengesIcon';
 import { ChallengeFilter } from './ChallengeFilter';
-import { Theme } from 'src/common/Theme';
 import { Loader } from 'src/components/Loader';
-
-const ChallengesCol = styled.div`
-  flex-grow: 1;
-`;
-
-const FilterCol = styled.div`
-  display: flex;
-  width: 220px;
-  flex-grow: 0;
-  flex-shrink: 0;
-`;
-
-const SepCol = styled.div`
-  width: 1px;
-  background: ${Theme.bgLightGray6};
-  margin-left: 40px;
-  margin-right: 30px;
-  flex-shrink: 0;
-`;
-
-const Wrapper = styled.div`
-  display: flex;
-  margin-top: 20px;
-`;
+import { FilterLayout } from 'src/components/FilterLayout';
 
 const NoData = styled.div`
   text-align: center;
@@ -53,23 +29,22 @@ export function ChallengesView() {
           url={createUrl({ name: 'challenges' })}
           root="Challenges"
         />
-        <Wrapper>
-          <ChallengesCol>
-            {isLoading ? (
-              <Loader center />
-            ) : items.length === 0 ? (
-              <NoData data-test="no-challenges">No Challenges</NoData>
-            ) : (
-              items.map(item => (
-                <ChallengeInfo key={item.id} challenge={item} />
-              ))
-            )}
-          </ChallengesCol>
-          <SepCol />
-          <FilterCol>
-            <ChallengeFilter />
-          </FilterCol>
-        </Wrapper>
+        <FilterLayout
+          content={
+            <>
+              {isLoading ? (
+                <Loader center />
+              ) : items.length === 0 ? (
+                <NoData data-test="no-challenges">No Challenges</NoData>
+              ) : (
+                items.map(item => (
+                  <ChallengeInfo key={item.id} challenge={item} />
+                ))
+              )}
+            </>
+          }
+          filter={<ChallengeFilter />}
+        />
       </Container>
     </Dashboard>
   );

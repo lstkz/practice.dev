@@ -152,3 +152,45 @@ export function countryListItemToOption({
     label: `${emoji} ${name}`,
   };
 }
+
+export function parseFilterValue(str: string, allowed?: string[]) {
+  const value = (str || '').trim().toLowerCase();
+  if (!allowed || allowed.includes(value)) {
+    return value;
+  } else {
+    return null;
+  }
+}
+
+export function parseFilterValues(str: string, allowed?: string[]) {
+  const values = (str || '')
+    .split(',')
+    .map(x => parseFilterValue(x, allowed))
+    .filter(x => x) as string[];
+  return values;
+}
+
+export function parseFilterMap(str: string, allowed?: string[]) {
+  const values = parseFilterValues(str, allowed);
+  return values.reduce((ret, value) => {
+    ret[value] = value;
+    return ret;
+  }, {} as any);
+}
+
+export function capitalize(str: string) {
+  return str[0].toUpperCase() + str.substr(1);
+}
+
+export function toggleMapValue<
+  T extends Record<string, string | undefined>,
+  K extends string
+>(map: T, value: K): T {
+  let copy = { ...map };
+  if (copy[value]) {
+    delete copy[value];
+  } else {
+    (copy as any)[value] = value;
+  }
+  return copy;
+}
