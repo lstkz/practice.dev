@@ -1,5 +1,5 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Theme, Button } from 'ui';
 import { Tag } from './Tag';
 import { SolvedTag } from './SolvedTag';
@@ -10,9 +10,11 @@ interface MediaCardProps {
   icon: React.ReactNode;
   title: React.ReactNode;
   description: React.ReactNode;
-  tags: React.ReactNode;
-  stats: React.ReactNode;
+  tags?: React.ReactNode;
+  stats?: React.ReactNode;
   button: React.ReactNode;
+  disabled?: boolean;
+  highlighted?: boolean;
 }
 
 const Top = styled.div`
@@ -49,6 +51,7 @@ const Col3 = styled.div`
 `;
 
 const Tags = styled.div`
+margin-top: 15px;
   ${Tag} + ${Tag} {
     margin-left: 10px;
   } 
@@ -56,7 +59,6 @@ const Tags = styled.div`
 
 const Desc = styled.div`
   margin-top: 10px;
-  margin-bottom: 15px;
 `;
 
 const _MediaCard = (props: MediaCardProps) => {
@@ -77,7 +79,7 @@ const _MediaCard = (props: MediaCardProps) => {
       <Col2>
         <Top>{title}</Top>
         <Desc data-test="desc">{description}</Desc>
-        <Tags>{tags}</Tags>
+        {tags && <Tags>{tags}</Tags>}
       </Col2>
       <Col3>
         {stats}
@@ -96,4 +98,15 @@ export const MediaCard = styled(_MediaCard)`
   margin-bottom: 20px;
   padding: 20px 20px 25px 25px;
   position: relative;
+  ${props =>
+    props.disabled &&
+    css`
+      opacity: 0.6;
+    `}
+  ${props =>
+    props.highlighted &&
+    css`
+      border: 1px solid ${Theme.blueTag};
+      background: ${Theme.lightBlue};
+    `}
 `;

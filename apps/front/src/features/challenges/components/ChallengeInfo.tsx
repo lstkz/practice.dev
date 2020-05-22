@@ -1,15 +1,13 @@
 import React from 'react';
 import { Button } from 'ui';
 import { Challenge } from 'shared';
-import { UserIcon } from 'src/icons/UserIcon';
-import { FileIcon } from 'src/icons/FileIcon';
 import { createUrl } from 'src/common/url';
 import { SolvedTag } from 'src/components/SolvedTag';
 import { ChallengeTags } from 'src/components/ChallengeTags';
 import { Title } from 'src/components/Title';
-import { IconCounter } from 'src/components/IconCounter';
 import { MediaCard } from 'src/components/MediaCard';
 import { DomainIcon } from 'src/components/DomainIcon';
+import { SubmissionStats } from 'src/components/SubmissionStats';
 
 interface ChallengeInfoProps {
   challenge: Challenge;
@@ -39,20 +37,10 @@ export function ChallengeInfo(props: ChallengeInfoProps) {
       description={challenge.description}
       tags={<ChallengeTags challenge={challenge} />}
       stats={
-        <>
-          <IconCounter
-            icon={<FileIcon />}
-            count={challenge.stats.submissions}
-            tooltip="Total Submissions"
-            testId="submissions"
-          />
-          <IconCounter
-            icon={<UserIcon />}
-            count={challenge.stats.solved}
-            tooltip="User Solved"
-            testId="solved"
-          />
-        </>
+        <SubmissionStats
+          submissions={challenge.stats.submissions}
+          solved={challenge.stats.solved}
+        />
       }
       button={
         <Button

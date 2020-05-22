@@ -8,7 +8,7 @@ export function getRefType(
   if (!ref.startsWith('#/components/schemas/')) {
     throw new Error('$ref must start with #/components/schemas/');
   }
-  const name = R.last(ref.split('/'));
+  const name = R.last(ref.split('/'))!;
   const schema = schemas[name];
   if (!schema) {
     throw new Error(`Schema ${name} not found`);

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { FrontendIcon } from 'src/icons/FrontendIcon';
 import { Theme } from 'src/common/Theme';
 import { Tag } from 'src/components/Tag';
 import { getChallengeState } from '../interface';
@@ -9,6 +8,7 @@ import { useActions } from 'typeless';
 import { SubmitActions, getSubmitState } from 'src/features/submit/interface';
 import { SolutionActions } from 'src/features/solution/interface';
 import { ChallengeTags } from 'src/components/ChallengeTags';
+import { DomainIcon } from 'src/components/DomainIcon';
 
 interface ChallengeHeaderProps {
   className?: string;
@@ -62,7 +62,7 @@ const _ChallengeHeader = (props: ChallengeHeaderProps) => {
   return (
     <div className={className}>
       <Col1>
-        <FrontendIcon />
+        <DomainIcon domain={challenge.domain} />
       </Col1>
       <Col2>
         <Title data-test="challenge-title">{challenge.title}</Title>

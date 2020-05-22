@@ -1,10 +1,11 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Theme } from 'src/common/Theme';
 
 interface SolvedTagProps {
   className?: string;
   percent?: number;
+  large?: boolean;
 }
 
 const _SolvedTag = (props: SolvedTagProps) => {
@@ -26,4 +27,14 @@ export const SolvedTag = styled(_SolvedTag)`
   height: 16px;
   padding: 0 5px;
   background: ${Theme.green};
+  white-space: pre;
+  ${props =>
+    props.large &&
+    css`
+      font-size: 14px;
+      font-weight: 500;
+      height: 24px;
+      padding: 0 10px;
+      line-height: 1;
+    `}
 `;

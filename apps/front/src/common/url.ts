@@ -27,6 +27,11 @@ export type UrlOptions =
       id: number;
     }
   | {
+      name: 'project-challenge';
+      projectId: number;
+      id: number;
+    }
+  | {
       name: 'contests';
     }
   | {
@@ -66,6 +71,10 @@ export function createUrl(options: UrlOptions) {
       let url = '/projects/' + options.id;
       return url;
     }
+    case 'project-challenge': {
+      let url = `/projects/${options.projectId}/challenges/${options.id}`;
+      return url;
+    }
     case 'home':
       return '/challenges';
     case 'tos':
@@ -85,6 +94,7 @@ export function createUrl(options: UrlOptions) {
 
 export function getRouteParams(name: 'reset-password'): { code: string };
 export function getRouteParams(name: 'challenge'): { id: number };
+export function getRouteParams(name: 'project'): { id: number };
 export function getRouteParams(name: 'confirm'): { code: string };
 export function getRouteParams(name: 'confirm-change-email'): { code: string };
 export function getRouteParams(name: 'profile'): { username: string };
@@ -93,6 +103,7 @@ export function getRouteParams(
   name:
     | 'reset-password'
     | 'challenge'
+    | 'project'
     | 'confirm'
     | 'profile'
     | 'confirm-change-email'
@@ -108,6 +119,7 @@ export function getRouteParams(
         code: getLast(),
       };
     }
+    case 'project':
     case 'challenge': {
       return {
         id: Number(getLast()),

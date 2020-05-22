@@ -82,6 +82,7 @@ handle
                 id: submissionId!,
                 createdAt: started.toISOString(),
                 user: null!,
+                type: 'challenge',
                 status: item.payload.success
                   ? SubmissionStatus.Pass
                   : SubmissionStatus.Fail,
