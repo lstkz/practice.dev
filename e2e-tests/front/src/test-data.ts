@@ -1,7 +1,22 @@
-import { PagedResult, Challenge, AuthData, TestInfo, Solution } from 'shared';
+import {
+  PagedResult,
+  Challenge,
+  AuthData,
+  TestInfo,
+  Solution,
+  Project,
+} from 'shared';
 import { getRange } from './helper';
 
 export const emptyChallenges: PagedResult<Challenge> = {
+  items: [],
+  pageNumber: 0,
+  pageSize: 0,
+  total: 0,
+  totalPages: 0,
+};
+
+export const emptyProjects: PagedResult<Project> = {
   items: [],
   pageNumber: 0,
   pageSize: 0,
@@ -102,3 +117,26 @@ export const solutions: Solution[] = getRange(20).map(id => {
     },
   };
 });
+
+export const getProjects = (loggedIn: boolean) =>
+  getRange(20).map(id => {
+    const mod3 = id % 3;
+    const mod4 = id % 4;
+    return {
+      id,
+      createdAt: new Date(2000, 0, id).toISOString(),
+      title: 'Project ' + id,
+      description: 'Desc ' + id,
+      domain: mod4 === 0 ? 'backend' : mod4 === 1 ? 'frontend' : 'fullstack',
+      solvedPercent: loggedIn ? (mod3 === 1 ? 50 : mod3 === 2 ? 100 : 0) : 0,
+      stats:
+        mod3 === 1
+          ? {
+              solved_1: 10,
+              solved_2: 20,
+              submissions_1: 20,
+              submissions_2: 30,
+            }
+          : {},
+    } as Project;
+  });

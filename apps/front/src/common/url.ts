@@ -63,7 +63,7 @@ export function createUrl(options: UrlOptions) {
       return url;
     }
     case 'project': {
-      let url = '/project/' + options.id;
+      let url = '/projects/' + options.id;
       return url;
     }
     case 'home':
