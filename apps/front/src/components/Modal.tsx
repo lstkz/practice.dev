@@ -159,9 +159,10 @@ export function Modal(props: ModalProps) {
           }}
         >
           <FocusContainer data-focus-root>
+            <div ref={modalRef}></div>
             <ModalContent
               data-test={testId}
-              ref={modalRef}
+              ref={modalRef as any}
               style={{
                 background: transparent ? 'transparent' : 'white',
                 maxWidth: size === 'md' ? 800 : size === 'sm' ? 460 : undefined,

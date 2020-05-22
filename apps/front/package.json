@@ -18,7 +18,6 @@
     "@types/react-image-crop": "^8.1.2",
     "@types/react-select": "^3.0.10",
     "@types/react-tooltip": "^3.11.0",
-    "@types/styled-components": "^5.1.0",
     "@types/typed.js": "^2.0.9",
     "@types/webpack-env": "^1.14.0",
     "copy-webpack-plugin": "^5.1.1",
