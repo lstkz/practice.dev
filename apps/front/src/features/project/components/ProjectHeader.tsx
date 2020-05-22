@@ -57,12 +57,12 @@ const _ProjectHeader = (props: ProjectHeaderProps) => {
   const { solved, submissions } = useProjectStats(project);
 
   return (
-    <div className={className}>
+    <div className={className} data-test="project">
       <Col1>
         <DomainIcon domain={project.domain} />
       </Col1>
       <Col2>
-        <Title data-test="project-title">{project.title}</Title>
+        <Title data-test="title">{project.title}</Title>
         <Desc>{project.description}</Desc>
       </Col2>
       <Col3>

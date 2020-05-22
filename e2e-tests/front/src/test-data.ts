@@ -5,6 +5,7 @@ import {
   TestInfo,
   Solution,
   Project,
+  ProjectChallenge,
 } from 'shared';
 import { getRange } from './helper';
 
@@ -139,4 +140,46 @@ export const getProjects = (loggedIn: boolean) =>
             }
           : {},
     } as Project;
+  });
+
+export const getProjectChallenges: (loggedIn: boolean) => ProjectChallenge[] = (
+  loggedIn: boolean
+) =>
+  getRange(4).map(id => {
+    return {
+      id,
+      createdAt: new Date(2000, 0, id).toISOString(),
+      title: 'Challenge ' + id,
+      description: 'Desc ' + id,
+      detailsBundleS3Key: `bundle.js`,
+      isSolved: loggedIn && id % 2 === 1,
+      stats: {
+        likes: 10,
+        solutions: 4,
+        solved: 1,
+        submissions: 100,
+      },
+      isLocked: id > 1,
+      testCase: JSON.stringify([
+        {
+          id: 1,
+          name: 'Navigate to page',
+          steps: [],
+        },
+        {
+          id: 2,
+          name: 'Click on button',
+          steps: [],
+        },
+        {
+          id: 3,
+          name: 'Enter text',
+          steps: [],
+        },
+      ]),
+      project: {
+        id: 1,
+        title: 'Project 1',
+      },
+    } as ProjectChallenge;
   });

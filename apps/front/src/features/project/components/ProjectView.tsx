@@ -27,6 +27,8 @@ const Wrapper = styled.div`
 const Challenges = styled.div`
   padding: 30px 50px;
   background: white;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 `;
 
 export function ProjectView() {
@@ -54,12 +56,17 @@ export function ProjectView() {
                     key={item.id}
                     testId={`challenge_${item.id}`}
                     disabled
-                    title={<Title>Locked</Title>}
+                    title={<Title testId="title">Locked</Title>}
                     stats={stats}
                     description="Challenge details are locked. Complete previous challenges to be able to access it."
                     icon={<DomainIcon domain={project.domain} />}
                     button={
-                      <Button icon={<LockIcon />} disabled type="primary">
+                      <Button
+                        testId="solve-btn"
+                        icon={<LockIcon />}
+                        disabled
+                        type="primary"
+                      >
                         Solve
                       </Button>
                     }
@@ -71,7 +78,6 @@ export function ProjectView() {
                 id: item.id,
                 projectId: project.id,
               });
-
               return (
                 <MediaCard
                   highlighted={challenges[i + 1]?.isLocked ?? true}
@@ -80,14 +86,16 @@ export function ProjectView() {
                   title={
                     <>
                       {item.isSolved && <SolvedTag />}
-                      <Title href={href}>{item.title}</Title>
+                      <Title testId="title" href={href}>
+                        {item.title}
+                      </Title>
                     </>
                   }
                   stats={stats}
                   description={item.description}
                   icon={<DomainIcon domain={project.domain} />}
                   button={
-                    <Button href={href} type="primary">
+                    <Button testId="solve-btn" href={href} type="primary">
                       Solve
                     </Button>
                   }
