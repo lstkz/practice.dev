@@ -95,6 +95,9 @@ export function createUrl(options: UrlOptions) {
 export function getRouteParams(name: 'reset-password'): { code: string };
 export function getRouteParams(name: 'challenge'): { id: number };
 export function getRouteParams(name: 'project'): { id: number };
+export function getRouteParams(
+  name: 'projectChallenge'
+): { id: number; projectId: number };
 export function getRouteParams(name: 'confirm'): { code: string };
 export function getRouteParams(name: 'confirm-change-email'): { code: string };
 export function getRouteParams(name: 'profile'): { username: string };
@@ -108,6 +111,7 @@ export function getRouteParams(
     | 'profile'
     | 'confirm-change-email'
     | 'faq'
+    | 'projectChallenge'
 ): any {
   const location = getRouterState().location!;
   const getLast = () => R.last(location.pathname.split('/'));
@@ -123,6 +127,13 @@ export function getRouteParams(
     case 'challenge': {
       return {
         id: Number(getLast()),
+      };
+    }
+    case 'projectChallenge': {
+      const [, , projectId, , challengeId] = location.pathname.split('/');
+      return {
+        projectId: Number(projectId),
+        id: Number(challengeId),
       };
     }
     case 'profile': {

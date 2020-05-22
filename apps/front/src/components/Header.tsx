@@ -123,13 +123,15 @@ const _Header = (props: HeaderProps) => {
             <Logo type="light" />
           </Brand>
           <Nav>
-            <NavItem active={pathname === '/' || pathname === '/challenges'}>
+            <NavItem
+              active={pathname === '/' || pathname.startsWith('/challenges')}
+            >
               <Link href={createUrl({ name: 'challenges' })}>Challenges</Link>
             </NavItem>
-            <NavItem active={pathname === '/projects'}>
+            <NavItem active={pathname.startsWith('/projects')}>
               <Link href={createUrl({ name: 'projects' })}>Projects</Link>
             </NavItem>
-            <NavItem active={pathname === '/contests'}>
+            <NavItem active={pathname.startsWith('/contests')}>
               <Link href={createUrl({ name: 'contests' })}>Contests</Link>
             </NavItem>
             <NavItem>

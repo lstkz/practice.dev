@@ -194,3 +194,29 @@ export function toggleMapValue<
   }
   return copy;
 }
+
+const BUNDLE_ID = 'CHALLENGE_BUNDLE_SCRIPT';
+
+function removeBundle() {
+  const existing = document.getElementById(BUNDLE_ID);
+  if (existing) {
+    existing.remove();
+  }
+}
+
+export function loadBundle(detailsBundleS3Key: string) {
+  return new Rx.Observable<any>(subscriber => {
+    removeBundle();
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = BUNDLE_BASE_URL + detailsBundleS3Key;
+    (window as any).ChallengeJSONP = (module: any) => {
+      subscriber.next(module.Details);
+      subscriber.complete();
+    };
+    document.body.appendChild(script);
+    return () => {
+      removeBundle();
+    };
+  });
+}
