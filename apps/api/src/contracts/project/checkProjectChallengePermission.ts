@@ -1,7 +1,6 @@
 import { S } from 'schema';
 import { createContract } from '../../lib';
 import { ProjectChallengeSolvedEntity } from '../../entities';
-import { AppError } from '../../common/errors';
 
 export const checkProjectChallengePermission = createContract(
   'project.checkProjectChallengePermission'
@@ -28,18 +27,3 @@ export const checkProjectChallengePermission = createContract(
     });
     return result != null;
   });
-
-export async function assertProjectChallengePermission(
-  userId: string | undefined,
-  values: {
-    projectId: number;
-    challengeId: number;
-  }
-) {
-  const hasAccess = await checkProjectChallengePermission(userId, values);
-  if (!hasAccess) {
-    throw new AppError(
-      "You don't have permission to access the provided project challenge."
-    );
-  }
-}

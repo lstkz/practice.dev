@@ -77,6 +77,7 @@ export class APIClient {
     challengeId: number;
     text: string;
     parentCommentId?: string | null | undefined;
+    projectId?: number | undefined;
   }): Rx.Observable<DiscussionComment> {
     return this.call('discussion.createComment', values);
   }
@@ -228,15 +229,9 @@ export class APIClient {
   challenge_submit(values: {
     challengeId: number;
     testUrl: string;
+    projectId?: number | undefined;
   }): Rx.Observable<{ id: string }> {
     return this.call('challenge.submit', values);
-  }
-  submission_submitProject(values: {
-    challengeId: number;
-    projectId: number;
-    testUrl: string;
-  }): Rx.Observable<{ id: string }> {
-    return this.call('submission.submitProject', values);
   }
   user_authGithub(code: string): Rx.Observable<AuthData> {
     return this.call('user.authGithub', code);

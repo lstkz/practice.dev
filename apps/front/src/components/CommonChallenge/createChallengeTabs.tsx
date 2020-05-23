@@ -1,10 +1,10 @@
 import React from 'react';
 import { Tab } from '../Tabs';
 import { TabContent } from './TabContent';
-import { ApiSpecTab } from 'src/features/challenge/components/ApiSpecTab';
 import { TestSuite } from './TestSuite';
 import { MyRecentSubmissions } from './MyRecentSubmissions';
 import { TestInfo, Submission } from 'shared';
+import { ApiSpecTab } from './ApiSpecTab';
 
 export function createDetailsTab(
   component: React.ReactNode,

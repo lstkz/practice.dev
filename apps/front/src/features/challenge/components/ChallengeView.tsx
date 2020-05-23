@@ -18,7 +18,6 @@ import { SubmitModal } from '../../submit/components/SubmitModal';
 import { SolutionModal } from 'src/features/solution/components/SolutionModal';
 import { FavoriteSolutions } from './FavoriteSolutions';
 import { useSolutionsModule, SolutionsTab } from './SolutionsTab';
-import { useApiSpecModule } from './ApiSpecTab';
 import { DiscussionTab, useDiscussionModule } from './Discussion/DiscussionTab';
 import { ChallengeLoader } from 'src/components/CommonChallenge/ChallengeLoader';
 import { ChallengeHeader } from 'src/components/CommonChallenge/ChallengeHeader';
@@ -37,6 +36,7 @@ import {
 } from 'src/components/CommonChallenge/ChallengeStats';
 import { VoidLink } from 'src/components/VoidLink';
 import { SidebarStack } from 'src/components/CommonChallenge/SidebarStack';
+import { useApiSpecModule } from 'src/components/CommonChallenge/ApiSpecTab';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};

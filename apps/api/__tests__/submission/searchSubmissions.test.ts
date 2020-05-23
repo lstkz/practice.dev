@@ -141,7 +141,7 @@ it('should throw an error if permission for project', async () => {
       challengeId: 3,
     })
   ).rejects.toThrow(
-    "You don't have permission to access the provided project challenge."
+    "You don't have permission to access the provided Project Challenge."
   );
   await expect(
     searchSubmissions('1', {
@@ -149,7 +149,7 @@ it('should throw an error if permission for project', async () => {
       challengeId: 3,
     })
   ).rejects.toThrow(
-    "You don't have permission to access the provided project challenge."
+    "You don't have permission to access the provided Project Challenge."
   );
 });
 

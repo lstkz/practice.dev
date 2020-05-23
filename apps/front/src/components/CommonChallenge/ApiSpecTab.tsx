@@ -2,7 +2,7 @@ import { Loader } from 'src/components/Loader';
 import * as Rx from 'src/rx';
 import { createModule, useActions } from 'typeless';
 import React from 'react';
-import { ApiSpecSymbol } from '../symbol';
+import { ApiSpecSymbol } from './symbol';
 import styled from 'styled-components';
 import { BUNDLE_BASE_URL } from 'src/config';
 import { handleAppError } from 'src/common/helper';

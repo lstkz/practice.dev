@@ -9,8 +9,7 @@ import { doFn } from '../../common/helper';
 import { SearchResult } from '../../orm/types';
 import { LoadMoreResult, Submission } from 'shared';
 import { esSearch } from '../../common/elastic';
-import { AppError } from '../../common/errors';
-import { assertProjectChallengePermission } from '../project/checkProjectChallengePermission';
+import { validateChallengeOrProjectChallenge } from '../../common/validateChallengeOrProjectChallenge';
 
 export const searchSubmissions = createContract('submission.searchSubmissions')
   .params('userId', 'criteria')
@@ -26,16 +25,10 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
   })
   .fn(async (userId, criteria) => {
     const { challengeId, username, projectId } = criteria;
-
-    if (projectId) {
-      if (!challengeId) {
-        throw new AppError('challengeId is required if projectId is defined');
-      }
-      await assertProjectChallengePermission(userId, {
-        projectId,
-        challengeId,
-      });
-    }
+    await validateChallengeOrProjectChallenge(userId, {
+      projectId,
+      challengeId,
+    });
 
     const { lastKey, items } = await doFn(async () => {
       const userId = username

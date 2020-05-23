@@ -11,6 +11,7 @@ export interface DiscussionCommentKey {
 export interface DiscussionCommentProps extends DiscussionCommentKey {
   userId: string;
   challengeId: number;
+  projectId?: number;
   text: string | null;
   isAnswered?: boolean;
   isAnswer?: boolean;
