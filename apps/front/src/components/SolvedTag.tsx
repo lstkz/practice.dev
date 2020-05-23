@@ -12,7 +12,7 @@ const _SolvedTag = (props: SolvedTagProps) => {
   const { className, percent } = props;
   return (
     <div data-test="solved-tag" className={className}>
-      {percent && percent < 100 ? `${percent}%` : ''} SOLVED
+      {percent && percent < 100 ? `${Math.round(percent)}%` : ''} SOLVED
     </div>
   );
 };

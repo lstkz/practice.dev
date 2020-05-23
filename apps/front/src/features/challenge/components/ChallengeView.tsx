@@ -73,6 +73,10 @@ export function ChallengeView() {
 
   return (
     <Dashboard>
+      <SolutionModal
+        visibleChallengeId={challenge?.id}
+        onTagClick={showSolutionsWithTag}
+      />
       <Container>
         <Breadcrumb
           icon={<ChallengesIcon />}
@@ -86,10 +90,6 @@ export function ChallengeView() {
           ) : (
             <>
               <SubmitModal target={{ challengeId: challenge.id }} />
-              <SolutionModal
-                visibleChallengeId={challenge.id}
-                onTagClick={showSolutionsWithTag}
-              />
               <ChallengeHeader
                 domain={challenge.domain}
                 title={challenge.title}

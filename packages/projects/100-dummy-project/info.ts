@@ -16,7 +16,7 @@ export const info: ProjectInfo = {
       id: 2,
       title: 'Change static text',
       description: 'Change the text created in the previous challenges.',
-      domain: 'backend',
+      domain: 'frontend',
     },
     {
       id: 3,
