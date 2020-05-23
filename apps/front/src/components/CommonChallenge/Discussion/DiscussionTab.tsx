@@ -7,7 +7,7 @@ import { AddComment } from './AddComment';
 import { api } from 'src/services/api';
 import { handleAppError, getErrorMessage } from 'src/common/helper';
 import { LoadMoreResult, DiscussionComment } from 'shared';
-import { SelectOption, DeleteType } from 'src/types';
+import { SelectOption, DeleteType, TargetChallengeValues } from 'src/types';
 import { SortOptions } from './SortOptions';
 import { CommentItem } from './CommentItem';
 import { ConfirmModalActions } from 'src/features/confirmModal/interface';
@@ -22,7 +22,7 @@ export const [handle, DiscussionActions, getDiscussionState] = createModule(
 )
   .withActions({
     $init: null,
-    initTarget: (target: DiscussionTarget) => ({ payload: { target } }),
+    initTarget: (target: TargetChallengeValues) => ({ payload: { target } }),
     load: (loadMore: boolean) => ({ payload: { loadMore } }),
     loaded: (loadMore: boolean, result: LoadMoreResult<DiscussionComment>) => ({
       payload: { loadMore, result },
@@ -46,12 +46,7 @@ interface DiscussionState {
   items: DiscussionComment[];
   cursor: string | null;
   sortBy: SelectOption<DiscussionSortBy>;
-  target: DiscussionTarget;
-}
-
-export interface DiscussionTarget {
-  projectId?: number;
-  challengeId: number;
+  target: TargetChallengeValues;
 }
 
 export type DiscussionSortBy = 'newest' | 'oldest';
@@ -219,7 +214,7 @@ const Separator = styled.div`
 `;
 
 interface DiscussionTabProps {
-  target: DiscussionTarget;
+  target: TargetChallengeValues;
 }
 
 export function DiscussionTab(props: DiscussionTabProps) {

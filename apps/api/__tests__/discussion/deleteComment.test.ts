@@ -17,6 +17,7 @@ beforeEach(async () => {
       userId,
       challengeId: 1,
       parentCommentId: null,
+      type: 'challenge',
     }),
   ];
 

@@ -13,7 +13,6 @@ import {
 import { getAccessToken } from 'src/services/Storage';
 import { SocketMessage, updateTestResult, SubmissionStatus } from 'shared';
 import { api } from 'src/services/api';
-import { getChallengeState, ChallengeActions } from '../challenge/interface';
 import { ActionLike } from 'typeless';
 import { SOCKET_URL } from 'src/config';
 import { getErrorMessage } from 'src/common/helper';
@@ -77,8 +76,8 @@ handle
             subject.next(SubmitActions.testingDone(item.payload.success));
             const { submissionId } = getSubmitState();
             subject.next(
-              ChallengeActions.addRecentSubmission({
-                challengeId: getChallengeState().challenge.id,
+              SubmitActions.newSubmission({
+                ...getSubmitState().target,
                 id: submissionId!,
                 createdAt: started.toISOString(),
                 user: null!,
@@ -112,7 +111,7 @@ handle
         ),
         api
           .challenge_submit({
-            challengeId: getChallengeState().challenge.id,
+            ...getSubmitState().target,
             testUrl: values.url,
           })
           .pipe(
@@ -121,10 +120,7 @@ handle
           ),
         action$.pipe(
           Rx.waitForType(SubmitActions.started),
-          Rx.mergeMap(() => [
-            SubmitActions.close(),
-            ChallengeActions.changeTab('testSuite'),
-          ])
+          Rx.mergeMap(() => [SubmitActions.close()])
         )
       ).pipe(
         Rx.takeUntil(action$.pipe(Rx.waitForType(SubmitActions.setError)))
@@ -157,6 +153,7 @@ const initialState: SubmitState = {
   submissionId: null,
   started: null,
   isSubmitting: false,
+  target: null!,
 };
 
 handle
@@ -200,6 +197,9 @@ handle
         }
       }
     });
+  })
+  .on(SubmitActions.initTarget, (state, { target }) => {
+    state.target = target;
   });
 
 // --- Module ---

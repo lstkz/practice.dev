@@ -142,17 +142,20 @@ handle
   .on(ChallengeActions.changeTab, (state, { tab }) => {
     state.tab = tab;
   })
-  .on(ChallengeActions.addRecentSubmission, (state, { submission }) => {
-    state.recentSubmissions.unshift(submission);
-    state.recentSubmissions = state.recentSubmissions.slice(0, 10);
+  .on(GlobalSolutionsActions.removeSolution, (state, { id }) => {
+    state.favoriteSolutions = state.favoriteSolutions.filter(x => x !== id);
+  })
+  .on(SubmitActions.started, state => {
+    state.tab = 'testSuite';
   })
   .on(SubmitActions.testingDone, (state, { success }) => {
     if (success) {
       state.challenge.isSolved = success;
     }
   })
-  .on(GlobalSolutionsActions.removeSolution, (state, { id }) => {
-    state.favoriteSolutions = state.favoriteSolutions.filter(x => x !== id);
+  .on(SubmitActions.newSubmission, (state, { submission }) => {
+    state.recentSubmissions.unshift(submission);
+    state.recentSubmissions = state.recentSubmissions.slice(0, 10);
   });
 
 // --- Module ---

@@ -5,7 +5,8 @@ import { TestSuite } from './TestSuite';
 import { MyRecentSubmissions } from './MyRecentSubmissions';
 import { TestInfo, Submission } from 'shared';
 import { ApiSpecTab } from './ApiSpecTab';
-import { DiscussionTarget, DiscussionTab } from './Discussion/DiscussionTab';
+import { DiscussionTab } from './Discussion/DiscussionTab';
+import { TargetChallengeValues } from 'src/types';
 
 export function createDetailsTab(
   component: React.ReactNode,
@@ -42,7 +43,7 @@ export function createTestSuiteTab(
   );
 }
 
-export function createDiscussionTab(target: DiscussionTarget) {
+export function createDiscussionTab(target: TargetChallengeValues) {
   return (
     <Tab testId="discussion-tab" title="Discussion" name="discussion">
       <DiscussionTab target={target} />

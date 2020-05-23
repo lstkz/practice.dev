@@ -59,7 +59,6 @@ export function ProjectChallengeView() {
 
   return (
     <Dashboard>
-      <SubmitModal />
       <Container>
         <Breadcrumb
           icon={<ProjectsSmallIcon />}
@@ -72,6 +71,12 @@ export function ProjectChallengeView() {
             <ChallengeLoader />
           ) : (
             <>
+              <SubmitModal
+                target={{
+                  challengeId: challenge.id,
+                  projectId: challenge.project.id,
+                }}
+              />
               <ChallengeHeader
                 domain={challenge.domain}
                 title={challenge.title}

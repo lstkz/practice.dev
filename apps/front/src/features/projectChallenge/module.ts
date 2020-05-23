@@ -80,10 +80,17 @@ handle
   .on(ProjectChallengeActions.changeTab, (state, { tab }) => {
     state.tab = tab;
   })
+  .on(SubmitActions.started, state => {
+    state.tab = 'testSuite';
+  })
   .on(SubmitActions.testingDone, (state, { success }) => {
     if (success) {
       state.challenge.isSolved = success;
     }
+  })
+  .on(SubmitActions.newSubmission, (state, { submission }) => {
+    state.recentSubmissions.unshift(submission);
+    state.recentSubmissions = state.recentSubmissions.slice(0, 10);
   });
 
 // --- Module ---
