@@ -141,6 +141,7 @@ export class APIClient {
       id: number;
       title: string;
       description: string;
+      domain: 'frontend' | 'backend' | 'fullstack' | 'styling';
       detailsBundleS3Key: string;
       testsBundleS3Key: string;
       testCase: string;

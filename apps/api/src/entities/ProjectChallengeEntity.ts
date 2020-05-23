@@ -1,5 +1,5 @@
 import { createBaseEntity } from '../lib';
-import { ProjectChallenge } from 'shared';
+import { ProjectChallenge, ChallengeDomain } from 'shared';
 import { ProjectEntity } from './ProjectEntity';
 
 export interface ProjectChallengeKey {
@@ -10,6 +10,7 @@ export interface ProjectChallengeKey {
 export interface ProjectChallengeProps extends ProjectChallengeKey {
   title: string;
   description: string;
+  domain: ChallengeDomain;
   detailsBundleS3Key: string;
   testsBundleS3Key: string;
   testCase: string;
@@ -48,6 +49,7 @@ export class ProjectChallengeEntity extends BaseEntity {
         ...base,
         title: '',
         description: '',
+        domain: this.domain,
         detailsBundleS3Key: '',
         testCase: '',
         assets: {},
@@ -57,6 +59,7 @@ export class ProjectChallengeEntity extends BaseEntity {
         ...base,
         title: this.title,
         description: this.description,
+        domain: this.domain,
         detailsBundleS3Key: this.detailsBundleS3Key,
         testCase: this.testCase,
         assets: this.assets,

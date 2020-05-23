@@ -11,10 +11,8 @@ import {
 } from '../interface';
 import styled from 'styled-components';
 import { Theme } from 'src/common/Theme';
-import { ChallengeHeader } from './ChallengeHeader';
 import { Container } from 'src/components/Container';
 import { Tab, Tabs } from 'src/components/Tabs';
-import { ChallengeLoader } from './ChallengeLoader';
 import { Stats } from './Stats';
 import { TabContent } from './TabContent';
 import { useActions } from 'typeless';
@@ -27,12 +25,25 @@ import { SidebarStack } from './SidebarStack';
 import { useSolutionsModule, SolutionsTab } from './SolutionsTab';
 import { ApiSpecTab, useApiSpecModule } from './ApiSpecTab';
 import { DiscussionTab, useDiscussionModule } from './Discussion/DiscussionTab';
+import { ChallengeLoader } from 'src/components/CommonChallenge/ChallengeLoader';
+import { ChallengeHeader } from 'src/components/CommonChallenge/ChallengeHeader';
+import { ChallengeTags } from 'src/components/ChallengeTags';
+import { Button } from 'ui';
+import { SubmitActions } from 'src/features/submit/interface';
+import { SolutionActions } from 'src/features/solution/interface';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
   background: ${Theme.bgLightGray7};
   border-radius: 5px;
   margin-bottom: 70px;
+`;
+
+const Buttons = styled.div`
+  width: 100%;
+  ${Button} + ${Button} {
+    margin-top: 10px;
+  }
 `;
 
 export function ChallengeView() {
@@ -48,6 +59,8 @@ export function ChallengeView() {
     tab,
   } = getChallengeState.useState();
   const { changeTab, showSolutionsWithTag } = useActions(ChallengeActions);
+  const { show: showSubmit } = useActions(SubmitActions);
+  const { show: showSolution } = useActions(SolutionActions);
 
   return (
     <Dashboard>
@@ -68,7 +81,34 @@ export function ChallengeView() {
             <ChallengeLoader />
           ) : (
             <>
-              <ChallengeHeader />
+              <ChallengeHeader
+                domain={challenge.domain}
+                title={challenge.title}
+                tags={<ChallengeTags challenge={challenge} />}
+                buttons={
+                  <Buttons>
+                    <Button
+                      testId="submit-btn"
+                      block
+                      type={challenge.isSolved ? 'secondary' : 'primary'}
+                      onClick={showSubmit}
+                      disabled={status === 'testing'}
+                    >
+                      SUBMIT
+                    </Button>
+                    {challenge.isSolved && (
+                      <Button
+                        testId="create-solution-btn"
+                        block
+                        type="primary"
+                        onClick={() => showSolution('edit', null)}
+                      >
+                        CREATE SOLUTION
+                      </Button>
+                    )}
+                  </Buttons>
+                }
+              />
               <Tabs
                 selectedTab={tab}
                 onIndexChange={(value: ChallengeTab) => changeTab(value)}

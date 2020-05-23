@@ -225,8 +225,6 @@ export interface DiscussionComment {
   createdAt: string;
 }
 
-export type ProjectDomain = 'frontend' | 'backend' | 'fullstack' | 'styling';
-
 export interface Project {
   id: number;
   title: string;
@@ -234,7 +232,7 @@ export interface Project {
   solvedPercent: number;
   createdAt: string;
   stats: ProjectStats;
-  domain: ProjectDomain;
+  domain: ChallengeDomain;
 }
 
 export interface ProjectInfo {
@@ -256,6 +254,7 @@ export interface ProjectChallenge {
   stats: ProjectChallengeStats;
   isLocked: boolean;
   project: ProjectInfo;
+  domain: ChallengeDomain;
 }
 
 export interface ProjectChallengeStats {

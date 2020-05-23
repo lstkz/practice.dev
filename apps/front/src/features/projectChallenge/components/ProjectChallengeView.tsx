@@ -8,14 +8,17 @@ import {
 } from '../interface';
 import { useActions } from 'typeless';
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Theme, Button } from 'ui';
 import { Container } from 'src/components/Container';
 import { Breadcrumb } from 'src/components/Breadcrumb';
 import { ProjectsSmallIcon } from 'src/icons/ProjectsSmallIcon';
-import { createUrl } from 'src/common/url';
-import { ChallengeLoader } from 'src/features/challenge/components/ChallengeLoader';
+import { createUrl, createFullProjectsUrl } from 'src/common/url';
 import { Tabs, Tab } from 'src/components/Tabs';
 import { TabContent } from 'src/features/challenge/components/TabContent';
+import { ChallengeLoader } from 'src/components/CommonChallenge/ChallengeLoader';
+import { SubmitActions } from 'src/features/submit/interface';
+import { ChallengeHeader } from 'src/components/CommonChallenge/ChallengeHeader';
+import { DomainTag } from 'src/components/DomainTag';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
@@ -34,6 +37,7 @@ export function ProjectChallengeView() {
     tab,
   } = getProjectChallengeState.useState();
   const { changeTab } = useActions(ProjectChallengeActions);
+  const { show: showSubmit } = useActions(SubmitActions);
 
   return (
     <Dashboard>
@@ -49,6 +53,30 @@ export function ProjectChallengeView() {
             <ChallengeLoader />
           ) : (
             <>
+              <ChallengeHeader
+                domain={challenge.domain}
+                title={challenge.title}
+                tags={
+                  <DomainTag
+                    testId="tag-domain"
+                    domain={challenge.domain}
+                    url={createFullProjectsUrl({
+                      domains: [challenge.domain],
+                    })}
+                  />
+                }
+                buttons={
+                  <Button
+                    testId="submit-btn"
+                    block
+                    type={challenge.isSolved ? 'secondary' : 'primary'}
+                    onClick={showSubmit}
+                    disabled={status === 'testing'}
+                  >
+                    SUBMIT
+                  </Button>
+                }
+              />
               <Tabs
                 selectedTab={tab}
                 onIndexChange={(value: ProjectChallengeTab) => changeTab(value)}

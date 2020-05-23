@@ -1,10 +1,11 @@
 import React from 'react';
-import { ProjectDomain, ChallengeDomain } from 'shared';
+import { ChallengeDomain } from 'shared';
 import { BackendIcon } from 'src/icons/BackendIcon';
 import { FrontendIcon } from 'src/icons/FrontendIcon';
+import { FullstackIcon } from 'src/icons/FullstackIcon';
 
 interface DomainIconProps {
-  domain: ProjectDomain | ChallengeDomain;
+  domain: ChallengeDomain;
 }
 
 export function DomainIcon(props: DomainIconProps) {
@@ -13,6 +14,8 @@ export function DomainIcon(props: DomainIconProps) {
       return <FrontendIcon />;
     case 'backend':
       return <BackendIcon />;
+    case 'fullstack':
+      return <FullstackIcon />;
   }
   return null;
 }

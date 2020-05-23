@@ -50,6 +50,7 @@ export function ProjectView() {
                   solved={project.stats[`solved_${item.id}`] ?? 0}
                 />
               );
+              const icon = <DomainIcon domain={item.domain} />;
               if (item.isLocked) {
                 return (
                   <MediaCard
@@ -59,7 +60,7 @@ export function ProjectView() {
                     title={<Title testId="title">Locked</Title>}
                     stats={stats}
                     description="Challenge details are locked. Complete previous challenges to be able to access it."
-                    icon={<DomainIcon domain={project.domain} />}
+                    icon={icon}
                     button={
                       <Button
                         testId="solve-btn"
@@ -93,7 +94,7 @@ export function ProjectView() {
                   }
                   stats={stats}
                   description={item.description}
-                  icon={<DomainIcon domain={project.domain} />}
+                  icon={icon}
                   button={
                     <Button testId="solve-btn" href={href} type="primary">
                       Solve

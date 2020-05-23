@@ -210,6 +210,7 @@ export function loadBundle(detailsBundleS3Key: string) {
     const script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = BUNDLE_BASE_URL + detailsBundleS3Key;
+    script.setAttribute('id', BUNDLE_ID);
     (window as any).ChallengeJSONP = (module: any) => {
       subscriber.next(module.Details);
       subscriber.complete();
