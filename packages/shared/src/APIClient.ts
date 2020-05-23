@@ -221,6 +221,7 @@ export class APIClient {
     username?: string | undefined;
     limit?: number | undefined;
     cursor?: string | null | undefined;
+    projectId?: number | undefined;
   }): Rx.Observable<LoadMoreResult<Submission>> {
     return this.call('submission.searchSubmissions', criteria);
   }

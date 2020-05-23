@@ -9,19 +9,33 @@ import { doFn } from '../../common/helper';
 import { SearchResult } from '../../orm/types';
 import { LoadMoreResult, Submission } from 'shared';
 import { esSearch } from '../../common/elastic';
+import { AppError } from '../../common/errors';
+import { assertProjectChallengePermission } from '../project/checkProjectChallengePermission';
 
 export const searchSubmissions = createContract('submission.searchSubmissions')
-  .params('criteria')
+  .params('userId', 'criteria')
   .schema({
+    userId: S.string().optional(),
     criteria: S.object().keys({
-      challengeId: S.number().optional(),
+      challengeId: S.number().min(1).optional(),
+      projectId: S.number().min(1).optional(),
       username: S.string().optional(),
       limit: S.pageSize(),
       cursor: S.string().optional().nullable(),
     }),
   })
-  .fn(async criteria => {
-    const { challengeId, username } = criteria;
+  .fn(async (userId, criteria) => {
+    const { challengeId, username, projectId } = criteria;
+
+    if (projectId) {
+      if (!challengeId) {
+        throw new AppError('challengeId is required if projectId is defined');
+      }
+      await assertProjectChallengePermission(userId, {
+        projectId,
+        challengeId,
+      });
+    }
 
     const { lastKey, items } = await doFn(async () => {
       const userId = username
@@ -34,10 +48,19 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
           lastKey: null,
         } as SearchResult<SubmissionEntity>;
       }
-      const esCriteria: any[] = [];
+      const esCriteria: any[] = [
+        {
+          match: { type: projectId ? 'project' : 'challenge' },
+        },
+      ];
       if (userId) {
         esCriteria.push({
           match: { userId },
+        });
+      }
+      if (projectId) {
+        esCriteria.push({
+          match: { projectId },
         });
       }
       if (challengeId) {
@@ -45,6 +68,7 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
           match: { challengeId },
         });
       }
+
       return await esSearch(SubmissionEntity, {
         query: {
           bool: {
@@ -73,6 +97,7 @@ export const searchSubmissions = createContract('submission.searchSubmissions')
   });
 
 export const searchSubmissionsRpc = createRpcBinding({
+  injectUser: true,
   public: true,
   signature: 'submission.searchSubmissions',
   handler: searchSubmissions,

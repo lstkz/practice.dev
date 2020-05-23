@@ -13,19 +13,23 @@ import { Container } from 'src/components/Container';
 import { Breadcrumb } from 'src/components/Breadcrumb';
 import { ProjectsSmallIcon } from 'src/icons/ProjectsSmallIcon';
 import { createUrl, createFullProjectsUrl } from 'src/common/url';
-import { Tabs, Tab } from 'src/components/Tabs';
+import { Tabs } from 'src/components/Tabs';
 import { ChallengeLoader } from 'src/components/CommonChallenge/ChallengeLoader';
 import { SubmitActions } from 'src/features/submit/interface';
 import { ChallengeHeader } from 'src/components/CommonChallenge/ChallengeHeader';
 import { DomainTag } from 'src/components/DomainTag';
-import { TabContent } from 'src/components/CommonChallenge/TabContent';
 import { SubmitModal } from 'src/features/submit/components/SubmitModal';
-import { ApiSpecTab } from 'src/features/challenge/components/ApiSpecTab';
 import {
   createDetailsTab,
   createSwaggerTab,
   createTestSuiteTab,
 } from 'src/components/CommonChallenge/createChallengeTabs';
+import { SidebarStack } from 'src/components/CommonChallenge/SidebarStack';
+import {
+  ChallengeStats,
+  ChallengeStatsRow,
+} from 'src/components/CommonChallenge/ChallengeStats';
+import { VoidLink } from 'src/components/VoidLink';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
@@ -42,6 +46,8 @@ export function ProjectChallengeView() {
     isLoading,
     component: Component,
     tab,
+    testCase,
+    recentSubmissions,
   } = getProjectChallengeState.useState();
   const { changeTab } = useActions(ProjectChallengeActions);
   const { show: showSubmit } = useActions(SubmitActions);
@@ -92,7 +98,20 @@ export function ProjectChallengeView() {
                 {createDetailsTab(
                   <Component />,
                   <SidebarStack>
-                    <Stats />
+                    <ChallengeStats>
+                      <ChallengeStatsRow>
+                        Submissions{' '}
+                        <VoidLink data-test="submissions">
+                          {challenge.stats.submissions}
+                        </VoidLink>
+                      </ChallengeStatsRow>
+                      <ChallengeStatsRow>
+                        Solved{' '}
+                        <VoidLink data-test="solved">
+                          {challenge.stats.solved}
+                        </VoidLink>
+                      </ChallengeStatsRow>
+                    </ChallengeStats>
                   </SidebarStack>
                 )}
                 {createSwaggerTab(challenge.assets)}

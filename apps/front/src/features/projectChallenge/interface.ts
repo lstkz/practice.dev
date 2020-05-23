@@ -1,7 +1,7 @@
 import { RouteConfig } from 'src/types';
 import { createModule } from 'typeless';
 import { ProjectChallengeSymbol } from './symbol';
-import { ProjectChallenge, TestInfo } from 'shared';
+import { ProjectChallenge, TestInfo, Submission } from 'shared';
 
 // --- Actions ---
 export const [
@@ -14,8 +14,12 @@ export const [
     $mounted: null,
     $unmounted: null,
     load: null,
-    loaded: (challenge: ProjectChallenge, component: React.SFC) => ({
-      payload: { challenge, component },
+    loaded: (
+      challenge: ProjectChallenge,
+      recentSubmissions: Submission[],
+      component: React.SFC
+    ) => ({
+      payload: { challenge, component, recentSubmissions },
     }),
     changeTab: (tab: ProjectChallengeTab) => ({ payload: { tab } }),
   })
@@ -41,6 +45,7 @@ export interface ProjectChallengeState {
   component: React.SFC;
   tab: ProjectChallengeTab;
   testCase: TestInfo[];
+  recentSubmissions: Submission[];
 }
 
 export type ProjectChallengeTab = 'details' | 'testSuite' | 'discussion';
