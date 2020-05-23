@@ -5,26 +5,40 @@ import { esSearch } from '../../common/elastic';
 import { DiscussionCommentEntity } from '../../entities/DiscussionCommentEntity';
 import { UserEntity } from '../../entities';
 import { DiscussionComment, LoadMoreResult } from 'shared';
+import { validateChallengeOrProjectChallenge } from '../../common/validateChallengeOrProjectChallenge';
 
 export const searchComments = createContract('discussion.searchComments')
-  .params('criteria')
+  .params('userId', 'criteria')
   .schema({
+    userId: S.string().optional(),
     criteria: S.object().keys({
-      challengeId: S.number(),
+      challengeId: S.number().min(1),
+      projectId: S.number().min(1).optional(),
       limit: S.pageSize(),
       cursor: S.string().optional().nullable(),
       sortDesc: S.boolean(),
     }),
   })
-  .fn(async criteria => {
-    const { challengeId, sortDesc } = criteria;
+  .fn(async (userId, criteria) => {
+    const { projectId, challengeId, sortDesc } = criteria;
+    await validateChallengeOrProjectChallenge(userId, {
+      projectId,
+      challengeId,
+    });
 
+    const esCriteria: any[] = [
+      { match: { challengeId } },
+      { match: { type: projectId ? 'project' : 'challenge' } },
+    ];
+    if (projectId) {
+      esCriteria.push({
+        match: { projectId },
+      });
+    }
     const { items, lastKey } = await esSearch(DiscussionCommentEntity, {
       query: {
         bool: {
-          must: {
-            match: { challengeId },
-          },
+          must: esCriteria,
           must_not: {
             exists: {
               field: 'parentCommentId',
@@ -70,6 +84,7 @@ export const searchComments = createContract('discussion.searchComments')
   });
 
 export const searchCommentsRpc = createRpcBinding({
+  injectUser: true,
   public: true,
   signature: 'discussion.searchComments',
   handler: searchComments,

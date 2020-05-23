@@ -1,12 +1,20 @@
 import { resetDb } from '../helper';
-import { registerSampleUsers, addSampleChallenges } from '../seed-data';
+import {
+  registerSampleUsers,
+  addSampleChallenges,
+  addSampleProjects,
+} from '../seed-data';
 import { createComment } from '../../src/contracts/discussion/createComment';
 
 const userId = '1';
 
 beforeEach(async () => {
   await resetDb();
-  await Promise.all([registerSampleUsers(), addSampleChallenges()]);
+  await Promise.all([
+    registerSampleUsers(),
+    addSampleChallenges(),
+    addSampleProjects(),
+  ]);
 });
 
 it('should create a comment successfully', async () => {
@@ -29,11 +37,32 @@ it('should create a comment successfully', async () => {
   expect(sub.parentCommentId).toEqual(comment.id);
 });
 
+it('should create a project comment successfully', async () => {
+  const comment = await createComment(userId, {
+    parentCommentId: null,
+    challengeId: 1,
+    projectId: 1,
+    text: 'foo',
+  });
+  expect(comment.id).toBeDefined();
+});
+
+it('should throw an error if project not found', async () => {
+  await expect(
+    createComment(userId, {
+      parentCommentId: null,
+      projectId: 12344,
+      challengeId: 1,
+      text: 'foo',
+    })
+  ).rejects.toThrowError('Project not found');
+});
+
 it('should throw an error if challenge not found', async () => {
   await expect(
     createComment(userId, {
       parentCommentId: null,
-      challengeId: 12344,
+      challengeId: 1234,
       text: 'foo',
     })
   ).rejects.toThrowError('Challenge not found');
@@ -79,6 +108,23 @@ it('should throw an error if parent comment is from different challenge', async 
     createComment(userId, {
       parentCommentId: c1.id,
       challengeId: 2,
+      text: 'foo',
+    })
+  ).rejects.toThrowError('Invalid parent comment');
+});
+
+it('should throw an error if parent comment is from different project', async () => {
+  const c1 = await createComment(userId, {
+    parentCommentId: null,
+    challengeId: 1,
+    projectId: 1,
+    text: 'foo',
+  });
+  await expect(
+    createComment(userId, {
+      parentCommentId: c1.id,
+      challengeId: 1,
+      projectId: 2,
       text: 'foo',
     })
   ).rejects.toThrowError('Invalid parent comment');

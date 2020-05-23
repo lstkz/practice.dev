@@ -23,6 +23,7 @@ import {
   createDetailsTab,
   createSwaggerTab,
   createTestSuiteTab,
+  createDiscussionTab,
 } from 'src/components/CommonChallenge/createChallengeTabs';
 import { SidebarStack } from 'src/components/CommonChallenge/SidebarStack';
 import {
@@ -30,6 +31,8 @@ import {
   ChallengeStatsRow,
 } from 'src/components/CommonChallenge/ChallengeStats';
 import { VoidLink } from 'src/components/VoidLink';
+import { useDiscussionModule } from 'src/components/CommonChallenge/Discussion/DiscussionTab';
+import { useApiSpecModule } from 'src/components/CommonChallenge/ApiSpecTab';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
@@ -40,6 +43,8 @@ const Wrapper = styled.div`
 
 export function ProjectChallengeView() {
   useProjectChallengeModule();
+  useApiSpecModule();
+  useDiscussionModule();
 
   const {
     challenge,
@@ -116,6 +121,10 @@ export function ProjectChallengeView() {
                 )}
                 {createSwaggerTab(challenge.assets)}
                 {createTestSuiteTab(testCase, recentSubmissions)}
+                {createDiscussionTab({
+                  challengeId: challenge.id,
+                  projectId: challenge.project.id,
+                })}
               </Tabs>
             </>
           )}

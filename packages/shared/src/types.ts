@@ -81,10 +81,10 @@ export interface Submission {
   user: PublicUser;
   status: SubmissionStatus;
   createdAt: string;
-  type: SubmissionType;
+  type: ChallengeSource;
 }
 
-export type SubmissionType = 'challenge' | 'project';
+export type ChallengeSource = 'challenge' | 'project';
 
 export interface SolutionTag {
   name: string;

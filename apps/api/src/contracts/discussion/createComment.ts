@@ -41,7 +41,10 @@ export const createComment = createContract('discussion.createComment')
       if (!parent) {
         throw new AppError('Parent comment not found');
       }
-      if (parent.challengeId !== values.challengeId) {
+      if (
+        parent.challengeId !== values.challengeId ||
+        parent.projectId !== values.projectId
+      ) {
         throw new AppError('Invalid parent comment');
       }
       return parent;
@@ -58,6 +61,7 @@ export const createComment = createContract('discussion.createComment')
       userId,
       parentCommentId: parentComment?.commentId,
       createdAt: Date.now(),
+      type: values.projectId ? 'project' : 'challenge',
     });
     await comment.insert();
     return comment.toDiscussionComment(user);

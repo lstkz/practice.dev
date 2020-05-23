@@ -18,7 +18,6 @@ import { SubmitModal } from '../../submit/components/SubmitModal';
 import { SolutionModal } from 'src/features/solution/components/SolutionModal';
 import { FavoriteSolutions } from './FavoriteSolutions';
 import { useSolutionsModule, SolutionsTab } from './SolutionsTab';
-import { DiscussionTab, useDiscussionModule } from './Discussion/DiscussionTab';
 import { ChallengeLoader } from 'src/components/CommonChallenge/ChallengeLoader';
 import { ChallengeHeader } from 'src/components/CommonChallenge/ChallengeHeader';
 import { ChallengeTags } from 'src/components/ChallengeTags';
@@ -29,6 +28,7 @@ import {
   createDetailsTab,
   createSwaggerTab,
   createTestSuiteTab,
+  createDiscussionTab,
 } from 'src/components/CommonChallenge/createChallengeTabs';
 import {
   ChallengeStats,
@@ -37,6 +37,7 @@ import {
 import { VoidLink } from 'src/components/VoidLink';
 import { SidebarStack } from 'src/components/CommonChallenge/SidebarStack';
 import { useApiSpecModule } from 'src/components/CommonChallenge/ApiSpecTab';
+import { useDiscussionModule } from 'src/components/CommonChallenge/Discussion/DiscussionTab';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
@@ -152,13 +153,9 @@ export function ChallengeView() {
                 <Tab testId="solutions-tab" title="Solutions" name="solutions">
                   <SolutionsTab />
                 </Tab>
-                <Tab
-                  testId="discussion-tab"
-                  title="Discussion"
-                  name="discussion"
-                >
-                  <DiscussionTab />
-                </Tab>
+                {createDiscussionTab({
+                  challengeId: challenge.id,
+                })}
               </Tabs>
             </>
           )}
