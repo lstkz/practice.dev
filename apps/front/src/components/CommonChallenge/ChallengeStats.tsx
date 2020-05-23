@@ -18,7 +18,7 @@ export const ChallengeStatsRow = styled.div`
 const _ChallengeStats = (props: ChallengeStatsProps) => {
   const { className, children } = props;
   return (
-    <div className={className}>
+    <div className={className} data-test="challenge-stats">
       <SidebarTitle>Stats</SidebarTitle>
       {children}
     </div>
