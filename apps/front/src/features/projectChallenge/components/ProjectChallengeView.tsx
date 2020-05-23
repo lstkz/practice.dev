@@ -14,11 +14,18 @@ import { Breadcrumb } from 'src/components/Breadcrumb';
 import { ProjectsSmallIcon } from 'src/icons/ProjectsSmallIcon';
 import { createUrl, createFullProjectsUrl } from 'src/common/url';
 import { Tabs, Tab } from 'src/components/Tabs';
-import { TabContent } from 'src/features/challenge/components/TabContent';
 import { ChallengeLoader } from 'src/components/CommonChallenge/ChallengeLoader';
 import { SubmitActions } from 'src/features/submit/interface';
 import { ChallengeHeader } from 'src/components/CommonChallenge/ChallengeHeader';
 import { DomainTag } from 'src/components/DomainTag';
+import { TabContent } from 'src/components/CommonChallenge/TabContent';
+import { SubmitModal } from 'src/features/submit/components/SubmitModal';
+import { ApiSpecTab } from 'src/features/challenge/components/ApiSpecTab';
+import {
+  createDetailsTab,
+  createSwaggerTab,
+  createTestSuiteTab,
+} from 'src/components/CommonChallenge/createChallengeTabs';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
@@ -41,6 +48,7 @@ export function ProjectChallengeView() {
 
   return (
     <Dashboard>
+      <SubmitModal />
       <Container>
         <Breadcrumb
           icon={<ProjectsSmallIcon />}
@@ -81,13 +89,14 @@ export function ProjectChallengeView() {
                 selectedTab={tab}
                 onIndexChange={(value: ProjectChallengeTab) => changeTab(value)}
               >
-                <Tab testId="details-tab" title="Details" name="details">
-                  <TabContent
-                    testId="challenge-details"
-                    left={<Component />}
-                    right={<div />}
-                  />
-                </Tab>
+                {createDetailsTab(
+                  <Component />,
+                  <SidebarStack>
+                    <Stats />
+                  </SidebarStack>
+                )}
+                {createSwaggerTab(challenge.assets)}
+                {createTestSuiteTab(testCase, recentSubmissions)}
               </Tabs>
             </>
           )}

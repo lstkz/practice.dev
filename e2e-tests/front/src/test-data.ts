@@ -153,6 +153,7 @@ export const getProjectChallenges: (loggedIn: boolean) => ProjectChallenge[] = (
       description: 'Desc ' + id,
       detailsBundleS3Key: `bundle.js`,
       isSolved: loggedIn && id % 2 === 1,
+      domain: 'frontend',
       stats: {
         likes: 10,
         solutions: 4,

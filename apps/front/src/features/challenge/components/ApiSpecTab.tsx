@@ -5,7 +5,6 @@ import React from 'react';
 import { ApiSpecSymbol } from '../symbol';
 import styled from 'styled-components';
 import { BUNDLE_BASE_URL } from 'src/config';
-import { getChallengeState } from '../interface';
 import { handleAppError } from 'src/common/helper';
 import { SwaggerViewer } from 'src/components/Swagger/SwaggerViewer';
 
@@ -14,7 +13,7 @@ export const [handle, ApiSpecActions, getApiSpecState] = createModule(
 )
   .withActions({
     $init: null,
-    load: null,
+    load: (swaggerKey: string) => ({ payload: { swaggerKey } }),
     loaded: (spec: any) => ({ payload: { spec } }),
   })
   .withState<ApiSpecState>();
@@ -25,12 +24,9 @@ interface ApiSpecState {
 }
 
 // --- Epic ---
-handle.epic().on(ApiSpecActions.load, () => {
-  const { challenge } = getChallengeState();
+handle.epic().on(ApiSpecActions.load, ({ swaggerKey }) => {
   return Rx.defer(async () => {
-    const res = await fetch(
-      BUNDLE_BASE_URL + challenge.assets!.swagger + '.json'
-    );
+    const res = await fetch(BUNDLE_BASE_URL + swaggerKey + '.json');
     return res.json();
   }).pipe(
     Rx.map(spec => ApiSpecActions.loaded(spec)),
@@ -59,12 +55,17 @@ const LoaderWrapper = styled.div`
   text-align: center;
 `;
 
-export function ApiSpecTab() {
+interface ApiSpecTabProps {
+  swaggerKey: string;
+}
+
+export function ApiSpecTab(props: ApiSpecTabProps) {
+  const { swaggerKey } = props;
   const { isLoaded, spec } = getApiSpecState.useState();
   const { load } = useActions(ApiSpecActions);
   React.useEffect(() => {
     if (!isLoaded) {
-      load();
+      load(swaggerKey);
     }
   }, [isLoaded]);
 
