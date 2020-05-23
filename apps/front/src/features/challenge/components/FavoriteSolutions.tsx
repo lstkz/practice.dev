@@ -1,10 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { SidebarTitle } from './SidebarTitle';
 import { getChallengeState, ChallengeActions } from '../interface';
 import { SolutionInfo } from './SolutionInfo';
 import { useSolutions } from 'src/features/globalSolutions/useSolutions';
 import { useActions } from 'typeless';
+import { SidebarTitle } from 'src/components/CommonChallenge/SidebarTitle';
 
 interface FavoriteSolutionsProps {
   className?: string;

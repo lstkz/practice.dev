@@ -2,12 +2,13 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { SidebarTitle } from './SidebarTitle';
 import { Theme } from 'ui';
-import { getChallengeState } from '../interface';
 import { MySubmission } from './MySubmission';
 import { useUser } from 'src/hooks/useUser';
+import { Submission } from 'shared';
 
 interface MyRecentSubmissionsProps {
   className?: string;
+  recentSubmissions: Submission[];
 }
 
 const Na = styled.div`
@@ -15,8 +16,7 @@ const Na = styled.div`
 `;
 
 const _MyRecentSubmissions = (props: MyRecentSubmissionsProps) => {
-  const { className } = props;
-  const { recentSubmissions } = getChallengeState.useState();
+  const { className, recentSubmissions } = props;
   const user = useUser();
   if (!user) {
     return null;

@@ -2,14 +2,12 @@ import { Loader } from 'src/components/Loader';
 import * as Rx from 'src/rx';
 import { createModule, useActions } from 'typeless';
 import React from 'react';
-import { DiscussionSymbol } from '../../symbol';
 import styled from 'styled-components';
 import { AddComment } from './AddComment';
 import { api } from 'src/services/api';
-import { getChallengeState } from '../../interface';
 import { handleAppError, getErrorMessage } from 'src/common/helper';
 import { LoadMoreResult, DiscussionComment } from 'shared';
-import { SelectOption, DeleteType } from 'src/types';
+import { SelectOption, DeleteType, TargetChallengeValues } from 'src/types';
 import { SortOptions } from './SortOptions';
 import { CommentItem } from './CommentItem';
 import { ConfirmModalActions } from 'src/features/confirmModal/interface';
@@ -17,12 +15,14 @@ import { useUser } from 'src/hooks/useUser';
 import { LoadMoreButton } from 'src/components/LoadMoreButton';
 import { Theme } from 'ui';
 import { GlobalActions } from 'src/features/global/interface';
+import { DiscussionSymbol } from '../symbol';
 
 export const [handle, DiscussionActions, getDiscussionState] = createModule(
   DiscussionSymbol
 )
   .withActions({
     $init: null,
+    initTarget: (target: TargetChallengeValues) => ({ payload: { target } }),
     load: (loadMore: boolean) => ({ payload: { loadMore } }),
     loaded: (loadMore: boolean, result: LoadMoreResult<DiscussionComment>) => ({
       payload: { loadMore, result },
@@ -37,15 +37,16 @@ export const [handle, DiscussionActions, getDiscussionState] = createModule(
     commentDeleted: (id: string) => ({ payload: { id } }),
     markAsAnswer: (comment: DiscussionComment) => ({ payload: { comment } }),
   })
-  .withState<ApiSpecState>();
+  .withState<DiscussionState>();
 
-interface ApiSpecState {
+interface DiscussionState {
   isLoaded: boolean;
   isLoading: boolean;
   isSubmitting: boolean;
   items: DiscussionComment[];
   cursor: string | null;
   sortBy: SelectOption<DiscussionSortBy>;
+  target: TargetChallengeValues;
 }
 
 export type DiscussionSortBy = 'newest' | 'oldest';
@@ -54,11 +55,12 @@ export type DiscussionSortBy = 'newest' | 'oldest';
 handle
   .epic()
   .on(DiscussionActions.load, ({ loadMore }) => {
+    const { target } = getDiscussionState();
     return Rx.concatObs(
       Rx.of(DiscussionActions.setIsLoading(true)),
       api
         .discussion_searchComments({
-          challengeId: getChallengeState().challenge.id,
+          ...target,
           sortDesc: getDiscussionState().sortBy.value === 'newest',
           cursor: loadMore ? getDiscussionState().cursor : null,
         })
@@ -118,7 +120,7 @@ handle
   });
 
 // --- Reducer ---
-const initialState: ApiSpecState = {
+const initialState: DiscussionState = {
   isLoaded: false,
   isLoading: false,
   isSubmitting: false,
@@ -128,12 +130,16 @@ const initialState: ApiSpecState = {
     label: 'Newest',
     value: 'newest',
   },
+  target: null!,
 };
 
 handle
   .reducer(initialState)
   .on(DiscussionActions.$init, state => {
     Object.assign(state, initialState);
+  })
+  .on(DiscussionActions.initTarget, (state, { target }) => {
+    state.target = target;
   })
   .on(DiscussionActions.loaded, (state, { loadMore, result }) => {
     state.cursor = result.cursor;
@@ -207,13 +213,19 @@ const Separator = styled.div`
   margin-top: 30px;
 `;
 
-export function DiscussionTab() {
+interface DiscussionTabProps {
+  target: TargetChallengeValues;
+}
+
+export function DiscussionTab(props: DiscussionTabProps) {
+  const { target } = props;
   const { isLoaded, items, isLoading, cursor } = getDiscussionState.useState();
-  const { load } = useActions(DiscussionActions);
+  const { load, initTarget } = useActions(DiscussionActions);
   const user = useUser();
 
   React.useEffect(() => {
     if (!isLoaded) {
+      initTarget(target);
       load(false);
     }
   }, [isLoaded]);

@@ -37,17 +37,10 @@ export const S = {
     return new OrSchema();
   },
   pageSize() {
-    return this.number()
-      .min(1)
-      .max(100)
-      .optional()
-      .default(30);
+    return this.number().min(1).max(100).optional().default(30);
   },
   pageNumber() {
-    return this.number()
-      .optional()
-      .default(0)
-      .min(0);
+    return this.number().optional().default(0).min(0);
   },
 };
 
@@ -63,7 +56,7 @@ export {
   OrSchema,
 };
 
-export { Convert } from './convert-types';
+export type { Convert } from './convert-types';
 export * from './types';
 export * from './validate';
 export * from './ValidationError';

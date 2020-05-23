@@ -23,6 +23,15 @@ export type UrlOptions =
       name: 'projects';
     }
   | {
+      name: 'project';
+      id: number;
+    }
+  | {
+      name: 'project-challenge';
+      projectId: number;
+      id: number;
+    }
+  | {
       name: 'contests';
     }
   | {
@@ -58,6 +67,14 @@ export function createUrl(options: UrlOptions) {
       }
       return url;
     }
+    case 'project': {
+      let url = '/projects/' + options.id;
+      return url;
+    }
+    case 'project-challenge': {
+      let url = `/projects/${options.projectId}/challenges/${options.id}`;
+      return url;
+    }
     case 'home':
       return '/challenges';
     case 'tos':
@@ -77,6 +94,10 @@ export function createUrl(options: UrlOptions) {
 
 export function getRouteParams(name: 'reset-password'): { code: string };
 export function getRouteParams(name: 'challenge'): { id: number };
+export function getRouteParams(name: 'project'): { id: number };
+export function getRouteParams(
+  name: 'projectChallenge'
+): { id: number; projectId: number };
 export function getRouteParams(name: 'confirm'): { code: string };
 export function getRouteParams(name: 'confirm-change-email'): { code: string };
 export function getRouteParams(name: 'profile'): { username: string };
@@ -85,10 +106,12 @@ export function getRouteParams(
   name:
     | 'reset-password'
     | 'challenge'
+    | 'project'
     | 'confirm'
     | 'profile'
     | 'confirm-change-email'
     | 'faq'
+    | 'projectChallenge'
 ): any {
   const location = getRouterState().location!;
   const getLast = () => R.last(location.pathname.split('/'));
@@ -100,9 +123,17 @@ export function getRouteParams(
         code: getLast(),
       };
     }
+    case 'project':
     case 'challenge': {
       return {
         id: Number(getLast()),
+      };
+    }
+    case 'projectChallenge': {
+      const [, , projectId, , challengeId] = location.pathname.split('/');
+      return {
+        projectId: Number(projectId),
+        id: Number(challengeId),
       };
     }
     case 'profile': {
@@ -126,7 +157,8 @@ export function isRoute(
     | 'reset-password'
     | 'challenge'
     | 'profile'
-    | 'faq',
+    | 'faq'
+    | 'projects',
   location?: RouterLocation | null
 ): boolean {
   const { pathname } = location || getRouterState().location!;
@@ -218,5 +250,32 @@ export function createChallengesUrl(params: ChallengesUrlParams) {
 
 export function createFullChallengesUrl(params: ChallengesUrlParams) {
   const { pathname, search } = createChallengesUrl(params);
+  return pathname + search;
+}
+
+interface ProjectsUrlParams {
+  statuses?: string[];
+  domains?: string[];
+  sortOrder?: string;
+}
+export function createProjectsUrl(params: ProjectsUrlParams) {
+  const query: any = {};
+  if (params.statuses?.length) {
+    query.status = params.statuses.join(',');
+  }
+  if (params.domains?.length) {
+    query.domain = params.domains.join(',');
+  }
+  if (params.sortOrder && params.sortOrder !== 'oldest') {
+    query.sortOrder = params.sortOrder;
+  }
+  return {
+    pathname: createUrl({ name: 'projects' }),
+    search: stringifyQueryString(query, true),
+  };
+}
+
+export function createFullProjectsUrl(params: ProjectsUrlParams) {
+  const { pathname, search } = createProjectsUrl(params);
   return pathname + search;
 }

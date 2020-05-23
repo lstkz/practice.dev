@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { getChallengeState } from '../interface';
 import { Theme, Spinner } from 'ui';
 import { Colored } from 'src/components/Colored';
 import { getSubmitState } from 'src/features/submit/interface';
@@ -8,6 +7,7 @@ import { TestInfo } from 'shared';
 
 interface TestSuiteProps {
   className?: string;
+  testCase: TestInfo[];
 }
 
 const TestRow = styled.div`
@@ -71,8 +71,7 @@ const ResultLabel = styled.div`
 `;
 
 const _TestSuite = (props: TestSuiteProps) => {
-  const { className } = props;
-  const { testCase } = getChallengeState.useState();
+  const { className, testCase } = props;
   const { tests, status, result } = getSubmitState.useState();
   const targetTestCase = status === 'none' ? testCase : tests;
 

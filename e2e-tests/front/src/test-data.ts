@@ -1,7 +1,23 @@
-import { PagedResult, Challenge, AuthData, TestInfo, Solution } from 'shared';
+import {
+  PagedResult,
+  Challenge,
+  AuthData,
+  TestInfo,
+  Solution,
+  Project,
+  ProjectChallenge,
+} from 'shared';
 import { getRange } from './helper';
 
 export const emptyChallenges: PagedResult<Challenge> = {
+  items: [],
+  pageNumber: 0,
+  pageSize: 0,
+  total: 0,
+  totalPages: 0,
+};
+
+export const emptyProjects: PagedResult<Project> = {
   items: [],
   pageNumber: 0,
   pageSize: 0,
@@ -102,3 +118,69 @@ export const solutions: Solution[] = getRange(20).map(id => {
     },
   };
 });
+
+export const getProjects = (loggedIn: boolean) =>
+  getRange(20).map(id => {
+    const mod3 = id % 3;
+    const mod4 = id % 4;
+    return {
+      id,
+      createdAt: new Date(2000, 0, id).toISOString(),
+      title: 'Project ' + id,
+      description: 'Desc ' + id,
+      domain: mod4 === 0 ? 'backend' : mod4 === 1 ? 'frontend' : 'fullstack',
+      solvedPercent: loggedIn ? (mod3 === 1 ? 50 : mod3 === 2 ? 100 : 0) : 0,
+      stats:
+        mod3 === 1
+          ? {
+              solved_1: 10,
+              solved_2: 20,
+              submissions_1: 20,
+              submissions_2: 30,
+            }
+          : {},
+    } as Project;
+  });
+
+export const getProjectChallenges: (loggedIn: boolean) => ProjectChallenge[] = (
+  loggedIn: boolean
+) =>
+  getRange(4).map(id => {
+    return {
+      id,
+      createdAt: new Date(2000, 0, id).toISOString(),
+      title: 'Challenge ' + id,
+      description: 'Desc ' + id,
+      detailsBundleS3Key: `bundle.js`,
+      isSolved: loggedIn && id % 2 === 1,
+      domain: 'frontend',
+      stats: {
+        likes: 10,
+        solutions: 4,
+        solved: 1,
+        submissions: 100,
+      },
+      isLocked: id > 1,
+      testCase: JSON.stringify([
+        {
+          id: 1,
+          name: 'Navigate to page',
+          steps: [],
+        },
+        {
+          id: 2,
+          name: 'Click on button',
+          steps: [],
+        },
+        {
+          id: 3,
+          name: 'Enter text',
+          steps: [],
+        },
+      ]),
+      project: {
+        id: 1,
+        title: 'Project 1',
+      },
+    } as ProjectChallenge;
+  });

@@ -2,9 +2,7 @@ import * as Rx from 'src/rx';
 import { ChallengeActions, ChallengeState, handle } from './interface';
 import { api } from 'src/services/api';
 import { getRouteParams, parseQueryString, createUrl } from 'src/common/url';
-import { handleAppError } from 'src/common/helper';
-import { BUNDLE_BASE_URL } from 'src/config';
-import { ActionLike } from 'typeless';
+import { handleAppError, loadBundle } from 'src/common/helper';
 import { getGlobalState, GlobalActions } from '../global/interface';
 import { SubmitActions } from '../submit/interface';
 import { RouterActions, getRouterState } from 'typeless-router';
@@ -14,15 +12,6 @@ import {
 } from '../globalSolutions/interface';
 import { SolutionActions, getSolutionState } from '../solution/interface';
 import { SolutionsTabActions } from './components/SolutionsTab';
-
-const BUNDLE_ID = 'CHALLENGE_BUNDLE_SCRIPT';
-
-function removeBundle() {
-  const existing = document.getElementById(BUNDLE_ID);
-  if (existing) {
-    existing.remove();
-  }
-}
 
 function checkSolutionModal() {
   const { location } = getRouterState();
@@ -86,37 +75,21 @@ handle
         limit: 5,
       }),
     ]).pipe(
-      Rx.mergeMap(([challenge, recentSubmissions, solutions]) => {
-        return new Rx.Observable<ActionLike>(subscriber => {
-          removeBundle();
-          const script = document.createElement('script');
-          script.type = 'text/javascript';
-          script.src = BUNDLE_BASE_URL + challenge.detailsBundleS3Key;
-          document.body.appendChild(script);
-          (window as any).ChallengeJSONP = (module: any) => {
-            subscriber.next(
-              GlobalSolutionsActions.addSolutions(solutions.items)
-            );
-            subscriber.next(
-              ChallengeActions.loaded(
-                challenge,
-                recentSubmissions,
-                solutions.items.map(x => x.id),
-                module.Details
-              )
-            );
-            subscriber.complete();
-          };
-          return () => {
-            removeBundle();
-          };
-        }).pipe(
-          Rx.takeUntil(
-            action$.pipe(Rx.waitForType(ChallengeActions.$unmounted))
-          )
-        );
-      }),
-      handleAppError()
+      Rx.mergeMap(([challenge, recentSubmissions, solutions]) =>
+        loadBundle(challenge.detailsBundleS3Key).pipe(
+          Rx.mergeMap(bundle => [
+            GlobalSolutionsActions.addSolutions(solutions.items),
+            ChallengeActions.loaded(
+              challenge,
+              recentSubmissions,
+              solutions.items.map(x => x.id),
+              bundle
+            ),
+          ])
+        )
+      ),
+      handleAppError(),
+      Rx.takeUntil(action$.pipe(Rx.waitForType(ChallengeActions.$unmounted)))
     );
   })
   .on(SolutionActions.close, () => {
@@ -169,17 +142,20 @@ handle
   .on(ChallengeActions.changeTab, (state, { tab }) => {
     state.tab = tab;
   })
-  .on(ChallengeActions.addRecentSubmission, (state, { submission }) => {
-    state.recentSubmissions.unshift(submission);
-    state.recentSubmissions = state.recentSubmissions.slice(0, 10);
+  .on(GlobalSolutionsActions.removeSolution, (state, { id }) => {
+    state.favoriteSolutions = state.favoriteSolutions.filter(x => x !== id);
+  })
+  .on(SubmitActions.started, state => {
+    state.tab = 'testSuite';
   })
   .on(SubmitActions.testingDone, (state, { success }) => {
     if (success) {
       state.challenge.isSolved = success;
     }
   })
-  .on(GlobalSolutionsActions.removeSolution, (state, { id }) => {
-    state.favoriteSolutions = state.favoriteSolutions.filter(x => x !== id);
+  .on(SubmitActions.newSubmission, (state, { submission }) => {
+    state.recentSubmissions.unshift(submission);
+    state.recentSubmissions = state.recentSubmissions.slice(0, 10);
   });
 
 // --- Module ---

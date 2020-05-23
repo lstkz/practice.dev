@@ -1,5 +1,5 @@
 import { createBaseEntity } from '../lib';
-import { ProjectStats, ProjectDomain, Project } from 'shared';
+import { ProjectStats, Project, ChallengeDomain } from 'shared';
 
 export interface ProjectKey {
   projectId: number;
@@ -10,7 +10,7 @@ export interface ProjectProps extends ProjectKey {
   description: string;
   createdAt: number;
   stats: ProjectStats;
-  domain: ProjectDomain;
+  domain: ChallengeDomain;
   challengeCount: number;
 }
 

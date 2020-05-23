@@ -11,7 +11,7 @@ export class MockSocket {
         public onerror: (e: Error) => void = null;
         public onopen: () => void = null;
         public onmessage: (e: any) => void = null;
-        private isClosed = false;
+        protected isClosed = false;
         constructor(url: string, options: any) {
           if (!url.includes('/socket?token')) {
             return new OrgWebSocket(url, options) as any;

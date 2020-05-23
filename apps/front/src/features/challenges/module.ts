@@ -8,7 +8,12 @@ import {
   ChallengesSortOrder,
 } from './interface';
 import { api } from 'src/services/api';
-import { handleAppError } from 'src/common/helper';
+import {
+  handleAppError,
+  parseFilterValues,
+  parseFilterMap,
+  parseFilterValue,
+} from 'src/common/helper';
 import { RouterActions, getRouterState, RouterLocation } from 'typeless-router';
 import { createChallengesUrl, parseQueryString, isRoute } from 'src/common/url';
 import { ChallengeDifficulty, ChallengeDomain } from 'shared';
@@ -24,30 +29,6 @@ export const sortOptions: SelectOption<ChallengesSortOrder>[] = [
   { label: 'Most submissions', value: 'submissions' },
   { label: 'Most solved', value: 'solved' },
 ];
-
-function parseFilterValue(str: string, allowed?: string[]) {
-  const value = (str || '').trim().toLowerCase();
-  if (!allowed || allowed.includes(value)) {
-    return value;
-  } else {
-    return null;
-  }
-}
-
-function parseFilterValues(str: string, allowed?: string[]) {
-  const values = (str || '')
-    .split(',')
-    .map(x => parseFilterValue(x, allowed))
-    .filter(x => x) as string[];
-  return values;
-}
-function parseFilterMap(str: string, allowed?: string[]) {
-  const values = parseFilterValues(str, allowed);
-  return values.reduce((ret, value) => {
-    ret[value] = value;
-    return ret;
-  }, {} as any);
-}
 
 function getDefaultFilter(): ChallengesFilter {
   return {

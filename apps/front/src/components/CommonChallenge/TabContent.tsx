@@ -4,8 +4,8 @@ import { Theme } from 'ui';
 
 interface TabContentProps {
   className?: string;
-  left: React.ReactChild;
-  right: React.ReactChild;
+  left: React.ReactNode;
+  right: React.ReactNode;
   testId?: string;
 }
 

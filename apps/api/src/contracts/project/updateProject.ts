@@ -23,6 +23,7 @@ export const updateProject = createContract('project.updateProject')
         id: S.number(),
         title: S.string(),
         description: S.string(),
+        domain: S.enum().literal('frontend', 'backend', 'fullstack', 'styling'),
         detailsBundleS3Key: S.string(),
         testsBundleS3Key: S.string(),
         testCase: S.string(),

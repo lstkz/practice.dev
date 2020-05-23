@@ -197,15 +197,15 @@ async function getApiTests(testConfiguration: ApiTestConfiguration) {
   return tests;
 }
 
-function getTests(info: ProjectInfo, testFile: string) {
-  const testConfiguration = require(testFile!).default;
-  switch (info.domain) {
+function getTests(challenge: ChallengePackage) {
+  const testConfiguration = require(challenge.testFilePath!).default;
+  switch (challenge.domain) {
     case 'backend':
       return getApiTests(testConfiguration);
     case 'frontend':
       return getFrontendTests(testConfiguration);
     default:
-      throw new Error('Domain not supported: ' + info.domain);
+      throw new Error('Domain not supported: ' + challenge.domain);
   }
 }
 
@@ -224,12 +224,13 @@ async function upload() {
             ] = await Promise.all([
               uploadJSFile(challenge.detailsFile, 'bundle'),
               uploadJSFile(challenge.testFile, 'tests'),
-              getTests(info, challenge.testFilePath),
+              getTests(challenge),
             ]);
             return {
               id: challenge.id,
               title: challenge.title,
               description: challenge.description,
+              domain: challenge.domain,
               detailsBundleS3Key,
               testsBundleS3Key,
               testCase: JSON.stringify(tests),

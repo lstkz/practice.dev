@@ -1,4 +1,4 @@
-import { SocketMessage, TestInfo } from './types';
+import { SocketMessage, TestInfo, Project } from './types';
 
 interface TestResultState {
   tests: TestInfo[];
@@ -69,4 +69,17 @@ export function updateTestResult<T extends TestResultState>(
       break;
     }
   }
+}
+
+export function getProjectStats(
+  project: Project,
+  name: 'solved' | 'submissions'
+) {
+  let ret = 0;
+  Object.keys(project.stats).forEach(key => {
+    if (key.startsWith(name)) {
+      ret += project.stats[key];
+    }
+  });
+  return ret;
 }

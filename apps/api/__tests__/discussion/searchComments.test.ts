@@ -1,5 +1,9 @@
 import { resetDb, esReIndexFromDynamo } from '../helper';
-import { registerSampleUsers, addSampleChallenges } from '../seed-data';
+import {
+  registerSampleUsers,
+  addSampleChallenges,
+  addSampleProjects,
+} from '../seed-data';
 import { DiscussionCommentEntity } from '../../src/entities/DiscussionCommentEntity';
 import { searchComments } from '../../src/contracts/discussion/searchComments';
 
@@ -7,7 +11,11 @@ const userId = '1';
 
 beforeEach(async () => {
   await resetDb();
-  await Promise.all([registerSampleUsers(), addSampleChallenges()]);
+  await Promise.all([
+    registerSampleUsers(),
+    addSampleChallenges(),
+    addSampleProjects(),
+  ]);
   const entities = [
     // challenge 1
     // thread 1
@@ -19,6 +27,7 @@ beforeEach(async () => {
       challengeId: 1,
       isAnswered: false,
       parentCommentId: null,
+      type: 'challenge',
     }),
     new DiscussionCommentEntity({
       commentId: '101',
@@ -28,6 +37,7 @@ beforeEach(async () => {
       challengeId: 1,
       isAnswered: false,
       parentCommentId: '100',
+      type: 'challenge',
     }),
     new DiscussionCommentEntity({
       commentId: '102',
@@ -37,6 +47,7 @@ beforeEach(async () => {
       challengeId: 1,
       isAnswered: false,
       parentCommentId: '100',
+      type: 'challenge',
     }),
     new DiscussionCommentEntity({
       commentId: '100',
@@ -46,6 +57,7 @@ beforeEach(async () => {
       challengeId: 1,
       isAnswered: false,
       parentCommentId: null,
+      type: 'challenge',
     }),
     // thread 2
     new DiscussionCommentEntity({
@@ -56,6 +68,7 @@ beforeEach(async () => {
       challengeId: 1,
       isAnswered: false,
       parentCommentId: null,
+      type: 'challenge',
     }),
     new DiscussionCommentEntity({
       commentId: '201',
@@ -65,6 +78,7 @@ beforeEach(async () => {
       challengeId: 1,
       isAnswered: false,
       parentCommentId: '200',
+      type: 'challenge',
     }),
     // challenge 2
     new DiscussionCommentEntity({
@@ -75,6 +89,19 @@ beforeEach(async () => {
       challengeId: 2,
       isAnswered: false,
       parentCommentId: null,
+      type: 'challenge',
+    }),
+    // project 1 challenge 1
+    new DiscussionCommentEntity({
+      commentId: '100001',
+      createdAt: 1000,
+      text: '1',
+      userId,
+      projectId: 1,
+      challengeId: 1,
+      isAnswered: false,
+      parentCommentId: null,
+      type: 'project',
     }),
   ];
   await Promise.all(entities.map(item => item.insert()));
@@ -82,7 +109,7 @@ beforeEach(async () => {
 });
 
 it('should search comments', async () => {
-  const ret = await searchComments({
+  const ret = await searchComments(undefined, {
     challengeId: 1,
     sortDesc: false,
   });
@@ -178,14 +205,14 @@ it('should search comments', async () => {
 });
 
 it('should paginate', async () => {
-  const ret = await searchComments({
+  const ret = await searchComments(undefined, {
     challengeId: 1,
     sortDesc: true,
     limit: 1,
   });
   expect(ret.items).toHaveLength(1);
   expect(ret.items[0].id).toEqual('200');
-  const ret2 = await searchComments({
+  const ret2 = await searchComments(undefined, {
     challengeId: 1,
     sortDesc: true,
     limit: 1,
@@ -193,4 +220,35 @@ it('should paginate', async () => {
   });
   expect(ret2.items).toHaveLength(1);
   expect(ret2.items[0].id).toEqual('100');
+});
+
+it('should search project comments', async () => {
+  const ret = await searchComments(undefined, {
+    challengeId: 1,
+    projectId: 1,
+    sortDesc: false,
+  });
+  expect(ret).toMatchInlineSnapshot(`
+    Object {
+      "cursor": null,
+      "items": Array [
+        Object {
+          "challengeId": 1,
+          "children": Array [],
+          "createdAt": "1970-01-01T00:00:01.000Z",
+          "id": "100001",
+          "isAnswer": false,
+          "isAnswered": false,
+          "isDeleted": false,
+          "parentCommentId": null,
+          "text": "1",
+          "user": Object {
+            "avatarUrl": null,
+            "id": "1",
+            "username": "user1",
+          },
+        },
+      ],
+    }
+  `);
 });

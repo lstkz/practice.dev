@@ -2,7 +2,6 @@ import { createModule, useActions } from 'typeless';
 import { SolutionsTabSymbol } from '../symbol';
 import { SelectOption } from 'src/types';
 import React from 'react';
-import { TabContent } from './TabContent';
 import { FilterSection } from 'src/components/FilterSection';
 import { AsyncSelect, Select } from 'src/components/Select';
 import { getChallengeState } from '../interface';
@@ -14,6 +13,7 @@ import {
 } from 'src/mixins/solutionsMixin';
 import { searchSolutionTags } from 'src/common/helper';
 import { SolutionList } from 'src/components/SolutionList';
+import { TabContent } from 'src/components/CommonChallenge/TabContent';
 
 export const [handle, SolutionsTabActions, getSolutionsTabState] = createModule(
   SolutionsTabSymbol

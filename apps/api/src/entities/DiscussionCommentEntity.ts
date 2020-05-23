@@ -1,7 +1,7 @@
 import * as R from 'remeda';
 import { createBaseEntity } from '../lib';
 import { UserEntity } from './UserEntity';
-import { DiscussionComment } from 'shared';
+import { DiscussionComment, ChallengeSource } from 'shared';
 
 export interface DiscussionCommentKey {
   commentId: string;
@@ -11,11 +11,13 @@ export interface DiscussionCommentKey {
 export interface DiscussionCommentProps extends DiscussionCommentKey {
   userId: string;
   challengeId: number;
+  projectId?: number;
   text: string | null;
   isAnswered?: boolean;
   isAnswer?: boolean;
   isDeleted?: boolean;
   createdAt: number;
+  type: ChallengeSource;
 }
 
 const BaseEntity = createBaseEntity('DiscussionComment')

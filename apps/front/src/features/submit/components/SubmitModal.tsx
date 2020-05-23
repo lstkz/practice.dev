@@ -10,14 +10,23 @@ import { Alert } from 'src/components/Alert';
 import { SubmitActions, getSubmitState } from '../interface';
 import { useSubmitModule } from '../module';
 import { FormModalContent } from 'src/components/FormModalContent';
+import { TargetChallengeValues } from 'src/types';
 
 const Footer = styled.div`
   text-align: center;
   margin-top: 20px;
 `;
 
-export function SubmitModal() {
+interface SubmitModalProps {
+  target: TargetChallengeValues;
+}
+
+export function SubmitModal(props: SubmitModalProps) {
   useSubmitModule();
+  const { initTarget } = useActions(SubmitActions);
+  React.useEffect(() => {
+    initTarget(props.target);
+  }, []);
   const { close } = useActions(SubmitActions);
   const { isOpened, error, isSubmitting } = getSubmitState.useState();
   const { submit } = useActions(SubmitFormActions);

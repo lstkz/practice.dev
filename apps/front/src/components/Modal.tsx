@@ -1,7 +1,6 @@
 import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { CSSTransition } from 'react-transition-group';
 import { VoidLink } from './VoidLink';
 import { CloseIcon } from 'src/icons/CloseIcon';
 import { Theme } from 'ui';
@@ -21,7 +20,7 @@ interface ModalProps {
 
 const GlobalStyle = createGlobalStyle`
 .modal-enter {
-  opacity: 0.01;
+  opacity: 0.01; 
 }
 
 .modal-enter.modal-enter-active {
@@ -29,11 +28,11 @@ const GlobalStyle = createGlobalStyle`
   transition: opacity 150ms ease-in-out;
 }
 
-.modal-leave {
+.modal-exit {
   opacity: 1;
 }
 
-.modal-leave.modal-leave-active {
+.modal-exit.modal-exit-active {
   opacity: 0.01;
   transition: opacity 150ms ease-in-out;
 }
@@ -140,56 +139,56 @@ export function Modal(props: ModalProps) {
   return (
     <>
       <GlobalStyle />
-      <ReactCSSTransitionGroup
-        transitionName="modal"
-        transitionEnterTimeout={150}
-        transitionLeaveTimeout={150}
+      <CSSTransition
+        in={isOpen}
+        classNames="modal"
+        timeout={150}
+        unmountOnExit
+        mountOnEnter
       >
-        {isOpen && (
-          <Wrapper
-            data-modal-wrapper
-            onClick={e => {
-              const target = e.target as HTMLDivElement;
-              if (
-                target.hasAttribute('data-modal-wrapper') &&
-                !noBackgroundClose
-              ) {
-                close('background');
-              }
-            }}
-          >
-            <FocusContainer data-focus-root>
-              <ModalContent
-                data-test={testId}
-                ref={modalRef}
-                style={{
-                  background: transparent ? 'transparent' : 'white',
-                  maxWidth:
-                    size === 'md' ? 800 : size === 'sm' ? 460 : undefined,
-                }}
-                tabIndex={-1}
-                role="modal"
+        <Wrapper
+          data-modal-wrapper
+          onClick={e => {
+            const target = e.target as HTMLDivElement;
+            if (
+              target.hasAttribute('data-modal-wrapper') &&
+              !noBackgroundClose
+            ) {
+              close('background');
+            }
+          }}
+        >
+          <FocusContainer data-focus-root>
+            <div ref={modalRef}></div>
+            <ModalContent
+              data-test={testId}
+              ref={modalRef as any}
+              style={{
+                background: transparent ? 'transparent' : 'white',
+                maxWidth: size === 'md' ? 800 : size === 'sm' ? 460 : undefined,
+              }}
+              tabIndex={-1}
+              role="modal"
+            >
+              <Close
+                data-test="close-btn"
+                onClick={() => close('close-button')}
+                aria-label="close"
               >
-                <Close
-                  data-test="close-btn"
-                  onClick={() => close('close-button')}
-                  aria-label="close"
-                >
-                  <CloseIcon scale={1.3} color={Theme.text} />
-                </Close>
+                <CloseIcon scale={1.3} color={Theme.text} />
+              </Close>
 
-                <ModalBody
-                  style={{
-                    maxHeight,
-                  }}
-                >
-                  {children}
-                </ModalBody>
-              </ModalContent>
-            </FocusContainer>
-          </Wrapper>
-        )}
-      </ReactCSSTransitionGroup>
+              <ModalBody
+                style={{
+                  maxHeight,
+                }}
+              >
+                {children}
+              </ModalBody>
+            </ModalContent>
+          </FocusContainer>
+        </Wrapper>
+      </CSSTransition>
     </>
   );
 }

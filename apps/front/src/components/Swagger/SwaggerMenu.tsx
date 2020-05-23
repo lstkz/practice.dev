@@ -58,7 +58,7 @@ export function SwaggerMenu() {
             return;
           }
         }
-        setActiveItem(R.last(items).value);
+        setActiveItem(R.last(items)!.value);
       }, 100);
     };
     document.addEventListener('scroll', onScroll);

@@ -127,7 +127,7 @@ async function runTests({
     });
   });
 
-  console.time('start');
+  console.time('time');
   const ret = await lambda
     .invoke({
       FunctionName: fanoutLambda.PhysicalResourceId + ':$LATEST',
@@ -139,7 +139,8 @@ async function runTests({
     .promise();
 
   // fs.writeFileSync('./out.json', JSON.stringify(ret));
-  console.timeEnd('start');
+  console.timeEnd('time');
+  console.log('Total tests:', commandArgs.length);
   if (ret.FunctionError) {
     console.log('--------------------------');
     console.log(ret.FunctionError);

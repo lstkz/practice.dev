@@ -1,6 +1,6 @@
 import * as R from 'remeda';
 import { createBaseEntity } from '../lib';
-import { SubmissionStatus, Submission, SubmissionType } from 'shared';
+import { SubmissionStatus, Submission, ChallengeSource } from 'shared';
 import { UserEntity } from './UserEntity';
 
 export interface SubmissionKey {
@@ -16,7 +16,7 @@ export interface SubmissionProps {
   status: SubmissionStatus;
   result?: string;
   testUrl: string;
-  type: SubmissionType;
+  type: ChallengeSource;
 }
 
 const BaseEntity = createBaseEntity('Submission')

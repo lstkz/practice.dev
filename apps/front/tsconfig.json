@@ -2,9 +2,8 @@
   "extends": "../../base.tsconfig.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist",
-    "noEmit": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "noEmit": true
   },
   "references": [],
 

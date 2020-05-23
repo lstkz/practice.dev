@@ -31,6 +31,7 @@ module.exports = {
   name: 'client',
   target: 'web',
   mode: __DEV__ ? 'development' : 'production',
+  devtool: __DEV__ ? 'eval-cheap-module-source-map' : false,
   entry: {
     app: './src/main.tsx',
   },

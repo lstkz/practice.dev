@@ -2,22 +2,12 @@ import { S } from 'schema';
 import * as R from 'remeda';
 import { createContract, createRpcBinding } from '../../lib';
 import { ProjectEntity, ProjectChallengeSolvedEntity } from '../../entities';
-import { Project, PagedResult } from 'shared';
-
-function _getProjectStats(project: Project, name: 'solved' | 'submissions') {
-  let ret = 0;
-  Object.keys(project.stats).forEach(key => {
-    if (key.startsWith(name)) {
-      ret += project.stats[key];
-    }
-  });
-  return ret;
-}
+import { Project, PagedResult, getProjectStats } from 'shared';
 
 export const searchProjects = createContract('project.searchProjects')
   .params('userId', 'criteria')
   .schema({
-    userId: S.string(),
+    userId: S.string().optional(),
     criteria: S.object().keys({
       sortBy: S.enum().literal('created', 'solved', 'submissions').optional(),
       sortOrder: S.enum().literal('desc', 'asc').optional(),
@@ -85,7 +75,7 @@ export const searchProjects = createContract('project.searchProjects')
         const mul = sortOrder === 'desc' ? -1 : 1;
         if (sortBy && sortBy !== 'created') {
           const diff =
-            mul * (_getProjectStats(a, sortBy) - _getProjectStats(b, sortBy));
+            mul * (getProjectStats(a, sortBy) - getProjectStats(b, sortBy));
           if (diff === 0) {
             return a.id - b.id;
           }

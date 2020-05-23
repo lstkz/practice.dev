@@ -152,3 +152,72 @@ export function countryListItemToOption({
     label: `${emoji} ${name}`,
   };
 }
+
+export function parseFilterValue(str: string, allowed?: string[]) {
+  const value = (str || '').trim().toLowerCase();
+  if (!allowed || allowed.includes(value)) {
+    return value;
+  } else {
+    return null;
+  }
+}
+
+export function parseFilterValues(str: string, allowed?: string[]) {
+  const values = (str || '')
+    .split(',')
+    .map(x => parseFilterValue(x, allowed))
+    .filter(x => x) as string[];
+  return values;
+}
+
+export function parseFilterMap(str: string, allowed?: string[]) {
+  const values = parseFilterValues(str, allowed);
+  return values.reduce((ret, value) => {
+    ret[value] = value;
+    return ret;
+  }, {} as any);
+}
+
+export function capitalize(str: string) {
+  return str[0].toUpperCase() + str.substr(1);
+}
+
+export function toggleMapValue<
+  T extends Record<string, string | undefined>,
+  K extends string
+>(map: T, value: K): T {
+  let copy = { ...map };
+  if (copy[value]) {
+    delete copy[value];
+  } else {
+    (copy as any)[value] = value;
+  }
+  return copy;
+}
+
+const BUNDLE_ID = 'CHALLENGE_BUNDLE_SCRIPT';
+
+function removeBundle() {
+  const existing = document.getElementById(BUNDLE_ID);
+  if (existing) {
+    existing.remove();
+  }
+}
+
+export function loadBundle(detailsBundleS3Key: string) {
+  return new Rx.Observable<any>(subscriber => {
+    removeBundle();
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = BUNDLE_BASE_URL + detailsBundleS3Key;
+    script.setAttribute('id', BUNDLE_ID);
+    (window as any).ChallengeJSONP = (module: any) => {
+      subscriber.next(module.Details);
+      subscriber.complete();
+    };
+    document.body.appendChild(script);
+    return () => {
+      removeBundle();
+    };
+  });
+}

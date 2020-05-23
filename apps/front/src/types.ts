@@ -112,3 +112,8 @@ export interface SwaggerSpec {
     schemas: Record<string, SwaggerObjectType>;
   };
 }
+
+export interface TargetChallengeValues {
+  projectId?: number;
+  challengeId: number;
+}

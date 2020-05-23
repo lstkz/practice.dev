@@ -21,11 +21,7 @@ export const [handle, ChallengeActions, getChallengeState] = createModule(
     ) => ({
       payload: { challenge, recentSubmissions, favoriteSolutions, component },
     }),
-    challengeLoaded: (challenge: Challenge) => ({ payload: { challenge } }),
     changeTab: (tab: ChallengeTab) => ({ payload: { tab } }),
-    addRecentSubmission: (submission: Submission) => ({
-      payload: { submission },
-    }),
     showSolutionsWithTag: (tag: string) => ({ payload: { tag } }),
   })
   .withState<ChallengeState>();

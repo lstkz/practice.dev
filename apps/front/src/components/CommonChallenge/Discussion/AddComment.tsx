@@ -10,9 +10,8 @@ import mdParse from 'src/common/md';
 import { Alert } from 'src/components/Alert';
 import { getErrorMessage } from 'src/common/helper';
 import { api } from 'src/services/api';
-import { getChallengeState } from '../../interface';
 import { useActions } from 'typeless';
-import { DiscussionActions } from './DiscussionTab';
+import { DiscussionActions, getDiscussionState } from './DiscussionTab';
 import { GlobalActions } from 'src/features/global/interface';
 
 interface AddCommentProps {
@@ -145,7 +144,7 @@ const _AddComment = (props: AddCommentProps) => {
               try {
                 const comment = await api
                   .discussion_createComment({
-                    challengeId: getChallengeState().challenge.id,
+                    ...getDiscussionState().target,
                     text: text,
                     parentCommentId,
                   })

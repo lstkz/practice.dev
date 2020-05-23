@@ -1,7 +1,6 @@
 import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { CSSTransition } from 'react-transition-group';
 
 interface ModalProps {
   title?: string;
@@ -22,12 +21,12 @@ const GlobalStyle = createGlobalStyle`
   opacity: 1;
   transition: opacity 150ms ease-in-out;
 }
-
-.modal-leave {
+ 
+.modal-exit {
   opacity: 1;
 }
 
-.modal-leave.modal-leave-active {
+.modal-exit.modal-exit-active {
   opacity: 0.01;
   transition: opacity 150ms ease-in-out;
 }
@@ -149,47 +148,48 @@ export function Modal(props: ModalProps) {
   return (
     <>
       <GlobalStyle />
-      <ReactCSSTransitionGroup
-        transitionName="modal"
-        transitionEnterTimeout={150}
-        transitionLeaveTimeout={150}
+
+      <CSSTransition
+        in={isOpen}
+        classNames="modal"
+        timeout={150}
+        unmountOnExit
+        mountOnEnter
       >
-        {isOpen && (
-          <Wrapper
-            data-modal-wrapper
-            data-focus-root
-            onClick={e => {
-              const target = e.target as HTMLDivElement;
-              if (target.hasAttribute('data-modal-wrapper')) {
-                close();
-              }
+        <Wrapper
+          data-modal-wrapper
+          data-focus-root
+          onClick={e => {
+            const target = e.target as HTMLDivElement;
+            if (target.hasAttribute('data-modal-wrapper')) {
+              close();
+            }
+          }}
+        >
+          <ModalContent
+            style={{
+              background: transparent ? 'transparent' : 'white',
+              maxWidth: size === 'md' ? 800 : undefined,
             }}
           >
-            <ModalContent
+            {title ? (
+              <ModalHeader>
+                {<ModalTitle>{title}</ModalTitle>}
+                <Close onClick={close}>×</Close>
+              </ModalHeader>
+            ) : (
+              <AbsoluteClose onClick={close}>×</AbsoluteClose>
+            )}
+            <ModalBody
               style={{
-                background: transparent ? 'transparent' : 'white',
-                maxWidth: size === 'md' ? 800 : undefined,
+                maxHeight,
               }}
             >
-              {title ? (
-                <ModalHeader>
-                  {<ModalTitle>{title}</ModalTitle>}
-                  <Close onClick={close}>×</Close>
-                </ModalHeader>
-              ) : (
-                <AbsoluteClose onClick={close}>×</AbsoluteClose>
-              )}
-              <ModalBody
-                style={{
-                  maxHeight,
-                }}
-              >
-                {children}
-              </ModalBody>
-            </ModalContent>
-          </Wrapper>
-        )}
-      </ReactCSSTransitionGroup>
+              {children}
+            </ModalBody>
+          </ModalContent>
+        </Wrapper>
+      </CSSTransition>
     </>
   );
 }

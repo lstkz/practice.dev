@@ -21,6 +21,7 @@ function _getChallenge(id: number) {
     testCase: 'c' + id,
     testsBundleS3Key: 'd' + id,
     title: 'e' + id,
+    domain: 'frontend' as const,
   };
 }
 
@@ -96,6 +97,7 @@ it('create and update a project challenges', async () => {
         "createdAt": 123,
         "description": "b1",
         "detailsBundleS3Key": "a1",
+        "domain": "frontend",
         "entityType": "ProjectChallenge",
         "projectId": 1,
         "testCase": "c1",
@@ -108,6 +110,7 @@ it('create and update a project challenges', async () => {
         "createdAt": 123,
         "description": "b2",
         "detailsBundleS3Key": "a2",
+        "domain": "frontend",
         "entityType": "ProjectChallenge",
         "projectId": 1,
         "testCase": "c2",
@@ -125,6 +128,7 @@ it('create and update a project challenges', async () => {
       testCase: 'c1- updated',
       testsBundleS3Key: 'd1- updated',
       title: 'e1- updated',
+      domain: 'backend',
       assets: {
         a: 1,
       },
@@ -141,6 +145,7 @@ it('create and update a project challenges', async () => {
         "createdAt": 123,
         "description": "b1- updated",
         "detailsBundleS3Key": "a1 - updated",
+        "domain": "backend",
         "entityType": "ProjectChallenge",
         "projectId": 1,
         "testCase": "c1- updated",
@@ -153,6 +158,7 @@ it('create and update a project challenges', async () => {
         "createdAt": 123,
         "description": "b2",
         "detailsBundleS3Key": "a2",
+        "domain": "frontend",
         "entityType": "ProjectChallenge",
         "projectId": 1,
         "testCase": "c2",
@@ -171,6 +177,7 @@ it('create and update a project challenges', async () => {
         "createdAt": 123,
         "description": "b2",
         "detailsBundleS3Key": "a2",
+        "domain": "frontend",
         "entityType": "ProjectChallenge",
         "projectId": 1,
         "testCase": "c2",
@@ -183,6 +190,7 @@ it('create and update a project challenges', async () => {
         "createdAt": 123,
         "description": "b3",
         "detailsBundleS3Key": "a3",
+        "domain": "frontend",
         "entityType": "ProjectChallenge",
         "projectId": 1,
         "testCase": "c3",
