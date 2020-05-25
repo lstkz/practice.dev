@@ -46,13 +46,6 @@ const Wrapper = styled.div`
   margin-bottom: 70px;
 `;
 
-const Buttons = styled.div`
-  width: 100%;
-  ${Button} + ${Button} {
-    margin-top: 10px;
-  }
-`;
-
 export function ChallengeView() {
   useChallengeModule();
   useSolutionsModule();
@@ -95,7 +88,7 @@ export function ChallengeView() {
                 title={challenge.title}
                 tags={<ChallengeTags challenge={challenge} />}
                 buttons={
-                  <Buttons>
+                  <>
                     <Button
                       testId="submit-btn"
                       block
@@ -115,7 +108,7 @@ export function ChallengeView() {
                         CREATE SOLUTION
                       </Button>
                     )}
-                  </Buttons>
+                  </>
                 }
               />
               <Tabs

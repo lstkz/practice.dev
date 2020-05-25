@@ -81,7 +81,7 @@ export function ProjectView() {
               });
               return (
                 <MediaCard
-                  highlighted={challenges[i + 1]?.isLocked ?? true}
+                  highlighted={challenges[i + 1]?.isLocked ?? false}
                   key={item.id}
                   testId={`challenge_${item.id}`}
                   title={

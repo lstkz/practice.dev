@@ -31,6 +31,7 @@ it('should return a project as anonymous', async () => {
                 "isLocked": false,
                 "isSolved": false,
                 "project": Object {
+                  "challengeCount": 3,
                   "id": 1,
                   "title": "foo",
                 },
@@ -51,6 +52,7 @@ it('should return a project as anonymous', async () => {
                 "isLocked": true,
                 "isSolved": false,
                 "project": Object {
+                  "challengeCount": 3,
                   "id": 1,
                   "title": "foo",
                 },
@@ -71,6 +73,7 @@ it('should return a project as anonymous', async () => {
                 "isLocked": true,
                 "isSolved": false,
                 "project": Object {
+                  "challengeCount": 3,
                   "id": 1,
                   "title": "foo",
                 },
@@ -109,6 +112,7 @@ it('should return a project as logged in', async () => {
                 "isLocked": false,
                 "isSolved": false,
                 "project": Object {
+                  "challengeCount": 3,
                   "id": 1,
                   "title": "foo",
                 },
@@ -129,6 +133,7 @@ it('should return a project as logged in', async () => {
                 "isLocked": true,
                 "isSolved": false,
                 "project": Object {
+                  "challengeCount": 3,
                   "id": 1,
                   "title": "foo",
                 },
@@ -149,6 +154,7 @@ it('should return a project as logged in', async () => {
                 "isLocked": true,
                 "isSolved": false,
                 "project": Object {
+                  "challengeCount": 3,
                   "id": 1,
                   "title": "foo",
                 },
@@ -201,6 +207,7 @@ it('should project with progress', async () => {
                 "isLocked": false,
                 "isSolved": true,
                 "project": Object {
+                  "challengeCount": 3,
                   "id": 1,
                   "title": "foo",
                 },
@@ -221,6 +228,7 @@ it('should project with progress', async () => {
                 "isLocked": false,
                 "isSolved": true,
                 "project": Object {
+                  "challengeCount": 3,
                   "id": 1,
                   "title": "foo",
                 },
@@ -241,6 +249,7 @@ it('should project with progress', async () => {
                 "isLocked": false,
                 "isSolved": false,
                 "project": Object {
+                  "challengeCount": 3,
                   "id": 1,
                   "title": "foo",
                 },

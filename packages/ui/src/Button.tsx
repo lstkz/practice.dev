@@ -57,10 +57,14 @@ const _Button = (props: ButtonProps, ref: any) => {
       <a
         data-test={testId}
         data-dropdown-toggle={props['data-dropdown-toggle']}
-        className={className}
+        className={className + (disabled ? ' disabled' : '')}
         href={href}
         ref={ref}
         onClick={e => {
+          if (disabled) {
+            e.preventDefault();
+            return;
+          }
           if (onClick) {
             onClick(e);
             if (e.isDefaultPrevented()) {
@@ -126,12 +130,15 @@ export const Button = styled(React.forwardRef(_Button))`
     margin-right: 10px;
   }
 
-  &:disabled {
-    opacity: 0.65;
+  &:not(:disabled),
+  &:not(.disabled) {
+    cursor: pointer;
   }
 
-  &:not(:disabled) {
-    cursor: pointer;
+  &.disabled,
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
   }
 
   &[data-dropdown-toggle] {
@@ -161,8 +168,10 @@ export const Button = styled(React.forwardRef(_Button))`
             background: ${Theme.primaryGradientActive};
             box-shadow: 0 0 0 3px rgb(35, 122, 210, 0.5);
           }
+          &.disabled,
           &:disabled {
             background: ${Theme.primaryGradient};
+            box-shadow: none;
           }
         `;
       case 'secondary':
@@ -189,8 +198,10 @@ export const Button = styled(React.forwardRef(_Button))`
             background: ${Theme.dangerGradientActive};
             box-shadow: 0 0 0 3px rgb(210, 35, 35, 0.5);
           }
+          &.disabled,
           &:disabled {
             background: ${Theme.dangerGradient};
+            box-shadow: none;
           }
         `;
     }

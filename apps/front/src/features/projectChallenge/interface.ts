@@ -27,10 +27,10 @@ export const [
 
 // --- Routing ---
 
-export const routeConfig: RouteConfig = {
+export const routeConfig: RouteConfig<{ projectId: number; id: number }> = {
   type: 'route',
   auth: 'any',
-  path: '/projects/:projectId/challenges/:id',
+  path: '/projects/:n_projectId/challenges/:n_id',
   waitForAction: ProjectChallengeActions.loaded,
   component: () =>
     import('./components/ProjectChallengeView').then(

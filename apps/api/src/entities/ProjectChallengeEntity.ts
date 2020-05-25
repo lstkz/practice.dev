@@ -37,6 +37,7 @@ export class ProjectChallengeEntity extends BaseEntity {
       project: {
         id: project.projectId,
         title: project.title,
+        challengeCount: project.challengeCount,
       },
       createdAt: new Date(this.createdAt).toISOString(),
       stats: {

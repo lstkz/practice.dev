@@ -3,21 +3,18 @@ import {
   ProjectChallengeActions,
   ProjectChallengeState,
   handle,
+  routeConfig,
 } from './interface';
 import { SubmitActions } from '../submit/interface';
-import { getRouteParams } from 'src/common/url';
 import { api } from 'src/services/api';
 import { handleAppError, loadBundle } from 'src/common/helper';
 import { getGlobalState } from '../global/interface';
 
 // --- Epic ---
-handle
-  .epic()
-  .on(ProjectChallengeActions.$mounted, () => {
-    return ProjectChallengeActions.load();
-  })
-  .on(ProjectChallengeActions.load, (_, { action$ }) => {
-    const { projectId, id } = getRouteParams('projectChallenge');
+handle.epic().onRoute({
+  $mounted: ProjectChallengeActions.$mounted,
+  routeConfig: routeConfig,
+  onParamsChanged: ({ projectId, id }, _, { action$ }) => {
     return Rx.forkJoin([
       api.project_getProjectChallenge({
         projectId,
@@ -50,7 +47,8 @@ handle
         action$.pipe(Rx.waitForType(ProjectChallengeActions.$unmounted))
       )
     );
-  });
+  },
+});
 
 // --- Reducer ---
 const initialState: ProjectChallengeState = {
