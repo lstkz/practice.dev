@@ -46,7 +46,7 @@ export class Tester {
 
   async navigate(url: string) {
     await this.stepNotifier.notify(`Navigate to "${url}"`);
-    await this.page.goto(url, { timeout: 5000, waitUntil: 'load' });
+    await this.page.goto(url, { timeout: 5000, waitUntil: 'domcontentloaded' });
   }
 
   async expectToBeVisible(selector: string) {
