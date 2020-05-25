@@ -23,14 +23,26 @@ export const Link = (props: LinkProps) => {
             return;
           }
         }
-        if (href) {
+        const isModifiedEvent = !!(
+          e.metaKey ||
+          e.altKey ||
+          e.ctrlKey ||
+          e.shiftKey
+        );
+
+        if (
+          href &&
+          e.button === 0 &&
+          rest.target !== '_self' &&
+          !isModifiedEvent
+        ) {
+          e.preventDefault();
           const [pathname, search] = href.split('?');
           push({
             pathname,
             search,
           });
         }
-        e.preventDefault();
       }}
     />
   );
