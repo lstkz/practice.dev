@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import * as Rx from 'src/rx';
 import * as R from 'remeda';
 import { useActions, useMappedState, getIsHmr } from 'typeless';
@@ -69,6 +69,7 @@ export const RouteResolver = () => {
   const [component2, setComponent2] = useState<JSX.Element | null>(null);
   const [currentComponent, setCurrentComponent] = useState(1);
   const loadIdRef = React.useRef(1);
+  const loadingStarted = React.useRef(false);
 
   const setNextComponent = (comp: any) => {
     if (currentComponent === 1) {
@@ -108,28 +109,39 @@ export const RouteResolver = () => {
 
   const load = (routeConfig: RouteConfig) => {
     const id = ++loadIdRef.current;
-    let isStarted = false;
+    setNextComponent(null);
+    const isCancelled = () => {
+      const ret = id !== loadIdRef.current;
+      return ret;
+    };
     const startTimeout = setTimeout(() => {
-      if (loadIdRef.current !== id) {
+      if (isCancelled()) {
         return;
       }
-      isStarted = true;
-      if (!routeConfig.noLoader) {
+      if (!routeConfig.noLoader && !loadingStarted.current) {
         loaderRef.current?.continuousStart();
+        loadingStarted.current = true;
       }
     }, 500);
     const tryCompleteLoader = () => {
+      if (isCancelled()) {
+        return;
+      }
       clearTimeout(startTimeout);
-      if (!routeConfig.noLoader && isStarted) {
+      if (!routeConfig.noLoader && loadingStarted.current) {
         loaderRef.current?.complete();
+        loadingStarted.current = false;
       }
     };
     routeConfig
       .component()
       .then(Component => {
+        if (isCancelled()) {
+          return;
+        }
         const isSame = getCurrentComponent()?.type === Component;
         if (isSame && !getIsHmr()) {
-          clearTimeout(startTimeout);
+          tryCompleteLoader();
           return;
         }
         if (
@@ -146,11 +158,13 @@ export const RouteResolver = () => {
                 routeConfig.waitForAction,
                 GlobalActions.showAppError,
               ]),
+              Rx.take(1),
               Rx.tap(() => {
-                if (loadIdRef.current === id) {
-                  showNextComponent();
-                  tryCompleteLoader();
+                if (isCancelled()) {
+                  return;
                 }
+                showNextComponent();
+                tryCompleteLoader();
               })
             )
             .toPromise();
@@ -161,12 +175,15 @@ export const RouteResolver = () => {
         }
       })
       .catch(() => {
+        if (isCancelled()) {
+          return;
+        }
         tryCompleteLoader();
         showAppError('No internet connection. Please refresh the page.');
       });
   };
 
-  useEffect(() => {
+  React.useLayoutEffect(() => {
     let match = getMatch(location, !!user);
     if (match) {
       load(match);
@@ -187,7 +204,6 @@ export const RouteResolver = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, user]);
-
   return (
     <>
       <LoaderWrapper>
