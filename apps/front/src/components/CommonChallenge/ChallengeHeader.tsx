@@ -4,6 +4,7 @@ import { Theme } from 'src/common/Theme';
 import { Tag } from 'src/components/Tag';
 import { DomainIcon } from 'src/components/DomainIcon';
 import { ChallengeDomain } from 'shared';
+import { Button } from 'ui';
 
 interface ChallengeHeaderProps {
   className?: string;
@@ -46,6 +47,13 @@ const Tags = styled.div`
   } 
 `;
 
+const Buttons = styled.div`
+  width: 100%;
+  ${Button} + ${Button} {
+    margin-top: 10px;
+  }
+`;
+
 const _ChallengeHeader = (props: ChallengeHeaderProps) => {
   const { className, domain, title, tags, buttons } = props;
   return (
@@ -57,7 +65,9 @@ const _ChallengeHeader = (props: ChallengeHeaderProps) => {
         <Title data-test="challenge-title">{title}</Title>
         {tags && <Tags>{tags}</Tags>}
       </Col2>
-      <Col3>{buttons}</Col3>
+      <Col3>
+        <Buttons>{buttons}</Buttons>
+      </Col3>
     </div>
   );
 };

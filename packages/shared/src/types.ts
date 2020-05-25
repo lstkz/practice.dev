@@ -238,6 +238,7 @@ export interface Project {
 export interface ProjectInfo {
   id: number;
   title: string;
+  challengeCount: number;
 }
 
 export type ProjectStats = Record<string, number>;

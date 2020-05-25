@@ -90,15 +90,32 @@ export function ProjectChallengeView() {
                   />
                 }
                 buttons={
-                  <Button
-                    testId="submit-btn"
-                    block
-                    type={challenge.isSolved ? 'secondary' : 'primary'}
-                    onClick={showSubmit}
-                    disabled={status === 'testing'}
-                  >
-                    SUBMIT
-                  </Button>
+                  <>
+                    <Button
+                      testId="submit-btn"
+                      block
+                      type={challenge.isSolved ? 'secondary' : 'primary'}
+                      onClick={showSubmit}
+                      disabled={status === 'testing'}
+                    >
+                      SUBMIT
+                    </Button>
+                    {challenge.isSolved &&
+                      challenge.id !== challenge.project.challengeCount && (
+                        <Button
+                          testId="next-challenge-btn"
+                          block
+                          type="primary"
+                          href={createUrl({
+                            name: 'project-challenge',
+                            id: challenge.id + 1,
+                            projectId: challenge.project.id,
+                          })}
+                        >
+                          NEXT CHALLENGE
+                        </Button>
+                      )}
+                  </>
                 }
               />
               <Tabs

@@ -5,11 +5,13 @@ import { Hmr, startHmr, TypelessContext } from 'typeless';
 import { registry } from './registry';
 import { GlobalStyle } from 'ui';
 import { initErrorReporter } from './errorReporter';
+import { addTypelessExt } from './common/typeless-ext';
 
 const MOUNT_NODE = document.getElementById('root')!;
 
 setGlobalExport();
 initErrorReporter();
+addTypelessExt();
 
 (window as any)._registry = registry;
 const render = () => {

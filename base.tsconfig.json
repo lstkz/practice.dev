@@ -30,6 +30,6 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "downlevelIteration": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": false
   }
 }

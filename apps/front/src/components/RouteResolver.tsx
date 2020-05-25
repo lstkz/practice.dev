@@ -10,6 +10,7 @@ import { usePrevious } from '../hooks/usePrevious';
 import { Theme } from 'src/common/Theme';
 import { getOutputStream } from 'src/registry';
 import styled from 'styled-components';
+import { globalLoader } from 'src/common/globalLoader';
 
 // load dynamically all routes from all interfaces
 const reqs = [require.context('../features', true, /interface.tsx?$/)];
@@ -71,6 +72,17 @@ export const RouteResolver = () => {
   const loadIdRef = React.useRef(1);
   const loadingStarted = React.useRef(false);
 
+  React.useEffect(() => {
+    globalLoader.start = () => {
+      loaderRef.current?.continuousStart();
+      loadingStarted.current = true;
+    };
+    globalLoader.complete = () => {
+      loaderRef.current?.complete();
+      loadingStarted.current = false;
+    };
+  }, []);
+
   const setNextComponent = (comp: any) => {
     if (currentComponent === 1) {
       setComponent2(comp);
@@ -119,8 +131,7 @@ export const RouteResolver = () => {
         return;
       }
       if (!routeConfig.noLoader && !loadingStarted.current) {
-        loaderRef.current?.continuousStart();
-        loadingStarted.current = true;
+        globalLoader.start();
       }
     }, 500);
     const tryCompleteLoader = () => {
@@ -129,8 +140,7 @@ export const RouteResolver = () => {
       }
       clearTimeout(startTimeout);
       if (!routeConfig.noLoader && loadingStarted.current) {
-        loaderRef.current?.complete();
-        loadingStarted.current = false;
+        globalLoader.complete();
       }
     };
     routeConfig

@@ -68,6 +68,7 @@ it('should return a challenge (first)', async () => {
       "isLocked": false,
       "isSolved": false,
       "project": Object {
+        "challengeCount": 3,
         "id": 1,
         "title": "foo",
       },
@@ -105,6 +106,7 @@ it('should return a challenge (second)', async () => {
       "isLocked": false,
       "isSolved": false,
       "project": Object {
+        "challengeCount": 3,
         "id": 1,
         "title": "foo",
       },

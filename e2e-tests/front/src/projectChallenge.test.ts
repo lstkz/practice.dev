@@ -64,7 +64,8 @@ it('should submit successfully', async () => {
   await page.goto(WEBSITE_URL + '/projects/1/challenges/1');
   const mockSocket = new MockSocket(page);
   await mockSocket.init();
-
+  await $('@submit-btn').expect.toBeVisible();
+  await $('@next-challenge-btn').expect.toBeHidden();
   await $('@submit-btn').click();
   await $('@submit-modal @url-input').type('http://a.bb');
   await $('@submit-modal @submit-btn').click();
