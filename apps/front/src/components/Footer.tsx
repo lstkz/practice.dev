@@ -67,14 +67,6 @@ const _Footer = (props: FooterProps) => {
           {' | '}
           <Link
             href={createUrl({
-              name: 'home',
-            })}
-          >
-            Forums
-          </Link>
-          {' | '}
-          <Link
-            href={createUrl({
               name: 'faq',
             })}
           >

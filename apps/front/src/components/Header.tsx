@@ -134,9 +134,6 @@ const _Header = (props: HeaderProps) => {
             <NavItem active={pathname.startsWith('/contests')}>
               <Link href={createUrl({ name: 'contests' })}>Contests</Link>
             </NavItem>
-            <NavItem>
-              <Link href={createUrl({ name: 'challenges' })}>Forums</Link>
-            </NavItem>
           </Nav>
           {user ? (
             <UserInfoWrapper>
