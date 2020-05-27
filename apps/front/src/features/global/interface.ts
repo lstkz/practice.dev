@@ -21,6 +21,10 @@ export const [handle, GlobalActions, getGlobalState] = createModule(
       payload: { error, requestId },
     }),
     hideAppError: null,
+    showAppSuccess: (message: string) => ({
+      payload: { message },
+    }),
+    hideAppSuccess: null,
     avatarUpdated: (avatarUrl: string | null) => ({ payload: { avatarUrl } }),
     showErrorModal: (message: string) => ({ payload: { message } }),
     showVerifyEmailError: null,
@@ -36,6 +40,7 @@ export interface GlobalState {
     error: string;
     requestId?: string;
   } | null;
+  appSuccess: string | null;
   errorModal: {
     isOpen: boolean;
     message: string | null;

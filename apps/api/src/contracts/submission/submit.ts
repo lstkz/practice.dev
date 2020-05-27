@@ -5,7 +5,7 @@ import { urlRegex, SubmissionStatus, TesterMessage } from 'shared';
 import uuid from 'uuid';
 import { createSubmissionCUD } from '../../cud/submission';
 import { TESTER_TOPIC_ARN } from '../../config';
-import { getChallengeOrProjectChallenge } from '../../common/validateChallengeOrProjectChallenge';
+import { getChallengeOrProjectChallenge } from '../../common/baseChallenge';
 import { rateLimit } from '../misc/rateLimit';
 import { getDuration } from '../../common/helper';
 

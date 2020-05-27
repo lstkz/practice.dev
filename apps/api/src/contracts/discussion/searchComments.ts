@@ -5,7 +5,7 @@ import { esSearch } from '../../common/elastic';
 import { DiscussionCommentEntity } from '../../entities/DiscussionCommentEntity';
 import { UserEntity } from '../../entities';
 import { DiscussionComment, LoadMoreResult } from 'shared';
-import { validateChallengeOrProjectChallenge } from '../../common/validateChallengeOrProjectChallenge';
+import { validateChallengeOrProjectChallenge } from '../../common/baseChallenge';
 
 export const searchComments = createContract('discussion.searchComments')
   .params('userId', 'criteria')

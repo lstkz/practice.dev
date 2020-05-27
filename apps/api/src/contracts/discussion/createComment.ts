@@ -1,12 +1,13 @@
 import { S } from 'schema';
 import * as R from 'remeda';
 import uuid from 'uuid';
-import { createContract, createRpcBinding } from '../../lib';
-import { UserEntity } from '../../entities';
+import { createContract, createRpcBinding, createTransaction } from '../../lib';
+import { UserEntity, DiscussionSubscriptionEntity } from '../../entities';
 import { AppError } from '../../common/errors';
 import { DiscussionCommentEntity } from '../../entities/DiscussionCommentEntity';
 import { doFn } from '../../common/helper';
-import { validateChallengeOrProjectChallenge } from '../../common/validateChallengeOrProjectChallenge';
+import { validateChallengeOrProjectChallenge } from '../../common/baseChallenge';
+import { dispatch } from '../../dispatch';
 
 export const createComment = createContract('discussion.createComment')
   .params('userId', 'values')
@@ -52,6 +53,14 @@ export const createComment = createContract('discussion.createComment')
     const commentId = parentComment
       ? `${parentComment.commentId}_${uuid()}`
       : uuid();
+    const t = createTransaction();
+    if (!parentComment) {
+      const subscription = new DiscussionSubscriptionEntity({
+        commentId,
+        userId,
+      });
+      t.insert(subscription);
+    }
     const comment = new DiscussionCommentEntity({
       challengeId: values.challengeId,
       projectId: values.projectId,
@@ -63,7 +72,16 @@ export const createComment = createContract('discussion.createComment')
       createdAt: Date.now(),
       type: values.projectId ? 'project' : 'challenge',
     });
-    await comment.insert();
+    t.insert(comment);
+    await t.commit();
+
+    await dispatch({
+      type: 'NewDiscussionEvent',
+      payload: {
+        commentId,
+      },
+    });
+
     return comment.toDiscussionComment(user);
   });
 

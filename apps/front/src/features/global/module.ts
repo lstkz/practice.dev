@@ -47,6 +47,7 @@ const initialState: GlobalState = {
     isOpen: false,
     message: null,
   },
+  appSuccess: null,
 };
 
 handle
@@ -63,6 +64,12 @@ handle
   })
   .on(GlobalActions.hideAppError, state => {
     state.appError = null;
+  })
+  .on(GlobalActions.showAppSuccess, (state, { message }) => {
+    state.appSuccess = message;
+  })
+  .on(GlobalActions.hideAppSuccess, state => {
+    state.appSuccess = null;
   })
   .on(GlobalActions.avatarUpdated, (state, { avatarUrl }) => {
     state.user!.avatarUrl = avatarUrl;

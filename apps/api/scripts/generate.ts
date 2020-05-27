@@ -139,7 +139,7 @@ interface EventMapping {
   }
 }
 export const eventMapping: EventMapping = {
-${entries.join('\n')}
+${entries.join(',\n')}
 }
 `,
       { ...require('../../../prettier.config'), parser: 'typescript' }

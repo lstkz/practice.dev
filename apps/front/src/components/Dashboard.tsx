@@ -5,6 +5,7 @@ import { Footer } from './Footer';
 import { AppErrorBanner } from './AppErrorBanner';
 import { ConfirmModalView } from 'src/features/confirmModal/components/ConfirmModal';
 import { ConfirmEmailWarning } from './ConfirmEmailWarning';
+import { AppSuccessBanner } from './AppSuccessBanner';
 
 interface DashboardProps {
   className?: string;
@@ -22,6 +23,7 @@ const _Dashboard = (props: DashboardProps) => {
       <div className={className}>
         <Header />
         <Content>
+          <AppSuccessBanner />
           <AppErrorBanner />
           <ConfirmEmailWarning />
           {children}
