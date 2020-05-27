@@ -74,7 +74,7 @@ export const onNewDiscussion = createContract('notification.onNewDiscussion')
 ------------------------------------------------------------------------
   <br/>
   <br/>
-  <a href="${challengeUrl}?unsubscribe=${comment.parentCommentId}">Click here to unsubscribe from the thread.</a> 
+  <a href="${challengeUrl}?unsubscribe=${comment.parentCommentId}">Click here to unsubscribe from the thread</a> 
   <br/>
   <br/>
   Practice.dev

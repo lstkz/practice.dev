@@ -446,3 +446,18 @@ it('should display an error if posting as unverified', async () => {
     'You must verify email to perform this action.'
   );
 });
+
+it('should unsubscribe', async () => {
+  engine.mock('discussion_unsubscribe', (params, count) => {
+    expect(params).toEqual<typeof params>('123');
+    if (count === 1) {
+      throw new MockError('err');
+    }
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1?unsubscribe=123');
+  await $('@app-error').expect.toMatch('Cannot unsubscribe');
+  await page.reload();
+  await $('@app-success').expect.toMatch('Unsubscribed successfully');
+  await $('@app-success a').click();
+  await $('@app-success').expect.toBeHidden();
+});

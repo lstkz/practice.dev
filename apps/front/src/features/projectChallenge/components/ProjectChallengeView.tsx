@@ -33,6 +33,7 @@ import {
 import { VoidLink } from 'src/components/VoidLink';
 import { useDiscussionModule } from 'src/components/CommonChallenge/Discussion/DiscussionTab';
 import { useApiSpecModule } from 'src/components/CommonChallenge/ApiSpecTab';
+import { DiscussionUnsubscribe } from 'src/components/DiscussionUnsubscribe';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};
@@ -59,6 +60,7 @@ export function ProjectChallengeView() {
 
   return (
     <Dashboard>
+      <DiscussionUnsubscribe />
       <Container>
         <Breadcrumb
           icon={<ProjectsSmallIcon />}
