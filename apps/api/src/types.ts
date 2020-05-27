@@ -8,7 +8,15 @@ export interface UserEmailConfirmedEvent {
   payload: { userId: string };
 }
 
-export type AppEvent = UserRegisteredEvent | UserEmailConfirmedEvent;
+export interface NewDiscussionEvent {
+  type: 'NewDiscussionEvent';
+  payload: { commentId: string };
+}
+
+export type AppEvent =
+  | UserRegisteredEvent
+  | UserEmailConfirmedEvent
+  | NewDiscussionEvent;
 
 export type EntityType =
   | 'SolutionEntity'

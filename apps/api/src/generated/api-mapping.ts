@@ -46,6 +46,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "discussion.searchComments"*/ '../contracts/discussion/searchComments'
     ).then(x => x['searchCommentsRpc']),
+  'discussion.unsubscribe': () =>
+    import(
+      /* webpackChunkName: "discussion.unsubscribe"*/ '../contracts/discussion/unsubscribe'
+    ).then(x => x['unsubscribeRpc']),
   'errorReporting.reportFrontendError': () =>
     import(
       /* webpackChunkName: "errorReporting.reportFrontendError"*/ '../contracts/errorReporting/reportFrontendError'

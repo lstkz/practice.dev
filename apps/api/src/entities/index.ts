@@ -20,3 +20,4 @@ export * from './FeatureSubscriptionEntity';
 export * from './ProjectEntity';
 export * from './ProjectChallengeEntity';
 export * from './ProjectChallengeSolvedEntity';
+export * from './DiscussionSubscriptionEntity';

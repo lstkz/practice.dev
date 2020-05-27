@@ -1,4 +1,6 @@
+import { SES } from 'aws-sdk';
 import { resetDb } from '../helper';
+import { ses } from '../../src/lib';
 import {
   registerSampleUsers,
   addSampleChallenges,
@@ -15,6 +17,13 @@ beforeEach(async () => {
     addSampleChallenges(),
     addSampleProjects(),
   ]);
+
+  const sendEmailMock: any = (params: SES.Types.SendEmailRequest) => ({
+    promise: () => {
+      return Promise.resolve();
+    },
+  });
+  jest.spyOn(ses, 'sendEmail').mockImplementation(sendEmailMock);
 });
 
 it('should create a comment successfully', async () => {

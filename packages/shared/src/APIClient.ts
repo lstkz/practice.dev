@@ -92,8 +92,12 @@ export class APIClient {
     sortDesc: boolean;
     limit?: number | undefined;
     cursor?: string | null | undefined;
+    projectId?: number | undefined;
   }): Rx.Observable<LoadMoreResult<DiscussionComment>> {
     return this.call('discussion.searchComments', criteria);
+  }
+  discussion_unsubscribe(commentId: string): Rx.Observable<void> {
+    return this.call('discussion.unsubscribe', commentId);
   }
   errorReporting_reportFrontendError(content: {
     [key: string]: any;

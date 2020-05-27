@@ -8,6 +8,12 @@ interface EventMapping {
   };
 }
 export const eventMapping: EventMapping = {
+  NewDiscussionEvent: {
+    onNewDiscussionEvent: () =>
+      import(
+        /* webpackChunkName: "NewDiscussionEvent.onNewDiscussionEvent"*/ '../contracts/discussion/onNewDiscussionEvent'
+      ).then(x => x['onNewDiscussionEvent']),
+  },
   UserRegisteredEvent: {
     sendConfirmEmailEvent: () =>
       import(

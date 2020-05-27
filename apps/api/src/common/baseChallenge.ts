@@ -5,6 +5,7 @@ import {
 } from '../entities';
 import { AppError } from './errors';
 import { checkProjectChallengePermission } from '../contracts/project/checkProjectChallengePermission';
+import { BASE_URL } from '../config';
 
 export async function validateChallengeOrProjectChallenge(
   userId: string | undefined,
@@ -63,4 +64,12 @@ export async function getChallengeOrProjectChallenge(
     throw new Error('Expected challenge or project challenge');
   }
   return ret;
+}
+
+export function getChallengeUrl(
+  challenge: ProjectChallengeEntity | ChallengeEntity
+) {
+  return 'projectId' in challenge
+    ? `${BASE_URL}/projects/${challenge.projectId}/challenges/${challenge.challengeId}`
+    : `${BASE_URL}/challenges/${challenge.challengeId}`;
 }

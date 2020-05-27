@@ -9,7 +9,7 @@ import { doFn } from '../../common/helper';
 import { SearchResult } from '../../orm/types';
 import { LoadMoreResult, Submission } from 'shared';
 import { esSearch } from '../../common/elastic';
-import { validateChallengeOrProjectChallenge } from '../../common/validateChallengeOrProjectChallenge';
+import { validateChallengeOrProjectChallenge } from '../../common/baseChallenge';
 
 export const searchSubmissions = createContract('submission.searchSubmissions')
   .params('userId', 'criteria')
