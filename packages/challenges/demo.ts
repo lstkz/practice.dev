@@ -1,4 +1,4 @@
-import { demo } from '@pvd/data-deploy';
+import { demo } from '@pvd/tools';
 
 const challengeId = process.argv[2];
 

@@ -57,19 +57,28 @@ if (module.hot) {
   );
 }
 
+function createChallengeEntry(basedir: string, challengeId: number) {
+  const roots = getChallengeRoots(basedir);
+  for (const name of roots) {
+    const exec = /^\d+/.exec(name);
+    if (exec && Number(exec[0]) === challengeId) {
+      const componentPath = `./${name}/details/index`;
+      const fullPath = Path.join(basedir, componentPath + '.tsx');
+      if (!fs.existsSync(fullPath)) {
+        throw new Error(`${fullPath} doesn't exist`);
+      }
+      createEntry(basedir, componentPath);
+      return;
+    }
+  }
+  throw new Error(`Challenge ${challengeId} not found`);
+}
+
 export async function demo(options: BuildSourcesOptions) {
   const { basedir, type, challengeId } = options;
 
   if (type === 'challenge') {
-    const roots = getChallengeRoots(basedir);
-    for (const name of roots) {
-      const exec = /^\d+/.exec(name);
-      if (exec && Number(exec[0]) === challengeId) {
-        const componentPath = `./${name}/details/index`;
-        createEntry(basedir, componentPath);
-        break;
-      }
-    }
+    createChallengeEntry(basedir, challengeId);
   } else {
     throw new Error('todo');
   }

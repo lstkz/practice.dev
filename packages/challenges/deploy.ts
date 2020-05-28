@@ -1,4 +1,4 @@
-import { deployChallenges } from '@pvd/data-deploy';
+import { deployChallenges } from '@pvd/tools';
 
 const API_URL = process.env.API_URL!;
 const API_TOKEN = process.env.API_TOKEN!;

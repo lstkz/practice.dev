@@ -1,4 +1,4 @@
-import { ChallengeInfo } from '@pvd/data-deploy/src/types';
+import { ChallengeInfo } from '@pvd/tools';
 
 export const info: ChallengeInfo = {
   id: 1,
