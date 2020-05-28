@@ -3,6 +3,9 @@ import { TestInfo } from 'shared';
 export type Domain = 'frontend' | 'backend' | 'fullstack' | 'styling';
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
+export type SourceType = 'details' | 'tests';
+export type TargetType = 'challenge' | 'projects';
+
 export interface ProjectInfo {
   id: number;
   title: string;
@@ -32,7 +35,7 @@ export interface FileUpload {
 export interface ProjectChallengePackage extends ProjectChallengeInfo {
   detailsFile: FileUpload;
   testFile: FileUpload;
-  testFilePath: string;
+  testInfo: TestInfo[];
 }
 
 export interface ProjectPackage {

@@ -47,11 +47,11 @@ export async function deployChallenges(options: DeployChallengesOptions) {
   await Promise.all([
     buildSources({
       basedir: basedir,
-      type: 'challenge',
+      target: 'challenge',
     }),
     buildTests({
       basedir: basedir,
-      type: 'challenge',
+      target: 'challenge',
     }),
   ]);
   const packages = await getChallengePackages(basedir);

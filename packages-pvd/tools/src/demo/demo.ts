@@ -4,7 +4,7 @@ import fs from 'fs';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import createStyledComponentsTransformer from 'typescript-plugin-styled-components';
 import Path from 'path';
-import { getChallengeRoots } from '../helper';
+import { getValidRoots } from '../helper';
 
 const styledComponentsTransformer = createStyledComponentsTransformer({
   getDisplayName: (filename: string, bindingName: string) => {
@@ -58,7 +58,7 @@ if (module.hot) {
 }
 
 function createChallengeEntry(basedir: string, challengeId: number) {
-  const roots = getChallengeRoots(basedir);
+  const roots = getValidRoots(basedir);
   for (const name of roots) {
     const exec = /^\d+/.exec(name);
     if (exec && Number(exec[0]) === challengeId) {

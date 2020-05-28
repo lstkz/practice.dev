@@ -1,14 +1,15 @@
 import Path from 'path';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
-import { getEntryForChallenges, execWebpack, getWebpackModule } from './helper';
+import { getEntry, execWebpack, getWebpackModule } from './helper';
+import { TargetType } from './types';
 
 export interface BuildTestsOptions {
   basedir: string;
-  type: 'challenge' | 'projects';
+  target: TargetType;
 }
 
 export async function buildTests(options: BuildTestsOptions) {
-  const { basedir } = options;
+  const { basedir, target } = options;
   const testsDir = Path.join(basedir, 'dist/tests');
 
   await execWebpack({
@@ -20,7 +21,7 @@ export async function buildTests(options: BuildTestsOptions) {
     resolve: {
       extensions: ['.tsx', '.ts', '.jsx', '.js', '.json', 'json5'],
     },
-    entry: getEntryForChallenges(basedir, 'tests'),
+    entry: getEntry(target, basedir, 'tests'),
     output: {
       filename: '[name].js',
       libraryTarget: 'commonjs',

@@ -10,6 +10,11 @@ import {
   FileUpload,
   Domain,
   AssetsInfo,
+  ProjectPackage,
+  ProjectInfo,
+  ProjectChallengePackage,
+  SourceType,
+  TargetType,
 } from './types';
 import { TestInfo } from 'shared';
 import { TestConfiguration, Tester as FrontendTester } from 'tester';
@@ -17,7 +22,17 @@ import { ApiTestConfiguration, Tester as ApiTester } from 'tester-api';
 
 const s3 = new AWS.S3();
 
-export function getChallengeRoots(basedir: string) {
+function _getSourceTarget(type: SourceType) {
+  return type === 'details' ? 'details/index.tsx' : 'test-case.ts';
+}
+
+function _assertExists(basedir: string, path: string) {
+  if (!fs.existsSync(Path.join(basedir, path))) {
+    throw new Error(`"${path}" doesn't exist`);
+  }
+}
+
+export function getValidRoots(basedir: string) {
   const dir = fs.readdirSync(basedir);
   return dir.filter(name => {
     const stats = fs.statSync(Path.join(basedir, name));
@@ -25,21 +40,48 @@ export function getChallengeRoots(basedir: string) {
   });
 }
 
-export function getEntryForChallenges(
-  basedir: string,
-  type: 'details' | 'tests'
-) {
+export function getEntryForChallenges(basedir: string, type: SourceType) {
   const entry: Record<string, string[]> = {};
-  getChallengeRoots(basedir).forEach(name => {
-    const target = type === 'details' ? 'details/index.tsx' : 'test-case.ts';
+  getValidRoots(basedir).forEach(name => {
+    const target = _getSourceTarget(type);
     const index = `./${name}/${target}`;
-    if (!fs.existsSync(Path.join(basedir, index))) {
-      throw new Error(`"${index}" doesn't exist`);
-    }
+    _assertExists(basedir, index);
     entry[name] = [index];
   });
 
   return entry;
+}
+
+export function getEntryForProjects(basedir: string, type: SourceType) {
+  const entry: Record<string, string[]> = {};
+  getValidRoots(basedir).forEach(name => {
+    const dir = fs.readdirSync(Path.join(basedir, name));
+    dir.forEach(subName => {
+      const exec = /challenge-(\d+)/.exec(subName);
+      if (exec) {
+        const challengeId = exec[1];
+        const target = _getSourceTarget(type);
+        const index = `./${name}/${subName}/${target}`;
+        _assertExists(basedir, index);
+        entry[`${name}/${challengeId}`] = [index];
+      }
+    });
+  });
+
+  return entry;
+}
+
+export function getEntry(
+  target: TargetType,
+  basedir: string,
+  type: SourceType
+) {
+  switch (target) {
+    case 'challenge':
+      return getEntryForChallenges(basedir, type);
+    case 'projects':
+      return getEntryForProjects(basedir, type);
+  }
 }
 
 export function execWebpack(options: webpack.Configuration) {
@@ -104,6 +146,36 @@ async function _getChallengeFileUpload(
   };
 }
 
+function _getProjectChallengeFileUploadPath(
+  basedir: string,
+  projectName: string,
+  challenge: number,
+  dir: string
+) {
+  return Path.join(basedir, 'dist', dir, projectName, challenge + '.js');
+}
+
+async function getProjectChallengeFileUpload(
+  basedir: string,
+  projectName: string,
+  challenge: number,
+  dir: string
+): Promise<FileUpload> {
+  const path = _getProjectChallengeFileUploadPath(
+    basedir,
+    projectName,
+    challenge,
+    dir
+  );
+  const content = await fs.readFile(path);
+  const hash = md5(content);
+  return {
+    name: `${projectName}-${challenge}.${hash}.js`,
+    path,
+    content,
+  };
+}
+
 async function getFrontendTests(testConfiguration: TestConfiguration) {
   const tester = new FrontendTester({
     notify() {
@@ -158,7 +230,7 @@ function getTests(domain: Domain, testFile: string) {
 }
 
 export async function getChallengePackages(basedir: string) {
-  const challengeNames = getChallengeRoots(basedir);
+  const challengeNames = getValidRoots(basedir);
   const ret = await Promise.all(
     challengeNames.map(async challengeName => {
       const info = require(Path.join(basedir, challengeName, 'info.ts'))
@@ -178,6 +250,55 @@ export async function getChallengePackages(basedir: string) {
     })
   );
   ret.sort((a, b) => a.id - b.id);
+  return ret;
+}
+
+export async function getProjectPackages(basedir: string) {
+  const dir = fs.readdirSync(basedir);
+  const projectNames = dir.filter(name => {
+    const stats = fs.statSync(Path.join(basedir, name));
+    return stats.isDirectory() && /^\d\d\d\-/.test(name);
+  });
+
+  const ret = await Promise.all(
+    projectNames.map(async projectName => {
+      const info = require(Path.join(basedir, projectName, 'info.ts'))
+        .info as ProjectInfo;
+      const pkg: ProjectPackage = {
+        name: projectName,
+        info,
+        challenges: await Promise.all(
+          info.challenges.map(async challenge => {
+            const [detailsFile, testFile] = await Promise.all([
+              getProjectChallengeFileUpload(
+                basedir,
+                projectName,
+                challenge.id,
+                'details'
+              ),
+              getProjectChallengeFileUpload(
+                basedir,
+                projectName,
+                challenge.id,
+                'tests'
+              ),
+            ]);
+            const challengePkg: ProjectChallengePackage = {
+              ...challenge,
+              detailsFile: detailsFile,
+              testFile: testFile,
+              testInfo: await getTests(challenge.domain, testFile.path),
+            };
+            return challengePkg;
+          })
+        ),
+      };
+      return pkg;
+    })
+  );
+
+  ret.sort((a, b) => a.name.localeCompare(b.name));
+
   return ret;
 }
 
