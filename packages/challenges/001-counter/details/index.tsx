@@ -1,10 +1,12 @@
-import { Section, IsolatedHtml } from 'ui';
+import {
+  Section,
+  IsolatedHtml,
+  InjectingSection,
+  DefaultFrontendNotesSection,
+} from 'ui';
 import React from 'react';
 import exampleCss from './assets/example.css';
 import exampleHTML from './assets/example.html';
-import { InjectingSection } from '../../_common/InjectingSection';
-import { DefaultFrontendNotesSection } from '../../_common/DefaultFrontendNotes';
-import { CommonSection } from '../../_common/CommonSection';
 
 export function Details() {
   return (
@@ -35,7 +37,6 @@ export function Details() {
           </li>
         </ul>
       </Section>
-      <CommonSection type="API integration is not required" />
       <DefaultFrontendNotesSection />
       <InjectingSection />
     </div>

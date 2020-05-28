@@ -24,7 +24,27 @@ function createEntry(basedir: string, componentPath: string) {
   fs.writeFileSync(
     Path.join(basedir, 'demo-entry.tsx'),
     `
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { ChallengeDemo } from 'ui';
 import { Details } from '${componentPath}';
+
+const MOUNT_NODE = document.getElementById('root')!;
+
+function render(Component: React.SFC) {
+  ReactDOM.unmountComponentAtNode(MOUNT_NODE);
+  try {
+    ReactDOM.render(
+      <ChallengeDemo>
+        <Component />
+      </ChallengeDemo>,
+      MOUNT_NODE
+    );
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
 
 render(Details);
 
@@ -33,7 +53,6 @@ if (module.hot) {
     render(require('${componentPath}').Details);
   });
 }
-
   `
   );
 }
@@ -46,7 +65,7 @@ export async function demo(options: BuildSourcesOptions) {
     for (const name of roots) {
       const exec = /^\d+/.exec(name);
       if (exec && Number(exec[0]) === challengeId) {
-        const componentPath = `./${name}/details/demo.tsx`;
+        const componentPath = `./${name}/details/index`;
         createEntry(basedir, componentPath);
         break;
       }
