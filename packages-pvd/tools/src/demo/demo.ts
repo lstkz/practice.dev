@@ -5,6 +5,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import createStyledComponentsTransformer from 'typescript-plugin-styled-components';
 import Path from 'path';
 import { getValidRoots } from '../helper';
+import { TargetType } from '../types';
 
 const styledComponentsTransformer = createStyledComponentsTransformer({
   getDisplayName: (filename: string, bindingName: string) => {
@@ -15,7 +16,7 @@ const styledComponentsTransformer = createStyledComponentsTransformer({
 
 export interface BuildSourcesOptions {
   basedir: string;
-  type: 'challenge' | 'projects';
+  type: TargetType;
   projectId?: number;
   challengeId: number;
 }
@@ -74,13 +75,37 @@ function createChallengeEntry(basedir: string, challengeId: number) {
   throw new Error(`Challenge ${challengeId} not found`);
 }
 
+function createProjectChallengeEntry(
+  basedir: string,
+  projectId: number,
+  challengeId: number
+) {
+  const roots = getValidRoots(basedir);
+  for (const name of roots) {
+    const exec = /^\d+/.exec(name);
+    if (exec && Number(exec[0]) === projectId) {
+      const componentPath = `./${name}/challenge-${challengeId}/details/index`;
+      const fullPath = Path.join(basedir, componentPath + '.tsx');
+      if (!fs.existsSync(fullPath)) {
+        throw new Error(`${fullPath} doesn't exist`);
+      }
+      createEntry(basedir, componentPath);
+      return;
+    }
+  }
+  throw new Error(`Project ${projectId} not found`);
+}
+
 export async function demo(options: BuildSourcesOptions) {
-  const { basedir, type, challengeId } = options;
+  const { basedir, type, challengeId, projectId } = options;
 
   if (type === 'challenge') {
     createChallengeEntry(basedir, challengeId);
-  } else {
-    throw new Error('todo');
+  } else if (type === 'project') {
+    if (!projectId) {
+      throw new Error('projectId required');
+    }
+    createProjectChallengeEntry(basedir, projectId, challengeId);
   }
 
   const webpackConfig = webpack({

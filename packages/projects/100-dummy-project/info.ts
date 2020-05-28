@@ -1,4 +1,4 @@
-import { ProjectInfo } from '../_common/types';
+import { ProjectInfo } from '@pvd/tools';
 
 export const info: ProjectInfo = {
   id: 100,

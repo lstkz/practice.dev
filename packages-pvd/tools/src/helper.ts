@@ -79,7 +79,7 @@ export function getEntry(
   switch (target) {
     case 'challenge':
       return getEntryForChallenges(basedir, type);
-    case 'projects':
+    case 'project':
       return getEntryForProjects(basedir, type);
   }
 }

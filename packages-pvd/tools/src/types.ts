@@ -4,7 +4,7 @@ export type Domain = 'frontend' | 'backend' | 'fullstack' | 'styling';
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
 export type SourceType = 'details' | 'tests';
-export type TargetType = 'challenge' | 'projects';
+export type TargetType = 'challenge' | 'project';
 
 export interface ProjectInfo {
   id: number;

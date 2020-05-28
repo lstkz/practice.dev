@@ -50,11 +50,11 @@ export async function deployProjects(options: DeployProjectsOptions) {
   await Promise.all([
     buildSources({
       basedir: basedir,
-      target: 'projects',
+      target: 'project',
     }),
     buildTests({
       basedir: basedir,
-      target: 'projects',
+      target: 'project',
     }),
   ]);
   const packages = await getProjectPackages(basedir);
