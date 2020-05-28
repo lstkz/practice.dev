@@ -76,9 +76,9 @@ export async function deployChallenges(options: DeployChallengesOptions) {
           difficulty: pkg.difficulty,
           tags: pkg.tags,
           testCase: JSON.stringify(pkg.testInfo),
-          detailsBundleS3Key: detailsBundleS3Key,
-          testsBundleS3Key: testsBundleS3Key,
-          assets: assets,
+          detailsBundleS3Key,
+          testsBundleS3Key,
+          assets,
         });
       } catch (e) {
         console.error('Failed to process ', pkg.id, pkg.title);

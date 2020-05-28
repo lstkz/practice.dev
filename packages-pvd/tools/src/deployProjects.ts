@@ -68,7 +68,7 @@ export async function deployProjects(options: DeployProjectsOptions) {
             const [
               detailsBundleS3Key,
               testsBundleS3Key,
-              tests,
+              assets,
             ] = await Promise.all([
               uploadJSFile(s3BucketName, challenge.detailsFile, 'bundle'),
               uploadJSFile(s3BucketName, challenge.testFile, 'tests'),
@@ -84,9 +84,10 @@ export async function deployProjects(options: DeployProjectsOptions) {
               title: challenge.title,
               description: challenge.description,
               domain: challenge.domain,
+              testCase: JSON.stringify(challenge.testInfo),
               detailsBundleS3Key,
               testsBundleS3Key,
-              testCase: JSON.stringify(tests),
+              assets,
             };
           })
         );
