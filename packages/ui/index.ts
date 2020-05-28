@@ -7,3 +7,5 @@ export * from './src/Section';
 export * from './src/Spinner';
 export * from './src/GlobalStyle';
 export * from './src/Theme';
+export * from './src/ChallengeDemo';
+export * from './src/CommonSection';

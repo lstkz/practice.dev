@@ -1,15 +1,11 @@
 {
-  "name": "challenges",
+  "name": "@pvd/data-deploy",
   "version": "1.0.0",
   "description": "",
+  "main": "src/index.ts",
   "sideEffects": false,
   "scripts": {
     "tsc": "tsc --noEmit",
-    "ts-node": "ts-node -T",
-    "lint": "tslint -c tslint.json \"src/**/*.{ts,tsx}\"",
-    "prettier": "prettier --write '{src,scripts}/*.{ts,tsx}'",
-    "start": "webpack-dev-server --config webpack.demo.config",
-    "deploy": "ts-node -T deploy",
     "test": "yarn run tsc && yarn run lint"
   },
   "dependencies": {
@@ -21,15 +17,15 @@
     "js-yaml": "^3.13.1",
     "node-fetch": "^2.5.0",
     "raw-loader": "^2.0.0",
-    "tester": "*",
-    "tester-api": "*",
     "webpack": "^4.41.2",
-    "webpack-dev-server": "^3.8.0",
-    "xmlhttprequest": "^1.8.0",
-    "@pvd/data-deploy": "*"
+    "xmlhttprequest": "^1.8.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/tmp": "^0.2.0",
+    "@types/webpack-dev-server": "^3.11.0",
+    "tmp": "^0.2.1"
+  },
   "keywords": [],
   "author": "",
-  "license": "UNLICENSED"
+  "license": "MIT"
 }

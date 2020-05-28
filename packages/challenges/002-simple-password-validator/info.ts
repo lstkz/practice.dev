@@ -1,4 +1,4 @@
-import { ChallengeInfo } from '../_common/types';
+import { ChallengeInfo } from '@pvd/data-deploy/src/types';
 
 export const info: ChallengeInfo = {
   id: 2,
@@ -8,5 +8,7 @@ export const info: ChallengeInfo = {
   tags: ['validation'],
   difficulty: 'easy',
   domain: 'backend',
-  hasSwagger: true,
+  assets: {
+    hasSwagger: true,
+  },
 };
