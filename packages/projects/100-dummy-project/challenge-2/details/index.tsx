@@ -1,9 +1,12 @@
-import { Section, IsolatedHtml } from 'ui';
+import {
+  Section,
+  IsolatedHtml,
+  DefaultFrontendNotesSection,
+  InjectingSection,
+} from 'ui';
 import React from 'react';
 import exampleCss from './assets/example.css';
 import exampleHTML from './assets/example.html';
-import { InjectingSection } from '../../../_common/InjectingSection';
-import { DefaultFrontendNotesSection } from '../../../_common/DefaultFrontendNotes';
 
 export function Details() {
   return (

@@ -1,6 +1,7 @@
-import { Section, Highlight } from 'ui';
 import React from 'react';
 import styled from 'styled-components';
+import { Section } from './Section';
+import { Highlight } from './Highlight';
 
 const toggleLayersBtnSource = `
 <script src="https://practice.dev/assets/toggle-layer.js"></script>`.trim();

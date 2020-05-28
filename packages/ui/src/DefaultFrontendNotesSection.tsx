@@ -1,5 +1,5 @@
 import React from 'react';
-import { Section } from 'ui';
+import { Section } from './Section';
 
 export function DefaultFrontendNotesSection() {
   return (

@@ -2,7 +2,6 @@
   "name": "challenges",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "sideEffects": false,
   "scripts": {
     "tsc": "tsc --noEmit",
@@ -10,26 +9,13 @@
     "lint": "tslint -c tslint.json \"src/**/*.{ts,tsx}\"",
     "prettier": "prettier --write '{src,scripts}/*.{ts,tsx}'",
     "start": "webpack-dev-server --config webpack.demo.config",
-    "build": "rm -rf dist && yarn run build:test && yarn run build:details",
-    "build:test": "webpack --config webpack.test.config",
-    "build:details": "webpack --config webpack.details.config",
-    "deploy": "yarn run build && ts-node -T -r dotenv/config deploy dotenv_config_path=../../$ENV_FILE",
+    "deploy": "ts-node -T deploy",
     "test": "yarn run tsc && yarn run lint"
   },
   "dependencies": {
-    "@types/fs-extra": "^5.1.0",
-    "@types/js-yaml": "^3.12.3",
-    "@types/node-fetch": "^2.3.3",
-    "clean-webpack-plugin": "^0.1.19",
-    "fs-extra": "^8.0.0",
-    "js-yaml": "^3.13.1",
-    "node-fetch": "^2.5.0",
-    "raw-loader": "^2.0.0",
     "tester": "*",
     "tester-api": "*",
-    "webpack": "^4.41.2",
-    "webpack-dev-server": "^3.8.0",
-    "xmlhttprequest": "^1.8.0"
+    "@pvd/tools": "*"
   },
   "devDependencies": {},
   "keywords": [],

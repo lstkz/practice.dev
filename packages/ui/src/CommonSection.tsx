@@ -1,4 +1,4 @@
-import { Section } from 'ui';
+import { Section } from './Section';
 import React from 'react';
 
 interface CommonSectionProps {

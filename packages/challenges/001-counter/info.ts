@@ -1,4 +1,4 @@
-import { ChallengeInfo } from '../_common/types';
+import { ChallengeInfo } from '@pvd/tools';
 
 export const info: ChallengeInfo = {
   id: 1,
