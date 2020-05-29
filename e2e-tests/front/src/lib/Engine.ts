@@ -22,6 +22,11 @@ export class MockError extends Error {
     super(message);
   }
 }
+export class NoConnectionError extends Error {
+  constructor(message: string = 'No Connection') {
+    super(message);
+  }
+}
 
 function createResponse(body: any, status: number) {
   return {
@@ -156,6 +161,8 @@ export class Engine {
           await request.respond(
             createResponse({ error: e.message }, e.status || 400)
           );
+        } else if (e instanceof NoConnectionError) {
+          await request.abort();
         } else {
           await request.respond(
             createResponse(
