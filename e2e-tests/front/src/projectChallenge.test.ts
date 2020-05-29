@@ -132,6 +132,7 @@ it('should add a new comment', async () => {
     isAnswered: false,
     isDeleted: false,
     text: 'com1',
+    html: 'com1',
     user: {
       id: authData1.user.id,
       username: authData1.user.username,
@@ -155,6 +156,7 @@ it('should add a new comment', async () => {
     return {
       ...baseComment,
       text: 'foo',
+      html: 'foo',
       id: '1',
     };
   });
