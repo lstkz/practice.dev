@@ -8,9 +8,9 @@
   "author": "Łukasz Sentkiewicz <lukasz@sentkiewicz.pl>",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^24.0.21",
-    "jest": "^24.9.0",
-    "ts-jest": "^24.1.0",
+    "@types/jest": "^25.2.3",
+    "jest": "^26.0.1",
+    "ts-jest": "^26.0.0",
     "typescript": "3.9.2"
   }
 }
