@@ -1,5 +1,5 @@
 import { WEBSITE_URL } from './config';
-import { Engine, MockError } from './lib/Engine';
+import { Engine, MockError, NoConnectionError } from './lib/Engine';
 import {
   authData1,
   emptyChallenges,
@@ -80,4 +80,20 @@ it('should logout and relogin', async () => {
   await $('@password-input').type('pass');
   await $('@login-submit').click();
   await $('@current-username').expect.toMatch('user2');
+});
+
+it('should retry getMe if not connection to API', async () => {
+  engine.mock('user_getMe', (params, count) => {
+    if (count === 1) {
+      throw new NoConnectionError();
+    }
+    if (count === 2) {
+      throw new MockError('error', 500);
+    }
+    return authData1Verified.user;
+  });
+  engine.setToken('t1');
+  await page.goto(WEBSITE_URL);
+  engine.mock('challenge_searchChallenges', () => emptyChallenges);
+  await $('@current-username').expect.toMatch('user1');
 });

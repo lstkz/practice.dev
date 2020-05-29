@@ -17,6 +17,16 @@ handle
   .on(GlobalActions.$mounted, () => {
     if (getAccessToken()) {
       return api.user_getMe().pipe(
+        Rx.retryWhen(errors =>
+          errors.pipe(
+            Rx.mergeMap((error, i) => {
+              if ((!error.status || error.status >= 500) && i > 5) {
+                return Rx.throwObs(error);
+              }
+              return Rx.timer(500 + i * 100);
+            })
+          )
+        ),
         Rx.map(GlobalActions.loggedIn),
         Rx.catchLog(() => {
           clearAccessToken();
