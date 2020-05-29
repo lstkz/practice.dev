@@ -65,10 +65,10 @@ export const onNewDiscussion = createContract('notification.onNewDiscussion')
   <br/>
    Challenge: <a href="${challengeUrl}">${challenge.title}</a><br/>
    Your question: <br/>
-   ${originalComment.text} 
+   ${originalComment.html} 
    <br/><br/>
    Message: <br/>
-   ${comment.text} 
+   ${comment.html} 
   <br/>
   <br/>
 ------------------------------------------------------------------------

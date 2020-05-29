@@ -20,9 +20,6 @@ html
 }
 body
 {
-    font-family: 'Roboto', sans-serif;
-    font-size: 14px;
-    font-weight: 400;
     line-height: 1.7;
     margin: 0;
     text-align: left;
@@ -31,6 +28,12 @@ body
     height: 100%;
     display: flex;
     flex-direction: column;
+}
+
+body, input, textarea {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
 }
 
 a {

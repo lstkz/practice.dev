@@ -42,6 +42,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "discussion.markAnswer"*/ '../contracts/discussion/markAnswer'
     ).then(x => x['markAnswerRpc']),
+  'discussion.previewComment': () =>
+    import(
+      /* webpackChunkName: "discussion.previewComment"*/ '../contracts/discussion/previewComment'
+    ).then(x => x['previewCommentRpc']),
   'discussion.searchComments': () =>
     import(
       /* webpackChunkName: "discussion.searchComments"*/ '../contracts/discussion/searchComments'

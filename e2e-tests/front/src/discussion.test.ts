@@ -4,19 +4,20 @@ import { authData1Verified, getChallenges, authData1 } from './test-data';
 
 let engine: Engine = null!;
 
-const baseComment = {
+const getBaseComment = (text = 'comm1') => ({
   challengeId: 1,
   createdAt: new Date(2000, 1, 1).toISOString(),
   children: [],
   isAnswer: false,
   isAnswered: false,
   isDeleted: false,
-  text: 'com1',
+  text,
+  html: text,
   user: {
     id: authData1.user.id,
     username: authData1.user.username,
   },
-};
+});
 
 beforeEach(async () => {
   engine = new Engine(page, WEBSITE_URL);
@@ -68,12 +69,12 @@ it('should load discussion and load more', async () => {
         cursor: 'abc',
         items: [
           {
-            ...baseComment,
+            ...getBaseComment('com1'),
             id: '1',
             text: 'com1',
           },
           {
-            ...baseComment,
+            ...getBaseComment('com2'),
             id: '2',
             text: 'com2',
           },
@@ -89,9 +90,8 @@ it('should load discussion and load more', async () => {
       cursor: null,
       items: [
         {
-          ...baseComment,
+          ...getBaseComment('com3'),
           id: '3',
-          text: 'com3',
         },
       ],
     };
@@ -114,32 +114,28 @@ it('should display nested comments with answered and deleted', async () => {
       cursor: 'abc',
       items: [
         {
-          ...baseComment,
+          ...getBaseComment('com1'),
           id: '1',
-          text: 'com1',
           isAnswered: true,
           children: [
             {
-              ...baseComment,
+              ...getBaseComment('com2'),
               id: '2',
-              text: 'com2',
             },
             {
-              ...baseComment,
+              ...getBaseComment('com3'),
               id: '3',
-              text: 'com3',
               isAnswer: true,
             },
             {
-              ...baseComment,
+              ...getBaseComment(''),
               id: '4',
-              text: '',
               isDeleted: true,
             },
           ],
         },
         {
-          ...baseComment,
+          ...getBaseComment('coma5'),
           id: '2',
           text: 'coma5',
         },
@@ -159,14 +155,12 @@ it('should show discussion as anonymous user', async () => {
       cursor: null,
       items: [
         {
-          ...baseComment,
+          ...getBaseComment('com1'),
           id: '1',
-          text: 'com1',
           children: [
             {
-              ...baseComment,
+              ...getBaseComment('com2'),
               id: '2',
-              text: 'com2',
             },
           ],
         },
@@ -180,6 +174,25 @@ it('should show discussion as anonymous user', async () => {
   await $('@new-comment-input').expect.toBeHidden();
   await $('@comment-menu-btn').expect.toBeHidden();
   await $('@reply-btn').expect.toBeHidden();
+});
+
+it('should preview comment', async () => {
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  engine.mock('discussion_searchComments', () => {
+    return {
+      cursor: null,
+      items: [],
+    };
+  });
+  engine.mock('discussion_previewComment', (params, count) => {
+    expect(params).toEqual<typeof params>('**a**');
+    return 'fake html';
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  await $('@discussion-tab').click();
+  await $('@new-comment-input').type('**a**');
+  await $('@preview-btn').click();
+  await $('@comment-preview').expect.toMatch('fake html');
 });
 
 it('should add a new comment (from empty)', async () => {
@@ -199,8 +212,7 @@ it('should add a new comment (from empty)', async () => {
       throw new MockError('Err');
     }
     return {
-      ...baseComment,
-      text: 'foo',
+      ...getBaseComment('foo'),
       id: '1',
     };
   });
@@ -223,7 +235,7 @@ it('should add a new nested comment', async () => {
       cursor: null,
       items: [
         {
-          ...baseComment,
+          ...getBaseComment(),
           id: '1',
         },
       ],
@@ -236,9 +248,8 @@ it('should add a new nested comment', async () => {
       parentCommentId: '1',
     });
     return {
-      ...baseComment,
+      ...getBaseComment('foo'),
       parentCommentId: '1',
-      text: 'foo',
       id: '2',
     };
   });
@@ -260,7 +271,7 @@ it('should remove a comment', async () => {
       cursor: null,
       items: [
         {
-          ...baseComment,
+          ...getBaseComment(),
           id: '1',
         },
       ],
@@ -294,8 +305,7 @@ it('should change sort', async () => {
         cursor: null,
         items: [
           {
-            ...baseComment,
-            text: 'comm2',
+            ...getBaseComment('comm2'),
             id: '2',
           },
         ],
@@ -305,8 +315,7 @@ it('should change sort', async () => {
       cursor: null,
       items: [
         {
-          ...baseComment,
-          text: 'comm1',
+          ...getBaseComment('comm1'),
           id: '1',
         },
       ],
@@ -332,28 +341,24 @@ it('mark comment answered should be hidden if not admin', async () => {
       cursor: null,
       items: [
         {
-          ...baseComment,
+          ...getBaseComment('com1'),
           id: '1',
-          text: 'com1',
           children: [
             {
-              ...baseComment,
+              ...getBaseComment('com2'),
               id: '2',
-              text: 'com2',
               parentCommentId: '1',
             },
             {
-              ...baseComment,
+              ...getBaseComment('com3'),
               id: '3',
-              text: 'com3',
               parentCommentId: '1',
             },
           ],
         },
         {
-          ...baseComment,
+          ...getBaseComment('com4'),
           id: '4',
-          text: 'com4',
         },
       ],
     };
@@ -380,28 +385,24 @@ it('should mark comment answered', async () => {
       cursor: null,
       items: [
         {
-          ...baseComment,
+          ...getBaseComment('com1'),
           id: '1',
-          text: 'com1',
           children: [
             {
-              ...baseComment,
+              ...getBaseComment('com2'),
               id: '2',
-              text: 'com2',
               parentCommentId: '1',
             },
             {
-              ...baseComment,
+              ...getBaseComment('com3'),
               id: '3',
-              text: 'com3',
               parentCommentId: '1',
             },
           ],
         },
         {
-          ...baseComment,
+          ...getBaseComment('com4'),
           id: '4',
-          text: 'com4',
         },
       ],
     };
@@ -422,9 +423,8 @@ it('should display an error if posting as unverified', async () => {
       cursor: null,
       items: [
         {
-          ...baseComment,
+          ...getBaseComment('com1'),
           id: '1',
-          text: 'com1',
           children: [],
         },
       ],

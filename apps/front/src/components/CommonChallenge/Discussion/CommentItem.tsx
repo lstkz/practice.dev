@@ -6,7 +6,6 @@ import { Avatar } from 'src/components/Avatar';
 import { Link } from 'src/components/Link';
 import { createUrl } from 'src/common/url';
 import { Theme } from 'ui';
-import mdParse from 'src/common/md';
 import { VoidLink } from 'src/components/VoidLink';
 import { AddComment } from './AddComment';
 import { MenuDropdown } from 'src/components/MenuDropdown';
@@ -36,7 +35,11 @@ const Ago = styled.span`
   color: ${Theme.textLight};
 `;
 
-const Text = styled.div``;
+const Text = styled.div`
+  & > p {
+    margin: 0;
+  }
+`;
 
 const Bottom = styled.div`
   display: flex;
@@ -152,13 +155,6 @@ const _CommentItem = (props: CommentItemProps) => {
     });
   }, [comment.createdAt]);
 
-  const mdText = React.useMemo(() => {
-    if (comment.isDeleted) {
-      return '[Deleted]';
-    }
-    return mdParse(comment.text);
-  }, [comment.isDeleted, comment.text]);
-
   return (
     <div
       className={className}
@@ -186,7 +182,9 @@ const _CommentItem = (props: CommentItemProps) => {
         </Top>
         <Text
           data-test="text"
-          dangerouslySetInnerHTML={{ __html: mdText }}
+          dangerouslySetInnerHTML={{
+            __html: comment.isDeleted ? '[Deleted]' : comment.html,
+          }}
         ></Text>
       </Inner>
       <SubComments>

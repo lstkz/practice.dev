@@ -25,6 +25,7 @@ export const deleteComment = createContract('discussion.deleteComment')
       throw new AppError('Comment is already deleted');
     }
     comment.text = null;
+    comment.html = null;
     comment.isDeleted = true;
     await comment.update(['isDeleted', 'text']);
   });

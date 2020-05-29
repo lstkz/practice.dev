@@ -14,6 +14,7 @@ beforeEach(async () => {
       commentId: '100',
       createdAt: 100,
       text: '1',
+      html: '1',
       userId,
       challengeId: 1,
       parentCommentId: null,

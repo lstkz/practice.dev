@@ -8,6 +8,7 @@ import { DiscussionCommentEntity } from '../../entities/DiscussionCommentEntity'
 import { doFn } from '../../common/helper';
 import { validateChallengeOrProjectChallenge } from '../../common/baseChallenge';
 import { dispatch } from '../../dispatch';
+import { markdown } from '../../common/markdown';
 
 export const createComment = createContract('discussion.createComment')
   .params('userId', 'values')
@@ -67,6 +68,7 @@ export const createComment = createContract('discussion.createComment')
       commentId,
       isAnswered: false,
       text: values.text,
+      html: markdown(values.text),
       userId,
       parentCommentId: parentComment?.commentId,
       createdAt: Date.now(),
