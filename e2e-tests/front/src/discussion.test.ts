@@ -12,6 +12,7 @@ const baseComment = {
   isAnswered: false,
   isDeleted: false,
   text: 'com1',
+  html: 'com1',
   user: {
     id: authData1.user.id,
     username: authData1.user.username,
@@ -180,6 +181,25 @@ it('should show discussion as anonymous user', async () => {
   await $('@new-comment-input').expect.toBeHidden();
   await $('@comment-menu-btn').expect.toBeHidden();
   await $('@reply-btn').expect.toBeHidden();
+});
+
+it('should preview comment', async () => {
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  engine.mock('discussion_searchComments', () => {
+    return {
+      cursor: null,
+      items: [],
+    };
+  });
+  engine.mock('discussion_previewComment', (params, count) => {
+    expect(params).toEqual<typeof params>('**a**');
+    return 'fake html';
+  });
+  await page.goto(WEBSITE_URL + '/challenges/1');
+  await $('@discussion-tab').click();
+  await $('@new-comment-input').type('**a**');
+  await $('@preview-btn').click();
+  await $('@comment-preview').expect.toMatch('fake html');
 });
 
 it('should add a new comment (from empty)', async () => {

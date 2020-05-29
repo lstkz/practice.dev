@@ -218,6 +218,7 @@ export interface DiscussionComment {
   user: PublicUser;
   challengeId: number;
   text: string;
+  html: string;
   isAnswered: boolean;
   isAnswer: boolean;
   isDeleted: boolean;

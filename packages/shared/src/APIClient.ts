@@ -87,6 +87,9 @@ export class APIClient {
   discussion_markAnswer(id: string): Rx.Observable<void> {
     return this.call('discussion.markAnswer', id);
   }
+  discussion_previewComment(text: string): Rx.Observable<string> {
+    return this.call('discussion.previewComment', text);
+  }
   discussion_searchComments(criteria: {
     challengeId: number;
     sortDesc: boolean;

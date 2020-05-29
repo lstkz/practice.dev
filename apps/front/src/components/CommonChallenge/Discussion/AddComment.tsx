@@ -6,7 +6,6 @@ import { Title } from 'src/components/Title';
 import { Theme, Button } from 'ui';
 import { VoidLink } from 'src/components/VoidLink';
 import { Input } from 'src/components/Input';
-import mdParse from 'src/common/md';
 import { Alert } from 'src/components/Alert';
 import { getErrorMessage } from 'src/common/helper';
 import { api } from 'src/services/api';
@@ -58,11 +57,16 @@ const Buttons = styled.div`
 `;
 
 const Preview = styled.div`
+  min-height: 100px;
   border-radius: 5px;
   padding: 10px;
   color: #3c485a;
   border: 1px solid #d4d6db;
   background: ${Theme.bgLightGray7};
+
+  & > p {
+    margin: 0;
+  }
 `;
 
 const LinkWrapper = styled.div`
@@ -85,17 +89,12 @@ const _AddComment = (props: AddCommentProps) => {
   const user = useUser();
   const [text, setText] = React.useState('');
   const [isPreview, setIsPreview] = React.useState(false);
+  const [previewHtml, setPreviewHtml] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState('');
   const { commentCreated } = useActions(DiscussionActions);
   const { showVerifyEmailError } = useActions(GlobalActions);
 
-  const mdText = React.useMemo(() => {
-    if (!isPreview) {
-      return '';
-    }
-    return mdParse(text);
-  }, [isPreview, text]);
   return (
     <div className={className}>
       {showBanner && (
@@ -106,7 +105,10 @@ const _AddComment = (props: AddCommentProps) => {
       )}
       <CommentWrapper>
         {isPreview && (
-          <Preview dangerouslySetInnerHTML={{ __html: mdText }}></Preview>
+          <Preview
+            data-test="comment-preview"
+            dangerouslySetInnerHTML={{ __html: previewHtml }}
+          ></Preview>
         )}
         <Input
           style={{ display: isPreview ? 'none' : 'block' }}
@@ -128,7 +130,27 @@ const _AddComment = (props: AddCommentProps) => {
         </span>
         <Buttons>
           <LinkWrapper>
-            <VoidLink onClick={() => setIsPreview(!isPreview)}>
+            <VoidLink
+              data-test="preview-btn"
+              onClick={() => {
+                if (isPreview) {
+                  setIsPreview(false);
+                } else {
+                  setIsPreview(true);
+                  setPreviewHtml('Loading preview...');
+                  api
+                    .discussion_previewComment(text)
+                    .toPromise()
+                    .then(ret => {
+                      setPreviewHtml(ret);
+                    })
+                    .catch(err => {
+                      console.error(err);
+                      setPreviewHtml('Failed to load preview ');
+                    });
+                }
+              }}
+            >
               {isPreview ? 'Edit' : 'Preview'}
             </VoidLink>
           </LinkWrapper>
