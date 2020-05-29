@@ -3,6 +3,8 @@ import { Tester } from './Tester';
 import { getBrowser } from './getBrowser';
 import { TestInfo } from 'shared';
 import { Browser } from 'puppeteer';
+import { TestError } from './TestError';
+import { TimeoutError } from 'puppeteer/Errors';
 
 const createdBrowsers: Browser[] = [];
 
@@ -80,11 +82,20 @@ export async function runTests(
       });
     } catch (e) {
       success = false;
-      await notifier.notify({
-        type: 'TEST_FAIL',
-        meta,
-        payload: { testId: test.id, error: e.message },
-      });
+      if (e instanceof TestError || e instanceof TimeoutError) {
+        await notifier.notify({
+          type: 'TEST_FAIL',
+          meta,
+          payload: { testId: test.id, error: e.message },
+        });
+      } else {
+        console.error(`Internal error when testing ${id}`, e);
+        await notifier.notify({
+          type: 'TEST_FAIL',
+          meta,
+          payload: { testId: test.id, error: 'Internal Error' },
+        });
+      }
       break;
     }
   }
