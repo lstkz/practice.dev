@@ -8,7 +8,6 @@ import {
   ChallengePackage,
   ChallengeInfo,
   FileUpload,
-  Domain,
   AssetsInfo,
   ProjectPackage,
   ProjectInfo,
@@ -17,8 +16,7 @@ import {
   TargetType,
 } from './types';
 import { TestInfo } from 'shared';
-import { TestConfiguration, Tester as FrontendTester } from 'tester';
-import { ApiTestConfiguration, Tester as ApiTester } from 'tester-api';
+import { Tester } from '@pvd/tester';
 
 const s3 = new AWS.S3();
 
@@ -176,57 +174,30 @@ async function getProjectChallengeFileUpload(
   };
 }
 
-async function getFrontendTests(testConfiguration: TestConfiguration) {
-  const tester = new FrontendTester({
-    notify() {
-      throw new Error('Not supported');
-    },
-  });
-  await testConfiguration.handler({
-    tester,
-    url: 'mock',
-    createPage: async () => {
-      throw new Error('Not implemented');
-    },
-  });
-  const tests: TestInfo[] = tester.tests.map(test => ({
-    id: test.id,
-    name: test.name,
-    result: 'pending' as 'pending',
-    steps: [],
-  }));
-  return tests;
-}
-
-async function getApiTests(testConfiguration: ApiTestConfiguration) {
-  const tester = new ApiTester({
-    notify() {
-      throw new Error('Not supported');
-    },
-  });
-  await testConfiguration.handler({
-    tester,
-    url: 'mock',
-  });
-  const tests: TestInfo[] = tester.tests.map(test => ({
-    id: test.id,
-    name: test.name,
-    result: 'pending' as 'pending',
-    steps: [],
-  }));
-  return tests;
-}
-
-function getTests(domain: Domain, testFile: string) {
+async function getTests(testFile: string) {
   const testConfiguration = require(testFile).default;
-  switch (domain) {
-    case 'backend':
-      return getApiTests(testConfiguration);
-    case 'frontend':
-      return getFrontendTests(testConfiguration);
-    default:
-      throw new Error('Domain not supported: ' + domain);
-  }
+
+  const tester = new Tester(
+    {
+      notify() {
+        throw new Error('Not supported');
+      },
+    },
+    async () => {
+      throw new Error('Not supported');
+    }
+  );
+  await testConfiguration.handler({
+    tester,
+    url: 'mock',
+  });
+  const tests: TestInfo[] = tester.tests.map(test => ({
+    id: test.id,
+    name: test.name,
+    result: 'pending' as 'pending',
+    steps: [],
+  }));
+  return tests;
 }
 
 export async function getChallengePackages(basedir: string) {
@@ -244,7 +215,7 @@ export async function getChallengePackages(basedir: string) {
         ...info,
         detailsFile,
         testFile,
-        testInfo: await getTests(info.domain, testFile.path),
+        testInfo: await getTests(testFile.path),
       };
       return pkg;
     })
@@ -287,7 +258,7 @@ export async function getProjectPackages(basedir: string) {
               ...challenge,
               detailsFile: detailsFile,
               testFile: testFile,
-              testInfo: await getTests(challenge.domain, testFile.path),
+              testInfo: await getTests(testFile.path),
             };
             return challengePkg;
           })
