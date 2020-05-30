@@ -88,4 +88,15 @@ export class TesterPage {
     await this.page.waitForSelector(input, this.waitOptions);
     await this.page.click(input);
   }
+
+  async type(selector: string, text: string) {
+    const input = convertSelector(selector);
+    await this.stepNotifier.notify(`Type "${text}" to "${input}"`);
+    await this.page.waitForSelector(input, this.waitOptions);
+    await this.page.type(input, text, { delay: 10 });
+  }
+
+  async close() {
+    await this.page.close();
+  }
 }

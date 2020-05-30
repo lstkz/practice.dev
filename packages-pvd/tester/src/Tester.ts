@@ -47,6 +47,12 @@ export class Tester {
     );
   }
 
+  async closePage(name: string | number = 'default') {
+    const page = this.getPage(name);
+    await page.close();
+    delete this.pageMap[name];
+  }
+
   getPage(name: string | number = 'default') {
     if (!this.pageMap[name]) {
       throw new Error(
