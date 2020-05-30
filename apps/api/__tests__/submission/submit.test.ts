@@ -36,12 +36,9 @@ describe('normal', () => {
         },
         'Challenge not found',
       ],
-    ] as any)(
-      '.submit(%p) should throw `%s`',
-      async (input: any, errorMessage: any) => {
-        await expect(submit(userId, input)).rejects.toThrow(errorMessage);
-      }
-    );
+    ])('.submit(%p) should throw `%s`', async (input, errorMessage) => {
+      await expect(submit(userId, input)).rejects.toThrow(errorMessage);
+    });
   });
   it('submit successfully', async () => {
     const spy = jest.spyOn(sns, 'publish');
@@ -89,12 +86,9 @@ describe('project', () => {
         },
         'Project Challenge not found',
       ],
-    ] as any)(
-      '.submit(%p) should throw `%s`',
-      async (input: any, errorMessage: any) => {
-        await expect(submit(userId, input)).rejects.toThrow(errorMessage);
-      }
-    );
+    ])('.submit(%p) should throw `%s`', async (input, errorMessage) => {
+      await expect(submit(userId, input)).rejects.toThrow(errorMessage);
+    });
   });
 
   it('submit successfully (challenge = 1)', async () => {

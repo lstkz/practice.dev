@@ -4,7 +4,7 @@ import {
   updateTestResult,
   SubmissionStatus,
 } from 'shared';
-import { Notifier } from 'tester';
+import { Notifier } from '@pvd/tester';
 import { updateSubmissionStatus } from '../contracts/submission/updateSubmissionStatus';
 import { randomString } from 'remeda';
 import { s3 } from '../lib';
