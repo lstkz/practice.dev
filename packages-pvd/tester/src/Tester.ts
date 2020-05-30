@@ -126,11 +126,11 @@ export class Tester {
         input
       );
       if (typeof actual === 'object' && actual.error === 'multiple') {
-        throw new Error(
+        throw new TestError(
           `Found ${actual.count} elements with selector "${input}". Expected only 1.`
         );
       } else {
-        throw new Error(
+        throw new TestError(
           exact
             ? `Expected "${input}" to equal "${expected}". Actual: "${actual}".`
             : `Expected "${input}" to include "${expected}". Actual: "${actual}".`

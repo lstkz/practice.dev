@@ -5,7 +5,7 @@ import { S } from 'schema';
 import { Tester, StepNotifier } from '../Tester';
 import { launch } from '../puppeteer';
 import { Page, Browser } from 'puppeteer';
-import { getBody } from './helper';
+import { getBody, initFrontendServer } from './helper';
 
 class TestNotifier implements StepNotifier {
   actions: any[] = [];
@@ -28,12 +28,6 @@ beforeEach(async () => {
   tester = new Tester(notifier);
 });
 
-async function runTests() {
-  for (const test of tester.tests) {
-    await test.exec();
-  }
-}
-
 describe('frontend', () => {
   let page: Page;
   let server: http.Server;
@@ -44,21 +38,7 @@ describe('frontend', () => {
       headless: true,
     });
     page = await browser.newPage();
-    server = http.createServer((req, res) => {
-      res.writeHead(200, {
-        'content-type': 'text/html',
-      });
-      res.write(`<!DOCTYPE html>
-<html lang="en">
-<head>
-</head>
-<body>
-</body>
-</html>
-    `);
-      res.end();
-    });
-    await new Promise(resolve => server.listen(port, resolve));
+    server = await initFrontendServer(port);
     await page.goto('http://localhost:' + port);
   });
 
@@ -86,10 +66,7 @@ describe('frontend', () => {
         btn.setAttribute('data-test', 'foo');
         document.body.appendChild(btn);
       });
-      tester.test('example', async () => {
-        await tester.click('@foo');
-      });
-      await runTests();
+      await tester.click('@foo');
       const result = await page.evaluate(() => {
         const btn = document.querySelector('button');
         return btn!.value;
@@ -98,10 +75,7 @@ describe('frontend', () => {
     });
 
     it('should throw an error if not found', async () => {
-      tester.test('example', async () => {
-        await tester.click('@foo');
-      });
-      await expect(runTests()).rejects.toThrow(
+      await expect(tester.click('@foo')).rejects.toThrow(
         'waiting for selector "[data-test="foo"]" failed'
       );
     });
@@ -114,10 +88,7 @@ describe('frontend', () => {
         goto: jest.fn(),
       };
       tester.page = page as any;
-      tester.test('example', async () => {
-        await tester.navigate('http://example.com');
-      });
-      await runTests();
+      await tester.navigate('http://example.com');
       expect(page.goto).toBeCalledWith('http://example.com', {
         timeout: 5000,
         waitUntil: 'domcontentloaded',
@@ -133,20 +104,14 @@ describe('frontend', () => {
         btn.setAttribute('data-test', 'foo');
         document.body.appendChild(btn);
       });
-      tester.test('example', async () => {
-        await tester.expectToBeVisible('@foo');
-      });
-      await runTests();
+      await tester.expectToBeVisible('@foo');
       expect(notifier.actions).toEqual([
         'Expect "[data-test="foo"]" to be visible',
       ]);
     });
 
     it('should throw an error if does not exist', async () => {
-      tester.test('example', async () => {
-        await tester.expectToBeVisible('@foo');
-      });
-      await expect(runTests()).rejects.toThrow(
+      await expect(tester.expectToBeVisible('@foo')).rejects.toThrow(
         'waiting for selector "[data-test="foo"]" failed'
       );
     });
@@ -158,10 +123,7 @@ describe('frontend', () => {
         btn.style.display = 'none';
         document.body.appendChild(btn);
       });
-      tester.test('example', async () => {
-        await tester.expectToBeVisible('@foo');
-      });
-      await expect(runTests()).rejects.toThrow(
+      await expect(tester.expectToBeVisible('@foo')).rejects.toThrow(
         'waiting for selector "[data-test="foo"]" failed'
       );
     });
@@ -179,38 +141,26 @@ describe('frontend', () => {
     describe('partial', () => {
       it('should match properly', async () => {
         await addDiv();
-        tester.test('example', async () => {
-          await tester.expectToMatch('@foo', 'lor');
-        });
-        await runTests();
+        await tester.expectToMatch('@foo', 'lor');
         expect(notifier.actions).toEqual([
           'Expect "[data-test="foo"]" to contain "lor"',
         ]);
       });
       it('should throw an error if does not match', async () => {
         await addDiv();
-        tester.test('example', async () => {
-          await tester.expectToMatch('@foo', 'qwe');
-        });
-        await expect(runTests()).rejects.toThrow(
+        await expect(tester.expectToMatch('@foo', 'qwe')).rejects.toThrow(
           'Expected "[data-test="foo"]" to include "qwe". Actual: "lorem".'
         );
       });
       it('should throw an error if does not exist', async () => {
-        tester.test('example', async () => {
-          await tester.expectToMatch('@foo', 'qwe');
-        });
-        await expect(runTests()).rejects.toThrow(
+        await expect(tester.expectToMatch('@foo', 'qwe')).rejects.toThrow(
           'waiting for selector "[data-test="foo"]" failed'
         );
       });
       it('should throw an error if multiple results', async () => {
         await addDiv();
         await addDiv();
-        tester.test('example', async () => {
-          await tester.expectToMatch('@foo', 'qwe');
-        });
-        await expect(runTests()).rejects.toThrow(
+        await expect(tester.expectToMatch('@foo', 'qwe')).rejects.toThrow(
           'Found 2 elements with selector "[data-test="foo"]". Expected only 1.'
         );
       });
@@ -218,20 +168,14 @@ describe('frontend', () => {
     describe('exact', () => {
       it('should match properly', async () => {
         await addDiv();
-        tester.test('example', async () => {
-          await tester.expectToMatch('@foo', 'lorem', true);
-        });
-        await runTests();
+        await tester.expectToMatch('@foo', 'lorem', true);
         expect(notifier.actions).toEqual([
           'Expect "[data-test="foo"]" to equal "lorem"',
         ]);
       });
       it('should throw an error if does not match', async () => {
         await addDiv();
-        tester.test('example', async () => {
-          await tester.expectToMatch('@foo', 'lor', true);
-        });
-        await expect(runTests()).rejects.toThrow(
+        await expect(tester.expectToMatch('@foo', 'lor', true)).rejects.toThrow(
           'Expected "[data-test="foo"]" to equal "lor". Actual: "lorem".'
         );
       });

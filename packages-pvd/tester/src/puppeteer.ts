@@ -1,5 +1,3 @@
-// tslint:disable:no-var-requires
-
 import { Browser } from 'puppeteer';
 
 const chromium = process.env.IS_AWS ? require('chrome-aws-lambda') : null;
