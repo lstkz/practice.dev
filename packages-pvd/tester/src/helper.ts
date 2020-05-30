@@ -70,3 +70,7 @@ export function tryParse(data: any) {
     return data;
   }
 }
+
+export function isPuppeteerTimeout(error: Error) {
+  return error.constructor.name === 'TimeoutError';
+}

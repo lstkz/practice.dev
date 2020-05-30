@@ -1,13 +1,16 @@
 import { Page, WaitForSelectorOptions } from 'puppeteer';
-import { checkHasSelectorMatches, getSelectorMatchResult } from './helper';
+import {
+  checkHasSelectorMatches,
+  getSelectorMatchResult,
+  isPuppeteerTimeout,
+} from './helper';
 import { TestError } from './TestError';
 import { StepNotifier } from './types';
 
 function rethrowNonTimeout(error: Error) {
-  if (error.constructor.name === 'TimeoutError') {
-    return;
+  if (!isPuppeteerTimeout(error)) {
+    throw error;
   }
-  throw error;
 }
 
 function convertSelector(selector: string) {

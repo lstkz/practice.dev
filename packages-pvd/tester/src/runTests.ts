@@ -4,7 +4,7 @@ import { getBrowser } from './getBrowser';
 import { TestInfo } from 'shared';
 import { Browser } from 'puppeteer';
 import { TestError } from './TestError';
-import { TimeoutError } from 'puppeteer/Errors';
+import { isPuppeteerTimeout } from './helper';
 
 const createdBrowsers: Browser[] = [];
 
@@ -76,7 +76,7 @@ export async function runTests(
       });
     } catch (e) {
       success = false;
-      if (e instanceof TestError || e instanceof TimeoutError) {
+      if (e instanceof TestError || isPuppeteerTimeout(e)) {
         await notifier.notify({
           type: 'TEST_FAIL',
           meta,
