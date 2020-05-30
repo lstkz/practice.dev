@@ -1,4 +1,4 @@
-import { runTests, ConsoleNotifier } from 'tester';
+import { runTests, ConsoleNotifier } from '@pvd/tester';
 
 const [, , id, url] = process.argv;
 

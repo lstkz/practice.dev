@@ -3,6 +3,8 @@ import { Tester } from './Tester';
 import { getBrowser } from './getBrowser';
 import { TestInfo } from 'shared';
 import { Browser } from 'puppeteer';
+import { TestError } from './TestError';
+import { isPuppeteerTimeout } from './helper';
 
 const createdBrowsers: Browser[] = [];
 
@@ -22,29 +24,23 @@ export async function runTests(
   const meta = { id: id };
   let currentTestId = 0;
 
-  const tester = new Tester({
-    notify(text, data) {
-      return notifier.notify({
-        type: 'STEP',
-        meta,
-        payload: { text, data, testId: currentTestId },
-      });
+  const tester = new Tester(
+    {
+      notify(text, data) {
+        return notifier.notify({
+          type: 'STEP',
+          meta,
+          payload: { text, data, testId: currentTestId },
+        });
+      },
     },
-  });
+    getPage
+  );
 
   await config.handler({
     tester,
     url,
-    createPage: async () => {
-      if (config.page === 'single') {
-        throw new Error('createPage cannot be called in single mode');
-      }
-      return await getPage();
-    },
   });
-  if (config.page === 'single') {
-    tester.page = await getPage();
-  }
 
   let success = true;
 
@@ -80,11 +76,20 @@ export async function runTests(
       });
     } catch (e) {
       success = false;
-      await notifier.notify({
-        type: 'TEST_FAIL',
-        meta,
-        payload: { testId: test.id, error: e.message },
-      });
+      if (e instanceof TestError || isPuppeteerTimeout(e)) {
+        await notifier.notify({
+          type: 'TEST_FAIL',
+          meta,
+          payload: { testId: test.id, error: e.message },
+        });
+      } else {
+        console.error(`Internal error when testing ${id}`, e);
+        await notifier.notify({
+          type: 'TEST_FAIL',
+          meta,
+          payload: { testId: test.id, error: 'Internal Error' },
+        });
+      }
       break;
     }
   }

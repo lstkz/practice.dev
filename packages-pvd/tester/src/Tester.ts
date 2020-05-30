@@ -1,28 +1,14 @@
-import https from 'https';
 import * as R from 'remeda';
 import http from 'http';
 import Url from 'url';
-import qs from 'querystring';
 import crypto from 'crypto';
+import { Page } from 'puppeteer';
 import { Schema, Convert, getValidateResult } from 'schema';
 import { TestError } from './TestError';
 import { formatErrors } from 'schema/src/utils';
-
-const defaultTimeout = 3500;
-const maxBodyLength = 1 * 1024 * 1024;
-
-type TestResult = 'pass' | 'fail' | 'pending';
-
-interface Test {
-  id: number;
-  name: string;
-  result: TestResult;
-  exec: () => Promise<void>;
-}
-
-interface StepNotifier {
-  notify(text: string, data?: any): Promise<void>;
-}
+import { makeUrl, getRequest, tryParse } from './helper';
+import { Test, StepNotifier } from './types';
+import { TesterPage } from './TesterPage';
 
 export interface MakeRequestOptions {
   path: string;
@@ -32,62 +18,53 @@ export interface MakeRequestOptions {
   query?: any;
 }
 
-interface MakeUrlOptions {
-  baseUrl: string;
-  path: string;
-  query?: any;
-  params?: any;
-}
+const maxBodyLength = 1 * 1024 * 1024;
 
-function makeUrl(options: MakeUrlOptions) {
-  const { baseUrl, path, query, params } = options;
-  let url = `${baseUrl}${path}`;
-  if (params) {
-    Object.entries(params).forEach(([name, value]) => {
-      url = url.replace(':' + name, encodeURIComponent(String(value)));
-    });
-  }
-  if (query && Object.keys(query).length) {
-    url += '?' + qs.stringify(query);
-  }
+const defaultApiTimeout = 3500;
 
-  return url;
-}
+const defaultTimeout = process.env.DEFAULT_WAIT_TIME
+  ? Number(process.env.DEFAULT_WAIT_TIME)
+  : 2500;
 
-function getRequest(url: string) {
-  if (url.startsWith('http://')) {
-    return http.request.bind(http);
-  }
-  if (url.startsWith('https://')) {
-    return https.request.bind(https);
-  }
-  throw new Error('Not supported protocol');
-}
-
-function tryParse(data: any) {
-  try {
-    return JSON.parse(data);
-  } catch (e) {
-    return data;
-  }
-}
+export const defaultWaitOptions = { visible: true, timeout: defaultTimeout };
 
 export class Tester {
   tests: Test[] = [];
-  baseUrl: string | null = null;
+  baseApiUrl: string | null = null;
   private nextId = 1;
+  private pageMap: Record<string, TesterPage> = {};
 
-  constructor(private stepNotifier: StepNotifier) {}
+  constructor(
+    private stepNotifier: StepNotifier,
+    private createBrowserPage: () => Promise<Page>
+  ) {}
 
-  setBaseUrl(baseUrl: string) {
-    this.baseUrl = baseUrl.replace(/\/$/, '');
+  async createPage(name: string | number = 'default') {
+    this.pageMap[name] = new TesterPage(
+      this.stepNotifier,
+      await this.createBrowserPage(),
+      defaultTimeout
+    );
   }
 
-  private getBaseUrl() {
-    if (!this.baseUrl) {
-      throw new Error('baseUrl not set');
+  getPage(name: string | number = 'default') {
+    if (!this.pageMap[name]) {
+      throw new Error(
+        `Page "${name}" is not created. Use "createPage" function first.`
+      );
     }
-    return this.baseUrl;
+    return this.pageMap[name];
+  }
+
+  setBaseApiUrl(baseApiUrl: string) {
+    this.baseApiUrl = baseApiUrl.replace(/\/$/, '');
+  }
+
+  private getBaseApiUrl() {
+    if (!this.baseApiUrl) {
+      throw new Error('baseApiUrl not set');
+    }
+    return this.baseApiUrl;
   }
 
   test(name: string, fn: () => Promise<void>) {
@@ -103,7 +80,7 @@ export class Tester {
   async makeRequest(options: MakeRequestOptions) {
     const id = this.nextId++;
     const url = makeUrl({
-      baseUrl: this.getBaseUrl(),
+      baseUrl: this.getBaseApiUrl(),
       path: options.path,
       params: options.params,
       query: options.query,
@@ -127,7 +104,7 @@ export class Tester {
       const parsed = new Url.URL(url);
       const req = makeRequest(
         {
-          host: parsed.host,
+          host: parsed.hostname,
           port: parsed.port,
           path: parsed.pathname,
           search: parsed.search,
@@ -153,15 +130,17 @@ export class Tester {
       if (serializedBody) {
         req.write(serializedBody);
       }
-      req.on('error', reject);
+      req.on('error', e => {
+        reject(new TestError('Cannot connect to server: ' + e.message));
+      });
       req.end();
 
       timeoutId = setTimeout(() => {
-        reject(new TestError(`Timeout exceeded: ${defaultTimeout}ms`));
+        reject(new TestError(`Timeout exceeded: ${defaultApiTimeout}ms`));
         try {
           req.abort();
         } catch (ignore) {}
-      }, defaultTimeout);
+      }, defaultApiTimeout);
     }).then(async ret => {
       await this.stepNotifier.notify(`Response from request ${id}`, {
         status: ret[1].statusCode,
@@ -171,11 +150,11 @@ export class Tester {
     });
   }
 
-  async expectStatus(res: http.IncomingMessage, status: 200) {
+  async expectStatus(res: http.IncomingMessage, status: number) {
     await this.stepNotifier.notify(`Expect status to equal "${status}"`);
     if (res.statusCode !== status) {
       throw new TestError(
-        `Expect status to equal "${status}". Actual: "${res.statusCode}".`
+        `Expected status to equal "${status}". Actual: "${res.statusCode}".`
       );
     }
   }
@@ -185,7 +164,7 @@ export class Tester {
     await this.stepNotifier.notify(`Expect "${name}" to equal "${serialized}"`);
     if (!R.equals(actual, expected)) {
       throw new TestError(
-        `Expect "${name}" to equal "${serialized}". Actual: "${JSON.stringify(
+        `Expected "${name}" to equal "${serialized}". Actual: "${JSON.stringify(
           actual
         )}".`
       );
@@ -199,7 +178,7 @@ export class Tester {
     schemaName: string
   ): Promise<Convert<T>> {
     await this.stepNotifier.notify(
-      `Expect "${schemaName}" to match "${schemaName}" schema.`
+      `Expect "${sourceName}" to match "${schemaName}" schema.`
     );
 
     const { value: newValue, errors } = getValidateResult(data, schema, [

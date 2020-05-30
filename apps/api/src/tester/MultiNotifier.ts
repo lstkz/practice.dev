@@ -1,4 +1,4 @@
-import { Notifier } from 'tester';
+import { Notifier } from '@pvd/tester';
 import { SocketMessage } from 'shared';
 
 export class MultiNotifier implements Notifier {
