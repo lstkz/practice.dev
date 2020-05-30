@@ -4,9 +4,7 @@ import http from 'http';
 import { TestConfiguration, Notifier } from '../types';
 import { runTests } from '../runTests';
 import { SocketMessage } from 'shared';
-import { initFrontendServer } from './helper';
-
-const port = 6899;
+import { initFrontendServer, TEST_PORT } from './helper';
 
 class TestNotifier implements Notifier {
   messages: any[] = [];
@@ -25,7 +23,7 @@ describe('frontend single page', () => {
   let testConfig: TestConfiguration;
 
   beforeAll(async () => {
-    server = await initFrontendServer(port, () => html);
+    server = await initFrontendServer(TEST_PORT, () => html);
   });
 
   afterAll(async done => {
@@ -35,14 +33,14 @@ describe('frontend single page', () => {
   beforeEach(() => {
     html = '';
     testConfig = {
-      page: 'single',
       handler({ tester, url }) {
         tester.test('navigate to page', async () => {
-          await tester.navigate(url);
+          await tester.createPage();
+          await tester.getPage().navigate(url);
         });
 
         tester.test('verify text', async () => {
-          await tester.expectToMatch('@text', 'foo');
+          await tester.getPage().expectToMatch('@text', 'foo');
         });
       },
     };
@@ -51,7 +49,12 @@ describe('frontend single page', () => {
   it('all tests successfully', async () => {
     html = '<div data-test="text">foobar</div>';
     const notifier = new TestNotifier();
-    await runTests('mock', 'http://localhost:' + port, testConfig, notifier);
+    await runTests(
+      'mock',
+      'http://localhost:' + TEST_PORT,
+      testConfig,
+      notifier
+    );
     expect(notifier.messages).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -152,7 +155,12 @@ describe('frontend single page', () => {
   it('should fail', async () => {
     html = '<div data-test="text">abc</div>';
     const notifier = new TestNotifier();
-    await runTests('mock', 'http://localhost:' + port, testConfig, notifier);
+    await runTests(
+      'mock',
+      'http://localhost:' + TEST_PORT,
+      testConfig,
+      notifier
+    );
     expect(notifier.messages).toMatchInlineSnapshot(`
       Array [
         Object {

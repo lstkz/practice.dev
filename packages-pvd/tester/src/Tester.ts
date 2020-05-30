@@ -6,17 +6,9 @@ import { Page } from 'puppeteer';
 import { Schema, Convert, getValidateResult } from 'schema';
 import { TestError } from './TestError';
 import { formatErrors } from 'schema/src/utils';
-import {
-  checkHasSelectorMatches,
-  getSelectorMatchResult,
-  makeUrl,
-  getRequest,
-  tryParse,
-} from './helper';
-
-function convertSelector(selector: string) {
-  return selector.replace(/\@([a-zA-Z0-9_-]+)/g, '[data-test="$1"]');
-}
+import { makeUrl, getRequest, tryParse } from './helper';
+import { Test, StepNotifier } from './types';
+import { TesterPage } from './TesterPage';
 
 export interface MakeRequestOptions {
   path: string;
@@ -33,28 +25,36 @@ const defaultApiTimeout = 3500;
 const defaultTimeout = process.env.DEFAULT_WAIT_TIME
   ? Number(process.env.DEFAULT_WAIT_TIME)
   : 2500;
+
 export const defaultWaitOptions = { visible: true, timeout: defaultTimeout };
-
-type TestResult = 'pass' | 'fail' | 'pending';
-
-interface Test {
-  id: number;
-  name: string;
-  result: TestResult;
-  exec: () => Promise<void>;
-}
-
-export interface StepNotifier {
-  notify(text: string, data?: any): Promise<void>;
-}
 
 export class Tester {
   tests: Test[] = [];
   baseApiUrl: string | null = null;
-  page: Page = null!;
   private nextId = 1;
+  private pageMap: Record<string, TesterPage> = {};
 
-  constructor(private stepNotifier: StepNotifier) {}
+  constructor(
+    private stepNotifier: StepNotifier,
+    private createBrowserPage: () => Promise<Page>
+  ) {}
+
+  async createPage(name: string | number = 'default') {
+    this.pageMap[name] = new TesterPage(
+      this.stepNotifier,
+      await this.createBrowserPage(),
+      defaultTimeout
+    );
+  }
+
+  getPage(name: string | number = 'default') {
+    if (!this.pageMap[name]) {
+      throw new Error(
+        `Page "${name}" is not created. Use "createPage" function first.`
+      );
+    }
+    return this.pageMap[name];
+  }
 
   setBaseApiUrl(baseApiUrl: string) {
     this.baseApiUrl = baseApiUrl.replace(/\/$/, '');
@@ -76,79 +76,6 @@ export class Tester {
     };
     this.tests.push(test);
   }
-
-  //////
-  // Front
-  /////
-
-  rethrowNonTimeout(error: Error) {
-    if (error.constructor.name === 'TimeoutError') {
-      return;
-    }
-    throw error;
-  }
-
-  async navigate(url: string) {
-    await this.stepNotifier.notify(`Navigate to "${url}"`);
-    await this.page.goto(url, { timeout: 5000, waitUntil: 'domcontentloaded' });
-  }
-
-  async expectToBeVisible(selector: string) {
-    const input = convertSelector(selector);
-    await this.stepNotifier.notify(`Expect "${input}" to be visible`);
-    await this.page.waitForSelector(input, defaultWaitOptions);
-  }
-
-  async expectToMatch(selector: string, expected: string, exact = false) {
-    const input = convertSelector(selector);
-    await this.stepNotifier.notify(
-      `Expect "${input}" to ${exact ? 'equal' : 'contain'} "${expected}"`
-    );
-    await this.page.waitForSelector(input, defaultWaitOptions);
-
-    const handle = await this.page.evaluateHandle(() => document);
-    try {
-      await this.page.waitForFunction(
-        checkHasSelectorMatches,
-        {
-          timeout: defaultTimeout,
-        },
-        handle,
-        input,
-        expected as any,
-        exact
-      );
-    } catch (error) {
-      this.rethrowNonTimeout(error);
-      const actual = await this.page.evaluate(
-        getSelectorMatchResult,
-        handle,
-        input
-      );
-      if (typeof actual === 'object' && actual.error === 'multiple') {
-        throw new TestError(
-          `Found ${actual.count} elements with selector "${input}". Expected only 1.`
-        );
-      } else {
-        throw new TestError(
-          exact
-            ? `Expected "${input}" to equal "${expected}". Actual: "${actual}".`
-            : `Expected "${input}" to include "${expected}". Actual: "${actual}".`
-        );
-      }
-    }
-  }
-
-  async click(selector: string) {
-    const input = convertSelector(selector);
-    await this.stepNotifier.notify(`Click on "${input}"`);
-    await this.page.waitForSelector(input, defaultWaitOptions);
-    await this.page.click(input);
-  }
-
-  //////
-  // API
-  /////
 
   async makeRequest(options: MakeRequestOptions) {
     const id = this.nextId++;

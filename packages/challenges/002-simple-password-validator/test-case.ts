@@ -1,9 +1,9 @@
-import { ApiTestConfiguration } from 'tester-api';
+import { TestConfiguration } from '@pvd/tester';
 import { S } from 'schema';
 
 export default {
   handler({ tester, url }) {
-    tester.setBaseUrl(url);
+    tester.setBaseApiUrl(url);
 
     const validPasswords = [
       'foobar!',
@@ -75,4 +75,4 @@ export default {
       }
     });
   },
-} as ApiTestConfiguration;
+} as TestConfiguration;

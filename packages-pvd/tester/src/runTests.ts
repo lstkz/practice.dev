@@ -24,29 +24,23 @@ export async function runTests(
   const meta = { id: id };
   let currentTestId = 0;
 
-  const tester = new Tester({
-    notify(text, data) {
-      return notifier.notify({
-        type: 'STEP',
-        meta,
-        payload: { text, data, testId: currentTestId },
-      });
+  const tester = new Tester(
+    {
+      notify(text, data) {
+        return notifier.notify({
+          type: 'STEP',
+          meta,
+          payload: { text, data, testId: currentTestId },
+        });
+      },
     },
-  });
+    getPage
+  );
 
   await config.handler({
     tester,
     url,
-    createPage: async () => {
-      if (config.page === 'single') {
-        throw new Error('createPage cannot be called in single mode');
-      }
-      return await getPage();
-    },
   });
-  if (config.page === 'single') {
-    tester.page = await getPage();
-  }
 
   let success = true;
 

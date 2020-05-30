@@ -7,6 +7,7 @@
   "scripts": {
     "tsc": "tsc --noEmit",
     "ts-node": "ts-node -T",
+    "jest": "jest --forceExit -i",
     "lint": "tslint -c tslint.json \"src/**/*.{ts,tsx}\"",
     "prettier": "prettier --write '{src,scripts}/*.{ts,tsx}'",
     "test": "yarn run jest --forceExit && yarn run tsc"

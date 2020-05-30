@@ -1,185 +1,16 @@
-process.env.DEFAULT_WAIT_TIME = '100';
-
 import http from 'http';
 import { S } from 'schema';
-import { Tester, StepNotifier } from '../Tester';
-import { launch } from '../puppeteer';
-import { Page, Browser } from 'puppeteer';
-import { getBody, initFrontendServer } from './helper';
+import { Tester } from '../Tester';
+import { getBody, TEST_PORT } from './helper';
+import { TestNotifier } from './TestNotifier';
 
-class TestNotifier implements StepNotifier {
-  actions: any[] = [];
-
-  async notify(text: string, data?: any) {
-    if (data) {
-      this.actions.push({ text, data });
-    } else {
-      this.actions.push(text);
-    }
-  }
-}
-
-const port = 6899;
 let tester: Tester;
 let notifier: TestNotifier;
 
-beforeEach(async () => {
+beforeEach(() => {
   notifier = new TestNotifier();
-  tester = new Tester(notifier);
-});
-
-describe('frontend', () => {
-  let page: Page;
-  let server: http.Server;
-  let browser: Browser;
-
-  beforeAll(async () => {
-    browser = await launch({
-      headless: true,
-    });
-    page = await browser.newPage();
-    server = await initFrontendServer(port);
-    await page.goto('http://localhost:' + port);
-  });
-
-  afterAll(async done => {
-    await browser.close();
-    server.close(done);
-  });
-
-  beforeEach(async () => {
-    tester.page = page;
-    await page.evaluate(() => {
-      document.body.innerHTML = '';
-    });
-  });
-
-  describe('click', () => {
-    it('should click properly', async () => {
-      await page.evaluate(() => {
-        const btn = document.createElement('button');
-        let count = 0;
-        btn.addEventListener('click', () => {
-          count++;
-          btn.value = 'clicks ' + count;
-        });
-        btn.setAttribute('data-test', 'foo');
-        document.body.appendChild(btn);
-      });
-      await tester.click('@foo');
-      const result = await page.evaluate(() => {
-        const btn = document.querySelector('button');
-        return btn!.value;
-      });
-      expect(result).toMatch('clicks 1');
-    });
-
-    it('should throw an error if not found', async () => {
-      await expect(tester.click('@foo')).rejects.toThrow(
-        'waiting for selector "[data-test="foo"]" failed'
-      );
-    });
-  });
-
-  describe('navigate', () => {
-    it('should navigate properly', async () => {
-      // hard to test without mocking
-      const page = {
-        goto: jest.fn(),
-      };
-      tester.page = page as any;
-      await tester.navigate('http://example.com');
-      expect(page.goto).toBeCalledWith('http://example.com', {
-        timeout: 5000,
-        waitUntil: 'domcontentloaded',
-      });
-      expect(notifier.actions).toEqual(['Navigate to "http://example.com"']);
-    });
-  });
-
-  describe('expectToBeVisible', () => {
-    it('should expected to be visible properly', async () => {
-      await page.evaluate(() => {
-        const btn = document.createElement('button');
-        btn.setAttribute('data-test', 'foo');
-        document.body.appendChild(btn);
-      });
-      await tester.expectToBeVisible('@foo');
-      expect(notifier.actions).toEqual([
-        'Expect "[data-test="foo"]" to be visible',
-      ]);
-    });
-
-    it('should throw an error if does not exist', async () => {
-      await expect(tester.expectToBeVisible('@foo')).rejects.toThrow(
-        'waiting for selector "[data-test="foo"]" failed'
-      );
-    });
-
-    it('should throw an error if hidden', async () => {
-      await page.evaluate(() => {
-        const btn = document.createElement('button');
-        btn.setAttribute('data-test', 'foo');
-        btn.style.display = 'none';
-        document.body.appendChild(btn);
-      });
-      await expect(tester.expectToBeVisible('@foo')).rejects.toThrow(
-        'waiting for selector "[data-test="foo"]" failed'
-      );
-    });
-  });
-
-  describe('expectToMatch', () => {
-    function addDiv() {
-      return page.evaluate(() => {
-        const div = document.createElement('div');
-        div.setAttribute('data-test', 'foo');
-        div.textContent = 'lorem';
-        document.body.appendChild(div);
-      });
-    }
-    describe('partial', () => {
-      it('should match properly', async () => {
-        await addDiv();
-        await tester.expectToMatch('@foo', 'lor');
-        expect(notifier.actions).toEqual([
-          'Expect "[data-test="foo"]" to contain "lor"',
-        ]);
-      });
-      it('should throw an error if does not match', async () => {
-        await addDiv();
-        await expect(tester.expectToMatch('@foo', 'qwe')).rejects.toThrow(
-          'Expected "[data-test="foo"]" to include "qwe". Actual: "lorem".'
-        );
-      });
-      it('should throw an error if does not exist', async () => {
-        await expect(tester.expectToMatch('@foo', 'qwe')).rejects.toThrow(
-          'waiting for selector "[data-test="foo"]" failed'
-        );
-      });
-      it('should throw an error if multiple results', async () => {
-        await addDiv();
-        await addDiv();
-        await expect(tester.expectToMatch('@foo', 'qwe')).rejects.toThrow(
-          'Found 2 elements with selector "[data-test="foo"]". Expected only 1.'
-        );
-      });
-    });
-    describe('exact', () => {
-      it('should match properly', async () => {
-        await addDiv();
-        await tester.expectToMatch('@foo', 'lorem', true);
-        expect(notifier.actions).toEqual([
-          'Expect "[data-test="foo"]" to equal "lorem"',
-        ]);
-      });
-      it('should throw an error if does not match', async () => {
-        await addDiv();
-        await expect(tester.expectToMatch('@foo', 'lor', true)).rejects.toThrow(
-          'Expected "[data-test="foo"]" to equal "lor". Actual: "lorem".'
-        );
-      });
-    });
+  tester = new Tester(notifier, async () => {
+    throw new Error('Cannot create page');
   });
 });
 
@@ -199,7 +30,7 @@ describe('api', () => {
         res.end();
       }
     });
-    await new Promise(resolve => server.listen(port, resolve));
+    await new Promise(resolve => server.listen(TEST_PORT, resolve));
   });
 
   afterAll(done => {
@@ -208,7 +39,7 @@ describe('api', () => {
 
   beforeEach(() => {
     handler = null!;
-    tester.setBaseApiUrl('http://localhost:' + port);
+    tester.setBaseApiUrl('http://localhost:' + TEST_PORT);
   });
 
   describe('makeRequest', () => {
@@ -299,7 +130,7 @@ describe('api', () => {
     // this test causes
     // "Jest did not exit one second after the test run has completed."
     it('should throw error if cannot connect', async () => {
-      tester.setBaseApiUrl('http://localhost:' + (port + 1));
+      tester.setBaseApiUrl('http://localhost:' + (TEST_PORT + 1));
       await expect(
         tester.makeRequest({
           method: 'GET',

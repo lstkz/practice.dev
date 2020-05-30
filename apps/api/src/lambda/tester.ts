@@ -2,8 +2,7 @@ import * as R from 'remeda';
 import AWS from 'aws-sdk';
 import path from 'path';
 import fs from 'fs';
-import { runTests as runFrontedTests } from 'tester';
-import { runTests as runApiTests } from 'tester-api';
+import { runTests } from '@pvd/tester';
 import { getUserSocketConnections } from '../contracts/socket/getUserSocketConnections';
 import { SocketNotifier } from '../tester/SocketNotifier';
 import { DbNotifier } from '../tester/DbNotifier';
@@ -52,19 +51,10 @@ export async function testerHandler(event: SNSEvent) {
     typeof __webpack_require__ === 'function'
       ? __non_webpack_require__
       : require;
-  if (msg.type === 'frontend') {
-    await runFrontedTests(
-      msg.id,
-      msg.testUrl,
-      requireFunc(testPath).default,
-      multiNotifier
-    );
-  } else {
-    await runApiTests(
-      msg.id,
-      msg.testUrl,
-      requireFunc(testPath).default,
-      multiNotifier
-    );
-  }
+  await runTests(
+    msg.id,
+    msg.testUrl,
+    requireFunc(testPath).default,
+    multiNotifier
+  );
 }
