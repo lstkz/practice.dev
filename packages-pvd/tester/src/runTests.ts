@@ -6,21 +6,13 @@ import { Browser } from 'puppeteer';
 import { TestError } from './TestError';
 import { isPuppeteerTimeout } from './helper';
 
-const createdBrowsers: Browser[] = [];
-
-async function getPage() {
-  const browser = await getBrowser();
-  createdBrowsers.push(browser);
-  const page = await browser.newPage();
-  return page;
-}
-
 export async function runTests(
   id: string,
   url: string,
   config: TestConfiguration,
   notifier: Notifier
 ) {
+  const createdBrowsers: Record<string, Browser> = {};
   const meta = { id: id };
   let currentTestId = 0;
 
@@ -34,7 +26,12 @@ export async function runTests(
         });
       },
     },
-    getPage
+    async (contextId = 'default') => {
+      if (!createdBrowsers[contextId]) {
+        createdBrowsers[contextId] = await getBrowser();
+      }
+      return createdBrowsers[contextId].newPage();
+    }
   );
 
   await config.handler({
@@ -96,11 +93,11 @@ export async function runTests(
   await notifier.notify({ type: 'RESULT', meta, payload: { success } });
   await notifier.flush();
 
-  for (const browser of createdBrowsers) {
+  Object.values(createdBrowsers).forEach(browser => {
     try {
       browser.close();
     } catch (e) {
       console.error(e);
     }
-  }
+  });
 }

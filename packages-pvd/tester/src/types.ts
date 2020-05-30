@@ -1,5 +1,6 @@
 import { SocketMessage } from 'shared';
 import { Tester } from './Tester';
+import { Page } from 'puppeteer';
 
 export interface TestOptions {
   url: string;
@@ -28,3 +29,5 @@ export interface Test {
   result: TestResult;
   exec: () => Promise<void>;
 }
+
+export type PageFactory = (contextId?: number | string) => Promise<Page>;

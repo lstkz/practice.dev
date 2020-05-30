@@ -88,4 +88,65 @@ export class TesterPage {
     await this.page.waitForSelector(input, this.waitOptions);
     await this.page.click(input);
   }
+
+  async type(selector: string, text: string) {
+    const input = convertSelector(selector);
+    await this.stepNotifier.notify(`Type "${text}" to "${input}"`);
+    await this.page.waitForSelector(input, this.waitOptions);
+    await this.page.type(input, text, { delay: 10 });
+  }
+
+  async expectToBeEnabled(selector: string) {
+    const input = convertSelector(selector);
+    await this.stepNotifier.notify(`Expect "${input}" to be enabled`);
+    await this.page.waitForSelector(input, this.waitOptions);
+    const handle = await this.page.evaluateHandle(() => document);
+    try {
+      await this.page.waitForFunction(
+        (handle, input) => {
+          const elements = [...handle.querySelectorAll(input)];
+          if (elements.length !== 1) {
+            return null;
+          }
+          const element = elements[0];
+          return element.getAttribute('disabled') === null;
+        },
+        {
+          timeout: this.defaultTimeout,
+        },
+        handle,
+        input
+      );
+    } catch (error) {
+      rethrowNonTimeout(error);
+      const actual = await this.page.evaluate(
+        (handle, input) => {
+          const elements = [...handle.querySelectorAll(input)];
+          if (elements.length !== 1) {
+            return { error: 'multiple', count: elements.length };
+          }
+          return null;
+        },
+        handle,
+        input
+      );
+      if (actual?.error === 'multiple') {
+        throw new TestError(
+          `Found ${actual.count} elements with selector '${selector}'. Expected only 1.`
+        );
+      }
+      throw new TestError(
+        `Expected "${input}" to be enabled, but it's still disabled`
+      );
+    }
+  }
+
+  async close() {
+    await this.page.close();
+  }
+
+  async reload() {
+    await this.stepNotifier.notify(`Reloading page`);
+    await this.page.reload();
+  }
 }

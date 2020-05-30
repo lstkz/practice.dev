@@ -9,11 +9,13 @@ interface IsolatedHtmlProps {
   css: string;
   height: number;
   scripts?: string[];
+  addToggle?: boolean;
 }
 
 const Buttons = styled.div`
   text-align: right;
   margin-top: 15px;
+  margin-bottom: 10px;
   & > button + button {
     margin-left: 10px;
   }
@@ -23,7 +25,15 @@ export function IsolatedHtml(props: IsolatedHtmlProps) {
   const [isHTMLVisible, setIsHTMLVisible] = React.useState(false);
   const [isCSSVisible, setIsCSSVisible] = React.useState(false);
   const iframeRef = React.useRef<HTMLIFrameElement | null>(null);
-  const { html, css, height, scripts } = props;
+  const { html, css, height } = props;
+
+  const scripts = React.useMemo(() => {
+    const ret = props.scripts || [];
+    if (props.addToggle) {
+      ret.push('https://practice.dev/assets/toggle-layer.js');
+    }
+    return ret;
+  }, [props.scripts, props.addToggle]);
 
   React.useLayoutEffect(() => {
     const document = iframeRef.current!.contentDocument!;
