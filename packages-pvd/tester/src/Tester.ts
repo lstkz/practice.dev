@@ -2,12 +2,11 @@ import * as R from 'remeda';
 import http from 'http';
 import Url from 'url';
 import crypto from 'crypto';
-import { Page } from 'puppeteer';
 import { Schema, Convert, getValidateResult } from 'schema';
 import { TestError } from './TestError';
 import { formatErrors } from 'schema/src/utils';
 import { makeUrl, getRequest, tryParse } from './helper';
-import { Test, StepNotifier } from './types';
+import { Test, StepNotifier, PageFactory } from './types';
 import { TesterPage } from './TesterPage';
 
 export interface MakeRequestOptions {
@@ -36,13 +35,16 @@ export class Tester {
 
   constructor(
     private stepNotifier: StepNotifier,
-    private createBrowserPage: () => Promise<Page>
+    private createBrowserPage: PageFactory
   ) {}
 
-  async createPage(name: string | number = 'default') {
+  async createPage(
+    name: string | number = 'default',
+    contextId?: number | string
+  ) {
     this.pageMap[name] = new TesterPage(
       this.stepNotifier,
-      await this.createBrowserPage(),
+      await this.createBrowserPage(contextId),
       defaultTimeout
     );
   }

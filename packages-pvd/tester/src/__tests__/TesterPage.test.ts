@@ -153,3 +153,45 @@ describe('expectToMatch', () => {
     });
   });
 });
+
+describe('type', () => {
+  it('should type properly', async () => {
+    await page.evaluate(() => {
+      const div = document.createElement('input');
+      div.setAttribute('data-test', 'foo');
+      document.body.appendChild(div);
+    });
+    await tester.type('@foo', 'bar');
+    expect(notifier.actions).toEqual(['Type "bar" to "[data-test="foo"]"']);
+    const value = await page.evaluate(() => {
+      return document.querySelector('input')!.value;
+    });
+    expect(value).toEqual('bar');
+  });
+});
+
+describe('expectToBeEnabled', () => {
+  it('should match properly', async () => {
+    await page.evaluate(() => {
+      const btn = document.createElement('button');
+      btn.setAttribute('data-test', 'foo');
+      document.body.appendChild(btn);
+    });
+    await tester.expectToBeEnabled('@foo');
+    expect(notifier.actions).toEqual([
+      'Expect "[data-test="foo"]" to be enabled',
+    ]);
+  });
+
+  it('should throw if disabled', async () => {
+    await page.evaluate(() => {
+      const btn = document.createElement('button');
+      btn.setAttribute('data-test', 'foo');
+      btn.setAttribute('disabled', '');
+      document.body.appendChild(btn);
+    });
+    await expect(tester.expectToBeEnabled('@foo')).rejects.toThrow(
+      'Expected "[data-test="foo"]" to be enabled, but it\'s still disabled'
+    );
+  });
+});
