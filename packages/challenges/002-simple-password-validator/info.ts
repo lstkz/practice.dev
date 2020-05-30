@@ -5,7 +5,7 @@ export const info: ChallengeInfo = {
   title: 'Simple password validator',
   description:
     'Create a single route for password validation with simple validation rules.',
-  tags: ['validation'],
+  tags: ['warmup', 'validation'],
   difficulty: 'easy',
   domain: 'backend',
   assets: {

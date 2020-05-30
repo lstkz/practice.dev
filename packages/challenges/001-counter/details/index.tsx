@@ -12,13 +12,29 @@ export function Details() {
   return (
     <div>
       <Section title="Overview">
-        Create a simple counter application with two buttons using provided HTML
-        and CSS. <br />
-        No API integration required, all data is stored directly in the
-        application. <br />
-        Refreshing the page resets the counter.
+        Welcome to practice.dev! <br />
+        This is a simple warmup challenge where you must implement minimal
+        interactions.
+        <br />
+        In every frontend challenge, we always give you a complete set of HTML
+        and CSS files. Your task is to implement business logic without focusing
+        on visual aspects.
+        <br />
+        Testing is based on <code>data-test</code> attributes on HTML elements.
+        Pay attention to them, and do not remove them from the provided HTML
+        files.
+        <br />
+        After you solve the challenge, you can upload a solution and share it
+        with other developers.
+        <br />
+        Good luck!
       </Section>
-      <Section title="Features">
+      <Section title="Use Cases">
+        <ul>
+          <li>As a user, I can increase or decrease the counter value.</li>
+        </ul>
+      </Section>
+      <Section title="Acceptance Criteria">
         <ul>
           <li>
             <div>Initial application state</div>
@@ -30,10 +46,12 @@ export function Details() {
             />
           </li>
           <li>
-            Clicking on "increase-btn" should increase "count-value" by 1.
+            Clicking on <code>increase-btn</code> should increase{' '}
+            <code>count-value</code> by 1.
           </li>
           <li>
-            Clicking on "decrease-btn" should decrease "count-value" by 1.
+            Clicking on <code>decrease-btn</code> should decrease{' '}
+            <code>count-value</code> by 1.
           </li>
         </ul>
       </Section>

@@ -13,6 +13,16 @@ const Wrapper = styled.div`
   &:first-child {
     margin-top: 0;
   }
+  code {
+    padding: 3px 7px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+    font-family: courier;
+  }
+
+  li + li {
+  }
 `;
 
 const Title = styled.h2`

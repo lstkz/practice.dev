@@ -5,7 +5,7 @@ export const info: ChallengeInfo = {
   title: 'Counter',
   description:
     'Create a basic counter application. No API integration required.',
-  tags: [],
+  tags: ['warmup'],
   difficulty: 'easy',
   domain: 'frontend',
 };

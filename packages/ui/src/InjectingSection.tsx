@@ -29,7 +29,7 @@ export function InjectingSection() {
       You can inject <ToggleLayersBtn>Toggle layers</ToggleLayersBtn> button by
       adding below script to your main HTML page in the <code>{'<head>'}</code>{' '}
       section. Injecting this button is not required, but it can help you
-      debugging "data-test" attributes on HTML elements.
+      debugging data-test attributes on HTML elements.
       <Highlight lang="html" code={toggleLayersBtnSource} />
     </Section>
   );
