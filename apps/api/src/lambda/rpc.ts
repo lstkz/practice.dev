@@ -47,7 +47,7 @@ export async function handler(
     const { path, httpMethod } = _getHttpParams(event);
     const exec = /\/rpc\/(.+)/.exec(path);
     if (!exec) {
-      throw new Error('Invalid url');
+      throw new AppError('Invalid url');
     }
     if (httpMethod === 'OPTIONS') {
       return {
@@ -56,19 +56,19 @@ export async function handler(
       };
     }
     if (httpMethod !== 'POST') {
-      throw new Error('Method must be POST');
+      throw new AppError('Method must be POST');
     }
     let params: any[];
     if (!event.body) {
-      throw new Error('Body required');
+      throw new AppError('Body required');
     }
     try {
       params = JSON.parse(event.body);
     } catch (e) {
-      throw new Error('Invalid JSON');
+      throw new AppError('Invalid JSON');
     }
     if (!Array.isArray(params)) {
-      throw new Error('Request body must be an array');
+      throw new AppError('Request body must be an array');
     }
     const headers = event.headers || {};
     const ret = await rpcHandler(exec[1], params, headers['x-token']);
@@ -80,7 +80,6 @@ export async function handler(
   } catch (e) {
     const serialized = util.inspect(e, { depth: null });
     const requestId = event.requestContext?.requestId || uuid();
-    console.error(requestId, serialized);
     if (_isPublicError(e)) {
       return {
         statusCode: 400,
@@ -91,6 +90,7 @@ export async function handler(
         }),
       };
     } else {
+      console.error(requestId, serialized);
       return {
         statusCode: 500,
         headers: baseHeaders,
