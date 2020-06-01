@@ -1,4 +1,4 @@
-(function() {
+(function () {
   function init() {
     const head = document.getElementsByTagName('head')[0];
     const style = document.createElement('style');
@@ -50,6 +50,13 @@
     .toggle-layers-btn:hover {
       opacity: 0.8;
       cursor: pointer;
+    }
+
+    body.show-layers [data-test][data-test-dir='left']:after {
+      left: auto;
+      right: 100%;
+      margin-left: 0px;
+      margin-right: 3px;
     }
     `;
     head.appendChild(style);

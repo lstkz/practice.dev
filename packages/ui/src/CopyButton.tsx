@@ -6,7 +6,7 @@ const Wrapper = styled.button`
   position: absolute;
   top: 4px;
   right: 20px;
-  z-index: 2;
+  z-index: 4;
   cursor: pointer;
   border: 1px solid transparent;
   padding: 0;
@@ -14,7 +14,7 @@ const Wrapper = styled.button`
   background-color: transparent;
   height: 30px;
   transition: all 0.25s ease-out;
-  display: flex;
+  display: inline-flex;
   align-items: center;
 `;
 
