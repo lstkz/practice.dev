@@ -195,3 +195,20 @@ describe('expectToBeEnabled', () => {
     );
   });
 });
+
+describe('clear', () => {
+  it('should clear properly', async () => {
+    await page.evaluate(() => {
+      const div = document.createElement('input');
+      div.setAttribute('data-test', 'foo');
+      div.value = 'value';
+      document.body.appendChild(div);
+    });
+    await tester.clear('@foo');
+    expect(notifier.actions).toEqual(['Clear "[data-test="foo"]"']);
+    const value = await page.evaluate(() => {
+      return document.querySelector('input')!.value;
+    });
+    expect(value).toEqual('');
+  });
+});

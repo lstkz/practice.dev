@@ -32,15 +32,9 @@ body {
   cursor: pointer;
 }
 
-.btn[disabled] {
-  opacity: 1;
-  cursor: default;
-  background: #ccc;
-}
-
 .main-content {
   margin: 50px auto 0;
-  width: 300px;
+  width: 350px;
   text-align: center;
 }
 
@@ -51,14 +45,23 @@ body {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  width: 100%;
+  width: auto;
   border: 1px solid #ccc;
 }
 
-.buttons {
-  margin-top: 10px;
+.form {
+  display: flex;
 }
 
-.buttons .btn + .btn {
+.btn-format {
   margin-left: 10px;
+  flex-grow: 1;
+}
+
+.result {
+  margin-top: 10px;
+  text-align: center;
+  background: #eee;
+  min-height: 18px;
+  padding: 5px 10px;
 }

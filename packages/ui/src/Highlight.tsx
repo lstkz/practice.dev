@@ -5,7 +5,8 @@ import { CopyButton } from './CopyButton';
 
 interface HighlightProps {
   code: string;
-  lang: 'html' | 'css';
+  lang: 'html' | 'css' | 'js';
+  maxHeight?: number;
 }
 
 const prismColors = {
@@ -124,26 +125,32 @@ pre[class*="language-"] {
 `;
 
 const Wrapper = styled.div`
+  overflow: auto;
+  border-radius: 0.3em;
+`;
+const RelativeWrapper = styled.div`
   position: relative;
 `;
 
 export function Highlight(props: HighlightProps) {
   const ref = React.useRef<HTMLElement>(null!);
-  const { code, lang } = props;
+  const { code, lang, maxHeight } = props;
 
   React.useLayoutEffect(() => {
     Prism.highlightElement(ref.current!);
   }, [code, lang]);
 
   return (
-    <Wrapper>
-      <PrismStyles />
-      <pre>
-        <code ref={ref} className={`language-${lang}`}>
-          {code}
-        </code>
-      </pre>
+    <RelativeWrapper>
       <CopyButton content={code} />
-    </Wrapper>
+      <Wrapper style={maxHeight ? { maxHeight } : undefined}>
+        <PrismStyles />
+        <pre>
+          <code ref={ref} className={`language-${lang}`}>
+            {code}
+          </code>
+        </pre>
+      </Wrapper>
+    </RelativeWrapper>
   );
 }
