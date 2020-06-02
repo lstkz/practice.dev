@@ -149,4 +149,12 @@ export class TesterPage {
     await this.stepNotifier.notify(`Reloading page`);
     await this.page.reload();
   }
+
+  async clear(selector: string) {
+    const input = convertSelector(selector);
+    await this.stepNotifier.notify(`Clear "${input}"`);
+    await this.page.waitForSelector(input, this.waitOptions);
+    await this.page.click(input, { clickCount: 3 });
+    await this.page.keyboard.press('Backspace');
+  }
 }

@@ -36,7 +36,7 @@ export function Details() {
       </Section>
       <Section title="Use Cases">
         <ul>
-          <li>As a user, I can see user-friendly text of a liked post.</li>
+          <li>As a user, I can see the user-friendly text of a liked post.</li>
         </ul>
       </Section>
       <Section title="Acceptance Criteria">
@@ -151,7 +151,7 @@ export function Details() {
                 <br />
                 Display "You, {'<friend_name_1>'} and {'<friend_name_2>'} like
                 it" if <code>isLikedByMe</code> is <code>true</code>,{' '}
-                <code>likedFriends</code> is an non-empty array, and{' '}
+                <code>likedFriends</code> is a non-empty array, and{' '}
                 <code>totalLikes</code> is equal to length of{' '}
                 <code>likedFriends</code> plus <code>1</code>.
                 <br />
@@ -183,7 +183,7 @@ export function Details() {
                 <br />
                 Display "You, {'<friend_name_1>'}, {'<friend_name_2>'} and 1
                 another person like it" if <code>isLikedByMe</code> is{' '}
-                <code>true</code>, <code>likedFriends</code> is an non-empty
+                <code>true</code>, <code>likedFriends</code> is a non-empty
                 array, and
                 <code>totalLikes</code> is equal to length of{' '}
                 <code>likedFriends</code> plus <code>2</code>.
@@ -205,9 +205,8 @@ export function Details() {
                 </strong>
                 <br />
                 Display "You, {'<friend_name_1>'}, {'<friend_name_2>'} and{' '}
-                {'<n>'}
-                other people like" if <code>isLikedByMe</code> is{' '}
-                <code>true</code>, <code>likedFriends</code> is an non-empty
+                {'<n>'} other people like" if <code>isLikedByMe</code> is{' '}
+                <code>true</code>, <code>likedFriends</code> is a non-empty
                 array, and
                 <code>totalLikes</code> is greater than
                 <code>likedFriends</code> plus <code>2</code>.
@@ -245,7 +244,7 @@ export function Details() {
                 <br />
                 Display "{'<friend_name_1>'}, {'<friend_name_2>'} and{' '}
                 {'<friend_name_3>'} like it" if <code>isLikedByMe</code> is{' '}
-                <code>false</code>, <code>likedFriends</code> is an non-empty
+                <code>false</code>, <code>likedFriends</code> is a non-empty
                 array, and
                 <code>totalLikes</code> is equal to length of{' '}
                 <code>likedFriends</code>.
@@ -269,7 +268,7 @@ export function Details() {
                 <br />
                 Display "{'<friend_name_1>'}, {'<friend_name_2>'} and 1 another
                 person like it" if <code>isLikedByMe</code> is{' '}
-                <code>false</code>, <code>likedFriends</code> is an non-empty
+                <code>false</code>, <code>likedFriends</code> is a non-empty
                 array, and
                 <code>totalLikes</code> is equal to length of{' '}
                 <code>likedFriends</code> plus <code>1</code>.
@@ -288,9 +287,9 @@ export function Details() {
               <li>
                 <strong>Your friends like it and other people like it</strong>
                 <br />
-                Display "{'<friend_name_1>'}, {'<friend_name_2>'} and {'<n>'}
+                Display "{'<friend_name_1>'}, {'<friend_name_2>'} and {'<n>'}{' '}
                 other people like" if <code>isLikedByMe</code> is{' '}
-                <code>false</code>, <code>likedFriends</code> is an non-empty
+                <code>false</code>, <code>likedFriends</code> is a non-empty
                 array, and
                 <code>totalLikes</code> is greater than
                 <code>likedFriends</code> plus <code>1</code>.
@@ -304,6 +303,40 @@ export function Details() {
                     totalLikes: 10,
                   }}
                   result="Tod, Otes, Merill and 7 other people like it"
+                />
+              </li>
+              <li>
+                <strong>Only another person likes it</strong>
+                <br />
+                Display "1 person likes it" if <code>isLikedByMe</code> is{' '}
+                <code>false</code>, <code>likedFriends</code> is an empty array,
+                and
+                <code>totalLikes</code> is equal to <code>1</code>.
+                <Example
+                  example={{
+                    id: 1,
+                    isLikedByMe: false,
+                    likedFriends: [],
+                    totalLikes: 1,
+                  }}
+                  result="1 person likes it"
+                />
+              </li>
+              <li>
+                <strong>Only other people like it</strong>
+                <br />
+                Display "{'<n>'} people like it" if <code>isLikedByMe</code> is{' '}
+                <code>false</code>, <code>likedFriends</code> is an empty array,
+                and
+                <code>totalLikes</code> is greater than <code>1</code>.
+                <Example
+                  example={{
+                    id: 1,
+                    isLikedByMe: false,
+                    likedFriends: [],
+                    totalLikes: 5,
+                  }}
+                  result="5 people like it"
                 />
               </li>
             </ol>

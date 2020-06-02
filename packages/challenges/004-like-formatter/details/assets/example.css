@@ -34,7 +34,7 @@ body {
 
 .main-content {
   margin: 50px auto 0;
-  width: 300px;
+  width: 350px;
   text-align: center;
 }
 
@@ -45,7 +45,7 @@ body {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  width: 100%;
+  width: auto;
   border: 1px solid #ccc;
 }
 
@@ -62,6 +62,6 @@ body {
   margin-top: 10px;
   text-align: center;
   background: #eee;
-  height: 18px;
-  padding: 5px 0;
+  min-height: 18px;
+  padding: 5px 10px;
 }
