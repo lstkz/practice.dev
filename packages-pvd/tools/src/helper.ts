@@ -18,7 +18,19 @@ import {
 import { TestInfo } from 'shared';
 import { Tester } from '@pvd/tester';
 
-const s3 = new AWS.S3();
+let s3: AWS.S3 | null = null;
+
+function getS3() {
+  if (!s3) {
+    s3 = new AWS.S3({
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+      },
+    });
+  }
+  return s3;
+}
 
 function _getSourceTarget(type: SourceType) {
   return type === 'details' ? 'details/index.tsx' : 'test-case.ts';
@@ -117,7 +129,7 @@ export function getWebpackModule() {
   };
 }
 
-function md5(data: string | Buffer) {
+export function md5(data: string | Buffer) {
   return crypto.createHash('md5').update(data).digest('hex');
 }
 
@@ -282,7 +294,7 @@ interface UploadS3Options {
 
 export async function uploadS3(options: UploadS3Options) {
   const { content, contentType, bucketName, s3Key } = options;
-  const exists = await s3
+  const exists = await getS3()
     .headObject({
       Bucket: bucketName,
       Key: s3Key,
@@ -299,7 +311,7 @@ export async function uploadS3(options: UploadS3Options) {
     );
 
   if (!exists) {
-    await s3
+    await getS3()
       .upload({
         Bucket: bucketName,
         Key: s3Key,

@@ -3,14 +3,22 @@ import fs from 'fs';
 import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
 import { ChildProcess } from 'child_process';
-import { libs, rootPath, apps } from './config';
+import { libs, rootPath, apps, sharedLibs } from './config';
 
 function isLib(app: string) {
   return libs.includes(app);
 }
 
+function isSharedLib(app: string) {
+  return sharedLibs.includes(app);
+}
+
 export function getAppRoot(app: string) {
-  return path.join(rootPath, isLib(app) ? 'packages' : 'apps', app);
+  return path.join(
+    rootPath,
+    isLib(app) ? 'packages' : isSharedLib(app) ? 'packages-pvd' : 'apps',
+    app
+  );
 }
 
 export function getSpawnOptions(app: string) {
