@@ -22,12 +22,16 @@ let s3: AWS.S3 | null = null;
 
 function getS3() {
   if (!s3) {
-    s3 = new AWS.S3({
-      credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-      },
-    });
+    s3 = new AWS.S3(
+      process.env.AWS_DEFAULT_CREDENTIALS === 'true'
+        ? {}
+        : {
+            credentials: {
+              accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+              secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+            },
+          }
+    );
   }
   return s3;
 }

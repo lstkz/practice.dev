@@ -17,8 +17,8 @@ export function Details() {
         <ul>
           <li>As a user, I can select filter options.</li>
           <li>
-            As a user, I can see the results count for the given filter option
-            before selecting that option.
+            As a user, I can see the count of the potential results for the
+            given filter option before selecting that option.
           </li>
         </ul>
       </Section>
@@ -47,12 +47,12 @@ export function Details() {
           <li>
             There are 5 sections, and each section represents a property from
             the JSON data. Properties <code>capacity</code> and{' '}
-            <code>speed</code> are numeric properties, but are displayed with
+            <code>speed</code> are numeric properties but are displayed with an
             additional unit (GB, MHz).
           </li>
           <li>
             The number in parentheses represents the count of items that match
-            that option.
+            that option if this option is selected.
             <br />
             For example:
             <br />
@@ -81,8 +81,8 @@ export function Details() {
             After selecting or deselecting the option, the counts from other
             sections should update immediately.
             <br />
-            The other options from the same section should always remain the
-            same.
+            NOTE: the other options from the same section should always remain
+            the same.
           </li>
           <li>
             Disable the option if the count is <code>0</code>. Add{' '}
@@ -91,7 +91,23 @@ export function Details() {
             <br />
             Don't disable the checkbox if it's already selected.
           </li>
+          <li>
+            Options should be displayed in descending order based on the count
+            when no options are selected. <br />
+            Don't re-sort options when selected. <br />
+            The provided HTML shows the correct order.
+          </li>
         </ul>
+      </Section>
+      <Section title="Demo">
+        <video
+          style={{ width: '100%', height: 600, outline: 'none' }}
+          src={
+            'https://practice.dev/assets/demo.e2b221b8add80d529df9a50c993a7d0e.mp4'
+          }
+          loop
+          controls
+        ></video>
       </Section>
       <InjectingSection />
     </div>
