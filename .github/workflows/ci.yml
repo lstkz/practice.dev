@@ -50,7 +50,7 @@ jobs:
 
       - name: test front
         run: |
-          npm i -g aws-cdk
+          npm i -g aws-cdk@1.38.0
           touch .env
           cd packages/pd-cli
           npm i -g .
@@ -100,7 +100,7 @@ jobs:
         uses: rrainn/dynamodb-action@v2.0.0
         with:
           port: 8000
-          cors: '*'
+          cors: "*"
       - name: Configure sysctl limits
         run: |
           sudo swapoff -a
