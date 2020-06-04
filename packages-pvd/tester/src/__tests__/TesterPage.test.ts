@@ -196,6 +196,32 @@ describe('expectToBeEnabled', () => {
   });
 });
 
+describe('expectToBeDisabled', () => {
+  it('should match properly', async () => {
+    await page.evaluate(() => {
+      const btn = document.createElement('button');
+      btn.setAttribute('data-test', 'foo');
+      btn.setAttribute('disabled', '');
+      document.body.appendChild(btn);
+    });
+    await tester.expectToBeDisabled('@foo');
+    expect(notifier.actions).toEqual([
+      'Expect "[data-test="foo"]" to be disabled',
+    ]);
+  });
+
+  it('should throw if enabled', async () => {
+    await page.evaluate(() => {
+      const btn = document.createElement('button');
+      btn.setAttribute('data-test', 'foo');
+      document.body.appendChild(btn);
+    });
+    await expect(tester.expectToBeDisabled('@foo')).rejects.toThrow(
+      'Expected "[data-test="foo"]" to be disabled, but it\'s still enabled'
+    );
+  });
+});
+
 describe('clear', () => {
   it('should clear properly', async () => {
     await page.evaluate(() => {
@@ -210,5 +236,46 @@ describe('clear', () => {
       return document.querySelector('input')!.value;
     });
     expect(value).toEqual('');
+  });
+});
+
+describe('expectOrder', () => {
+  beforeEach(async () => {
+    await page.evaluate(() => {
+      document.body.innerHTML = `
+      <div data-test="group">
+        <div data-test="item-a"></div>
+        <div data-test="item-b"></div>
+        <div data-test="item-c"></div>
+        <div data-test="item-d"></div>
+      </div>`;
+    });
+  });
+
+  it('should expect order properly', async () => {
+    await tester.expectOrder('@group @^item-', '@item-a', 1);
+    await tester.expectOrder('@group @^item-', '@item-b', 2);
+    await tester.expectOrder('@group @^item-', '@item-c', 3);
+    await tester.expectOrder('@group @^item-', '@item-d', 4);
+    expect(notifier.actions).toEqual([
+      'Expect "[data-test="item-a"]" to be 1st in group "[data-test="group"] [data-test^="item-"]"',
+      'Expect "[data-test="item-b"]" to be 2nd in group "[data-test="group"] [data-test^="item-"]"',
+      'Expect "[data-test="item-c"]" to be 3rd in group "[data-test="group"] [data-test^="item-"]"',
+      'Expect "[data-test="item-d"]" to be 4th in group "[data-test="group"] [data-test^="item-"]"',
+    ]);
+  });
+
+  it('should throw an error if invalid order', async () => {
+    await expect(
+      tester.expectOrder('@group @^item-', '@item-a', 2)
+    ).rejects.toThrow('Expected order: 2. Actual: 1');
+  });
+
+  it('should throw an error if not found', async () => {
+    await expect(
+      tester.expectOrder('@group @^item-', '@item-z', 2)
+    ).rejects.toThrow(
+      '"[data-test="item-z"]" not found in group "[data-test="group"] [data-test^="item-"]"'
+    );
   });
 });

@@ -16,7 +16,7 @@ export function checkHasSelectorMatches(
   const textContent: string =
     element.tagName.toLowerCase() === 'input'
       ? (element as HTMLInputElement).value
-      : element.textContent || '';
+      : (element as HTMLDivElement).innerText || '';
   return exact ? textContent === text : textContent.includes(text);
 }
 
@@ -28,7 +28,7 @@ export function getSelectorMatchResult(document: Document, input: string) {
   const element = elements[0];
   return element.tagName.toLowerCase() === 'input'
     ? (element as HTMLInputElement).value
-    : element.textContent || '';
+    : (element as HTMLDivElement).innerText || '';
 }
 
 export interface MakeUrlOptions {

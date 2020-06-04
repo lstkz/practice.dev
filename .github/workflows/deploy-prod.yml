@@ -45,7 +45,7 @@ jobs:
 
       - name: deploy
         run: |
-          npm i -g aws-cdk
+          npm i -g aws-cdk@1.38.0
           touch .env
           cd packages/pd-cli
           npm i -g .

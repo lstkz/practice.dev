@@ -14,7 +14,22 @@ function rethrowNonTimeout(error: Error) {
 }
 
 function convertSelector(selector: string) {
-  return selector.replace(/\@([a-zA-Z0-9_-]+)/g, '[data-test="$1"]');
+  return selector
+    .replace(/\@\^([a-zA-Z0-9_-]+)/g, '[data-test^="$1"]')
+    .replace(/\@([a-zA-Z0-9_-]+)/g, '[data-test="$1"]');
+}
+
+function getNumSuffix(n: number) {
+  if (n === 1) {
+    return 'st';
+  }
+  if (n === 2) {
+    return 'nd';
+  }
+  if (n === 3) {
+    return 'rd';
+  }
+  return 'th';
 }
 
 export class TesterPage {
@@ -141,6 +156,51 @@ export class TesterPage {
     }
   }
 
+  async expectToBeDisabled(selector: string) {
+    const input = convertSelector(selector);
+    await this.stepNotifier.notify(`Expect "${input}" to be disabled`);
+    await this.page.waitForSelector(input, this.waitOptions);
+    const handle = await this.page.evaluateHandle(() => document);
+    try {
+      await this.page.waitForFunction(
+        (handle, input) => {
+          const elements = [...handle.querySelectorAll(input)];
+          if (elements.length !== 1) {
+            return null;
+          }
+          const element = elements[0];
+          return element.getAttribute('disabled') !== null;
+        },
+        {
+          timeout: this.defaultTimeout,
+        },
+        handle,
+        input
+      );
+    } catch (error) {
+      rethrowNonTimeout(error);
+      const actual = await this.page.evaluate(
+        (handle, input) => {
+          const elements = [...handle.querySelectorAll(input)];
+          if (elements.length !== 1) {
+            return { error: 'multiple', count: elements.length };
+          }
+          return null;
+        },
+        handle,
+        input
+      );
+      if (actual?.error === 'multiple') {
+        throw new TestError(
+          `Found ${actual.count} elements with selector '${selector}'. Expected only 1.`
+        );
+      }
+      throw new TestError(
+        `Expected "${input}" to be disabled, but it's still enabled`
+      );
+    }
+  }
+
   async close() {
     await this.page.close();
   }
@@ -156,5 +216,52 @@ export class TesterPage {
     await this.page.waitForSelector(input, this.waitOptions);
     await this.page.click(input, { clickCount: 3 });
     await this.page.keyboard.press('Backspace');
+  }
+
+  async expectOrder(groupSelector: string, selector: string, order: number) {
+    const group = convertSelector(groupSelector);
+    const input = convertSelector(selector);
+    await this.stepNotifier.notify(
+      `Expect "${input}" to be ${order}${getNumSuffix(
+        order
+      )} in group "${group}"`
+    );
+    const handle = await this.page.evaluateHandle(() => document);
+    try {
+      await this.page.waitForFunction(
+        (handle, group, input, order) => {
+          const elements = [...handle.querySelectorAll(group)];
+          const target = handle.querySelector(input);
+          if (!target) {
+            return null;
+          }
+          return elements.indexOf(target) + 1 === order;
+        },
+        {
+          timeout: this.defaultTimeout,
+        },
+        handle,
+        group,
+        input,
+        order
+      );
+    } catch (error) {
+      rethrowNonTimeout(error);
+      const actual = await this.page.evaluate(
+        (handle, group, input) => {
+          const elements = [...handle.querySelectorAll(group)];
+          const target = handle.querySelector(input);
+          return elements.indexOf(target);
+        },
+        handle,
+        group,
+        input
+      );
+
+      if (actual === -1) {
+        throw new TestError(`"${input}" not found in group "${group}"`);
+      }
+      throw new TestError(`Expected order: ${order}. Actual: ${actual + 1}`);
+    }
   }
 }
