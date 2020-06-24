@@ -21,13 +21,25 @@ export const initDb = createContract('init-db')
         },
         {
           _id: 2,
-          username: 'owner',
+          username: 'owner1',
           passwordHash: passwordHash,
           passwordSalt: salt,
         },
         {
           _id: 3,
-          username: 'reporter',
+          username: 'owner2',
+          passwordHash: passwordHash,
+          passwordSalt: salt,
+        },
+        {
+          _id: 4,
+          username: 'reporter1',
+          passwordHash: passwordHash,
+          passwordSalt: salt,
+        },
+        {
+          _id: 5,
+          username: 'reporter2',
           passwordHash: passwordHash,
           passwordSalt: salt,
         },

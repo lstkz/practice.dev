@@ -7,17 +7,8 @@ import { HomePage } from '../pages/HomePage';
 
 export function Router() {
   const { pathname, push } = useRouter();
-  const { user, isLoaded } = useAppState();
+  const { isLoaded } = useAppState();
   const appDispatch = useAppDispatch();
-
-  React.useLayoutEffect(() => {
-    if (!isLoaded) {
-      return;
-    }
-    if (!user && pathname !== '/login') {
-      push('/login');
-    }
-  }, [pathname, user, isLoaded]);
 
   React.useEffect(() => {
     if (localStorage.token) {
@@ -27,6 +18,7 @@ export function Router() {
           appDispatch({ type: 'user-loaded', user });
         });
     } else {
+      push('/login');
       appDispatch({ type: 'user-loaded', user: null });
     }
   }, []);

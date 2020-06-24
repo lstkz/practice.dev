@@ -56,6 +56,14 @@ export class TesterPage {
     await this.stepNotifier.notify(`Expect "${input}" to be visible`);
     await this.page.waitForSelector(input, this.waitOptions);
   }
+  async expectToBeHidden(selector: string) {
+    const input = convertSelector(selector);
+    await this.stepNotifier.notify(`Expect "${input}" to be hidden`);
+    await this.page.waitForSelector(input, {
+      ...this.waitOptions,
+      hidden: true,
+    });
+  }
 
   async expectToMatch(selector: string, expected: string, exact = false) {
     const input = convertSelector(selector);
