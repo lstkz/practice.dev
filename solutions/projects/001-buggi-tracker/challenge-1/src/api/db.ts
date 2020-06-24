@@ -1,5 +1,10 @@
 import mongodb from 'mongodb';
 
+export interface AppUser {
+  id: number;
+  username: string;
+}
+
 export interface User {
   _id: number;
   username: string;
@@ -8,7 +13,7 @@ export interface User {
 }
 
 export interface Token {
-  token: string;
+  _id: string;
   userId: number;
 }
 

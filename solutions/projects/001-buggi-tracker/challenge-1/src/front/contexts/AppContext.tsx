@@ -1,19 +1,20 @@
 import React from 'react';
-import { PublicUser } from '../types';
+import { PublicUser } from '../../types';
 
 interface State {
   user: PublicUser | null;
+  isLoaded: boolean;
 }
 
-const AppContext = React.createContext<State>({
-  user: null,
-});
+const AppContext = React.createContext<State>(null);
 
 export const AppDispatchContext = React.createContext<
   React.Dispatch<AppAction>
 >(null);
 
-type AppAction = { type: 'user-loaded'; user: PublicUser };
+type AppAction =
+  | { type: 'user-loaded'; user: PublicUser | null }
+  | { type: 'logout' };
 
 function wrapLog<T extends (state: any, action: any) => any>(reducer: T): T {
   return ((state: any, action: any) => {
@@ -27,16 +28,19 @@ function wrapLog<T extends (state: any, action: any) => any>(reducer: T): T {
 const appReducer = wrapLog((state: State, action: AppAction) => {
   switch (action.type) {
     case 'user-loaded': {
-      return { ...state, user: action.user };
+      return { ...state, user: action.user, isLoaded: true };
     }
-    default: {
-      throw new Error(`Unhandled action type: ${action.type}`);
+    case 'logout': {
+      return { ...state, user: null };
     }
   }
 });
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = React.useReducer(appReducer, { user: null });
+  const [state, dispatch] = React.useReducer(appReducer, {
+    user: null,
+    isLoaded: false,
+  });
   return (
     <AppContext.Provider value={state}>
       <AppDispatchContext.Provider value={dispatch}>

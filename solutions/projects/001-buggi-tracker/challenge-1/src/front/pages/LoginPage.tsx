@@ -1,8 +1,8 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { ApiClient } from './ApiClient';
-import { useAppDispatch } from './AppContext';
-import { useRouter } from './RouterContext';
+import { ApiClient } from '../ApiClient';
+import { useAppDispatch } from '../contexts/AppContext';
+import { useRouter } from '../contexts/RouterContext';
 
 interface LoginFormValues {
   username: string;

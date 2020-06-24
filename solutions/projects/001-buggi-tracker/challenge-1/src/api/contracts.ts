@@ -1,5 +1,5 @@
 import { createContract } from './lib';
-import { UserModel } from './db';
+import { UserModel, User, AppUser, TokenModel } from './db';
 import { randomSalt, createPasswordHash, randomUniqString } from './helper';
 import { V } from 'veni';
 import { BadRequestError } from './errors';
@@ -64,6 +64,10 @@ export const login = createContract('login')
       throw new BadRequestError('Authentication failed');
     }
     const token = randomUniqString();
+    await TokenModel.insert({
+      _id: token,
+      userId: user._id,
+    });
     return {
       token,
       user: {
@@ -78,5 +82,24 @@ export const login = createContract('login')
     public: true,
     async json(req) {
       return login(req.body);
+    },
+  });
+
+export const getMe = createContract('getMe')
+  .params('user')
+  .schema({
+    user: V.object().unknown(),
+  })
+  .fn(async (user: AppUser) => {
+    return {
+      id: user.id,
+      username: user.username,
+    };
+  })
+  .express({
+    method: 'get',
+    path: '/me',
+    async json(req) {
+      return getMe(req.user);
     },
   });

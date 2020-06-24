@@ -1,9 +1,9 @@
 import { hot } from 'react-hot-loader/root';
 import * as React from 'react';
-import './styles.css';
+import '../styles.css';
 import { Router } from './Router';
-import { AppProvider } from './AppContext';
-import { RouterProvider } from './RouterContext';
+import { AppProvider } from '../contexts/AppContext';
+import { RouterProvider } from '../contexts/RouterContext';
 
 function App() {
   return (

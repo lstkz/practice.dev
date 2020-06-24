@@ -16,16 +16,27 @@ import {
 
 const app = express();
 
-app.use(bodyParser());
+app.use(bodyParser.json());
 const router = express.Router();
 
+declare global {
+  namespace Express {
+    interface User {
+      id: number;
+      username: string;
+    }
+  }
+}
 passport.use(
   new BearerStrategy(async (token, done) => {
     try {
       const tokenEntity = await TokenModel.findOne({ _id: token });
       if (tokenEntity) {
         const user = await UserModel.findOne({ _id: tokenEntity.userId });
-        done(null, user);
+        done(null, {
+          id: user._id,
+          username: user.username,
+        });
       } else {
         return done(null, null);
       }

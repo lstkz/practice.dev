@@ -1,4 +1,4 @@
-import { AuthData } from '../types';
+import { AuthData, PublicUser } from '../types';
 
 interface CallApiOptions {
   method: 'get' | 'post' | 'put' | 'patch';
@@ -33,6 +33,12 @@ export const ApiClient = {
       method: 'post',
       body: { username, password },
       auth: false,
+    });
+  },
+  getMe() {
+    return _callApi<PublicUser>({
+      url: '/api/me',
+      method: 'get',
     });
   },
 };

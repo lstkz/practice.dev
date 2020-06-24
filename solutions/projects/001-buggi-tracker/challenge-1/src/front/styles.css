@@ -6,6 +6,7 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: #333;
+  margin: 0;
 }
 
 *,
@@ -92,4 +93,31 @@ body {
 
 .login-page .alert {
   margin-bottom: 10px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  border-bottom: 1px solid #ccc;
+}
+
+.header__title {
+  margin: 0;
+  padding-left: 100px;
+}
+
+.header__username {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+/* Homepage */
+
+.home-page {
+  text-align: center;
+  padding: 20px;
 }
