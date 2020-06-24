@@ -4,17 +4,25 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'development',
-  entry: ['./src/index'],
+  entry: ['./src/front/index'],
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
   },
+  stats: 'errors-only',
   resolve: {
     modules: ['node_modules'],
     alias: {
       'react-dom': '@hot-loader/react-dom',
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
+  },
+  devServer: {
+    historyApiFallback: true,
+    port: 4000,
+    proxy: {
+      '/api': 'http://localhost:4001',
+    },
   },
   module: {
     rules: [
@@ -29,7 +37,11 @@ module.exports = {
             presets: [
               [
                 '@babel/preset-env',
-                { targets: { browsers: 'last 2 versions' } }, // or whatever your project requires
+                {
+                  targets: {
+                    chrome: '83',
+                  },
+                }, // or whatever your project requires
               ],
               '@babel/preset-typescript',
               '@babel/preset-react',
@@ -38,6 +50,11 @@ module.exports = {
               // plugin-proposal-decorators is only needed if you're using experimental decorators in TypeScript
               // ['@babel/plugin-proposal-decorators', { legacy: true }],
               ['@babel/plugin-proposal-class-properties', { loose: true }],
+              ['@babel/plugin-proposal-optional-chaining', { loose: true }],
+              [
+                '@babel/plugin-proposal-nullish-coalescing-operator',
+                { loose: true },
+              ],
               'react-hot-loader/babel',
             ],
           },
@@ -53,6 +70,8 @@ module.exports = {
   plugins: [
     // new ForkTsCheckerWebpackPlugin(),
     new webpack.NamedModulesPlugin(),
-    new HtmlWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      template: 'index.html',
+    }),
   ],
 };
