@@ -2,8 +2,10 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const IS_PROD = process.env.NODE_ENV === 'production';
+
 module.exports = {
-  mode: 'development',
+  mode: IS_PROD ? 'production' : 'development',
   entry: ['./src/front/index'],
   output: {
     path: path.join(__dirname, 'dist'),
@@ -19,6 +21,7 @@ module.exports = {
   },
   devServer: {
     historyApiFallback: true,
+    disableHostCheck: true,
     port: 4000,
     proxy: {
       '/api': 'http://localhost:4001',
@@ -66,7 +69,7 @@ module.exports = {
       },
     ],
   },
-  devtool: 'eval-source-map',
+  devtool: IS_PROD ? false : 'eval-source-map',
   plugins: [
     // new ForkTsCheckerWebpackPlugin(),
     new webpack.NamedModulesPlugin(),
