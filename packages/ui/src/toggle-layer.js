@@ -34,6 +34,7 @@ font-size: 16px;
 
 .toggle-layers-btn {
 position: absolute;
+z-index: 1000000;
 left: 5px;
 top: 5px;
 display: inline-block;

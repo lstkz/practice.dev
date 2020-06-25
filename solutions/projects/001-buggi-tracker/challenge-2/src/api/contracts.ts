@@ -1,0 +1,262 @@
+import { createContract } from './lib';
+import { UserModel, User, AppUser, TokenModel, SeqModel } from './db';
+import { randomSalt, createPasswordHash, randomUniqString } from './helper';
+import { V } from 'veni';
+import { BadRequestError } from './errors';
+import { AuthData } from '../types';
+
+function mapUser(user: User) {
+  return {
+    id: user._id,
+    username: user.username,
+    role: user.role,
+  };
+}
+
+async function getNextSeq(name: 'user') {
+  const ret = await SeqModel.findOneAndUpdate(
+    {
+      _id: name,
+    },
+    {
+      $inc: {
+        seq: 1,
+      },
+    },
+    {
+      upsert: true,
+      returnOriginal: false,
+    }
+  );
+  return ret.value.count;
+}
+
+export const initDb = createContract('init-db')
+  .params()
+  .fn(async () => {
+    await Promise.all([UserModel.deleteMany({}), SeqModel.deleteMany({})]);
+    const salt = await randomSalt();
+    const passwordHash = await createPasswordHash('passa1', salt);
+    await Promise.all([
+      UserModel.insertMany([
+        {
+          _id: 1,
+          username: 'admin',
+          username_lowered: 'admin',
+          passwordHash: passwordHash,
+          passwordSalt: salt,
+          role: 'admin',
+        },
+        {
+          _id: 2,
+          username: 'owner1',
+          username_lowered: 'owner1',
+          passwordHash: passwordHash,
+          passwordSalt: salt,
+          role: 'owner',
+        },
+        {
+          _id: 3,
+          username: 'owner2',
+          username_lowered: 'owner2',
+          passwordHash: passwordHash,
+          passwordSalt: salt,
+          role: 'owner',
+        },
+        {
+          _id: 4,
+          username: 'reporter1',
+          username_lowered: 'reporter1',
+          passwordHash: passwordHash,
+          passwordSalt: salt,
+          role: 'reporter',
+        },
+        {
+          _id: 5,
+          username: 'reporter2',
+          username_lowered: 'reporter2',
+          passwordHash: passwordHash,
+          passwordSalt: salt,
+          role: 'reporter',
+        },
+      ]),
+    ]);
+    SeqModel.insertMany([
+      {
+        _id: 'user',
+        count: 5,
+      },
+    ]);
+  })
+  .express({
+    method: 'post',
+    path: '/init',
+    public: true,
+    async json() {
+      await initDb();
+      return {
+        done: true,
+      };
+    },
+  });
+
+export const login = createContract('login')
+  .params('values')
+  .schema({
+    values: V.object().keys({
+      username: V.string(),
+      password: V.string(),
+    }),
+  })
+  .fn(async values => {
+    const user = await UserModel.findOne({ username: values.username });
+    if (!user) {
+      throw new BadRequestError('Authentication failed');
+    }
+    const hash = await createPasswordHash(values.password, user.passwordSalt);
+    if (user.passwordHash !== hash) {
+      throw new BadRequestError('Authentication failed');
+    }
+    const token = randomUniqString();
+    await TokenModel.insert({
+      _id: token,
+      userId: user._id,
+    });
+    return {
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+      },
+    } as AuthData;
+  })
+  .express({
+    method: 'post',
+    path: '/login',
+    public: true,
+    async json(req) {
+      return login(req.body);
+    },
+  });
+
+export const getMe = createContract('getMe')
+  .params('user')
+  .schema({
+    user: V.object().unknown(),
+  })
+  .fn(async (user: AppUser) => {
+    return {
+      id: user.id,
+      username: user.username,
+    };
+  })
+  .express({
+    method: 'get',
+    path: '/me',
+    async json(req) {
+      return getMe(req.user);
+    },
+  });
+
+export const getUsers = createContract('getUsers')
+  .params()
+  .fn(async () => {
+    const users = await UserModel.find({})
+      .sort({
+        username_lowered: 1,
+      })
+      .toArray();
+    return users.map(mapUser);
+  })
+  .express({
+    method: 'get',
+    path: '/users',
+    async json(req) {
+      return getUsers();
+    },
+  });
+
+export const createUser = createContract('createUser')
+  .params('values')
+  .schema({
+    values: V.object().keys({
+      username: V.string(),
+      role: V.enum().literal('admin', 'owner', 'reporter'),
+    }),
+  })
+  .fn(async values => {
+    const salt = await randomSalt();
+    const passwordHash = await createPasswordHash('passa1', salt);
+    const nextId = await getNextSeq('user');
+    await UserModel.insert({
+      _id: nextId,
+      username: values.username,
+      username_lowered: values.username.toLowerCase(),
+      role: values.role,
+      passwordHash: passwordHash,
+      passwordSalt: salt,
+    });
+    return {
+      id: nextId,
+      username: values.username,
+      role: values.role,
+    };
+  })
+  .express({
+    method: 'post',
+    path: '/users',
+    async json(req) {
+      return createUser(req.body);
+    },
+  });
+
+export const updateUser = createContract('updateUser')
+  .params('id', 'values')
+  .schema({
+    id: V.number(),
+    values: V.object().keys({
+      username: V.string(),
+      role: V.enum().literal('admin', 'owner', 'reporter'),
+    }),
+  })
+  .fn(async (id, values) => {
+    const user = await UserModel.findOne({ _id: id });
+    if (!user) {
+      throw new BadRequestError('User not found');
+    }
+    user.username = values.username;
+    user.username_lowered = values.username.toLowerCase();
+    await UserModel.findOneAndUpdate({ _id: id }, user);
+    return {
+      id: id,
+      username: values.username,
+      role: values.role,
+    };
+  })
+  .express({
+    method: 'post',
+    path: '/users/:id',
+    async json(req) {
+      return updateUser(req.params.id as any, req.body);
+    },
+  });
+
+export const deleteUser = createContract('deleteUser')
+  .params('id')
+  .schema({
+    id: V.number(),
+  })
+  .fn(async id => {
+    const user = await UserModel.findOne({ _id: id });
+    if (!user) {
+      throw new BadRequestError('User not found');
+    }
+    await UserModel.findOneAndDelete({ _id: id });
+  })
+  .express({
+    method: 'delete',
+    path: '/users/:id',
+    async json(req) {
+      return deleteUser(req.params.id as any);
+    },
+  });
