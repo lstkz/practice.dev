@@ -25,7 +25,7 @@ export function Details() {
           <li>
             <strong>Seed data</strong>
             <br />
-            It won't possible to register to the application. <br /> Generate
+            It won't be possible to register to the application. <br /> Generate
             the following users: <code>admin</code>, <code>owner1</code>,{' '}
             <code>owner2</code>, <code>reporter1</code>, <code>reporter2</code>.
             <br />
@@ -35,7 +35,7 @@ export function Details() {
             <strong>Login page</strong>
             <ul>
               <li>
-                If the user is not authentication show the login page.
+                If the user is not authenticated show the login page.
                 <IsolatedHtml
                   height={320}
                   addToggle
@@ -47,14 +47,14 @@ export function Details() {
                 Clicking on <code>login-btn</code> should validate the form and
                 log in the user.
                 <br />
-                If the <code>username</code> input is empty display{' '}
+                If the <code>username</code> input is empty, display{' '}
                 <code>Username is required</code> error under the input.
                 <br />
-                If the <code>password</code> input is empty display{' '}
+                If the <code>password</code> input is empty, display{' '}
                 <code>Password is required</code> error under the input.
                 <br />
-                If the form data is valid, but username or password is invalid
-                display <code>Authentication failed</code> in{' '}
+                If the form data is valid, but the username or password is
+                invalid display <code>Authentication failed</code> in{' '}
                 <code>login-error</code>.
                 <br />
                 <IsolatedHtml
@@ -92,10 +92,20 @@ export function Details() {
             </ul>
           </li>
           <li>
-            User should be still logged in after refreshing the page. <br />
+            User should still be logged in after refreshing the page. <br />
             Session expiration is not required to implement.
           </li>
         </ol>
+      </Section>
+      <Section title="Demo">
+        <video
+          style={{ width: '100%', height: 340, outline: 'none' }}
+          src={
+            'https://practice.dev/assets/001-1-demo.fba1cb338236eef9f3933ffeed78a1ad.mp4'
+          }
+          loop
+          controls
+        ></video>
       </Section>
       <InjectingSection />
     </div>
