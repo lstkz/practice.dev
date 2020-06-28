@@ -37,7 +37,20 @@ export function UsersPage() {
       )}
 
       <Dashboard>
-        <div className="users-page">
+        <div className="page users-page">
+          <div
+            className="breadcrumb"
+            data-test="breadcrumb"
+            data-test-dir="top-center"
+          >
+            <Link data-test="item-1" data-test-dir="top" href="/">
+              Home
+            </Link>
+            <span className="breadcrumb__separator">&gt;</span>
+            <span data-test="item-2" data-test-dir="top">
+              Users
+            </span>
+          </div>
           <Link
             href="/users/new"
             data-test="add-user-btn"
@@ -81,14 +94,14 @@ export function UsersPage() {
                             Delete
                           </a>{' '}
                           |{' '}
+                          <Link
+                            href={`/users/${item.id}`}
+                            data-test={'edit-btn' + suffix}
+                          >
+                            Edit
+                          </Link>
                         </>
                       )}
-                      <Link
-                        href={`/users/${item.id}`}
-                        data-test={'edit-btn' + suffix}
-                      >
-                        Edit
-                      </Link>
                     </td>
                   </tr>
                 );

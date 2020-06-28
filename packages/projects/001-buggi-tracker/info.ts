@@ -12,5 +12,11 @@ export const info: ProjectInfo = {
       description: 'Initialize the project with basic functionality.',
       domain: 'fullstack',
     },
+    {
+      id: 2,
+      title: 'User management',
+      description: 'Implement user management functionality for admin',
+      domain: 'fullstack',
+    },
   ],
 };

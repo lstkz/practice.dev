@@ -5,6 +5,8 @@ import { V } from 'veni';
 import { BadRequestError } from './errors';
 import { AuthData } from '../types';
 
+const DUPLICATED_KEY_ERROR_CODE = 11000;
+
 function mapUser(user: User) {
   return {
     id: user._id,
@@ -20,7 +22,7 @@ async function getNextSeq(name: 'user') {
     },
     {
       $inc: {
-        seq: 1,
+        count: 1,
       },
     },
     {
@@ -127,6 +129,7 @@ export const login = createContract('login')
       user: {
         id: user._id,
         username: user.username,
+        role: user.role,
       },
     } as AuthData;
   })
@@ -148,6 +151,7 @@ export const getMe = createContract('getMe')
     return {
       id: user.id,
       username: user.username,
+      role: user.role,
     };
   })
   .express({
@@ -188,14 +192,21 @@ export const createUser = createContract('createUser')
     const salt = await randomSalt();
     const passwordHash = await createPasswordHash('passa1', salt);
     const nextId = await getNextSeq('user');
-    await UserModel.insert({
-      _id: nextId,
-      username: values.username,
-      username_lowered: values.username.toLowerCase(),
-      role: values.role,
-      passwordHash: passwordHash,
-      passwordSalt: salt,
-    });
+    try {
+      await UserModel.insert({
+        _id: nextId,
+        username: values.username,
+        username_lowered: values.username.toLowerCase(),
+        role: values.role,
+        passwordHash: passwordHash,
+        passwordSalt: salt,
+      });
+    } catch (e) {
+      if (e.code === DUPLICATED_KEY_ERROR_CODE) {
+        throw new BadRequestError('Username is already taken');
+      }
+      throw e;
+    }
     return {
       id: nextId,
       username: values.username,
@@ -226,7 +237,19 @@ export const updateUser = createContract('updateUser')
     }
     user.username = values.username;
     user.username_lowered = values.username.toLowerCase();
-    await UserModel.findOneAndUpdate({ _id: id }, user);
+    try {
+      await UserModel.findOneAndUpdate(
+        { _id: id },
+        {
+          $set: user,
+        }
+      );
+    } catch (e) {
+      if (e.code === DUPLICATED_KEY_ERROR_CODE) {
+        throw new BadRequestError('Username is already taken');
+      }
+      throw e;
+    }
     return {
       id: id,
       username: values.username,
@@ -258,5 +281,25 @@ export const deleteUser = createContract('deleteUser')
     path: '/users/:id',
     async json(req) {
       return deleteUser(req.params.id as any);
+    },
+  });
+
+export const getUser = createContract('getUser')
+  .params('id')
+  .schema({
+    id: V.number(),
+  })
+  .fn(async id => {
+    const user = await UserModel.findOne({ _id: id });
+    if (!user) {
+      throw new BadRequestError('User not found');
+    }
+    return mapUser(user);
+  })
+  .express({
+    method: 'get',
+    path: '/users/:id',
+    async json(req) {
+      return getUser(req.params.id as any);
     },
   });

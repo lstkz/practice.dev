@@ -13,6 +13,7 @@ import {
   errorHandlerMiddleware,
   notFoundHandlerMiddleware,
 } from './helper';
+import { Role } from '../types';
 
 const app = express();
 
@@ -24,6 +25,7 @@ declare global {
     interface User {
       id: number;
       username: string;
+      role: Role;
     }
   }
 }
@@ -36,6 +38,7 @@ passport.use(
         done(null, {
           id: user._id,
           username: user.username,
+          role: user.role,
         });
       } else {
         return done(null, null);
@@ -103,6 +106,13 @@ mongodb
         });
       }
       router[options.method](options.path, wrapExpress(actions) as any);
+    });
+    app.use((req, res, next) => {
+      if (process.env.NODE_ENV === 'production') {
+        next();
+      } else {
+        setTimeout(next, 500);
+      }
     });
     app.use('/api', router);
     app.use(errorHandlerMiddleware);

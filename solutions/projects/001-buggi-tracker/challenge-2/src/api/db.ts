@@ -4,6 +4,7 @@ import { Role } from '../types';
 export interface AppUser {
   id: number;
   username: string;
+  role: Role;
 }
 
 export interface User {

@@ -23,6 +23,15 @@ const Wrapper = styled.div`
 
   li + li {
   }
+
+  table {
+    border-collapse: collapse;
+    th,
+    td {
+      padding: 10px 15px;
+      border: 1px solid ${Theme.bgLightGray};
+    }
+  }
 `;
 
 const Title = styled.h2`

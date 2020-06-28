@@ -5,6 +5,7 @@ import { useRouter } from '../contexts/RouterContext';
 import { ApiClient } from '../ApiClient';
 import { HomePage } from '../pages/HomePage';
 import { UsersPage } from '../pages/UsersPage';
+import { UserPage } from '../pages/UserPage';
 
 export function Router() {
   const { pathname, push } = useRouter();
@@ -39,6 +40,9 @@ export function Router() {
       return <HomePage />;
     }
     default:
+      if (pathname.startsWith('/users/')) {
+        return <UserPage />;
+      }
       return <div>not found</div>;
   }
 }

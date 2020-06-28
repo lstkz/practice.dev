@@ -48,9 +48,29 @@ export const ApiClient = {
     });
   },
   deleteUser(id: number) {
-    return _callApi<User[]>({
+    return _callApi<void>({
       url: '/api/users/' + id,
       method: 'delete',
+    });
+  },
+  getUser(id: number) {
+    return _callApi<User>({
+      url: '/api/users/' + id,
+      method: 'get',
+    });
+  },
+  createUser(values: any) {
+    return _callApi<User>({
+      url: '/api/users',
+      method: 'post',
+      body: values,
+    });
+  },
+  updateUser(id: number, values: any) {
+    return _callApi<User>({
+      url: '/api/users/' + id,
+      method: 'post',
+      body: values,
     });
   },
 };
