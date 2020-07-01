@@ -37,7 +37,10 @@ export class SocketNotifier implements Notifier {
             .promise();
           this.lastNotify = Date.now();
         } catch (e) {
-          console.error(e, 'Failed to post message to socket');
+          // user socket disconnected
+          if (e.statusCode !== 410) {
+            console.error(e, 'Failed to post message to socket');
+          }
         }
       })
     );

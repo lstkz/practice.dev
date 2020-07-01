@@ -95,7 +95,11 @@ handle
         subscription.unsubscribe();
         ws.close();
       };
-    }).pipe(Rx.takeUntil(action$.pipe(Rx.ofType(SubmitActions.disconnect))));
+    }).pipe(
+      Rx.takeUntil(
+        action$.pipe(Rx.ofType([SubmitActions.disconnect, SubmitActions.reset]))
+      )
+    );
   })
   .on(SubmitFormActions.setSubmitSucceeded, (_, { action$ }) => {
     const { values } = getSubmitFormState();
@@ -158,7 +162,7 @@ const initialState: SubmitState = {
 
 handle
   .reducer(initialState)
-  .on(SubmitActions.$init, state => {
+  .onMany([SubmitActions.$init, SubmitActions.reset], state => {
     Object.assign(state, initialState);
   })
   .on(SubmitActions.setError, (state, { error }) => {

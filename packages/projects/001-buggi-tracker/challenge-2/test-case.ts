@@ -8,7 +8,7 @@ export default {
       await page.navigate(url);
     });
 
-    tester.test('login as reporter1 ans verify home page', async () => {
+    tester.test('login as reporter1 and verify home page', async () => {
       const page = await tester.getPage();
       await page.type('@username input', 'reporter1');
       await page.type('@password input', 'passa1');
@@ -19,7 +19,7 @@ export default {
       await page.click('@logout-btn');
     });
 
-    tester.test('login as owner2 ans verify home page', async () => {
+    tester.test('login as owner2 and verify home page', async () => {
       const page = await tester.getPage();
       await page.type('@username input', 'owner2');
       await page.type('@password input', 'passa1');
