@@ -49,7 +49,7 @@ export function UserFormSection(props: UserFormSectionProps) {
           {
             handle: 'bc-3',
             type: 'text',
-            desc: <>Displays static {edit ? 'Edit User' : 'Add User'}text.</>,
+            desc: <>Displays static {edit ? 'Edit User' : 'Add User'} text.</>,
           },
           {
             handle: 'username',
@@ -78,7 +78,7 @@ export function UserFormSection(props: UserFormSectionProps) {
             type: 'button',
             desc: (
               <>
-                Validates and saves the user. If the user was successfully
+                Validates and saves the user. If the user was successfully{' '}
                 {edit ? 'edited' : 'created'}, redirect to the Users page.
               </>
             ),
@@ -124,6 +124,7 @@ export function UserFormSection(props: UserFormSectionProps) {
                     <code>AdMiN</code>.
                   </>
                 ),
+                async: true,
               },
             ],
           },
@@ -159,9 +160,10 @@ export function UserFormSection(props: UserFormSectionProps) {
         items={[
           <>Don't show validation messages by default.</>,
           <>
-            You can trigger validation when typing a value to inputs or after
-            clicking the save button.
+            Trigger synchronous validation immediately when typing a value to
+            inputs.
           </>,
+          <>Trigger asynchronous validation after clicking the save button.</>,
           <>
             It should be a separate route. Refreshing the page should load this
             page again.

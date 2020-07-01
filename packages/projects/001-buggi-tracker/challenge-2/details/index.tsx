@@ -185,7 +185,7 @@ export function Details() {
               </>,
               <>
                 It should be a separate route. Refreshing the page should load
-                the this page again.
+                this page again.
               </>,
               <>
                 The <code>i</code> symbol in handles represents the row number
