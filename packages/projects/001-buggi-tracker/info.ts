@@ -18,5 +18,11 @@ export const info: ProjectInfo = {
       description: 'Implement user management functionality for admin.',
       domain: 'fullstack',
     },
+    {
+      id: 3,
+      title: 'Project management',
+      description: 'Implement project management functionality for all roles.',
+      domain: 'fullstack',
+    },
   ],
 };
