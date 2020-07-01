@@ -25,37 +25,36 @@ const TypeTd = styled.td`
 const _HandlesTable = (props: HandlesTableProps) => {
   const { className, entries } = props;
   return (
-    <div className={className}>
-      <table>
-        <thead>
-          <tr>
-            <TitleCell colSpan={3}>Handle description</TitleCell>
+    <table className={className}>
+      <thead>
+        <tr>
+          <TitleCell colSpan={3}>Handle description</TitleCell>
+        </tr>
+        <tr>
+          <th>Handle</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {entries.map((item, i) => (
+          <tr key={i}>
+            <td>
+              <code>{item.handle}</code>
+            </td>
+            <TypeTd>{item.type}</TypeTd>
+            <td>{item.desc}</td>
           </tr>
-          <tr>
-            <th>Handle</th>
-            <th>Type</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {entries.map((item, i) => (
-            <tr key={i}>
-              <td>
-                <code>{item.handle}</code>
-              </td>
-              <TypeTd>{item.type}</TypeTd>
-              <td>{item.desc}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
   );
 };
 
 export const HandlesTable = styled(_HandlesTable)`
-  display: block;
-  table {
-    width: 100%;
+  width: 100%;
+  td:nth-child(1),
+  td:nth-child(2) {
+    white-space: nowrap;
   }
 `;

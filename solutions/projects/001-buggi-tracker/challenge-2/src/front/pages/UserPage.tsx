@@ -64,15 +64,15 @@ export function UserPage() {
           data-test="breadcrumb"
           data-test-dir="top-center"
         >
-          <Link data-test="item-1" data-test-dir="top" href="/">
+          <Link data-test="bc-1" data-test-dir="top" href="/">
             Home
           </Link>
           <span className="breadcrumb__separator">&gt;</span>
-          <Link data-test="item-2" data-test-dir="top" href="/users">
+          <Link data-test="bc-2" data-test-dir="top" href="/users">
             Users
           </Link>
           <span className="breadcrumb__separator">&gt;</span>
-          <span data-test="item-3" data-test-dir="top">
+          <span data-test="bc-3" data-test-dir="top">
             {isNew ? 'Add User' : 'Edit User'}
           </span>
         </div>

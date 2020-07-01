@@ -43,11 +43,11 @@ export function UsersPage() {
             data-test="breadcrumb"
             data-test-dir="top-center"
           >
-            <Link data-test="item-1" data-test-dir="top" href="/">
+            <Link data-test="bc-1" data-test-dir="top" href="/">
               Home
             </Link>
             <span className="breadcrumb__separator">&gt;</span>
-            <span data-test="item-2" data-test-dir="top">
+            <span data-test="bc-2" data-test-dir="top">
               Users
             </span>
           </div>

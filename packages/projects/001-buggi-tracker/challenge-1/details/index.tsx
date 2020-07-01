@@ -1,8 +1,15 @@
-import { Section, IsolatedHtml, InjectingSection } from 'ui';
+import {
+  Section,
+  IsolatedHtml,
+  InjectingSection,
+  SubSection,
+  HandlesTable,
+  AdditionalReq,
+  FormFields,
+} from 'ui';
 import React from 'react';
 import stylesCss from './assets/styles.css';
 import loginHtml from './assets/login.html';
-import loginWithErrorsHtml from './assets/login-with-errors.html';
 import homepageHtml from './assets/homepage.html';
 
 export function Details() {
@@ -21,81 +28,185 @@ export function Details() {
         </ul>
       </Section>
       <Section title="Features">
-        <ol>
-          <li>
-            <strong>Seed data</strong>
-            <br />
-            It won't be possible to register to the application. <br /> Generate
-            the following users: <code>admin</code>, <code>owner1</code>,{' '}
-            <code>owner2</code>, <code>reporter1</code>, <code>reporter2</code>.
-            <br />
-            Set <code>passa1</code> password for all users.
-          </li>
-          <li>
-            <strong>Login page</strong>
-            <ul>
-              <li>
-                If the user is not authenticated show the login page.
-                <IsolatedHtml
-                  height={320}
-                  addToggle
-                  css={stylesCss}
-                  html={loginHtml}
-                />
-              </li>
-              <li>
-                Clicking on <code>login-btn</code> should validate the form and
-                log in the user.
+        <SubSection title="Seed data">
+          It won't be possible to register to the application.
+          <br />
+          Generate the following users:
+          <table>
+            <thead>
+              <tr>
+                <th>username</th>
+                <th>password</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>admin</td>
+                <td>passa1</td>
+              </tr>
+              <tr>
+                <td>owner1</td>
+                <td>passa1</td>
+              </tr>
+              <tr>
+                <td>owner2</td>
+                <td>passa1</td>
+              </tr>
+              <tr>
+                <td>reporter1</td>
+                <td>passa1</td>
+              </tr>
+              <tr>
+                <td>reporter2</td>
+                <td>passa1</td>
+              </tr>
+            </tbody>
+          </table>
+        </SubSection>
+        <SubSection title="Login page">
+          <IsolatedHtml
+            height={420}
+            addToggle
+            css={stylesCss}
+            html={loginHtml}
+          />
+          <HandlesTable
+            entries={[
+              {
+                handle: 'login-error',
+                type: 'text',
+                desc: (
+                  <>
+                    Displays an error if the authorization was not successful.
+                    <br />
+                    Display "Authentication failed" if username or password is
+                    invalid.
+                    <br />
+                  </>
+                ),
+              },
+              {
+                handle: 'username',
+                type: 'form field',
+                desc: (
+                  <>
+                    Represents a username field. It should include an{' '}
+                    <code>input</code> element and an <code>error</code> handle
+                    for the validation message.
+                  </>
+                ),
+              },
+              {
+                handle: 'password',
+                type: 'form field',
+                desc: (
+                  <>
+                    Represents a password field. It should include an{' '}
+                    <code>input</code> element and an <code>error</code> handle
+                    for the validation message.
+                  </>
+                ),
+              },
+            ]}
+          />
+          <FormFields
+            entries={[
+              {
+                field: 'username',
+                type: 'text',
+                desc: 'Represents the username.',
+                defaultValue: 'An empty value.',
+                rules: [
+                  {
+                    rule: 'Required',
+                    error: 'Username is required',
+                    condition: 'The input is empty.',
+                  },
+                ],
+              },
+              {
+                field: 'password',
+                type: 'password',
+                desc: 'Represents the password.',
+                defaultValue: 'An empty value.',
+                rules: [
+                  {
+                    rule: 'Required',
+                    error: 'Password is required',
+                    condition: 'The input is empty.',
+                  },
+                ],
+              },
+            ]}
+          />
+          Represents the login page. Show this page if the user is not
+          authenticated. It should be possible to log in as users generated in
+          the "Seed data" section.
+          <AdditionalReq
+            items={[
+              <>
+                The username is not case sensitive. <br />
+                Example:
                 <br />
-                If the <code>username</code> input is empty, display{' '}
-                <code>Username is required</code> error under the input.
-                <br />
-                If the <code>password</code> input is empty, display{' '}
-                <code>Password is required</code> error under the input.
-                <br />
-                If the form data is valid, but the username or password is
-                invalid display <code>Authentication failed</code> in{' '}
-                <code>login-error</code>.
-                <br />
-                <IsolatedHtml
-                  height={420}
-                  addToggle
-                  css={stylesCss}
-                  html={loginWithErrorsHtml}
-                />
-              </li>
-            </ul>
-          </li>
-          <li>
-            <strong>Home page</strong>
-            <br />
-            If the user is logged in, display the home page.
-            <IsolatedHtml
-              height={320}
-              addToggle
-              css={stylesCss}
-              html={homepageHtml}
-            />
-            <ul>
-              <li>
-                Display <code>Hello {'{username}'}</code> in{' '}
-                <code>header-username</code>.
-              </li>
-              <li>
-                Display <code>home page placeholder</code> in{' '}
-                <code>placeholder</code>.
-              </li>
-              <li>
-                Clicking on <code>logout-btn</code> should log out the user and
-                show the login form.
-              </li>
-            </ul>
-          </li>
-          <li>
-            User should still be logged in after refreshing the page. <br />
-            Session expiration is not required to implement.
-          </li>
-        </ol>
+                Logging as <code>aDmin</code> and <code>AdmiN</code> should log
+                in successful as <code>admin</code>.
+              </>,
+              <>Don't show validation messages by default.</>,
+              <>Loading states are not required.</>,
+              <>
+                Trigger synchronous validation errors immediately when typing a
+                value to inputs.
+              </>,
+              <>
+                Trigger asynchronous validation errors after clicking the login
+                button.
+              </>,
+            ]}
+          />
+        </SubSection>
+
+        <SubSection title="Home page">
+          <IsolatedHtml
+            height={320}
+            addToggle
+            css={stylesCss}
+            html={homepageHtml}
+          />
+          <HandlesTable
+            entries={[
+              {
+                handle: 'header-username',
+                type: 'text',
+                desc: (
+                  <>
+                    Displays a welcome message in form{' '}
+                    <code>Hello {'{username}'}</code>, where{' '}
+                    <code>{'{username}'}</code> is the username of the logged in
+                    user.
+                  </>
+                ),
+              },
+              {
+                handle: 'placeholder',
+                type: 'text',
+                desc: <>Displays static "home page placeholder" text.</>,
+              },
+              {
+                handle: 'logout-btn',
+                type: 'button',
+                desc: <>Logs out the user and navigates to the login page.</>,
+              },
+            ]}
+          />
+          Represents the home page. In this iteration, it contains only a
+          placeholder.
+          <AdditionalReq
+            items={[
+              <>User should still be logged in after refreshing the page.</>,
+              <>Session expiration is not required to implement.</>,
+            ]}
+          />
+        </SubSection>
       </Section>
       <Section title="Demo">
         <video

@@ -32,6 +32,11 @@ function getNumSuffix(n: number) {
   return 'th';
 }
 
+const waitNavigationOptions = {
+  timeout: 5000,
+  waitUntil: 'domcontentloaded',
+} as const;
+
 export class TesterPage {
   private waitOptions: WaitForSelectorOptions;
 
@@ -48,7 +53,7 @@ export class TesterPage {
 
   async navigate(url: string) {
     await this.stepNotifier.notify(`Navigate to "${url}"`);
-    await this.page.goto(url, { timeout: 5000, waitUntil: 'domcontentloaded' });
+    await this.page.goto(url, waitNavigationOptions);
   }
 
   async expectToBeVisible(selector: string) {
@@ -56,11 +61,13 @@ export class TesterPage {
     await this.stepNotifier.notify(`Expect "${input}" to be visible`);
     await this.page.waitForSelector(input, this.waitOptions);
   }
+
   async expectToBeHidden(selector: string) {
     const input = convertSelector(selector);
     await this.stepNotifier.notify(`Expect "${input}" to be hidden`);
     await this.page.waitForSelector(input, {
       ...this.waitOptions,
+      visible: false,
       hidden: true,
     });
   }
@@ -271,5 +278,59 @@ export class TesterPage {
       }
       throw new TestError(`Expected order: ${order}. Actual: ${actual + 1}`);
     }
+  }
+
+  async select(selector: string, text: string) {
+    const input = convertSelector(selector);
+    await this.stepNotifier.notify(`Select "${text}" option in "${input}"`);
+    const handle = await this.page.waitForSelector(input, this.waitOptions);
+    const tagName = await handle
+      .getProperty('tagName')
+      .then(x => x.jsonValue())
+      .then(x => (x as string).toLowerCase());
+    if (tagName !== 'select') {
+      throw new TestError(`"${input}" is not a <select> element`);
+    }
+    try {
+      await this.page.waitForFunction(
+        (handle, text) => {
+          const options = [...handle.querySelectorAll('option')];
+          const option = options.find(option => (option.text ?? '') === text);
+          if (option && !option.disabled) {
+            option.selected = true;
+            return true;
+          }
+          return false;
+        },
+        {
+          timeout: this.defaultTimeout,
+        },
+        handle,
+        text
+      );
+    } catch (error) {
+      rethrowNonTimeout(error);
+      const isDisabled = await this.page.evaluate(
+        (handle, text) => {
+          const options = [...handle.querySelectorAll('option')];
+          const option = options.find(option => (option.text ?? '') === text);
+          if (option && option.disabled) {
+            return true;
+          }
+          return false;
+        },
+        handle,
+        text
+      );
+      if (isDisabled) {
+        throw new TestError(`Option with text "${text}" is disabled`);
+      }
+      throw new TestError(`Option with text "${text}" not found in "${input}"`);
+    }
+  }
+
+  async goBack() {
+    await this.stepNotifier.notify(`Navigating back`);
+    await this.page.goBack(waitNavigationOptions);
   }
 }

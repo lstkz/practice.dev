@@ -8,6 +8,7 @@ export interface AppUser {
 export interface User {
   _id: number;
   username: string;
+  username_lowered: string;
   passwordHash: string;
   passwordSalt: string;
 }

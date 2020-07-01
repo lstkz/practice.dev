@@ -111,7 +111,9 @@ export const login = createContract('login')
     }),
   })
   .fn(async values => {
-    const user = await UserModel.findOne({ username: values.username });
+    const user = await UserModel.findOne({
+      username_lowered: values.username.toLowerCase(),
+    });
     if (!user) {
       throw new BadRequestError('Authentication failed');
     }

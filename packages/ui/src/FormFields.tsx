@@ -11,7 +11,7 @@ interface ValidationRule {
 
 export interface FormEntry {
   field: string;
-  type: 'text' | 'select';
+  type: 'text' | 'select' | 'password';
   desc: React.ReactChild;
   options?: React.ReactChild;
   defaultValue?: React.ReactChild;
@@ -125,4 +125,6 @@ const _FormFields = (props: FormFieldsProps) => {
   );
 };
 
-export const FormFields = styled(_FormFields)``;
+export const FormFields = styled(_FormFields)`
+  width: 100%;
+`;

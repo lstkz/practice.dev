@@ -38,7 +38,7 @@ export function initModels(db: mongodb.Db) {
   db.createIndex(
     'User',
     {
-      username: 1,
+      username_lowered: 1,
     },
     { unique: true }
   );

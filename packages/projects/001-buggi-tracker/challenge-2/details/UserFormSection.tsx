@@ -160,10 +160,13 @@ export function UserFormSection(props: UserFormSectionProps) {
         items={[
           <>Don't show validation messages by default.</>,
           <>
-            Trigger synchronous validation immediately when typing a value to
-            inputs.
+            Trigger synchronous validation errors immediately when typing a
+            value to inputs.
           </>,
-          <>Trigger asynchronous validation after clicking the save button.</>,
+          <>
+            Trigger asynchronous validation errors after clicking the save
+            button.
+          </>,
           <>
             It should be a separate route. Refreshing the page should load this
             page again.

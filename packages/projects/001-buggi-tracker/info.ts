@@ -15,7 +15,7 @@ export const info: ProjectInfo = {
     {
       id: 2,
       title: 'User management',
-      description: 'Implement user management functionality for admin',
+      description: 'Implement user management functionality for admin.',
       domain: 'fullstack',
     },
   ],

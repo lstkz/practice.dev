@@ -57,7 +57,7 @@ export default {
       }
     );
 
-    ['admin', 'owner1', 'owner2', 'reporter1', 'reporter2'].forEach(
+    ['admin', 'AdmiN', 'owner1', 'owner2', 'reporter1', 'reporter2'].forEach(
       username => {
         tester.test(`log in as ${username}`, async () => {
           await tester.createPage(username, username);
@@ -69,7 +69,7 @@ export default {
           await page.expectToBeHidden('@login-btn');
           await page.expectToMatch(
             '@header-username',
-            `Hello ${username}`,
+            `Hello ${username.toLowerCase()}`,
             true
           );
           await page.expectToMatch('@placeholder', 'home page placeholder');

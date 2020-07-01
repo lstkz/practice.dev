@@ -16,30 +16,35 @@ export const initDb = createContract('init-db')
         {
           _id: 1,
           username: 'admin',
+          username_lowered: 'admin',
           passwordHash: passwordHash,
           passwordSalt: salt,
         },
         {
           _id: 2,
           username: 'owner1',
+          username_lowered: 'owner1',
           passwordHash: passwordHash,
           passwordSalt: salt,
         },
         {
           _id: 3,
           username: 'owner2',
+          username_lowered: 'owner2',
           passwordHash: passwordHash,
           passwordSalt: salt,
         },
         {
           _id: 4,
           username: 'reporter1',
+          username_lowered: 'reporter1',
           passwordHash: passwordHash,
           passwordSalt: salt,
         },
         {
           _id: 5,
           username: 'reporter2',
+          username_lowered: 'reporter2',
           passwordHash: passwordHash,
           passwordSalt: salt,
         },
@@ -67,7 +72,9 @@ export const login = createContract('login')
     }),
   })
   .fn(async values => {
-    const user = await UserModel.findOne({ username: values.username });
+    const user = await UserModel.findOne({
+      username_lowered: values.username.toLowerCase(),
+    });
     if (!user) {
       throw new BadRequestError('Authentication failed');
     }
