@@ -252,7 +252,7 @@ export function Details() {
         <video
           style={{ width: '100%', height: 340, outline: 'none' }}
           src={
-            'https://practice.dev/assets/001-2-demo.da954f4edfcfcefade266d109d3ff6fa.mp4'
+            'https://practice.dev/assets/001-2-demo.43b5f60d36a4cbeb1707246ec1a17d7e.mp4'
           }
           loop
           controls
