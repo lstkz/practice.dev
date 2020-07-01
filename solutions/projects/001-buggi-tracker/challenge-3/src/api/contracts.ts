@@ -366,7 +366,7 @@ export const createProject = createContract('createProject')
     method: 'post',
     path: '/projects',
     async json(req) {
-      return createUser(req.body);
+      return createProject(req.body);
     },
   });
 
@@ -435,7 +435,7 @@ export const getProjects = createContract('getProjects')
       }).toArray();
     };
     const projects = await get();
-    const users = await UserModel.find();
+    const users = await UserModel.find().toArray();
     const userMap: Record<string, PublicUser> = {};
     users.forEach(user => {
       userMap[user._id] = mapUser(user);

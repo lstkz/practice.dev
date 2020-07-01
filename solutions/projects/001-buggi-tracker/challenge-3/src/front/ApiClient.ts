@@ -1,4 +1,4 @@
-import { AuthData, PublicUser, User } from '../types';
+import { AuthData, PublicUser, User, Project } from '../types';
 
 interface CallApiOptions {
   method: 'get' | 'post' | 'put' | 'patch' | 'delete';
@@ -71,6 +71,38 @@ export const ApiClient = {
       url: '/api/users/' + id,
       method: 'post',
       body: values,
+    });
+  },
+  getProjects() {
+    return _callApi<Project[]>({
+      url: '/api/projects',
+      method: 'get',
+    });
+  },
+  getProject(id: number) {
+    return _callApi<Project>({
+      url: '/api/projects/' + id,
+      method: 'get',
+    });
+  },
+  createProject(values: any) {
+    return _callApi<Project>({
+      url: '/api/projects',
+      method: 'post',
+      body: values,
+    });
+  },
+  updateProject(id: number, values: any) {
+    return _callApi<Project>({
+      url: '/api/projects/' + id,
+      method: 'put',
+      body: values,
+    });
+  },
+  deleteProject(id: number) {
+    return _callApi({
+      url: '/api/projects/' + id,
+      method: 'delete',
     });
   },
 };

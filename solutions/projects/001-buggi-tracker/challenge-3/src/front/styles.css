@@ -224,3 +224,33 @@ a {
 .user-page .form {
   width: 400px;
 }
+
+/* projects-page */
+
+.projects-page .table {
+  margin-top: 20px;
+}
+
+/* project-page */
+
+.project-page .form {
+  width: 400px;
+}
+
+.project-page .add-select-wrapper {
+  display: flex;
+  align-items: flex-start;
+}
+.project-page .add-select-wrapper .select {
+  flex: 1 0 0;
+}
+.project-page .add-select-wrapper .btn {
+  margin-left: 10px;
+}
+.project-page .member-field ul {
+  list-style: none;
+}
+.project-page .member-field li a {
+  margin-right: 5px;
+  text-decoration: none;
+}

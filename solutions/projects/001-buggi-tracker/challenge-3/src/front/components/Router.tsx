@@ -6,6 +6,8 @@ import { ApiClient } from '../ApiClient';
 import { HomePage } from '../pages/HomePage';
 import { UsersPage } from '../pages/UsersPage';
 import { UserPage } from '../pages/UserPage';
+import { ProjectsPage } from '../pages/ProjectsPage';
+import { ProjectPage } from '../pages/ProjectPage';
 
 export function Router() {
   const { pathname, push } = useRouter();
@@ -36,12 +38,18 @@ export function Router() {
     case '/users': {
       return <UsersPage />;
     }
+    case '/projects': {
+      return <ProjectsPage />;
+    }
     case '/': {
       return <HomePage />;
     }
     default:
       if (pathname.startsWith('/users/')) {
         return <UserPage />;
+      }
+      if (pathname.startsWith('/projects/')) {
+        return <ProjectPage />;
       }
       return <div>not found</div>;
   }
