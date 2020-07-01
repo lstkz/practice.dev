@@ -18,7 +18,7 @@ const Wrapper = styled.div`
     border-radius: 4px;
     background: rgba(0, 0, 0, 0.05);
     font-weight: 600;
-    font-family: courier;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
   }
 
   li + li {
@@ -26,6 +26,8 @@ const Wrapper = styled.div`
 
   table {
     border-collapse: collapse;
+    border-spacing: 0;
+    margin: 10px 0;
     th,
     td {
       padding: 10px 15px;
@@ -36,9 +38,11 @@ const Wrapper = styled.div`
 
 const Title = styled.h2`
   margin: 0 0 10px;
-  font-weight: 500;
-  font-size: 18px;
+  font-weight: 600;
+  font-size: 20px;
   color: ${Theme.textDark};
+  padding-bottom: 5px;
+  border-bottom: 1px solid ${Theme.bgLightGray};
 `;
 
 export function Section(props: SectionProps) {

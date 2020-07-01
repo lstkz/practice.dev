@@ -12,20 +12,22 @@ interface UserFormValues {
 }
 
 export function UserPage() {
-  const [error, setError] = React.useState('');
+  const [formError, setFormError] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const { push, pathname } = useRouter();
   const id = R.last(pathname.split('/'));
   const isNew = id === 'new';
   const [isLoaded, setIsLoaded] = React.useState(isNew);
-  const { handleSubmit, register, errors, setValue } = useForm<UserFormValues>({
+  const { handleSubmit, register, errors, setValue, setError } = useForm<
+    UserFormValues
+  >({
     defaultValues: {
       role: '',
     },
   });
 
   const onSubmit = async (values: UserFormValues) => {
-    setError('');
+    setFormError('');
     setIsLoading(true);
     try {
       if (isNew) {
@@ -35,7 +37,11 @@ export function UserPage() {
       }
       push('/users');
     } catch (e) {
-      setError(e.message);
+      if (e.message === 'Username is already taken') {
+        setError('username', 'string', 'Username is already taken');
+      } else {
+        setFormError(e.message);
+      }
       setIsLoading(false);
     }
   };
@@ -73,9 +79,9 @@ export function UserPage() {
 
         {isLoaded && (
           <form className="form" onSubmit={handleSubmit(onSubmit)}>
-            {error && (
+            {formError && (
               <div data-test="user-error" className="alert">
-                {error}
+                {formError}
               </div>
             )}{' '}
             <div className="textbox" data-test="username">
@@ -85,7 +91,18 @@ export function UserPage() {
                 name="username"
                 type="text"
                 ref={register({
-                  required: 'Username is required',
+                  validate: (value: string) => {
+                    if (!value) {
+                      return 'Username is required';
+                    }
+                    if (value.length > 10) {
+                      return 'Username can have max 10 characters';
+                    }
+                    if (!/^[a-zA-Z0-9]+$/.test(value)) {
+                      return 'Username can contain only letters and numbers';
+                    }
+                    return true;
+                  },
                 })}
               />
               {errors.username && (

@@ -15,20 +15,20 @@
     ><span class="breadcrumb__separator">&gt;</span
     ><a data-test="item-2" data-test-dir="top" href="/users">Users</a
     ><span class="breadcrumb__separator">&gt;</span
-    ><span data-test="item-3" data-test-dir="top">Add User</span>
+    ><span data-test="item-3" data-test-dir="top">Edit User</span>
   </div>
   <form class="form">
     <div class="textbox" data-test="username">
       <label for="username">Username</label>
-      <input id="username" name="username" type="text" />
+      <input id="username" name="username" type="text" value="owner1" />
       <div data-test="error" class="error">Username error message</div>
     </div>
     <div class="select" data-test="role">
       <label for="role">Role</label>
       <select id="role" name="role">
-        <option disabled="" value="" selected>select</option>
+        <option disabled="" value="">select</option>
         <option value="admin">admin</option>
-        <option value="owner">owner</option>
+        <option value="owner" selected>owner</option>
         <option value="reporter">reporter</option>
       </select>
       <div data-test="error" class="error">Role error message</div>

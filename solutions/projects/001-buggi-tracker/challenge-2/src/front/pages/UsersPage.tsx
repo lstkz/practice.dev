@@ -58,7 +58,6 @@ export function UsersPage() {
           >
             + Add User
           </Link>
-          {!isLoaded && <div>loading...</div>}
           <table className="table">
             <thead>
               <tr>

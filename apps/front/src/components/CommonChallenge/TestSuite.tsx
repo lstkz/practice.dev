@@ -128,5 +128,5 @@ const _TestSuite = (props: TestSuiteProps) => {
 
 export const TestSuite = styled(_TestSuite)`
   display: block;
-  font-family: 'Roboto Mono', monospace;
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
 `;

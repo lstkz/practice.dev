@@ -237,6 +237,7 @@ export const updateUser = createContract('updateUser')
     }
     user.username = values.username;
     user.username_lowered = values.username.toLowerCase();
+    user.role = values.role;
     try {
       await UserModel.findOneAndUpdate(
         { _id: id },
