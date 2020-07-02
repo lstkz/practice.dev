@@ -234,7 +234,7 @@ export function Details() {
               {
                 handle: 'yes-btn',
                 type: 'button',
-                desc: <>Deletes the users, and removes it from the table.</>,
+                desc: <>Deletes the user, and removes it from the table.</>,
               },
             ]}
           />

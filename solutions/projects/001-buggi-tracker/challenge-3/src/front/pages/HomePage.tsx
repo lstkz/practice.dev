@@ -10,7 +10,7 @@ export function HomePage() {
       <div className="page home-page">
         {user.role === 'admin' && (
           <Link
-            data-test="home-card-1"
+            data-test="home-card-users"
             data-test-dir="top-center"
             className="home-page__card"
             href="/users"
@@ -19,7 +19,7 @@ export function HomePage() {
           </Link>
         )}
         <Link
-          data-test="home-card-2"
+          data-test="home-card-projects"
           data-test-dir="top-center"
           className="home-page__card"
           href="/projects"

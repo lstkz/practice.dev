@@ -235,6 +235,7 @@ a {
 
 .project-page .form {
   width: 400px;
+  margin: 0 auto;
 }
 
 .project-page .add-select-wrapper {

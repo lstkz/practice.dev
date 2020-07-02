@@ -4,9 +4,13 @@ import { Project } from '../../types';
 import { ApiClient } from '../ApiClient';
 import { Link } from '../components/Link';
 import { useUser } from '../hooks';
+import { ConfirmModal } from '../components/ConfirmModal';
 
 export function ProjectsPage() {
   const [projects, setProjects] = React.useState([] as Project[]);
+  const [targetDeleteProject, setTargetDeleteProject] = React.useState(
+    null as Project
+  );
   const user = useUser();
 
   React.useEffect(() => {
@@ -17,6 +21,22 @@ export function ProjectsPage() {
 
   return (
     <>
+      {targetDeleteProject && (
+        <ConfirmModal
+          desc={`Are you sure to delete "${targetDeleteProject.name}"?`}
+          onClose={() => {
+            setTargetDeleteProject(null);
+          }}
+          onConfirm={() => {
+            ApiClient.deleteProject(targetDeleteProject.id).then(() => {
+              setProjects(
+                projects.filter(x => x.id !== targetDeleteProject.id)
+              );
+              setTargetDeleteProject(null);
+            });
+          }}
+        />
+      )}
       <Dashboard>
         <div className="page projects-page">
           <div
@@ -32,7 +52,7 @@ export function ProjectsPage() {
               Projects
             </span>
           </div>
-          {user.role === 'admin' && (
+          {user.role !== 'reporter' && (
             <Link
               href="/projects/new"
               data-test="add-project-btn"
@@ -69,7 +89,9 @@ export function ProjectsPage() {
                             href="#"
                             data-test={'delete-btn' + suffix}
                             data-test-dir="left"
-                            onClick={() => {}}
+                            onClick={() => {
+                              setTargetDeleteProject(item);
+                            }}
                           >
                             Delete
                           </a>{' '}
@@ -78,7 +100,7 @@ export function ProjectsPage() {
                       )}
                       {(user.role === 'admin' || user.role === 'owner') && (
                         <Link
-                          href={`/users/${item.id}`}
+                          href={`/projects/${item.id}`}
                           data-test={'edit-btn' + suffix}
                         >
                           Edit

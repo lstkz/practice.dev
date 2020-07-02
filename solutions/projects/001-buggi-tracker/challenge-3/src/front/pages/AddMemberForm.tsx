@@ -26,7 +26,7 @@ export function AddMemberForm(props: AddMemberFormProps) {
 
   return (
     <div className="add-select-wrapper">
-      <div className="select" data-test="add-member">
+      <div className="select" data-test="add-member" data-test-dir="left">
         <select
           id="member"
           name="member"

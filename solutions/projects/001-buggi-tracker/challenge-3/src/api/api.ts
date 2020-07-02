@@ -107,13 +107,6 @@ mongodb
       }
       router[options.method](options.path, wrapExpress(actions) as any);
     });
-    app.use((req, res, next) => {
-      if (process.env.NODE_ENV === 'production') {
-        next();
-      } else {
-        setTimeout(next, 500);
-      }
-    });
     app.use('/api', router);
     app.use(errorHandlerMiddleware);
     app.use(notFoundHandlerMiddleware);

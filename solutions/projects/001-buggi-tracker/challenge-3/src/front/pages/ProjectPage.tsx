@@ -7,6 +7,7 @@ import { Link } from '../components/Link';
 import { ApiClient } from '../ApiClient';
 import { User } from '../../types';
 import { AddMemberForm } from './AddMemberForm';
+import { useUser } from '../hooks';
 
 interface ProjectFormValues {
   name: string;
@@ -16,9 +17,9 @@ interface ProjectFormValues {
 export function ProjectPage() {
   const [users, setUsers] = React.useState([] as User[]);
   const [members, setMembers] = React.useState([] as User[]);
-  const [formError, setFormError] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const { push, pathname } = useRouter();
+  const user = useUser();
   const id = R.last(pathname.split('/'));
   const isNew = id === 'new';
   const [isLoaded, setIsLoaded] = React.useState(isNew);
@@ -32,12 +33,17 @@ export function ProjectPage() {
   });
 
   React.useEffect(() => {
+    if (user.role === 'owner') {
+      setValue('owner', user.id.toString());
+    }
     ApiClient.getUsers().then(ret => {
       setUsers(ret);
       if (!isNew) {
         ApiClient.getProject(Number(id)).then(ret => {
           setIsLoaded(true);
           setValue('name', ret.name);
+          setValue('owner', ret.owner.id.toString());
+          setMembers(ret.members);
         });
       } else {
         setIsLoaded(true);
@@ -46,12 +52,23 @@ export function ProjectPage() {
   }, []);
 
   const onSubmit = async (values: ProjectFormValues) => {
-    await ApiClient.createProject({
+    setIsLoading(true);
+    const project = {
       name: values.name,
       ownerId: Number(values.owner),
       memberIds: members.map(x => x.id),
-    });
-    push('/projects');
+    };
+    try {
+      if (isNew) {
+        await ApiClient.createProject(project);
+      } else {
+        await ApiClient.updateProject(Number(id), project);
+      }
+      push('/projects');
+    } catch (e) {
+      console.error(e);
+    }
+    setIsLoading(false);
   };
   return (
     <Dashboard>
@@ -65,12 +82,12 @@ export function ProjectPage() {
             Home
           </Link>
           <span className="breadcrumb__separator">&gt;</span>
-          <Link data-test="bc-2" data-test-dir="top" href="/users">
-            Users
+          <Link data-test="bc-2" data-test-dir="top" href="/projects">
+            Projects
           </Link>
           <span className="breadcrumb__separator">&gt;</span>
           <span data-test="bc-3" data-test-dir="top">
-            {isNew ? 'Add User' : 'Edit User'}
+            {isNew ? 'Add Project' : 'Edit Project'}
           </span>
         </div>
         {isLoaded && (
@@ -104,6 +121,7 @@ export function ProjectPage() {
                 ref={register({
                   required: 'Owner is required',
                 })}
+                disabled={user.role !== 'admin'}
               >
                 <option disabled value="">
                   select

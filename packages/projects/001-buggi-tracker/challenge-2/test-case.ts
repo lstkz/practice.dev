@@ -68,6 +68,10 @@ export default {
       await page.expectToMatch('@role-5', 'reporter', true);
       await page.expectToBeVisible('@delete-btn-5');
       await page.expectToBeVisible('@edit-btn-5');
+
+      await page.reload();
+      await page.expectToMatch('@username-1', 'admin', true);
+      await page.expectToMatch('@username-5', 'reporter2', true);
     });
 
     tester.test('add new user: Admin2', async () => {
@@ -78,6 +82,9 @@ export default {
       await page.expectToMatch('@bc-3', 'Add User', true);
       await page.expectToBeHidden('@username @error');
       await page.expectToBeHidden('@role @error');
+      await page.reload();
+      await page.expectToMatch('@bc-3', 'Add User', true);
+
       await page.click('@save-btn');
       await tester
         .getPage()
@@ -146,6 +153,9 @@ export default {
     tester.test('edit owner1', async () => {
       const page = await tester.getPage();
       await page.click('@edit-btn-4');
+      await page.expectToMatch('@username input', 'owner1');
+      await page.expectToMatch('@role select', 'owner');
+      await page.reload();
       await page.expectToMatch('@username input', 'owner1');
       await page.expectToMatch('@role select', 'owner');
       await page.clear('@username input');

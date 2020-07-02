@@ -339,7 +339,7 @@ export const getProject = createContract('getProject')
     method: 'get',
     path: '/projects/:id',
     async json(req) {
-      return createUser(req.params.id as any);
+      return getProject(req.params.id as any);
     },
   });
 
@@ -421,20 +421,18 @@ export const getProjects = createContract('getProjects')
     user: V.object().unknown(),
   })
   .fn(async (user: AppUser) => {
-    const get = () => {
-      if (user.role === 'admin') {
-        return ProjectModel.find().toArray();
-      }
-      if (user.role === 'owner') {
-        return ProjectModel.find({
-          ownerId: user.id,
-        }).toArray();
-      }
-      return ProjectModel.find({
-        memberIds: user.id,
-      }).toArray();
-    };
-    const projects = await get();
+    const criteria: any = {};
+    if (user.role === 'owner') {
+      criteria.ownerId = user.id;
+    }
+    if (user.role === 'reporter') {
+      criteria.memberIds = user.id;
+    }
+    const projects = await ProjectModel.find(criteria)
+      .sort({
+        name: 1,
+      })
+      .toArray();
     const users = await UserModel.find().toArray();
     const userMap: Record<string, PublicUser> = {};
     users.forEach(user => {
