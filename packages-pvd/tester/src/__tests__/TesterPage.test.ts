@@ -361,3 +361,90 @@ describe('select', () => {
     );
   });
 });
+
+describe('expectToHaveOption', () => {
+  beforeEach(async () => {
+    await page.evaluate(() => {
+      document.body.innerHTML = `
+      <select data-test="foo">
+        <option value="" disabled>Select</option>
+        <option value="1">opt a</option>
+        <option value="2">opt b</option>
+        <option value="3">opt c</option>
+      </select>`;
+    });
+  });
+
+  it('should assert successfully', async () => {
+    await tester.expectToHaveOption('@foo', 'opt a');
+    expect(notifier.actions).toEqual([
+      'Expect "[data-test="foo"]" to have an option "opt a"',
+    ]);
+  });
+
+  it('should throw an error if option not found', async () => {
+    await expect(tester.expectToHaveOption('@foo', '1')).rejects.toThrow(
+      'Option with text "1" not found in "[data-test="foo"]"'
+    );
+  });
+
+  it('should throw an error if option is disabled', async () => {
+    await expect(tester.select('@foo', 'Select')).rejects.toThrow(
+      'Option with text "Select" is disabled'
+    );
+  });
+});
+
+describe('expectToNotHaveOption', () => {
+  beforeEach(async () => {
+    await page.evaluate(() => {
+      document.body.innerHTML = `
+      <select data-test="foo">
+        <option value="" disabled>Select</option>
+        <option value="1">opt a</option>
+        <option value="2">opt b</option>
+        <option value="3">opt c</option>
+      </select>`;
+    });
+  });
+
+  it('should assert successfully', async () => {
+    await tester.expectToNotHaveOption('@foo', '1');
+    expect(notifier.actions).toEqual([
+      'Expect "[data-test="foo"]" to not have an option "1"',
+    ]);
+  });
+
+  it('should throw an error if option found', async () => {
+    await expect(tester.expectToNotHaveOption('@foo', 'opt a')).rejects.toThrow(
+      'Option with text "opt a" found in "[data-test="foo"]"'
+    );
+  });
+});
+
+describe('expectSelectedText', () => {
+  beforeEach(async () => {
+    await page.evaluate(() => {
+      document.body.innerHTML = `
+      <select data-test="foo">
+        <option value="" disabled>Select</option>
+        <option value="1">opt a</option>
+        <option value="2">opt b</option>
+        <option value="3" selected>opt c</option>
+      </select>`;
+    });
+  });
+
+  it('should assert successfully', async () => {
+    await tester.expectSelectedText('@foo', 'opt c');
+    expect(notifier.actions).toEqual([
+      'Expect "[data-test="foo"]" to have selected text "opt c"',
+    ]);
+  });
+
+  it('should throw an error if option found', async () => {
+    await expect(tester.expectSelectedText('@foo', 'opt a')).rejects.toThrow(
+      'Expected selected text: "opt a". Actual: "opt c".'
+    );
+  });
+});

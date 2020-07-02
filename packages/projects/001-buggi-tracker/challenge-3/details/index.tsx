@@ -23,7 +23,7 @@ export function Details() {
       </Section>
       <Section title="Use Cases">
         <ul>
-          <li>As an admin user, I can create, edit or delete any project.</li>
+          <li>As an admin user, I can create, edit, or delete any project.</li>
           <li>
             As an owner user, I can view and edit projects that I am assigned
             to.
@@ -71,7 +71,7 @@ export function Details() {
         <SubSection title="Users page">
           Users page and Add/Edit User pages should remain the same.
           <br />
-          You can assume a user won't be deleted or edited if it's associated
+          You can assume that a user won't be deleted or edited if associated
           with a project (added as an owner or as a member).
         </SubSection>
         <SubSection title="Projects page">
@@ -223,7 +223,7 @@ export function Details() {
         <video
           style={{ width: '100%', height: 340, outline: 'none' }}
           src={
-            'https://practice.dev/assets/001-2-demo.43b5f60d36a4cbeb1707246ec1a17d7e.mp4'
+            'https://practice.dev/assets/001-3-demo.f707ee4072e5c8cc1ce077441580c6b1.mp4'
           }
           loop
           controls

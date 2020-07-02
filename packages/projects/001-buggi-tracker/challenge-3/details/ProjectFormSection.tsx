@@ -156,8 +156,10 @@ export function ProjectFormSection(props: ProjectFormSectionProps) {
             ),
             options: (
               <>
-                Show all users with the owner role. Sort them alphabetically by
-                username. The option text should be the username.
+                Show all users with the owner role.
+                <br />
+                Sort them alphabetically by username. <br />
+                The option text should be the username.
               </>
             ),
             defaultValue: edit ? (

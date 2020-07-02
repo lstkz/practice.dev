@@ -19,6 +19,9 @@ export function Router() {
       ApiClient.getMe()
         .catch(() => null)
         .then(user => {
+          if (!user) {
+            push('/login');
+          }
           appDispatch({ type: 'user-loaded', user });
         });
     } else {

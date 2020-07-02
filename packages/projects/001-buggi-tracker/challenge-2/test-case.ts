@@ -13,9 +13,7 @@ export default {
       await page.type('@username input', 'reporter1');
       await page.type('@password input', 'passa1');
       await page.click('@login-btn');
-      await tester
-        .getPage()
-        .expectToMatch('@placeholder', 'home page placeholder', true);
+      await page.expectToMatch('@placeholder', 'home page placeholder', true);
       await page.click('@logout-btn');
     });
 
@@ -154,10 +152,10 @@ export default {
       const page = await tester.getPage();
       await page.click('@edit-btn-4');
       await page.expectToMatch('@username input', 'owner1');
-      await page.expectToMatch('@role select', 'owner');
+      await page.expectSelectedText('@role select', 'owner');
       await page.reload();
       await page.expectToMatch('@username input', 'owner1');
-      await page.expectToMatch('@role select', 'owner');
+      await page.expectSelectedText('@role select', 'owner');
       await page.clear('@username input');
       await page.type('@username input', 'AdMIn');
       await page.select('@role select', 'admin');
