@@ -38,7 +38,7 @@ export function Details() {
         <SubSection title="Seed data">
           Use the same seed data from the previous iteration.
           <br />
-          There should be not projects by default.
+          There should be no projects by default.
         </SubSection>
         <SubSection title="Home page">
           <IsolatedHtml
