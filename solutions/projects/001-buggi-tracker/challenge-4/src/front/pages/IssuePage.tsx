@@ -40,8 +40,7 @@ export function IssuePage() {
           />
           <div></div>
           <h1 className="issue-title" data-test="issue-title">
-            {issue.title}
-            <span>#{issue.issueId}</span>
+            {issue.title} <span>#{issue.issueId}</span>
           </h1>
           <div className="issue-post" data-test="post-1">
             <div className="issue-post__author">

@@ -73,7 +73,10 @@ export function ProjectsPage() {
                       </span>
                     </td>
                     <td>
-                      <Link href={`/projects/${item.id}/issues`}>
+                      <Link
+                        data-test={'issues' + suffix}
+                        href={`/projects/${item.id}/issues`}
+                      >
                         {item.issueCount} open issue
                         {item.issueCount === 1 ? '' : 's'}
                       </Link>

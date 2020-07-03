@@ -48,6 +48,7 @@ export const initDb = createContract('init-db')
       UserModel.deleteMany({}),
       SeqModel.deleteMany({}),
       ProjectModel.deleteMany({}),
+      IssueModel.deleteMany({}),
     ]);
     const salt = await randomSalt();
     const passwordHash = await createPasswordHash('passa1', salt);
