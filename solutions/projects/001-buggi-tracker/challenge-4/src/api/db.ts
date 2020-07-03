@@ -40,6 +40,7 @@ export interface Issue {
   authorId: number;
   title: string;
   description: string;
+  status: string;
 }
 
 export let UserModel: mongodb.Collection<User> = null;

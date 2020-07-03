@@ -8,6 +8,9 @@ import { UsersPage } from '../pages/UsersPage';
 import { UserPage } from '../pages/UserPage';
 import { ProjectsPage } from '../pages/ProjectsPage';
 import { ProjectPage } from '../pages/ProjectPage';
+import { IssuesPage } from '../pages/IssuesPage';
+import { AddIssuePage } from '../pages/AddIssuePage';
+import { IssuePage } from '../pages/IssuePage';
 
 export function Router() {
   const { pathname, push } = useRouter();
@@ -50,6 +53,15 @@ export function Router() {
     default:
       if (pathname.startsWith('/users/')) {
         return <UserPage />;
+      }
+      if (/projects\/\d+\/issues\/new/.test(pathname)) {
+        return <AddIssuePage />;
+      }
+      if (/projects\/\d+\/issues\/\d+/.test(pathname)) {
+        return <IssuePage />;
+      }
+      if (/projects\/\d+\/issues/.test(pathname)) {
+        return <IssuesPage />;
       }
       if (pathname.startsWith('/projects/')) {
         return <ProjectPage />;

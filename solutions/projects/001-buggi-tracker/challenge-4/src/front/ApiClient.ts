@@ -1,4 +1,4 @@
-import { AuthData, PublicUser, User, Project } from '../types';
+import { AuthData, PublicUser, User, Project, Issue } from '../types';
 
 interface CallApiOptions {
   method: 'get' | 'post' | 'put' | 'patch' | 'delete';
@@ -103,6 +103,25 @@ export const ApiClient = {
     return _callApi({
       url: '/api/projects/' + id,
       method: 'delete',
+    });
+  },
+  getIssues(id: number) {
+    return _callApi<Issue[]>({
+      url: '/api/projects/' + id + '/issues',
+      method: 'get',
+    });
+  },
+  createIssue(projectId: number, values: any) {
+    return _callApi<Issue[]>({
+      url: '/api/projects/' + projectId + '/issues',
+      method: 'post',
+      body: values,
+    });
+  },
+  getIssue(projectId: number, issueId: number) {
+    return _callApi<Issue>({
+      url: '/api/projects/' + projectId + '/issues/' + issueId,
+      method: 'get',
     });
   },
 };

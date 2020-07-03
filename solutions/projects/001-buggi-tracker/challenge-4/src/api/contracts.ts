@@ -479,12 +479,13 @@ export const getIssues = createContract('getIssues')
     users.forEach(user => {
       userMap[user._id] = mapUser(user);
     });
-    return issues.forEach(issue => {
+    return issues.map(issue => {
       return {
         projectId: issue.projectId,
         issueId: issue.issueId,
         title: issue.title,
         description: issue.description,
+        status: issue.status,
         author: userMap[issue.authorId],
       };
     });
@@ -514,6 +515,7 @@ export const postIssue = createContract('postIssue')
       projectId,
       title: values.title,
       description: values.description,
+      status: 'Open',
     };
     await IssueModel.insertOne({
       _id: `${projectId}_${nextId}`,

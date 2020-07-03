@@ -5,6 +5,7 @@ import { ApiClient } from '../ApiClient';
 import { Link } from '../components/Link';
 import { useUser } from '../hooks';
 import { ConfirmModal } from '../components/ConfirmModal';
+import { Breadcrumb } from '../components/Breadcrumb';
 
 export function ProjectsPage() {
   const [projects, setProjects] = React.useState([] as Project[]);
@@ -39,19 +40,7 @@ export function ProjectsPage() {
       )}
       <Dashboard>
         <div className="page projects-page">
-          <div
-            className="breadcrumb"
-            data-test="breadcrumb"
-            data-test-dir="top-center"
-          >
-            <Link data-test="bc-1" data-test-dir="top" href="/">
-              Home
-            </Link>
-            <span className="breadcrumb__separator">&gt;</span>
-            <span data-test="bc-2" data-test-dir="top">
-              Projects
-            </span>
-          </div>
+          <Breadcrumb path={[{ url: '/', text: 'Home' }, 'Projects']} />
           {user.role !== 'reporter' && (
             <Link
               href="/projects/new"

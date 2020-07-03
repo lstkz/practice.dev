@@ -31,4 +31,5 @@ export interface Issue {
   title: string;
   description: string;
   author: PublicUser;
+  status: string;
 }
