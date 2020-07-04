@@ -42,7 +42,7 @@ export class ProjectChallengeSolvedEntity extends BaseEntity {
     const items = await this.queryAll({
       key: {
         pk: `PROJECT_CHALLENGE_SOLVED:${userId}`,
-        sk: ['begins_with', `PROJECT_CHALLENGE_SOLVED:${projectId}`],
+        sk: ['begins_with', `PROJECT_CHALLENGE_SOLVED:${projectId}:`],
       },
       sort: 'asc',
     });

@@ -1,0 +1,127 @@
+import { AuthData, PublicUser, User, Project, Issue } from '../types';
+
+interface CallApiOptions {
+  method: 'get' | 'post' | 'put' | 'patch' | 'delete';
+  url: string;
+  auth?: boolean;
+  body?: any;
+}
+
+async function _callApi<T>(options: CallApiOptions): Promise<T> {
+  const headers: Record<string, string> = {
+    'content-type': 'application/json',
+  };
+  if (options.auth ?? true) {
+    headers['Authorization'] = 'Bearer ' + localStorage.token;
+  }
+  const ret = await fetch(options.url, {
+    method: options.method,
+    headers: headers,
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+  const body = await ret.json().catch(() => null);
+  if (ret.status >= 300 || ret.status < 200) {
+    throw new Error(body?.error ?? 'Cannot connect to API');
+  }
+  return body;
+}
+
+export const ApiClient = {
+  login(username: string, password: string) {
+    return _callApi<AuthData>({
+      url: '/api/login',
+      method: 'post',
+      body: { username, password },
+      auth: false,
+    });
+  },
+  getMe() {
+    return _callApi<PublicUser>({
+      url: '/api/me',
+      method: 'get',
+    });
+  },
+  getUsers() {
+    return _callApi<User[]>({
+      url: '/api/users',
+      method: 'get',
+    });
+  },
+  deleteUser(id: number) {
+    return _callApi<void>({
+      url: '/api/users/' + id,
+      method: 'delete',
+    });
+  },
+  getUser(id: number) {
+    return _callApi<User>({
+      url: '/api/users/' + id,
+      method: 'get',
+    });
+  },
+  createUser(values: any) {
+    return _callApi<User>({
+      url: '/api/users',
+      method: 'post',
+      body: values,
+    });
+  },
+  updateUser(id: number, values: any) {
+    return _callApi<User>({
+      url: '/api/users/' + id,
+      method: 'post',
+      body: values,
+    });
+  },
+  getProjects() {
+    return _callApi<Project[]>({
+      url: '/api/projects',
+      method: 'get',
+    });
+  },
+  getProject(id: number) {
+    return _callApi<Project>({
+      url: '/api/projects/' + id,
+      method: 'get',
+    });
+  },
+  createProject(values: any) {
+    return _callApi<Project>({
+      url: '/api/projects',
+      method: 'post',
+      body: values,
+    });
+  },
+  updateProject(id: number, values: any) {
+    return _callApi<Project>({
+      url: '/api/projects/' + id,
+      method: 'put',
+      body: values,
+    });
+  },
+  deleteProject(id: number) {
+    return _callApi({
+      url: '/api/projects/' + id,
+      method: 'delete',
+    });
+  },
+  getIssues(id: number) {
+    return _callApi<Issue[]>({
+      url: '/api/projects/' + id + '/issues',
+      method: 'get',
+    });
+  },
+  createIssue(projectId: number, values: any) {
+    return _callApi<Issue[]>({
+      url: '/api/projects/' + projectId + '/issues',
+      method: 'post',
+      body: values,
+    });
+  },
+  getIssue(projectId: number, issueId: number) {
+    return _callApi<Issue>({
+      url: '/api/projects/' + projectId + '/issues/' + issueId,
+      method: 'get',
+    });
+  },
+};

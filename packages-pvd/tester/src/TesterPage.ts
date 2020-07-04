@@ -1,4 +1,4 @@
-import { Page, WaitForSelectorOptions } from 'puppeteer';
+import { Page, WaitForSelectorOptions, ElementHandle } from 'puppeteer';
 import {
   checkHasSelectorMatches,
   getSelectorMatchResult,
@@ -32,6 +32,11 @@ function getNumSuffix(n: number) {
   return 'th';
 }
 
+const waitNavigationOptions = {
+  timeout: 5000,
+  waitUntil: 'domcontentloaded',
+} as const;
+
 export class TesterPage {
   private waitOptions: WaitForSelectorOptions;
 
@@ -46,15 +51,62 @@ export class TesterPage {
     };
   }
 
+  private async _assertTag(
+    input: string,
+    handle: ElementHandle<Element>,
+    expectedTagName: string
+  ) {
+    const tagName = await handle
+      .getProperty('tagName')
+      .then(x => x.jsonValue())
+      .then(x => (x as string).toLowerCase());
+    if (tagName !== expectedTagName) {
+      throw new TestError(`"${input}" is not a <${expectedTagName}> element`);
+    }
+  }
+
+  private async _throwSelectOptionError(
+    input: string,
+    handle: ElementHandle<Element>,
+    text: string
+  ) {
+    const isDisabled = await this.page.evaluate(
+      (handle, text) => {
+        const options = [...handle.querySelectorAll('option')];
+        const option = options.find(option => (option.text ?? '') === text);
+        if (option && option.disabled) {
+          return true;
+        }
+        return false;
+      },
+      handle,
+      text
+    );
+    if (isDisabled) {
+      throw new TestError(`Option with text "${text}" is disabled`);
+    }
+    throw new TestError(`Option with text "${text}" not found in "${input}"`);
+  }
+
   async navigate(url: string) {
     await this.stepNotifier.notify(`Navigate to "${url}"`);
-    await this.page.goto(url, { timeout: 5000, waitUntil: 'domcontentloaded' });
+    await this.page.goto(url, waitNavigationOptions);
   }
 
   async expectToBeVisible(selector: string) {
     const input = convertSelector(selector);
     await this.stepNotifier.notify(`Expect "${input}" to be visible`);
     await this.page.waitForSelector(input, this.waitOptions);
+  }
+
+  async expectToBeHidden(selector: string) {
+    const input = convertSelector(selector);
+    await this.stepNotifier.notify(`Expect "${input}" to be hidden`);
+    await this.page.waitForSelector(input, {
+      ...this.waitOptions,
+      visible: false,
+      hidden: true,
+    });
   }
 
   async expectToMatch(selector: string, expected: string, exact = false) {
@@ -262,6 +314,137 @@ export class TesterPage {
         throw new TestError(`"${input}" not found in group "${group}"`);
       }
       throw new TestError(`Expected order: ${order}. Actual: ${actual + 1}`);
+    }
+  }
+
+  async select(selector: string, text: string) {
+    const input = convertSelector(selector);
+    await this.stepNotifier.notify(`Select "${text}" option in "${input}"`);
+    const handle = await this.page.waitForSelector(input, this.waitOptions);
+    await this._assertTag(input, handle, 'select');
+
+    try {
+      await this.page.waitForFunction(
+        (handle, text) => {
+          const options = [...handle.querySelectorAll('option')];
+          const option = options.find(option => (option.text ?? '') === text);
+          if (option && !option.disabled) {
+            option.selected = true;
+            return true;
+          }
+          return false;
+        },
+        {
+          timeout: this.defaultTimeout,
+        },
+        handle,
+        text
+      );
+    } catch (error) {
+      rethrowNonTimeout(error);
+      await this._throwSelectOptionError(input, handle, text);
+    }
+  }
+
+  async goBack() {
+    await this.stepNotifier.notify(`Navigating back`);
+    await this.page.goBack(waitNavigationOptions);
+  }
+
+  async expectToHaveOption(selector: string, text: string) {
+    const input = convertSelector(selector);
+    await this.stepNotifier.notify(
+      `Expect "${input}" to have an option "${text}"`
+    );
+
+    const handle = await this.page.waitForSelector(input, this.waitOptions);
+    await this._assertTag(input, handle, 'select');
+    try {
+      await this.page.waitForFunction(
+        (handle, text) => {
+          const options = [...handle.querySelectorAll('option')];
+          const option = options.find(
+            option => (option.text ?? '').trim() === text
+          );
+          if (option && !option.disabled) {
+            return true;
+          }
+          return false;
+        },
+        {
+          timeout: this.defaultTimeout,
+        },
+        handle,
+        text
+      );
+    } catch (error) {
+      rethrowNonTimeout(error);
+      await this._throwSelectOptionError(input, handle, text);
+    }
+  }
+
+  async expectToNotHaveOption(selector: string, text: string) {
+    const input = convertSelector(selector);
+    await this.stepNotifier.notify(
+      `Expect "${input}" to not have an option "${text}"`
+    );
+
+    const handle = await this.page.waitForSelector(input, this.waitOptions);
+    await this._assertTag(input, handle, 'select');
+    try {
+      await this.page.waitForFunction(
+        (handle, text) => {
+          const options = [...handle.querySelectorAll('option')];
+          const option = options.find(
+            option => (option.text ?? '').trim() === text
+          );
+          if (option) {
+            return false;
+          }
+          return true;
+        },
+        {
+          timeout: this.defaultTimeout,
+        },
+        handle,
+        text
+      );
+    } catch (error) {
+      rethrowNonTimeout(error);
+      throw new TestError(`Option with text "${text}" found in "${input}"`);
+    }
+  }
+
+  async expectSelectedText(selector: string, text: string) {
+    const input = convertSelector(selector);
+    await this.stepNotifier.notify(
+      `Expect "${input}" to have selected text "${text}"`
+    );
+    const handle = await this.page.waitForSelector(input, this.waitOptions);
+    await this._assertTag(input, handle, 'select');
+    try {
+      await this.page.waitForFunction(
+        (handle, text) => {
+          const options = [...handle.querySelectorAll('option')];
+          const option = options[handle.selectedIndex];
+          return (option?.text ?? '').trim() === text;
+        },
+        {
+          timeout: this.defaultTimeout,
+        },
+        handle,
+        text
+      );
+    } catch (error) {
+      rethrowNonTimeout(error);
+      const actual = await this.page.evaluate(handle => {
+        const options = [...handle.querySelectorAll('option')];
+        const option = options[handle.selectedIndex];
+        return (option?.text ?? '').trim();
+      }, handle);
+      throw new TestError(
+        `Expected selected text: "${text}". Actual: "${actual}".`
+      );
     }
   }
 }

@@ -85,6 +85,7 @@ handle
               solutions.items.map(x => x.id),
               bundle
             ),
+            SubmitActions.reset(),
           ])
         )
       ),
@@ -134,6 +135,7 @@ handle
       state.challenge = challenge;
       state.recentSubmissions = recentSubmissions;
       state.favoriteSolutions = favoriteSolutions;
+      state.tab = 'details';
       state.testCase = JSON.parse(challenge.testCase);
       state.component = component;
       state.isLoading = false;

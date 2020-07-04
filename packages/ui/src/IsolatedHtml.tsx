@@ -48,6 +48,9 @@ export function IsolatedHtml(props: IsolatedHtmlProps) {
       script.src = src;
       document.body.appendChild(script);
     });
+    document.body.addEventListener('click', e => {
+      e.preventDefault();
+    });
   }, [html, css, scripts ? scripts.join() : null]);
 
   return (

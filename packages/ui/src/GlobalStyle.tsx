@@ -11,7 +11,6 @@ export const GlobalStyle = createGlobalStyle`
 
 html
 {
-    font-family: sans-serif;
     line-height: 1.15;
 
     -webkit-text-size-adjust: 100%;
@@ -31,7 +30,7 @@ body
 }
 
 body, input, textarea {
-    font-family: 'Roboto', sans-serif;
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;
     font-size: 14px;
     font-weight: 400;
 }

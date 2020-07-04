@@ -37,9 +37,14 @@ handle.epic().onRoute({
     ]).pipe(
       Rx.mergeMap(([challenge, recentSubmissions]) =>
         loadBundle(challenge.detailsBundleS3Key).pipe(
-          Rx.map(bundle =>
-            ProjectChallengeActions.loaded(challenge, recentSubmissions, bundle)
-          )
+          Rx.mergeMap(bundle => [
+            ProjectChallengeActions.loaded(
+              challenge,
+              recentSubmissions,
+              bundle
+            ),
+            SubmitActions.reset(),
+          ])
         )
       ),
       handleAppError(),
@@ -69,6 +74,7 @@ handle
     ProjectChallengeActions.loaded,
     (state, { challenge, component, recentSubmissions }) => {
       state.challenge = challenge;
+      state.tab = 'details';
       state.testCase = JSON.parse(challenge.testCase);
       state.component = component;
       state.recentSubmissions = recentSubmissions;

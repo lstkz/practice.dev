@@ -26,7 +26,7 @@ export function SubmitModal(props: SubmitModalProps) {
   const { initTarget } = useActions(SubmitActions);
   React.useEffect(() => {
     initTarget(props.target);
-  }, []);
+  }, [props.target]);
   const { close } = useActions(SubmitActions);
   const { isOpened, error, isSubmitting } = getSubmitState.useState();
   const { submit } = useActions(SubmitFormActions);
