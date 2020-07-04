@@ -39,10 +39,18 @@ export function IssuePage() {
             ]}
           />
           <div></div>
-          <h1 className="issue-title" data-test="issue-title">
+          <h1
+            className="issue-title"
+            data-test="issue-title"
+            data-test-dir="top-center"
+          >
             {issue.title} <span>#{issue.issueId}</span>
           </h1>
-          <div className="issue-post" data-test="post-1">
+          <div
+            className="issue-post"
+            data-test="post-1"
+            data-test-dir="top-center"
+          >
             <div className="issue-post__author">
               <span data-test="author">{issue.author.username}</span>
             </div>

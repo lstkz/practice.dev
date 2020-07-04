@@ -3,7 +3,8 @@ import { ProjectInfo } from '@pvd/tools';
 export const info: ProjectInfo = {
   id: 1,
   title: 'Buggi tracker',
-  description: 'Create a new generation bug tracker.',
+  description:
+    'Create a new generation bug tracker.\n\nNOTE: This project is still in progress, there will be more iterations!',
   domain: 'fullstack',
   challenges: [
     {
@@ -22,6 +23,12 @@ export const info: ProjectInfo = {
       id: 3,
       title: 'Project management',
       description: 'Implement project management functionality for all roles.',
+      domain: 'fullstack',
+    },
+    {
+      id: 4,
+      title: 'Issue reporting',
+      description: 'Implement issue reporting functionality',
       domain: 'fullstack',
     },
   ],

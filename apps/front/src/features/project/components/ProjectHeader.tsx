@@ -49,6 +49,7 @@ const Desc = styled.div`
   color: ${Theme.textLight};
   align-items: center;
   justify-content: center;
+  white-space: pre-line;
 `;
 
 const _ProjectHeader = (props: ProjectHeaderProps) => {
