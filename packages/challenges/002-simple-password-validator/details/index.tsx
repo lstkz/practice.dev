@@ -26,6 +26,16 @@ export function Details() {
         Check the swagger specification in the "API Spec" tab for all
         requirements.
       </Section>
+      <Section title="Demo">
+        <video
+          style={{ width: '100%', height: 440, outline: 'none' }}
+          src={
+            'https://practice.dev/assets/002-demo.4047426c7935d7ad5048c93adcd0d44e.mp4'
+          }
+          loop
+          controls
+        ></video>
+      </Section>
     </div>
   );
 }
