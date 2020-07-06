@@ -88,7 +88,7 @@ export function Details() {
             </>,
           ]}
         />
-      </Section>{' '}
+      </Section>
       <Section title="Demo">
         <video
           style={{ width: '100%', height: 340, outline: 'none' }}
