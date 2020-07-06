@@ -17,6 +17,7 @@ const Title = styled.h3`
   position: sticky;
   top: 0;
   background: white;
+  z-index: 2;
 `;
 
 const _SubSection = (props: SubSectionProps) => {
