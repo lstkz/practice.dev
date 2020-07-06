@@ -30,7 +30,7 @@ const _WhatsPractice = (props: WhatsPracticeProps) => {
         <Title>What is Practice.dev?</Title>
         <Row gutter={60}>
           <Col lg={6}>
-            <Box icon={<TrophyIcon />} title="100+ Challenges">
+            <Box icon={<TrophyIcon />} title="Many Challenges">
               We've prepared many challenges that reflect problems from real
               projects. A challenge is a simple task that focuses on a
               particular area. You can solve them with any languages, technology
@@ -39,7 +39,7 @@ const _WhatsPractice = (props: WhatsPracticeProps) => {
           </Col>
           <Col lg={6}>
             <Box icon={<TwoPeopleIcon />} title="Not Only for Beginners">
-              Are you an experiment developer and want to try a new shiny
+              Are you an experienced developer and want to try a new shiny
               framework or compare libraries? Practice.dev is a perfect place
               for you.
             </Box>
@@ -49,7 +49,7 @@ const _WhatsPractice = (props: WhatsPracticeProps) => {
           <Col lg={6}>
             <Box icon={<AutomaticTestingIcon />} title="Automatic Testing">
               All your work is verified automatically by our testing engine. You
-              can submit an unlimited numbers of times. There are no fees!
+              can submit an unlimited number of times. There are no fees!
             </Box>
           </Col>
           <Col lg={6}>
@@ -63,9 +63,9 @@ const _WhatsPractice = (props: WhatsPracticeProps) => {
         <Row gutter={60}>
           <Col lg={6}>
             <Box icon={<ProjectsIcon />} title="Complete Projects">
-              Looking for app ideas for your portfolio? Try to complete a
-              project and create a fully working solutions. Projects are much
-              more complex than challenges, and are split to multiple parts.
+              Are you looking for app ideas for your portfolio? Try to complete
+              a project and create a fully working solution. Projects are much
+              more complex than challenges and are split into multiple parts.
             </Box>
           </Col>
           <Col lg={6}>

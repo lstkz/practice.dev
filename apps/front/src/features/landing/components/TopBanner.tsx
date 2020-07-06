@@ -60,6 +60,9 @@ const Desc = styled.div`
 const BannerButtonWrapper = styled.div`
   display: flex;
   align-items: center;
+  ${Button} + ${Button} {
+    margin-left: 10px;
+  }
 `;
 
 const FreeText = styled.div`
@@ -128,6 +131,13 @@ const _TopBanner = (props: TopBannerProps) => {
                 href={createUrl({ name: 'register' })}
               >
                 JOIN NOW
+              </Button>
+              <Button
+                type="secondary"
+                testId="browse-challenges-btn"
+                href={createUrl({ name: 'challenges' })}
+              >
+                BROWSE CHALLENGES
               </Button>
               <FreeText>It’s free!</FreeText>
             </BannerButtonWrapper>
