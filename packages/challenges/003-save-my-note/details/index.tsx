@@ -2,12 +2,12 @@ import {
   Section,
   IsolatedHtml,
   InjectingSection,
-  DefaultFrontendNotesSection,
+  HandlesTable,
+  AdditionalReq,
 } from 'ui';
 import React from 'react';
 import exampleCss from './assets/example.css';
 import exampleHTML from './assets/example.html';
-import disabledHTML from './assets/disabled.html';
 
 export function Details() {
   return (
@@ -37,46 +37,68 @@ export function Details() {
         </ul>
       </Section>
       <Section title="Acceptance Criteria">
-        <ul>
-          <li>
-            <div>Initial application state</div>
-            <IsolatedHtml
-              height={200}
-              addToggle
-              css={exampleCss}
-              html={exampleHTML}
-            />
-          </li>
-          <li>
-            Clicking on the <code>save-btn</code> button should save the{' '}
-            <code>note</code> in the API.
-          </li>
-          <li>
-            Clicking on the <code>load-btn</code> button should load the{' '}
-            <code>note</code> from the API.
-          </li>
-          <li>
-            Refreshing the page should display an empty note. Don't load it from
-            the API automatically.
-          </li>
-          <li>It should be possible to save an empty note.</li>
-          <li>
-            You can assume that the note will have less than 100 characters.
-          </li>
-          <li>
-            Disable <code>save-btn</code> and <code>load-btn</code> buttons
-            while loading or saving the note. You can always disable both
-            buttons, but it's not required.
-            <IsolatedHtml
-              height={200}
-              addToggle
-              css={exampleCss}
-              html={disabledHTML}
-            />
-          </li>
-        </ul>
+        <IsolatedHtml
+          height={200}
+          addToggle
+          css={exampleCss}
+          html={exampleHTML}
+        />
+
+        <HandlesTable
+          entries={[
+            {
+              handle: 'note',
+              type: 'form field',
+              desc: (
+                <>
+                  Represents a note field. It should include an{' '}
+                  <code>input</code> element.
+                </>
+              ),
+            },
+            {
+              handle: 'save-btn',
+              type: 'button',
+              desc: <>Saves the note to the API.</>,
+            },
+            {
+              handle: 'load-btn',
+              type: 'button',
+              desc: <>Loads the note to the API.</>,
+            },
+          ]}
+        />
+
+        <AdditionalReq
+          items={[
+            <>
+              Refreshing the page should display an empty note. Don't load it
+              from the API automatically.
+            </>,
+            <>It should be possible to save an empty note.</>,
+            <>
+              You can assume that the note will have less than 100 characters.
+            </>,
+            <>
+              Disable <code>save-btn</code> and <code>load-btn</code> buttons
+              while loading or saving the note (add a <code>disable</code>{' '}
+              attribute to the <code>{'<button>'}</code> element).
+              <br />
+              You can always disable both buttons, but it's not required.
+            </>,
+          ]}
+        />
+      </Section>{' '}
+      <Section title="Demo">
+        <video
+          style={{ width: '100%', height: 340, outline: 'none' }}
+          src={
+            'https://practice.dev/assets/003-demo.07abb3ac2098e8f9de12130a8aa5302a.mp4'
+          }
+          loop
+          controls
+        ></video>
       </Section>
-      <DefaultFrontendNotesSection />
       <InjectingSection />
     </div>
   );
