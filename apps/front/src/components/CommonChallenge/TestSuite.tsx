@@ -74,11 +74,20 @@ const _TestSuite = (props: TestSuiteProps) => {
   const { className, testCase } = props;
   const { tests, status, result } = getSubmitState.useState();
   const targetTestCase = status === 'none' ? testCase : tests;
-
+  React.useLayoutEffect(() => {
+    const running = tests.find(x => x.result === 'running');
+    if (running) {
+      document.querySelector('#test-' + running.id)!.scrollIntoView();
+    }
+  }, [tests]);
   return (
     <div className={className}>
       {targetTestCase.map(test => (
-        <TestRow key={test.id} data-test={`test-${test.id}`}>
+        <TestRow
+          key={test.id}
+          data-test={`test-${test.id}`}
+          id={`test-${test.id}`}
+        >
           <TestNumber>
             <Colored color={getTestColor(test)}>Test {test.id}:</Colored>
           </TestNumber>
