@@ -1,9 +1,4 @@
-import {
-  Section,
-  IsolatedHtml,
-  InjectingSection,
-  DefaultFrontendNotesSection,
-} from 'ui';
+import { Section, IsolatedHtml, InjectingSection, HandlesTable } from 'ui';
 import React from 'react';
 import exampleCss from './assets/example.css';
 import exampleHTML from './assets/example.html';
@@ -35,27 +30,50 @@ export function Details() {
         </ul>
       </Section>
       <Section title="Acceptance Criteria">
-        <ul>
-          <li>
-            <div>Initial application state</div>
-            <IsolatedHtml
-              height={200}
-              scripts={['https://practice.dev/assets/toggle-layer.js']}
-              css={exampleCss}
-              html={exampleHTML}
-            />
-          </li>
-          <li>
-            Clicking on <code>increase-btn</code> should increase{' '}
-            <code>count-value</code> by 1.
-          </li>
-          <li>
-            Clicking on <code>decrease-btn</code> should decrease{' '}
-            <code>count-value</code> by 1.
-          </li>
-        </ul>
+        <IsolatedHtml
+          height={200}
+          addToggle
+          css={exampleCss}
+          html={exampleHTML}
+        />
+        <HandlesTable
+          entries={[
+            {
+              handle: 'count-value',
+              type: 'text',
+              desc: 'Displays the counter value. Display 0 by default.',
+            },
+            {
+              handle: 'increase-btn',
+              type: 'button',
+              desc: (
+                <>
+                  Increases <code>count-value</code> by 1.
+                </>
+              ),
+            },
+            {
+              handle: 'increase-btn',
+              type: 'button',
+              desc: (
+                <>
+                  Decreases <code>count-value</code> by 1.
+                </>
+              ),
+            },
+          ]}
+        />
       </Section>
-      <DefaultFrontendNotesSection />
+      <Section title="Demo">
+        <video
+          style={{ width: '100%', height: 340, outline: 'none' }}
+          src={
+            'https://practice.dev/assets/001-demo.2cd7a6fff8d7170218a4741fa046746a.mp4'
+          }
+          loop
+          controls
+        ></video>
+      </Section>
       <InjectingSection />
     </div>
   );
