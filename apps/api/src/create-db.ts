@@ -1,5 +1,8 @@
+process.env.NODE_ENV = 'test';
+
 import { dynamodb } from './lib';
 import { TABLE_NAME } from './config';
+
 import os from 'os';
 
 const cpusCount = os.cpus().length;

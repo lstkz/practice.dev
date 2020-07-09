@@ -3,6 +3,8 @@ import { Response } from 'node-fetch';
 import * as R from 'remeda';
 import { AppError } from './errors';
 import { UserEntity } from '../entities';
+import { ses } from '../lib';
+import { EMAIL_SENDER } from '../config';
 
 const SECURITY = {
   SALT_LENGTH: 64,
@@ -208,4 +210,33 @@ export function intersectionBy<T, K, R>(
 ) {
   const set = new Set(other.map(fn));
   return items.filter(x => set.has(fn(x)));
+}
+
+export function sendEmail({
+  to,
+  subject,
+  message,
+}: {
+  to: string;
+  subject: string;
+  message: string;
+}) {
+  return ses
+    .sendEmail({
+      Source: EMAIL_SENDER,
+      Destination: {
+        ToAddresses: [to],
+      },
+      Message: {
+        Subject: {
+          Data: subject,
+        },
+        Body: {
+          Html: {
+            Data: message,
+          },
+        },
+      },
+    })
+    .promise();
 }

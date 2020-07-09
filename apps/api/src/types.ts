@@ -1,3 +1,6 @@
+import type { ProjectChallengeEntity } from './entities/ProjectChallengeEntity';
+import type { ChallengeEntity } from './entities/ChallengeEntity';
+
 export interface UserRegisteredEvent {
   type: 'UserRegisteredEvent';
   payload: { userId: string; registeredAt: string };
@@ -39,6 +42,8 @@ export type PropsOnly<T> = Omit<
   T,
   FunctionPropertyNames<T> | 'key' | 'colMapping'
 >;
+
+export type AnyChallenge = ProjectChallengeEntity | ChallengeEntity;
 
 /* LAMBDA TYPES */
 // from https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/aws-lambda/index.d.ts
