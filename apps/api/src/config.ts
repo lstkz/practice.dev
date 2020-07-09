@@ -10,6 +10,7 @@ if (process.env.NODE_ENV === 'test') {
   process.env.AWS_REGION = 'eu-central-1';
   process.env.AWS_ACCESS_KEY_ID = 'key';
   process.env.AWS_SECRET_ACCESS_KEY = 'secret';
+  process.env.MOCK_DB = '1';
 }
 
 if (!process.env.TABLE) {

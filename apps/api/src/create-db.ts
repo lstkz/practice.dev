@@ -1,5 +1,4 @@
 process.env.NODE_ENV = 'test';
-process.env.MOCK_DB = '1';
 
 import { dynamodb } from './lib';
 import { TABLE_NAME } from './config';
