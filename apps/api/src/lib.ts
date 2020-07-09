@@ -5,11 +5,6 @@ import { AppEvent, EntityType } from './types';
 import { Transaction } from './orm/Transaction';
 import { createBaseEntityProvider } from './orm/createBaseEntityProvider';
 
-if (process.env.NODE_ENV === 'test') {
-  process.env.AWS_ACCESS_KEY_ID = 'key';
-  process.env.AWS_SECRET_ACCESS_KEY = 'secret';
-}
-
 export const sns = new AWS.SNS({});
 export const s3 = new AWS.S3({});
 export const dynamodb = new AWS.DynamoDB({

@@ -5,9 +5,9 @@
   "scripts": {
     "tsc": "tsc --noEmit",
     "dev": "NODE_ENV=development nodemon",
-    "test": "yarn run tsc && MOCK_DB=1 ts-node -T src/create-db && yarn run jest",
+    "test": "yarn run tsc && ts-node -T src/create-db && yarn run jest",
     "build": "rm dist/*; yarn run webpack --progress --colors",
-    "jest": "MOCK_DB=1 jest"
+    "jest": "jest"
   },
   "sideEffects": false,
   "keywords": [],

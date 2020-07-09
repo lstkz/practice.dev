@@ -19,6 +19,7 @@ beforeEach(async () => {
     addSampleChallenges(),
     addSampleProjects(),
   ]);
+  await esReIndexFromDynamo('User');
   sentEmails = [];
 
   const sendEmailMock: any = (params: SES.Types.SendEmailRequest) => ({
@@ -148,7 +149,7 @@ describe('admin', () => {
     expect(sentEmails[0].msg).toMatch('bar');
   });
 
-  fit('admin should not receive an email when he comments', async () => {
+  it('admin should not receive an email when he comments', async () => {
     const comment = await createComment('1', {
       challengeId: 1,
       text: 'foo',
