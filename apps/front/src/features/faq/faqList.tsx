@@ -60,6 +60,22 @@ export const faqGroups: FaqGroup[] = [
     title: 'SOLVING CHALLENGES',
     items: [
       {
+        slug: 'how-to-test-localhost-solution',
+        title: 'How to test a localhost solution?',
+        content: (
+          <div>
+            If you want to test your solution from the localhost directly, we
+            recommend using{' '}
+            <a href="https://ngrok.com/" target="_blank">
+              ngrok.com
+            </a>
+            . However, ngrok has a slow bandwidth, and it can cause timeouts. We
+            recommend building your application to production mode and using a
+            proper region in ngrok (<code>--region</code> option).
+          </div>
+        ),
+      },
+      {
         slug: 'is-it-required-to-reuse-html-or-css-code',
         title: 'Is it required to reuse HTML or CSS code?',
         content: (
