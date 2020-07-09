@@ -109,6 +109,7 @@ const _Footer = (props: FooterProps) => {
 export const Footer = styled(_Footer)`
   display: block;
   padding: 30px 0;
+  margin-top: 30px;
   background: ${Theme.text};
   color: ${Theme.grayLight};
   a {

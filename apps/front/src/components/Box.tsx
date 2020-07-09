@@ -12,4 +12,7 @@ export const Box = styled.div<BoxProps>`
   border: 1px solid ${Theme.grayLight};
   border-radius: 5px;
   margin: 0 auto;
+  & > * {
+    margin-top: 0;
+  }
 `;
