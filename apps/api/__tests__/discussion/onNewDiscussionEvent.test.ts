@@ -1,5 +1,5 @@
 import { SES } from 'aws-sdk';
-import { resetDb } from '../helper';
+import { resetDb, esReIndexFromDynamo } from '../helper';
 import { ses } from '../../src/lib';
 import {
   registerSampleUsers,
@@ -8,6 +8,7 @@ import {
 } from '../seed-data';
 import { createComment } from '../../src/contracts/discussion/createComment';
 import { unsubscribe } from '../../src/contracts/discussion/unsubscribe';
+import { makeAdmin } from '../../src/contracts/user/makeAdmin';
 
 let sentEmails: Array<{ to: string; title: string; msg: string }> = [];
 
@@ -117,4 +118,47 @@ it('should unsubscribe and do not receive more emails', async () => {
     parentCommentId: comment.id,
   });
   expect(sentEmails).toHaveLength(0);
+});
+
+describe('admin', () => {
+  beforeEach(async () => {
+    await makeAdmin('1');
+    await esReIndexFromDynamo('User');
+  });
+
+  it('admin should receive an email on new question', async () => {
+    const comment = await createComment('2', {
+      challengeId: 1,
+      text: 'foo',
+    });
+
+    expect(sentEmails).toHaveLength(1);
+    expect(sentEmails[0].to).toEqual('user1@example.com');
+    expect(sentEmails[0].title).toEqual('New question in "foo" by user2');
+    expect(sentEmails[0].msg).toMatch('foo');
+    sentEmails.pop();
+    await createComment('2', {
+      challengeId: 1,
+      text: 'bar',
+      parentCommentId: comment.id,
+    });
+    expect(sentEmails[0].to).toEqual('user1@example.com');
+    expect(sentEmails[0].title).toEqual('New reply in "foo" by user2');
+    expect(sentEmails[0].msg).toMatch('foo');
+    expect(sentEmails[0].msg).toMatch('bar');
+  });
+
+  fit('admin should not receive an email when he comments', async () => {
+    const comment = await createComment('1', {
+      challengeId: 1,
+      text: 'foo',
+    });
+    await createComment('1', {
+      challengeId: 1,
+      text: 'bar',
+      parentCommentId: comment.id,
+    });
+
+    expect(sentEmails).toHaveLength(0);
+  });
 });

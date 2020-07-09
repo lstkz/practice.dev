@@ -1,5 +1,9 @@
+process.env.AWS_ACCESS_KEY_ID = 'key';
+process.env.AWS_SECRET_ACCESS_KEY = 'secret';
+
 import { dynamodb } from './lib';
 import { TABLE_NAME } from './config';
+
 import os from 'os';
 
 const cpusCount = os.cpus().length;
