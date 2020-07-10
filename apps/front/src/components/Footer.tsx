@@ -13,6 +13,7 @@ const Links = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
   a {
     text-decoration: none;
     margin: 8px;

@@ -3,10 +3,13 @@ import styled from 'styled-components';
 import { Container } from 'src/components/Container';
 import { Theme } from 'src/common/Theme';
 import { createUrl } from 'src/common/url';
-import { Button } from 'ui';
+import { Button, MOBILE } from 'ui';
 import { BannerSvg } from './BannerSvg';
 import Typed from 'typed.js';
 import { Logo } from 'src/components/Logo';
+import { useIsMobile } from 'src/hooks/useIsMobile';
+import { Link } from 'src/components/Link';
+import { SvgMobileWrapper } from './SvgMobileWrapper';
 
 interface TopBannerProps {
   className?: string;
@@ -22,6 +25,12 @@ const Buttons = styled.div`
   margin-left: auto;
   ${Button} + ${Button} {
     margin-left: 20px;
+  }
+  ${MOBILE} {
+    a {
+      font-size: 16px;
+      margin: 0 10px;
+    }
   }
 `;
 
@@ -68,12 +77,12 @@ const BannerButtonWrapper = styled.div`
 const FreeText = styled.div`
   color: ${Theme.green};
   font-size: 16px;
-  margin-left: 20px;
+  margin-top: 10px;
 `;
 
-const _TopBanner = (props: TopBannerProps) => {
-  const { className } = props;
+const MainMobile = styled.div``;
 
+function LeadingSlogan() {
   React.useLayoutEffect(() => {
     new Typed('#typed-text', {
       strings: ['frontend', 'backend', 'full-stack'],
@@ -82,6 +91,44 @@ const _TopBanner = (props: TopBannerProps) => {
       loop: true,
     });
   }, []);
+  return (
+    <>
+      <Title>
+        Boost your{' '}
+        <Animated>
+          <span id="typed-text"></span>
+        </Animated>{' '}
+        <br />
+        skills.
+      </Title>
+      <Desc>
+        Solve real web development challenges using favorite language and
+        technology, and learn by doing.
+      </Desc>
+      <BannerButtonWrapper>
+        <Button
+          type="primary"
+          testId="banner-register-btn"
+          href={createUrl({ name: 'register' })}
+        >
+          JOIN NOW
+        </Button>
+        <Button
+          type="secondary"
+          testId="browse-challenges-btn"
+          href={createUrl({ name: 'challenges' })}
+        >
+          BROWSE CHALLENGES
+        </Button>
+      </BannerButtonWrapper>
+      <FreeText>It’s free!</FreeText>
+    </>
+  );
+}
+
+const _TopBanner = (props: TopBannerProps) => {
+  const { className } = props;
+  const isMobile = useIsMobile();
 
   return (
     <div className={className} data-test="landing-banner">
@@ -91,58 +138,59 @@ const _TopBanner = (props: TopBannerProps) => {
             <Logo type="dark" />
           </div>
           <Buttons>
-            <Button
-              testId="top-login-btn"
-              type="secondary"
-              href={createUrl({ name: 'login' })}
-            >
-              LOGIN
-            </Button>
-            <Button
-              testId="top-register-btn"
-              type="primary"
-              href={createUrl({ name: 'register' })}
-            >
-              JOIN NOW
-            </Button>
+            {isMobile ? (
+              <>
+                <Link
+                  testId="top-login-btn"
+                  href={createUrl({ name: 'login' })}
+                >
+                  LOGIN
+                </Link>
+                {' / '}
+                <Link
+                  testId="top-register-btn"
+                  href={createUrl({ name: 'register' })}
+                >
+                  JOIN
+                </Link>
+              </>
+            ) : (
+              <>
+                <Button
+                  testId="top-login-btn"
+                  type="secondary"
+                  href={createUrl({ name: 'login' })}
+                >
+                  LOGIN
+                </Button>
+                <Button
+                  testId="top-register-btn"
+                  type="primary"
+                  href={createUrl({ name: 'register' })}
+                >
+                  JOIN NOW
+                </Button>
+              </>
+            )}
           </Buttons>
         </TopNav>
-        <Main>
-          <Left>
-            <BannerSvg />
-          </Left>
-          <Right>
-            <Title>
-              Boost your{' '}
-              <Animated>
-                <span id="typed-text"></span>
-              </Animated>{' '}
-              <br />
-              skills.
-            </Title>
-            <Desc>
-              Solve real web development challenges using favorite language and
-              technology, and learn by doing.
-            </Desc>
-            <BannerButtonWrapper>
-              <Button
-                type="primary"
-                testId="banner-register-btn"
-                href={createUrl({ name: 'register' })}
-              >
-                JOIN NOW
-              </Button>
-              <Button
-                type="secondary"
-                testId="browse-challenges-btn"
-                href={createUrl({ name: 'challenges' })}
-              >
-                BROWSE CHALLENGES
-              </Button>
-              <FreeText>It’s free!</FreeText>
-            </BannerButtonWrapper>
-          </Right>
-        </Main>
+        {isMobile ? (
+          <MainMobile>
+            <LeadingSlogan />
+            <SvgMobileWrapper>
+              <BannerSvg />
+            </SvgMobileWrapper>
+          </MainMobile>
+        ) : (
+          <Main>
+            <Left>
+              <BannerSvg />
+            </Left>
+            <Right>
+              <LeadingSlogan />
+            </Right>
+          </Main>
+        )}
       </Container>
     </div>
   );

@@ -58,3 +58,6 @@ export const Theme = {
   httpDeleteDark: '#FF2C4D',
   httpDeleteLight: '#FFDFE3',
 };
+
+export const MOBILE_MAX_WIDTH = 991;
+export const MOBILE = '@media (max-width: 991px)';

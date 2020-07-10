@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Theme } from 'src/common/Theme';
+import { MOBILE } from 'ui';
 
 interface StepProps {
   className?: string;
@@ -16,6 +17,14 @@ const Icon = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 0;
+  ${MOBILE} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: static;
+    transform: none;
+    margin: 0 20px;
+  }
 `;
 const Nr = styled.div`
   color: ${Theme.grayLight};
@@ -25,15 +34,22 @@ const Nr = styled.div`
   font-size: 24px;
   line-height: 32px;
   user-select: none;
+  ${MOBILE} {
+    position: static;
+  }
+`;
+
+const Content = styled.div`
+  text-align: left;
 `;
 
 const _Step = (props: StepProps) => {
   const { className, icon, children, nr } = props;
   return (
     <div className={className}>
-      <Icon>{icon}</Icon>
       <Nr>{nr}.</Nr>
-      {children}
+      <Icon>{icon}</Icon>
+      <Content>{children}</Content>
     </div>
   );
 };
@@ -50,4 +66,12 @@ export const Step = styled(_Step)`
   text-align: center;
   margin-bottom: 11px;
   line-height: 19px;
+
+  ${MOBILE} {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-left: 0;
+    padding: 20px;
+  }
 `;

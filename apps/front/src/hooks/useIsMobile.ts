@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
+import { MOBILE_MAX_WIDTH } from 'ui';
 
-const MOBILE_SIZE = 1024;
-
-export function useIsMobile(breakpoint = MOBILE_SIZE) {
+export function useIsMobile(breakpoint = MOBILE_MAX_WIDTH) {
   const [windowSize, setWindowSize] = useState(window.innerWidth);
 
   useEffect(() => {
