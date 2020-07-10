@@ -41,5 +41,8 @@ export const Row = styled.div<RowProps>`
   ${MOBILE} {
     margin-left: 0;
     margin-right: 0;
+    ${Col} + ${Col} {
+      margin-top: ${DEFAULT_GUTTER / 2}px;
+    }
   }
 `;
