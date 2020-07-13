@@ -62,6 +62,7 @@ jobs:
           ES_URL: ${{ secrets.PROD_ES_URL }}
           ES_USERNAME: ${{ secrets.PROD_ES_USERNAME }}
           ES_PASSWORD: ${{ secrets.PROD_ES_PASSWORD }}
+          REPORT_ERROR_EMAIL: ${{ secrets.REPORT_ERROR_EMAIL }}
           SOCKET_URL: wss://socket.practice.dev/
           API_URL: https://api.practice.dev/
           BUNDLE_BASE_URL: /
