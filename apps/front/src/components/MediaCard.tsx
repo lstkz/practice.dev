@@ -1,8 +1,10 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { Theme, Button } from 'ui';
+import { Theme, Button, MOBILE } from 'ui';
 import { Tag } from './Tag';
 import { SolvedTag } from './SolvedTag';
+import { useIsMobile } from 'src/hooks/useIsMobile';
+import { IconCounter } from './IconCounter';
 
 interface MediaCardProps {
   testId: string;
@@ -62,6 +64,25 @@ const Desc = styled.div`
   margin-top: 10px;
 `;
 
+const MobileRow1 = styled.div`
+  display: flex;
+  svg {
+    margin-right: 20px;
+  }
+`;
+const MobileRow2 = styled.div``;
+const MobileRow3 = styled.div`
+  display: flex;
+  margin-top: 10px;
+  ${IconCounter} {
+    justify-content: flex-start;
+  }
+  ${Button} {
+    margin-left: auto;
+    margin-right: 0;
+  }
+`;
+
 const _MediaCard = (props: MediaCardProps) => {
   const {
     className,
@@ -73,19 +94,38 @@ const _MediaCard = (props: MediaCardProps) => {
     stats,
     button,
   } = props;
+  const isMobile = useIsMobile();
 
   return (
     <div className={className} data-test={testId}>
-      <Col1>{icon}</Col1>
-      <Col2>
-        <Top>{title}</Top>
-        <Desc data-test="desc">{description}</Desc>
-        {tags && <Tags>{tags}</Tags>}
-      </Col2>
-      <Col3>
-        {stats}
-        {button}
-      </Col3>
+      {isMobile ? (
+        <>
+          <MobileRow1>
+            {icon} <Top>{title}</Top>
+          </MobileRow1>
+          <MobileRow2>
+            <Desc data-test="desc">{description}</Desc>
+            {tags && <Tags>{tags}</Tags>}
+          </MobileRow2>
+          <MobileRow3>
+            {stats}
+            {button}
+          </MobileRow3>
+        </>
+      ) : (
+        <>
+          <Col1>{icon}</Col1>
+          <Col2>
+            <Top>{title}</Top>
+            <Desc data-test="desc">{description}</Desc>
+            {tags && <Tags>{tags}</Tags>}
+          </Col2>
+          <Col3>
+            {stats}
+            {button}
+          </Col3>
+        </>
+      )}
     </div>
   );
 };
@@ -99,6 +139,7 @@ export const MediaCard = styled(_MediaCard)`
   margin-bottom: 20px;
   padding: 20px 20px 25px 25px;
   position: relative;
+
   ${props =>
     props.disabled &&
     css`
@@ -110,4 +151,8 @@ export const MediaCard = styled(_MediaCard)`
       border: 1px solid ${Theme.blueTag};
       background: ${Theme.lightBlue};
     `}
+
+  ${MOBILE} {
+    flex-direction: column;
+  }
 `;

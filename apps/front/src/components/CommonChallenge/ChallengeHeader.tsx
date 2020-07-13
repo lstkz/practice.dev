@@ -4,7 +4,8 @@ import { Theme } from 'src/common/Theme';
 import { Tag } from 'src/components/Tag';
 import { DomainIcon } from 'src/components/DomainIcon';
 import { ChallengeDomain } from 'shared';
-import { Button } from 'ui';
+import { Button, MOBILE } from 'ui';
+import { useIsMobile } from 'src/hooks/useIsMobile';
 
 interface ChallengeHeaderProps {
   className?: string;
@@ -54,20 +55,49 @@ const Buttons = styled.div`
   }
 `;
 
+const MobileRow1 = styled.div`
+  display: flex;
+  align-items: center;
+  svg {
+    margin-right: 20px;
+  }
+`;
+const MobileRow2 = styled.div``;
+const MobileRow3 = styled.div`
+  display: flex;
+  margin-top: 10px;
+`;
+
 const _ChallengeHeader = (props: ChallengeHeaderProps) => {
   const { className, domain, title, tags, buttons } = props;
+  const isMobile = useIsMobile();
   return (
     <div className={className}>
-      <Col1>
-        <DomainIcon domain={domain} />
-      </Col1>
-      <Col2>
-        <Title data-test="challenge-title">{title}</Title>
-        {tags && <Tags>{tags}</Tags>}
-      </Col2>
-      <Col3>
-        <Buttons>{buttons}</Buttons>
-      </Col3>
+      {isMobile ? (
+        <>
+          <MobileRow1>
+            <DomainIcon domain={domain} />
+            <Title data-test="challenge-title">{title}</Title>
+          </MobileRow1>
+          <MobileRow2>{tags && <Tags>{tags}</Tags>}</MobileRow2>
+          <MobileRow3>
+            <Buttons>{buttons}</Buttons>
+          </MobileRow3>
+        </>
+      ) : (
+        <>
+          <Col1>
+            <DomainIcon domain={domain} />
+          </Col1>
+          <Col2>
+            <Title data-test="challenge-title">{title}</Title>
+            {tags && <Tags>{tags}</Tags>}
+          </Col2>
+          <Col3>
+            <Buttons>{buttons}</Buttons>
+          </Col3>
+        </>
+      )}
     </div>
   );
 };
@@ -76,4 +106,7 @@ export const ChallengeHeader = styled(_ChallengeHeader)`
   width: 100%;
   display: flex;
   padding: 20px 30px 17px 25px;
+  ${MOBILE} {
+    flex-direction: column;
+  }
 `;

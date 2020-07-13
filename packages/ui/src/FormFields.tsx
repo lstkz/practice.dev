@@ -60,71 +60,77 @@ const TitleCell = styled.td`
   }
 `;
 
+const Scroll = styled.div`
+  overflow: auto;
+`;
 const _FormFields = (props: FormFieldsProps) => {
   const { className, entries } = props;
   return (
-    <table className={className}>
-      <tbody>
-        <tr>
-          <TitleCell colSpan={4}>Form description</TitleCell>
-        </tr>
-        {entries.map((entry, i) => (
-          <React.Fragment key={i}>
-            <tr>
-              <th>Field</th>
-              <td colSpan={3}>{entry.field}</td>
-            </tr>
-            <tr>
-              <th>Type</th>
-              <td colSpan={3}>{entry.type}</td>
-            </tr>
-            <tr>
-              <th>Description</th>
-              <td colSpan={3}>{entry.desc}</td>
-            </tr>
-            {entry.options && (
+    <Scroll>
+      <table className={className}>
+        <tbody>
+          <tr>
+            <TitleCell colSpan={4}>Form description</TitleCell>
+          </tr>
+          {entries.map((entry, i) => (
+            <React.Fragment key={i}>
               <tr>
-                <th>Options</th>
-                <td colSpan={3}>{entry.options}</td>
+                <th>Field</th>
+                <td colSpan={3}>{entry.field}</td>
               </tr>
-            )}
-            {entry.defaultValue && (
               <tr>
-                <th>Default value</th>
-                <td colSpan={3}>{entry.defaultValue}</td>
+                <th>Type</th>
+                <td colSpan={3}>{entry.type}</td>
               </tr>
-            )}
-            <tr>
-              <Th center colSpan={4}>
-                Validation Rules
-              </Th>
-            </tr>
-            <tr>
-              <th>Rule</th>
-              <th>Error Message</th>
-              <th>Condition</th>
-              <th>Async</th>
-            </tr>
-            {entry.rules.map((rule, j) => (
-              <Tr
-                key={j}
-                bottomSep={
-                  j + 1 === entry.rules.length && i + 1 !== entries.length
-                }
-              >
-                <td>{rule.rule}</td>
-                <td>{rule.error}</td>
-                <td>{rule.condition}</td>
-                <Td center>{rule.async ? 'Yes' : 'No'}</Td>
-              </Tr>
-            ))}
-          </React.Fragment>
-        ))}
-      </tbody>
-    </table>
+              <tr>
+                <th>Description</th>
+                <td colSpan={3}>{entry.desc}</td>
+              </tr>
+              {entry.options && (
+                <tr>
+                  <th>Options</th>
+                  <td colSpan={3}>{entry.options}</td>
+                </tr>
+              )}
+              {entry.defaultValue && (
+                <tr>
+                  <th>Default value</th>
+                  <td colSpan={3}>{entry.defaultValue}</td>
+                </tr>
+              )}
+              <tr>
+                <Th center colSpan={4}>
+                  Validation Rules
+                </Th>
+              </tr>
+              <tr>
+                <th>Rule</th>
+                <th>Error Message</th>
+                <th>Condition</th>
+                <th>Async</th>
+              </tr>
+              {entry.rules.map((rule, j) => (
+                <Tr
+                  key={j}
+                  bottomSep={
+                    j + 1 === entry.rules.length && i + 1 !== entries.length
+                  }
+                >
+                  <td>{rule.rule}</td>
+                  <td>{rule.error}</td>
+                  <td>{rule.condition}</td>
+                  <Td center>{rule.async ? 'Yes' : 'No'}</Td>
+                </Tr>
+              ))}
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
+    </Scroll>
   );
 };
 
 export const FormFields = styled(_FormFields)`
   width: 100%;
+  min-width: 500px;
 `;

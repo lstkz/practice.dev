@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { VoidLink } from './VoidLink';
 import { CloseIcon } from 'src/icons/CloseIcon';
-import { Theme } from 'ui';
+import { Theme, MOBILE } from 'ui';
 
 interface AppBannerProps {
   className?: string;
@@ -31,6 +31,9 @@ const Close = styled(VoidLink)`
   display: flex;
   align-items: center;
   justify-content: center;
+  ${MOBILE} {
+    right: 10px;
+  }
 `;
 
 const _AppBanner = (props: AppBannerProps) => {
@@ -50,7 +53,7 @@ export const AppBanner = styled(_AppBanner)`
   align-items: center;
   justify-content: center;
   box-shadow: 0px 1px 3px #0000001c;
-  padding: 15px;
+  padding: 15px 40px;
   position: relative;
   position: sticky;
   top: 0;

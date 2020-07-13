@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useUser } from 'src/hooks/useUser';
 import { Avatar } from 'src/components/Avatar';
 import { Title } from 'src/components/Title';
-import { Theme, Button } from 'ui';
+import { Theme, Button, MOBILE } from 'ui';
 import { VoidLink } from 'src/components/VoidLink';
 import { Input } from 'src/components/Input';
 import { Alert } from 'src/components/Alert';
@@ -39,13 +39,6 @@ const CommentWrapper = styled.div`
   }
 `;
 
-const Bottom = styled.div`
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
 const Buttons = styled.div`
   display: flex;
   ${VoidLink} {
@@ -53,6 +46,28 @@ const Buttons = styled.div`
   }
   ${Button} {
     margin-left: 10px;
+  }
+  ${MOBILE} {
+    flex-direction: column;
+    width: 100%;
+    ${Button} {
+      margin-left: 0;
+      margin-top: 10px;
+      width: 100%;
+    }
+  }
+`;
+
+const Bottom = styled.div`
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  ${MOBILE} {
+    ${Buttons} {
+      margin-top: 10px;
+    }
+    flex-wrap: wrap;
   }
 `;
 
