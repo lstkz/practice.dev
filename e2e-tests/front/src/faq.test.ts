@@ -11,7 +11,7 @@ beforeEach(async () => {
 it('should open faq and navigate', async () => {
   await page.goto(WEBSITE_URL + '/faq');
 
-  await $('@faq-title').expect.toMatch('What Is practice.dev?');
+  await $('@faq-title').expect.toMatch('What is practice.dev?');
   await $('@side-menu-whats-the-license-for-solutions').click();
   await $('@faq-title').expect.toMatch(
     'What is the license for the solutions I post?'

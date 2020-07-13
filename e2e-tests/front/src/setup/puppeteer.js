@@ -18,10 +18,10 @@ async function launch({ headless }) {
   return await puppeteer.launch(
     process.env.AWS
       ? {
-          args: chromium.args,
-          defaultViewport: chromium.defaultViewport,
+          args: [...chromium.args, '--window-size=1920,1080'],
           executablePath: await chromium.executablePath,
           headless,
+          defaultViewport: null,
         }
       : {
           args: [
