@@ -6,7 +6,7 @@ import { ProjectsSmallIcon } from 'src/icons/ProjectsSmallIcon';
 import { createUrl } from 'src/common/url';
 import { getProjectState } from '../interface';
 import { Breadcrumb } from 'src/components/Breadcrumb';
-import { Theme, Button } from 'ui';
+import { Theme, Button, MOBILE } from 'ui';
 import styled from 'styled-components';
 import { PageLoader } from 'src/components/PageLoader';
 import { Title } from 'src/components/Title';
@@ -29,6 +29,9 @@ const Challenges = styled.div`
   background: white;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
+  ${MOBILE} {
+    padding: 30px;
+  }
 `;
 
 export function ProjectView() {

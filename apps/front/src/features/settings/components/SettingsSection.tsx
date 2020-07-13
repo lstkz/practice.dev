@@ -21,4 +21,5 @@ const _SettingsSection = (props: SettingsSectionProps) => {
 export const SettingsSection = styled(_SettingsSection)`
   display: block;
   margin-bottom: 40px;
+  padding: 0 40px;
 `;

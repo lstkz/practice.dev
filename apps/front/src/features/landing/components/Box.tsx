@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Title } from 'src/components/Title';
+import { MOBILE } from 'ui';
 
 interface BoxProps {
   className?: string;
@@ -38,4 +39,7 @@ const _Box = (props: BoxProps) => {
 export const Box = styled(_Box)`
   display: flex;
   margin-top: 50px;
+  ${MOBILE} {
+    margin-top: 20px;
+  }
 `;

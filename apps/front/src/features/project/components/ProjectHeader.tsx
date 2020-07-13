@@ -1,11 +1,13 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Theme, MOBILE } from 'ui';
 import { getProjectState } from '../interface';
 import { DomainIcon } from 'src/components/DomainIcon';
 import { SubmissionStats } from 'src/components/SubmissionStats';
 import { useProjectStats } from 'src/hooks/useProjectStats';
 import { SolvedTag } from 'src/components/SolvedTag';
+import { useIsMobile } from 'src/hooks/useIsMobile';
+import { IconCounter } from 'src/components/IconCounter';
 
 interface ProjectHeaderProps {
   className?: string;
@@ -52,28 +54,65 @@ const Desc = styled.div`
   white-space: pre-line;
 `;
 
+const MobileRow1 = styled.div`
+  display: flex;
+  align-items: center;
+  svg {
+    margin-right: 20px;
+  }
+`;
+const MobileRow2 = styled.div``;
+const MobileRow3 = styled.div`
+  display: flex;
+  margin-top: 10px;
+  ${IconCounter} {
+    justify-content: flex-start;
+  }
+`;
+
 const _ProjectHeader = (props: ProjectHeaderProps) => {
   const { className } = props;
   const { project } = getProjectState.useState();
   const { solved, submissions } = useProjectStats(project);
+  const isMobile = useIsMobile();
 
   return (
     <div className={className} data-test="project">
-      <Col1>
-        <DomainIcon domain={project.domain} />
-      </Col1>
-      <Col2>
-        <Title data-test="title">{project.title}</Title>
-        <Desc>{project.description}</Desc>
-      </Col2>
-      <Col3>
-        <Col3Inner>
-          <SubmissionStats submissions={submissions} solved={solved} />
-          {project.solvedPercent > 0 && (
-            <SolvedTag percent={project.solvedPercent} large />
-          )}
-        </Col3Inner>
-      </Col3>
+      {isMobile ? (
+        <>
+          <MobileRow1>
+            <DomainIcon domain={project.domain} />
+            <Title data-test="title">{project.title}</Title>
+            {project.solvedPercent > 0 && (
+              <SolvedTag percent={project.solvedPercent} large />
+            )}
+          </MobileRow1>
+          <MobileRow2>
+            <Desc>{project.description}</Desc>
+          </MobileRow2>
+          <MobileRow3>
+            <SubmissionStats submissions={submissions} solved={solved} />
+          </MobileRow3>
+        </>
+      ) : (
+        <>
+          <Col1>
+            <DomainIcon domain={project.domain} />
+          </Col1>
+          <Col2>
+            <Title data-test="title">{project.title}</Title>
+            <Desc>{project.description}</Desc>
+          </Col2>
+          <Col3>
+            <Col3Inner>
+              <SubmissionStats submissions={submissions} solved={solved} />
+              {project.solvedPercent > 0 && (
+                <SolvedTag percent={project.solvedPercent} large />
+              )}
+            </Col3Inner>
+          </Col3>
+        </>
+      )}
     </div>
   );
 };
@@ -86,4 +125,7 @@ export const ProjectHeader = styled(_ProjectHeader)`
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
   border-bottom: 1px solid ${Theme.grayLight};
+  ${MOBILE} {
+    flex-direction: column;
+  }
 `;

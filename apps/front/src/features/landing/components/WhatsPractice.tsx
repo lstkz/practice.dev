@@ -10,6 +10,7 @@ import { OpenSourceIcon } from 'src/icons/OpenSourceIcon';
 import { TwoPeopleIcon } from 'src/icons/TwoPeopleIcon';
 import { ProjectsIcon } from 'src/icons/ProjectsIcon';
 import { SetupIcon } from 'src/icons/SetupIcon';
+import { MOBILE } from 'ui';
 
 interface WhatsPracticeProps {
   className?: string;
@@ -20,6 +21,9 @@ const Title = styled.h2`
   margin: 0;
   color: ${Theme.textDark};
   font-weight: normal;
+  ${MOBILE} {
+    margin-bottom: 30px;
+  }
 `;
 
 const _WhatsPractice = (props: WhatsPracticeProps) => {

@@ -13,7 +13,7 @@ import { CommentItem } from './CommentItem';
 import { ConfirmModalActions } from 'src/features/confirmModal/interface';
 import { useUser } from 'src/hooks/useUser';
 import { LoadMoreButton } from 'src/components/LoadMoreButton';
-import { Theme } from 'ui';
+import { Theme, MOBILE } from 'ui';
 import { GlobalActions } from 'src/features/global/interface';
 import { DiscussionSymbol } from '../symbol';
 
@@ -201,6 +201,10 @@ const LoaderWrapper = styled.div`
 
 const Wrapper = styled.div`
   padding: 40px 50px;
+
+  ${MOBILE} {
+    padding: 20px 25px;
+  }
 `;
 
 const NoData = styled.div`

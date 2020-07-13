@@ -15,6 +15,7 @@ export const Theme = {
   bgLightGray9: '#F7F9FE',
   bgLightGray10: '#FAFBFF',
   bgLightGray11: '#F8F9FB',
+  bgSelectedMenu: '#4c5767',
   border: '#8590A3',
   grayLight: '#D4D6DB',
   gray: '#8590A3',
@@ -58,3 +59,6 @@ export const Theme = {
   httpDeleteDark: '#FF2C4D',
   httpDeleteLight: '#FFDFE3',
 };
+
+export const MOBILE_MAX_WIDTH = 991;
+export const MOBILE = '@media (max-width: 991px)';

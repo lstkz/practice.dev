@@ -69,7 +69,15 @@ export function MenuDropdown(props: MenuDropdownProps) {
         {open =>
           open &&
           (animatedStyle => (
-            <Popper placement={placement || 'bottom-start'}>
+            <Popper
+              modifiers={{
+                preventOverflow: {
+                  enabled: true,
+                  boundariesElement: document.body,
+                },
+              }}
+              placement={placement || 'bottom-start'}
+            >
               {({ ref, style, placement: _placement }) => (
                 <DropdownWrapper
                   ref={ref}

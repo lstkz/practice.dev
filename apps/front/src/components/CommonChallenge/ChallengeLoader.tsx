@@ -107,6 +107,7 @@ const _ChallengeLoader = (props: ChallengeLoaderProps) => {
 
 export const ChallengeLoader = styled(_ChallengeLoader)`
   display: block;
+  overflow: hidden;
   ${TabContent} {
     margin-top: 50px;
   }

@@ -172,6 +172,7 @@ export const Input = styled(_Input)`
     line-height: 1.5;
     display: block;
     width: 100%;
+    max-width: 100%;
     height: 40px;
     padding: 10px;
     transition: border-color 0.2s ease;

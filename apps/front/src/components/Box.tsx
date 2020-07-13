@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Theme, MOBILE } from 'ui';
 
 interface BoxProps {
   full?: boolean;
@@ -14,5 +14,9 @@ export const Box = styled.div<BoxProps>`
   margin: 0 auto;
   & > * {
     margin-top: 0;
+  }
+
+  ${MOBILE} {
+    width: 100%;
   }
 `;

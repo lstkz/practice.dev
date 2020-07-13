@@ -2,9 +2,10 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Container } from 'src/components/Container';
 import { Theme } from 'src/common/Theme';
-import { Button } from 'ui';
+import { Button, MOBILE } from 'ui';
 import { ReadyToCodeSvg } from './ReadyToCodeSvg';
 import { createUrl } from 'src/common/url';
+import { SvgMobileWrapper } from './SvgMobileWrapper';
 
 interface ReadyToCodeProps {
   className?: string;
@@ -19,6 +20,12 @@ const Inner = styled.div`
   align-items: center;
   justify-content: space-between;
   position: relative;
+
+  ${MOBILE} {
+    height: auto;
+    flex-direction: column;
+    padding: 30px 15px;
+  }
 `;
 
 const Text = styled.div`
@@ -33,7 +40,9 @@ const _ReadyToCode = (props: ReadyToCodeProps) => {
       <Container>
         <Inner>
           <Text>Ready to code?</Text>
-          <ReadyToCodeSvg />
+          <SvgMobileWrapper>
+            <ReadyToCodeSvg />
+          </SvgMobileWrapper>
           <Button
             testId="start-coding-register-btn"
             type="primary"
@@ -56,5 +65,13 @@ export const ReadyToCode = styled(_ReadyToCode)`
     left: 50%;
     top: -50px;
     transform: translateX(-50%);
+  }
+  ${MOBILE} {
+    padding: 40px 30px;
+    svg {
+      position: static;
+      transform: none;
+      margin: 30px 0 40px;
+    }
   }
 `;

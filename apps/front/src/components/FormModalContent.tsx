@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Title } from './Title';
+import { MOBILE } from 'ui';
 
 interface FormModalContentProps {
   className?: string;
@@ -24,4 +25,8 @@ const _FormModalContent = (props: FormModalContentProps) => {
 
 export const FormModalContent = styled(_FormModalContent)`
   padding: 40px 50px 30px;
+
+  ${MOBILE} {
+    padding: 20px 25px 15px;
+  }
 `;

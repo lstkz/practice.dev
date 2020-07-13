@@ -17,6 +17,11 @@ import { Title } from 'src/components/Title';
 const Wrapper = styled(Box)`
   width: 100%;
   padding: 0;
+  overflow: scroll;
+
+  ${TwoColLayout} {
+    min-width: 800px;
+  }
 `;
 
 const Top = styled.div`

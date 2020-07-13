@@ -54,6 +54,7 @@ const LoaderWrapper = styled.div`
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 20000;
 `;
 
 export const RouteResolver = () => {

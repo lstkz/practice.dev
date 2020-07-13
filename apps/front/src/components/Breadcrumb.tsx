@@ -17,6 +17,7 @@ const Sep = styled.span`
 
 const _Breadcrumb = (props: BreadcrumbProps) => {
   const { className, icon, root, details, url } = props;
+
   return (
     <div className={className}>
       {icon}

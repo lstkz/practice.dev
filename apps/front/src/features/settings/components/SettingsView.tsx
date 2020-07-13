@@ -28,9 +28,10 @@ const Wrapper = styled.div`
 `;
 
 const TabContent = styled.div`
-  width: 350px;
+  max-width: 430px;
   padding-bottom: 40px;
   padding-top: 40px;
+  width: 100%;
   margin: 0 auto;
 `;
 

@@ -4,6 +4,7 @@ import styled, { css, keyframes } from 'styled-components';
 import { Manager, Reference, Popper } from 'react-popper';
 import { Theme } from 'ui';
 import { Portal } from './Portal';
+import { useIsMobile } from 'src/hooks/useIsMobile';
 
 const shakeAnimation = keyframes`
   0% { transform: translate(30px); }
@@ -50,6 +51,20 @@ const Error = styled.div<{ placement?: PopperJS.Placement }>`
     `}
 `;
 
+const InlineError = styled.div`
+  background: ${Theme.red};
+  box-shadow: 0px 3px 6px #00000029;
+  border-radius: 4px;
+  border-radius: 4px;
+  padding: 0 12px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  color: white;
+  margin-bottom: 15px;
+  margin-top: -15px;
+`;
+
 interface ErrorTooltip {
   id: string;
   isVisible: boolean;
@@ -60,6 +75,19 @@ interface ErrorTooltip {
 
 export function ErrorTooltip(props: ErrorTooltip) {
   const { isVisible, error, children, id, testId } = props;
+  const isMobile = useIsMobile();
+  if (isMobile) {
+    return (
+      <>
+        {children({ ref: () => {} })}
+        {isVisible && (
+          <InlineError data-test={testId} role="alert" id={id}>
+            {error}
+          </InlineError>
+        )}
+      </>
+    );
+  }
 
   return (
     <Manager>

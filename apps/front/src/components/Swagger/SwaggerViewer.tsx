@@ -19,6 +19,7 @@ export function SwaggerViewer(props: SwaggerViewerProps) {
     <SwaggerContext.Provider value={spec}>
       <TwoColLayout
         width={230}
+        hideMobile
         relative
         left={<SwaggerMenu />}
         right={

@@ -6,6 +6,8 @@ import { AppErrorBanner } from './AppErrorBanner';
 import { ConfirmModalView } from 'src/features/confirmModal/components/ConfirmModal';
 import { ConfirmEmailWarning } from './ConfirmEmailWarning';
 import { AppSuccessBanner } from './AppSuccessBanner';
+import { useIsMobile } from 'src/hooks/useIsMobile';
+import { MobileHeader } from './MobileHeader';
 
 interface DashboardProps {
   className?: string;
@@ -18,10 +20,12 @@ const Content = styled.div`
 
 const _Dashboard = (props: DashboardProps) => {
   const { className, children } = props;
+  const isMobile = useIsMobile();
+
   return (
     <>
       <div className={className}>
-        <Header />
+        {isMobile ? <MobileHeader /> : <Header />}
         <Content>
           <AppSuccessBanner />
           <AppErrorBanner />

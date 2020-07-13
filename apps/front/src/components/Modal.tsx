@@ -3,7 +3,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import { CSSTransition } from 'react-transition-group';
 import { VoidLink } from './VoidLink';
 import { CloseIcon } from 'src/icons/CloseIcon';
-import { Theme } from 'ui';
+import { Theme, MOBILE } from 'ui';
 import { FocusContainer } from './FocusContainer';
 import { modalGlobalContext } from './ModalGlobalContext';
 
@@ -49,6 +49,10 @@ const ModalContent = styled.div`
   border-radius: 4px;
   position: relative;
   outline: none;
+
+  ${MOBILE} {
+    width: 95vw;
+  }
 `;
 
 const ModalBody = styled.div`

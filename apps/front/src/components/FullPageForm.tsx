@@ -4,6 +4,7 @@ import { Theme } from '../common/Theme';
 import { Logo } from './Logo';
 import { Modal } from './Modal';
 import { Title } from './Title';
+import { MOBILE } from 'ui';
 
 interface AuthFormProps {
   className?: string;
@@ -52,6 +53,12 @@ const Wrapper = styled.div`
 
   @media (max-width: 500px) {
     width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  ${MOBILE} {
+    padding-top: 40px;
   }
 `;
 

@@ -78,6 +78,7 @@ const TabTitle = styled.li<{ active: boolean; type?: TabsType }>`
   border-bottom: 1px solid ${Theme.grayLight};
   list-style: none;
   line-height: 19px;
+  white-space: nowrap;
 
   ${VoidLink} {
     text-align: center;
@@ -122,6 +123,7 @@ const TabTitle = styled.li<{ active: boolean; type?: TabsType }>`
 
 export const Tabs = styled(_Tabs)`
   > ul {
+    overflow: auto;
     width: 100%;
     margin: 0;
     padding: 0;

@@ -8,6 +8,14 @@ import { AuthData } from 'shared';
 import { RouterActions } from 'typeless-router';
 import { BUNDLE_BASE_URL } from 'src/config';
 
+export class UnreachableCaseError extends Error {
+  constructor(val: never) {
+    super(
+      `Unreachable case: ${typeof val === 'string' ? val : JSON.stringify(val)}`
+    );
+  }
+}
+
 function fixErrorMessage(message: string) {
   if (message === 'is required') {
     return 'This field is required';
@@ -220,4 +228,42 @@ export function loadBundle(detailsBundleS3Key: string) {
       removeBundle();
     };
   });
+}
+
+export function opacityHex(hex: string, opacity: number) {
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, (m, r, g, b) => {
+    return r + r + g + g + b + b;
+  });
+
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) {
+    throw new Error('Invalid hex: ' + hex);
+  }
+
+  const parts = [
+    parseInt(result[1], 16),
+    parseInt(result[2], 16),
+    parseInt(result[3], 16),
+    opacity,
+  ];
+  return `rgba(${parts.join(', ')})`;
+}
+
+export function isMenuHighlighted(
+  pathname: string,
+  menu: 'challenges' | 'projects' | 'contents' | 'settings'
+) {
+  switch (menu) {
+    case 'challenges':
+      return pathname === '/' || pathname.startsWith('/challenges');
+    case 'projects':
+      return pathname.startsWith('/projects');
+    case 'contents':
+      return pathname.startsWith('/contests');
+    case 'settings':
+      return pathname.startsWith('/settings');
+    default:
+      throw new UnreachableCaseError(menu);
+  }
 }

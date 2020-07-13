@@ -6,7 +6,7 @@ import {
   PublicProfileActions,
 } from '../interface';
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Theme, MOBILE } from 'ui';
 import { Container } from 'src/components/Container';
 import { Dashboard } from 'src/components/Dashboard';
 import { Tabs, Tab } from 'src/components/Tabs';
@@ -25,10 +25,16 @@ const Wrapper = styled.div`
   display: flex;
   min-height: 500px;
   background: ${Theme.bgLightGray10};
+  ${MOBILE} {
+    flex-direction: column;
+  }
 `;
 
 const Left = styled.div`
   width: 300px;
+  ${MOBILE} {
+    width: 100%;
+  }
 `;
 const Right = styled.div`
   border-left: 1px solid ${Theme.grayLight};
@@ -38,6 +44,10 @@ const Right = styled.div`
     min-height: 600px;
     border-bottom-right-radius: 5px;
     padding: 30px 50px;
+  }
+  ${MOBILE} {
+    border-left: none;
+    border-top: 1px solid ${Theme.grayLight};
   }
 `;
 

@@ -5,7 +5,7 @@ import * as DateFns from 'date-fns';
 import { Avatar } from 'src/components/Avatar';
 import { Link } from 'src/components/Link';
 import { createUrl } from 'src/common/url';
-import { Theme } from 'ui';
+import { Theme, MOBILE } from 'ui';
 import { VoidLink } from 'src/components/VoidLink';
 import { AddComment } from './AddComment';
 import { MenuDropdown } from 'src/components/MenuDropdown';
@@ -33,6 +33,9 @@ const Top = styled.div`
 
 const Ago = styled.span`
   color: ${Theme.textLight};
+  ${MOBILE} {
+    display: none;
+  }
 `;
 
 const Text = styled.div`
@@ -143,6 +146,9 @@ const Toolbar = styled.div`
 
 const SubComments = styled.div`
   margin: 20px;
+  ${MOBILE} {
+    margin: 10px;
+  }
 `;
 
 const _CommentItem = (props: CommentItemProps) => {
