@@ -18,6 +18,12 @@ export const login = createContract('user.login')
   })
   .fn(async values => {
     const { emailOrUsername } = values;
+    if (
+      emailOrUsername === 'simulateError' &&
+      values.password === 'simulateError'
+    ) {
+      throw new Error('Simulate internal error');
+    }
     const userId = await UserEntity.getUserIdByEmailOrUsernameOrNull(
       emailOrUsername
     );
