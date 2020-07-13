@@ -60,7 +60,10 @@ const _MobileHeader = (props: MobileHeaderProps) => {
         <MobileSidebar onClose={() => setIsSidebarOpen(false)} />
       )}
       <div className={className}>
-        <MenuButton onClick={() => setIsSidebarOpen(true)}>
+        <MenuButton
+          data-test="mobile-menu"
+          onClick={() => setIsSidebarOpen(true)}
+        >
           <MenuIcon />
         </MenuButton>
         <Center>
@@ -68,13 +71,11 @@ const _MobileHeader = (props: MobileHeaderProps) => {
         </Center>
         <Right>
           {user ? (
-            <Avatar
-              border
-              avatarUrl={user.avatarUrl}
-              data-test="header-avatar"
-            />
+            <Avatar border avatarUrl={user.avatarUrl} testId="header-avatar" />
           ) : (
-            <Link href={createUrl({ name: 'login' })}>Login</Link>
+            <Link testId="header-login" href={createUrl({ name: 'login' })}>
+              Login
+            </Link>
           )}
         </Right>
       </div>

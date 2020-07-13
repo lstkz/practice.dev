@@ -2,7 +2,6 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Link } from './Link';
 import { Theme } from 'src/common/Theme';
-import { usePageTitle } from 'src/contexts/PageTitleContext';
 
 interface BreadcrumbProps {
   className?: string;
@@ -18,15 +17,7 @@ const Sep = styled.span`
 
 const _Breadcrumb = (props: BreadcrumbProps) => {
   const { className, icon, root, details, url } = props;
-  const { setTitle } = usePageTitle();
 
-  React.useLayoutEffect(() => {
-    if (details) {
-      setTitle(details.toString());
-    } else {
-      setTitle(root.toString());
-    }
-  }, [details, root]);
   return (
     <div className={className}>
       {icon}

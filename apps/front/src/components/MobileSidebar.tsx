@@ -112,7 +112,7 @@ const _MobileSidebar = (props: MobileSidebarProps) => {
   return (
     <div className={className} data-test="mobile-sidebar">
       <LogoLight />
-      <Close onClick={onClose}>
+      <Close onClick={onClose} data-test="close">
         <CloseIcon scale={2} />
       </Close>
 
@@ -120,12 +120,13 @@ const _MobileSidebar = (props: MobileSidebarProps) => {
         {user ? (
           <>
             <Avatar size="large" border avatarUrl={user.avatarUrl} />
-            <Username>{user.username}</Username>
+            <Username data-test="username">{user.username}</Username>
           </>
         ) : (
           <>
-            <Username>Hello Visitor!</Username>
+            <Username data-test="username">Hello Visitor!</Username>
             <Button
+              testId="register"
               type="primary"
               onClick={onClose}
               href={createUrl({ name: 'register' })}
@@ -155,6 +156,7 @@ const _MobileSidebar = (props: MobileSidebarProps) => {
       </List>
       {user ? (
         <Logout
+          data-test="logout"
           onClick={() => {
             logout();
             onClose();
@@ -165,7 +167,13 @@ const _MobileSidebar = (props: MobileSidebarProps) => {
       ) : (
         <Bottom>
           Have an account?{' '}
-          <Link href={createUrl({ name: 'login' })}>Login</Link>
+          <Link
+            testId="login"
+            onClick={onClose}
+            href={createUrl({ name: 'login' })}
+          >
+            Login
+          </Link>
         </Bottom>
       )}
     </div>
