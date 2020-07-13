@@ -15,7 +15,8 @@ import { getRouterState } from 'typeless-router';
 import { Button } from 'ui';
 import { LoginActions } from 'src/features/login/interface';
 import { RegisterActions } from 'src/features/register/interface';
-import { getAvatarUrl } from 'src/common/helper';
+import { Avatar } from './Avatar';
+import { isMenuHighlighted } from 'src/common/helper';
 
 interface HeaderProps {
   className?: string;
@@ -85,19 +86,6 @@ const UserInfo = styled(VoidLink)`
   }
 `;
 
-const Avatar = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: ${Theme.gray4};
-  border: 1px solid ${Theme.gray3};
-  img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-  }
-`;
-
 const Buttons = styled.div`
   display: flex;
   align-items: center;
@@ -123,15 +111,13 @@ const _Header = (props: HeaderProps) => {
             <Logo type="light" />
           </Brand>
           <Nav>
-            <NavItem
-              active={pathname === '/' || pathname.startsWith('/challenges')}
-            >
+            <NavItem active={isMenuHighlighted(pathname, 'challenges')}>
               <Link href={createUrl({ name: 'challenges' })}>Challenges</Link>
             </NavItem>
-            <NavItem active={pathname.startsWith('/projects')}>
+            <NavItem active={isMenuHighlighted(pathname, 'projects')}>
               <Link href={createUrl({ name: 'projects' })}>Projects</Link>
             </NavItem>
-            <NavItem active={pathname.startsWith('/contests')}>
+            <NavItem active={isMenuHighlighted(pathname, 'contents')}>
               <Link href={createUrl({ name: 'contests' })}>Contests</Link>
             </NavItem>
           </Nav>
@@ -170,11 +156,11 @@ const _Header = (props: HeaderProps) => {
                 }
               >
                 <UserInfo>
-                  <Avatar data-test="header-avatar">
-                    {user.avatarUrl && (
-                      <img src={getAvatarUrl(user.avatarUrl, 'sm')!} />
-                    )}
-                  </Avatar>
+                  <Avatar
+                    border
+                    testId="header-avatar"
+                    avatarUrl={user.avatarUrl}
+                  />
                   <Username data-test="current-username">
                     {user.username}
                   </Username>

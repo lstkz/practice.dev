@@ -51,10 +51,11 @@ const Col3 = styled.div`
 `;
 
 const Tags = styled.div`
-margin-top: 15px;
-  ${Tag} + ${Tag} {
-    margin-left: 10px;
-  } 
+  margin-top: 15px;
+  ${Tag} {
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
 `;
 
 const Desc = styled.div`

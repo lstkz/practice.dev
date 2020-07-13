@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Theme, MOBILE } from 'ui';
 
 interface FilterLayoutProps {
   className?: string;
@@ -32,4 +32,14 @@ const _FilterLayout = (props: FilterLayoutProps) => {
 
 export const FilterLayout = styled(_FilterLayout)`
   display: flex;
+  ${MOBILE} {
+    ${Left} {
+      width: 100%;
+      border: none;
+      padding: 0;
+    }
+    ${Right} {
+      display: none;
+    }
+  }
 `;

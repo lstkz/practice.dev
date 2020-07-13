@@ -21,6 +21,11 @@ const Buttons = styled.div`
   }
 `;
 
+const IframeWrapper = styled.div`
+  width: 100%;
+  overflow: auto;
+`;
+
 export function IsolatedHtml(props: IsolatedHtmlProps) {
   const [isHTMLVisible, setIsHTMLVisible] = React.useState(false);
   const [isCSSVisible, setIsCSSVisible] = React.useState(false);
@@ -69,10 +74,18 @@ export function IsolatedHtml(props: IsolatedHtmlProps) {
       >
         <Highlight code={html} lang="html" />
       </Modal>
-      <iframe
-        style={{ border: '1px dashed #ccc', width: '100%', height }}
-        ref={iframeRef}
-      />
+      <IframeWrapper>
+        <iframe
+          style={{
+            border: '1px dashed #ccc',
+            overflow: 'auto',
+            width: '100%',
+            minWidth: 600,
+            height,
+          }}
+          ref={iframeRef}
+        />
+      </IframeWrapper>
       <Buttons>
         <Button type="secondary" onClick={() => setIsHTMLVisible(true)}>
           Show HTML

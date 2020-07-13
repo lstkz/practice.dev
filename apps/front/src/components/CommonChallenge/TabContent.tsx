@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Theme, MOBILE } from 'ui';
 
 interface TabContentProps {
   className?: string;
@@ -34,4 +34,14 @@ const _TabContent = (props: TabContentProps) => {
 export const TabContent = styled(_TabContent)`
   display: flex;
   padding: 40px 0;
+  ${MOBILE} {
+    padding: 20px 0;
+    ${Col1} {
+      padding: 0 20px;
+      width: 100%;
+    }
+    ${Col2} {
+      display: none;
+    }
+  }
 `;
