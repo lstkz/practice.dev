@@ -15,6 +15,8 @@ import { useUser } from 'src/hooks/useUser';
 import { Avatar } from './Avatar';
 import { useActions } from 'typeless';
 import { GlobalActions } from 'src/features/global/interface';
+import { GearIcon } from 'src/icons/GearIcon';
+import { ProfileIcon } from 'src/icons/ProfileIcon';
 
 interface MobileSidebarProps {
   className?: string;
@@ -153,6 +155,28 @@ const _MobileSidebar = (props: MobileSidebarProps) => {
             <ContestsIcon /> Contests
           </Link>
         </ListItem>
+        {user && (
+          <>
+            <ListItem
+              active={
+                pathname ===
+                createUrl({ name: 'profile', username: user.username })
+              }
+            >
+              <Link
+                onClick={onClose}
+                href={createUrl({ name: 'profile', username: user.username })}
+              >
+                <ProfileIcon /> My Profile
+              </Link>
+            </ListItem>
+            <ListItem active={isMenuHighlighted(pathname, 'settings')}>
+              <Link onClick={onClose} href={createUrl({ name: 'settings' })}>
+                <GearIcon /> Settings
+              </Link>
+            </ListItem>
+          </>
+        )}
       </List>
       {user ? (
         <Logout

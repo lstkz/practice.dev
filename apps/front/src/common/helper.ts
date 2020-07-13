@@ -252,7 +252,7 @@ export function opacityHex(hex: string, opacity: number) {
 
 export function isMenuHighlighted(
   pathname: string,
-  menu: 'challenges' | 'projects' | 'contents'
+  menu: 'challenges' | 'projects' | 'contents' | 'settings'
 ) {
   switch (menu) {
     case 'challenges':
@@ -261,6 +261,8 @@ export function isMenuHighlighted(
       return pathname.startsWith('/projects');
     case 'contents':
       return pathname.startsWith('/contests');
+    case 'settings':
+      return pathname.startsWith('/settings');
     default:
       throw new UnreachableCaseError(menu);
   }

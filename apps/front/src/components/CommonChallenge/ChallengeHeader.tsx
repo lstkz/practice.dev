@@ -43,9 +43,10 @@ const Title = styled.h3`
 
 const Tags = styled.div`
   margin-top: 14px;
-  ${Tag} + ${Tag} {
-    margin-left: 10px;
-  } 
+  ${Tag} {
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
 `;
 
 const Buttons = styled.div`

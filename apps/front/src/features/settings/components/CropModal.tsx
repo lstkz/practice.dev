@@ -311,7 +311,7 @@ function ModalContent() {
   }, []);
   return (
     <>
-      <Title mt="lg" mb="md">
+      <Title mt="lg" mb="md" center>
         Crop Image
       </Title>
       <Wrapper>

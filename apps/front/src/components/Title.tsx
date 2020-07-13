@@ -30,7 +30,7 @@ interface TitleProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const _Title = (props: TitleProps) => {
-  const { center, mb, href, link, testId, ...rest } = props;
+  const { center, mb, href, link, testId, mt, ...rest } = props;
   if (link && !href) {
     return <VoidLink testId={testId} {...(rest as any)} />;
   }

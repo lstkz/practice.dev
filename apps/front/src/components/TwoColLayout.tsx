@@ -1,6 +1,6 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Theme } from 'ui';
+import styled, { css } from 'styled-components';
+import { Theme, MOBILE } from 'ui';
 
 interface TwoColLayoutProps {
   className?: string;
@@ -8,6 +8,7 @@ interface TwoColLayoutProps {
   left: React.ReactChild;
   right: React.ReactChild;
   relative?: boolean;
+  hideMobile?: boolean;
 }
 
 const Left = styled.div`
@@ -40,4 +41,17 @@ export const TwoColLayout = styled(_TwoColLayout)`
   ${Right} {
     width: calc(100% - ${props => props.width}px);
   }
+  ${props =>
+    props.hideMobile &&
+    css`
+      ${MOBILE} {
+        ${Left} {
+          display: none;
+        }
+        ${Right} {
+          width: 100%;
+          padding: 0 20px;
+        }
+      }
+    `}
 `;

@@ -2,7 +2,7 @@ import { SettingsSection } from './SettingsSection';
 import * as Rx from 'src/rx';
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { Theme, Button } from 'ui';
+import { Theme, Button, MOBILE } from 'ui';
 import { getSettingsState } from '../interface';
 import { createModule, useActions } from 'typeless';
 import { PictureSectionSymbol } from '../symbol';
@@ -151,6 +151,17 @@ const Buttons = styled.div`
   align-items: center;
   ${Button} + ${Button} {
     margin-left: 10px;
+  }
+
+  ${MOBILE} {
+    flex-direction: column;
+    ${Button} {
+      width: 100%;
+    }
+    ${Button} + ${Button} {
+      margin-left: 0;
+      margin-top: 10px;
+    }
   }
 `;
 
