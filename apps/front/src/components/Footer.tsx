@@ -97,6 +97,10 @@ const _Footer = (props: FooterProps) => {
           >
             Privacy Policy
           </Link>
+          {' | '}
+          <a target="_blank" href="https://github.com/practice-dev">
+            GitHub
+          </a>
         </Links>
         <BottomSep />
         <Bottom>

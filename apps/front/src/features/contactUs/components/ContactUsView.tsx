@@ -115,7 +115,18 @@ export function ContactUsView() {
                 You can also send a message directly at{' '}
                 <a target="_blank" href="mailto:contact@practice.dev">
                   contact@practice.dev
+                </a>{' '}
+                <br />
+                or
+                <br />
+                create an issue on GitHub{' '}
+                <a
+                  target="_blank"
+                  href="https://github.com/practice-dev/practice-dev/issues/new"
+                >
+                  here
                 </a>
+                .
               </Bottom>
             </Wrapper>
           </form>
