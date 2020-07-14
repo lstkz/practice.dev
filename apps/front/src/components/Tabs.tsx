@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { Theme } from 'src/Theme';
+import { Theme, MOBILE } from 'src/Theme';
 import { VoidLink } from './VoidLink';
 
 type TabsType = 'default' | 'minimal';
@@ -123,7 +123,6 @@ const TabTitle = styled.li<{ active: boolean; type?: TabsType }>`
 
 export const Tabs = styled(_Tabs)`
   > ul {
-    overflow: auto;
     width: 100%;
     margin: 0;
     padding: 0;
@@ -137,6 +136,9 @@ export const Tabs = styled(_Tabs)`
         ? 50
         : 80}px;
     border-bottom: 1px solid ${Theme.grayLight};
+    ${MOBILE} {
+      overflow: auto;
+    }
   }
 
   ${props =>
