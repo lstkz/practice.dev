@@ -39,7 +39,9 @@ const Nr = styled.div`
 `;
 
 const Content = styled.div`
-  text-align: left;
+  ${MOBILE} {
+    text-align: left;
+  }
 `;
 
 const _Step = (props: StepProps) => {
