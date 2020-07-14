@@ -13,9 +13,9 @@ import { CommentItem } from './CommentItem';
 import { ConfirmModalActions } from 'src/features/confirmModal/interface';
 import { useUser } from 'src/hooks/useUser';
 import { LoadMoreButton } from 'src/components/LoadMoreButton';
-import { Theme, MOBILE } from 'ui';
 import { GlobalActions } from 'src/features/global/interface';
 import { DiscussionSymbol } from '../symbol';
+import { MOBILE, Theme } from 'src/Theme';
 
 export const [handle, DiscussionActions, getDiscussionState] = createModule(
   DiscussionSymbol

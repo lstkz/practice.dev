@@ -1,11 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Container } from 'src/components/Container';
-import { Theme } from 'src/common/Theme';
-import { Button, MOBILE } from 'ui';
+import { Theme } from 'src/Theme';
 import { ReadyToCodeSvg } from './ReadyToCodeSvg';
 import { createUrl } from 'src/common/url';
 import { SvgMobileWrapper } from './SvgMobileWrapper';
+import { MOBILE } from 'src/Theme';
+import { Button } from 'src/components/Button';
 
 interface ReadyToCodeProps {
   className?: string;

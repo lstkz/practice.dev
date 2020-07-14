@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { MOBILE } from 'ui';
+
+import { MOBILE } from 'src/Theme';
 
 interface RowProps {
   children?: React.ReactNode;

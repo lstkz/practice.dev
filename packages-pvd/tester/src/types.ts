@@ -1,4 +1,4 @@
-import { SocketMessage } from 'shared';
+import { SocketMessage } from '@pvd/types';
 import { Tester } from './Tester';
 import { Page } from 'puppeteer';
 

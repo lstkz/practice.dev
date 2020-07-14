@@ -1,5 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
-import { Theme } from './Theme';
+import { BaseTheme } from './BaseTheme';
 
 export const GlobalStyle = createGlobalStyle`
 *,
@@ -22,8 +22,8 @@ body
     line-height: 1.7;
     margin: 0;
     text-align: left;
-    color: ${Theme.text};
-    background-color: ${Theme.bgLightGray4};
+    color: ${BaseTheme.text};
+    background-color: ${BaseTheme.bgLightGray};
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -36,7 +36,7 @@ body, input, textarea {
 }
 
 a {
-  color: ${Theme.blue};
+  color: ${BaseTheme.blue};
   text-decoration: none;
   &:hover {
     text-decoration: underline;

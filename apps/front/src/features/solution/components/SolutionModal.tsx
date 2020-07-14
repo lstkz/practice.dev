@@ -6,7 +6,7 @@ import { useSolutionModule } from '../module';
 import { FormModalContent } from 'src/components/FormModalContent';
 import { SolutionForm } from './SolutionForm';
 import { ViewSolution } from './ViewSolution';
-import { Spinner } from 'ui';
+import { Spinner } from '@pvd/ui';
 import styled from 'styled-components';
 import { useSolutionOrNull } from 'src/features/globalSolutions/useSolutions';
 

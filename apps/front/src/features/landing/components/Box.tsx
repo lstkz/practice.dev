@@ -1,7 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Title } from 'src/components/Title';
-import { MOBILE } from 'ui';
+
+import { MOBILE } from 'src/Theme';
 
 interface BoxProps {
   className?: string;

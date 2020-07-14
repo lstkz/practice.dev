@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 import { createUrl } from 'src/common/url';
 import { Link } from './Link';
 import { Container } from './Container';
@@ -97,6 +97,10 @@ const _Footer = (props: FooterProps) => {
           >
             Privacy Policy
           </Link>
+          {' | '}
+          <a target="_blank" href="https://github.com/practice-dev">
+            GitHub
+          </a>
         </Links>
         <BottomSep />
         <Bottom>

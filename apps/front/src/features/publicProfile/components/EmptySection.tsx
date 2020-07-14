@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 
 export const EmptySection = styled.div`
   padding: 16px 20px;

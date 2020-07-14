@@ -7,7 +7,7 @@ import LoadingBar from 'react-top-loading-bar';
 import { RouteConfig } from '../types';
 import { getGlobalState, GlobalActions } from '../features/global/interface';
 import { usePrevious } from '../hooks/usePrevious';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 import { getOutputStream } from 'src/registry';
 import styled from 'styled-components';
 import { globalLoader } from 'src/common/globalLoader';

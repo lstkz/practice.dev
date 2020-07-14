@@ -1,6 +1,6 @@
 import React from 'react';
 import { useChangePasswordModule } from '../module';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import {
   useChangePasswordForm,
   ChangePasswordFormProvider,

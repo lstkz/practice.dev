@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useUser } from 'src/hooks/useUser';
 import { Avatar } from 'src/components/Avatar';
 import { Title } from 'src/components/Title';
-import { Theme, Button, MOBILE } from 'ui';
 import { VoidLink } from 'src/components/VoidLink';
 import { Input } from 'src/components/Input';
 import { Alert } from 'src/components/Alert';
@@ -12,6 +11,8 @@ import { api } from 'src/services/api';
 import { useActions } from 'typeless';
 import { DiscussionActions, getDiscussionState } from './DiscussionTab';
 import { GlobalActions } from 'src/features/global/interface';
+import { Theme, MOBILE } from 'src/Theme';
+import { Button } from 'src/components/Button';
 
 interface AddCommentProps {
   className?: string;

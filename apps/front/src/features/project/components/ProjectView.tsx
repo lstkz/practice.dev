@@ -6,7 +6,6 @@ import { ProjectsSmallIcon } from 'src/icons/ProjectsSmallIcon';
 import { createUrl } from 'src/common/url';
 import { getProjectState } from '../interface';
 import { Breadcrumb } from 'src/components/Breadcrumb';
-import { Theme, Button, MOBILE } from 'ui';
 import styled from 'styled-components';
 import { PageLoader } from 'src/components/PageLoader';
 import { Title } from 'src/components/Title';
@@ -16,6 +15,8 @@ import { DomainIcon } from 'src/components/DomainIcon';
 import { LockIcon } from 'src/icons/LockIcon';
 import { SolvedTag } from 'src/components/SolvedTag';
 import { SubmissionStats } from 'src/components/SubmissionStats';
+import { Theme, MOBILE } from 'src/Theme';
+import { Button } from 'src/components/Button';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};

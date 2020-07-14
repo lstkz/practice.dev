@@ -8,7 +8,6 @@ import {
 } from '../interface';
 import { useActions } from 'typeless';
 import styled from 'styled-components';
-import { Theme, Button } from 'ui';
 import { Container } from 'src/components/Container';
 import { Breadcrumb } from 'src/components/Breadcrumb';
 import { ProjectsSmallIcon } from 'src/icons/ProjectsSmallIcon';
@@ -34,6 +33,8 @@ import { VoidLink } from 'src/components/VoidLink';
 import { useDiscussionModule } from 'src/components/CommonChallenge/Discussion/DiscussionTab';
 import { useApiSpecModule } from 'src/components/CommonChallenge/ApiSpecTab';
 import { DiscussionUnsubscribe } from 'src/components/DiscussionUnsubscribe';
+import { Theme } from 'src/Theme';
+import { Button } from 'src/components/Button';
 
 const Wrapper = styled.div`
   border: 1px solid ${Theme.grayLight};

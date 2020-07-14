@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 import React from 'react';
 import { VoidLink } from './VoidLink';
 import { Link } from './Link';

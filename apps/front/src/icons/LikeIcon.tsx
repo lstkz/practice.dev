@@ -1,5 +1,5 @@
 import React from 'react';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 
 export function LikeIcon({ size, empty }: { size: string; empty?: boolean }) {
   if (empty) {

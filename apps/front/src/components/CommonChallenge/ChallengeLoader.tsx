@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import ContentLoader from 'react-content-loader';
 import { TabContent } from './TabContent';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 
 interface ChallengeLoaderProps {
   className?: string;

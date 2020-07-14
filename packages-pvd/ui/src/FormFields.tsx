@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { Theme } from './Theme';
 
 interface ValidationRule {
   rule: string;
@@ -24,13 +23,12 @@ interface FormFieldsProps {
 }
 
 const Tr = styled.tr<{ bottomSep?: boolean }>`
-  ${props =>
+  ${(props) =>
     props.bottomSep &&
     css`
       && {
         th,
         td {
-          /* border-bottom-color: ${Theme.border}; */
           border-bottom-width: 4px;
         }
       }
@@ -38,14 +36,14 @@ const Tr = styled.tr<{ bottomSep?: boolean }>`
 `;
 
 const Th = styled.th<{ center?: boolean }>`
-  ${props =>
+  ${(props) =>
     props.center &&
     css`
       text-align: center;
     `}
 `;
 const Td = styled.td<{ center?: boolean }>`
-  ${props =>
+  ${(props) =>
     props.center &&
     css`
       text-align: center;

@@ -2,7 +2,7 @@ import React from 'react';
 import { useConfirmModalModule } from '../module';
 import { useActions } from 'typeless';
 import { ConfirmModalActions, getConfirmModalState } from '../interface';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import { Modal } from 'src/components/Modal';
 import styled from 'styled-components';
 import { FormModalContent } from 'src/components/FormModalContent';

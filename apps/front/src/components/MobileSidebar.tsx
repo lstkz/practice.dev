@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 import { VoidLink } from './VoidLink';
 import { LogoLight } from 'src/icons/LogoLight';
 import { CloseIcon } from 'src/icons/CloseIcon';
-import { Theme, Button } from 'ui';
 import { isMenuHighlighted } from 'src/common/helper';
 import { getRouterState } from 'typeless-router';
 import { createUrl } from 'src/common/url';
@@ -17,6 +16,8 @@ import { useActions } from 'typeless';
 import { GlobalActions } from 'src/features/global/interface';
 import { GearIcon } from 'src/icons/GearIcon';
 import { ProfileIcon } from 'src/icons/ProfileIcon';
+import { Theme } from 'src/Theme';
+import { Button } from './Button';
 
 interface MobileSidebarProps {
   className?: string;

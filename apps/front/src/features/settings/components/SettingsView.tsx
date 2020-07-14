@@ -6,7 +6,7 @@ import { Tabs, Tab } from 'src/components/Tabs';
 import { useActions } from 'typeless';
 import { Container } from 'src/components/Container';
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 import { PictureSection } from './PictureSection';
 import { PageLoader } from 'src/components/PageLoader';
 import { PublicProfileSection } from './PublicProfileSection';

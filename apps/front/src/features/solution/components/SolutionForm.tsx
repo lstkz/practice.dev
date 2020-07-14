@@ -9,7 +9,7 @@ import { useActions, useMappedState } from 'typeless';
 import { Alert } from 'src/components/Alert';
 import { FormInput } from 'src/components/FormInput';
 import { AsyncCreatableFormSelect } from 'src/components/FormSelect';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import styled from 'styled-components';
 
 const ShareInput = styled.input`

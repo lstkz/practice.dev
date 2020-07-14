@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Theme } from './Theme';
+import { BaseTheme } from './BaseTheme';
 
 interface SectionProps {
   title: string;
@@ -31,7 +31,7 @@ const Wrapper = styled.div`
     th,
     td {
       padding: 10px 15px;
-      border: 1px solid ${Theme.bgLightGray};
+      border: 1px solid ${BaseTheme.bgLightGray};
     }
   }
 `;
@@ -40,9 +40,9 @@ const Title = styled.h2`
   margin: 0 0 10px;
   font-weight: 600;
   font-size: 20px;
-  color: ${Theme.textDark};
+  color: ${BaseTheme.textDark};
   padding-bottom: 5px;
-  border-bottom: 1px solid ${Theme.bgLightGray};
+  border-bottom: 1px solid ${BaseTheme.bgLightGray};
 `;
 
 export function Section(props: SectionProps) {

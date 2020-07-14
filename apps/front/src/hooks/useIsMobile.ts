@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MOBILE_MAX_WIDTH } from 'ui';
+import { MOBILE_MAX_WIDTH } from 'src/Theme';
 
 export function useIsMobile(breakpoint = MOBILE_MAX_WIDTH) {
   const [windowSize, setWindowSize] = useState(window.screen.width);

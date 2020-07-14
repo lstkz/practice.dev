@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 import { SwaggerContext } from './SwaggerContext';
 import { SchemaViewer } from '../SchemaViewer/SchemaViewer';
 import { IntersectionWrapper } from './IntersectionWrapper';

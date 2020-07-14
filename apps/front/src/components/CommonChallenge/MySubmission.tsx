@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Submission, SubmissionStatus } from 'shared';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 import { Tag } from 'src/components/Tag';
 import * as DateFns from 'date-fns';
 

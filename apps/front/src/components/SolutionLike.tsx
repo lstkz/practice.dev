@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { VoidLink } from './VoidLink';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 import { Solution } from 'shared';
 import { LikeIcon } from 'src/icons/LikeIcon';
 import ReactTooltip from 'react-tooltip';

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 import { Tag } from 'src/components/Tag';
 import { DomainIcon } from 'src/components/DomainIcon';
 import { ChallengeDomain } from 'shared';
-import { Button, MOBILE } from 'ui';
 import { useIsMobile } from 'src/hooks/useIsMobile';
+import { Button } from '../Button';
+import { MOBILE } from 'src/Theme';
 
 interface ChallengeHeaderProps {
   className?: string;

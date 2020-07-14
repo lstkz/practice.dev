@@ -1,5 +1,5 @@
 import http from 'http';
-import { S } from 'schema';
+import { S } from '@pvd/schema';
 import { Tester } from '../Tester';
 import { getBody, TEST_PORT } from './helper';
 import { TestNotifier } from './TestNotifier';
@@ -30,10 +30,10 @@ describe('api', () => {
         res.end();
       }
     });
-    await new Promise(resolve => server.listen(TEST_PORT, resolve));
+    await new Promise((resolve) => server.listen(TEST_PORT, resolve));
   });
 
-  afterAll(done => {
+  afterAll((done) => {
     server.close(done);
   });
 

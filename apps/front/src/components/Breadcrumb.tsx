@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Link } from './Link';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 
 interface BreadcrumbProps {
   className?: string;

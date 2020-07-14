@@ -1,7 +1,7 @@
 import { TestConfiguration, Notifier } from './types';
 import { Tester } from './Tester';
 import { getBrowser } from './getBrowser';
-import { TestInfo } from 'shared';
+import { TestInfo } from '@pvd/types';
 import { Browser } from 'puppeteer';
 import { TestError } from './TestError';
 import { isPuppeteerTimeout } from './helper';
@@ -41,7 +41,7 @@ export async function runTests(
 
   let success = true;
 
-  const serialized: TestInfo[] = tester.tests.map(test => ({
+  const serialized: TestInfo[] = tester.tests.map((test) => ({
     id: test.id,
     name: test.name,
     result: 'pending',
@@ -93,7 +93,7 @@ export async function runTests(
   await notifier.notify({ type: 'RESULT', meta, payload: { success } });
   await notifier.flush();
 
-  Object.values(createdBrowsers).forEach(browser => {
+  Object.values(createdBrowsers).forEach((browser) => {
     try {
       browser.close();
     } catch (e) {

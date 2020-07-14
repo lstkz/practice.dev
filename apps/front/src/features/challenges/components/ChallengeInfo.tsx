@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import { Challenge } from 'shared';
 import { createUrl } from 'src/common/url';
 import { SolvedTag } from 'src/components/SolvedTag';

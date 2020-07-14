@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 import { Logo } from './Logo';
 import { Container } from './Container';
 import { Link } from './Link';
@@ -12,7 +12,7 @@ import { useActions } from 'typeless';
 import { GlobalActions } from 'src/features/global/interface';
 import { useUser } from 'src/hooks/useUser';
 import { getRouterState } from 'typeless-router';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import { LoginActions } from 'src/features/login/interface';
 import { RegisterActions } from 'src/features/register/interface';
 import { Avatar } from './Avatar';

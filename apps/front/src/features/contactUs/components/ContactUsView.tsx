@@ -6,7 +6,7 @@ import { useActions } from 'typeless';
 import { createUrl } from 'src/common/url';
 import { Box } from 'src/components/Box';
 import { SuccessFilledIcon } from 'src/icons/SuccessFilledIcon';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import { ContactUsFormActions, ContactUsFormProvider } from '../contactUs-form';
 import { Container } from 'src/components/Container';
 import { Breadcrumb } from 'src/components/Breadcrumb';
@@ -115,7 +115,18 @@ export function ContactUsView() {
                 You can also send a message directly at{' '}
                 <a target="_blank" href="mailto:contact@practice.dev">
                   contact@practice.dev
+                </a>{' '}
+                <br />
+                or
+                <br />
+                create an issue on GitHub{' '}
+                <a
+                  target="_blank"
+                  href="https://github.com/practice-dev/practice-dev/issues/new"
+                >
+                  here
                 </a>
+                .
               </Bottom>
             </Wrapper>
           </form>

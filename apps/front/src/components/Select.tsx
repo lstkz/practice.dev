@@ -5,7 +5,7 @@ import ReactSelectCreatable, {
   Props as CreatableProps,
 } from 'react-select/creatable';
 import { Props } from 'react-select/src/Select';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 import { createGlobalStyle } from 'styled-components';
 import AsyncPaginate, {
   Props as AsyncPaginateProps,

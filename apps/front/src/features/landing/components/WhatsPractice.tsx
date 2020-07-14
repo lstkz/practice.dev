@@ -4,13 +4,14 @@ import { Container } from 'src/components/Container';
 import { Row, Col } from 'src/components/Grid';
 import { Box } from './Box';
 import { TrophyIcon } from 'src/icons/TrophyIcon';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 import { AutomaticTestingIcon } from 'src/icons/AutomaticTestingIcon';
 import { OpenSourceIcon } from 'src/icons/OpenSourceIcon';
 import { TwoPeopleIcon } from 'src/icons/TwoPeopleIcon';
 import { ProjectsIcon } from 'src/icons/ProjectsIcon';
 import { SetupIcon } from 'src/icons/SetupIcon';
-import { MOBILE } from 'ui';
+
+import { MOBILE } from 'src/Theme';
 
 interface WhatsPracticeProps {
   className?: string;

@@ -1,10 +1,11 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { Theme, Button, MOBILE } from 'ui';
 import { Tag } from './Tag';
 import { SolvedTag } from './SolvedTag';
 import { useIsMobile } from 'src/hooks/useIsMobile';
 import { IconCounter } from './IconCounter';
+import { Button } from './Button';
+import { Theme, MOBILE } from 'src/Theme';
 
 interface MediaCardProps {
   testId: string;

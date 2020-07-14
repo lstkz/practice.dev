@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import StyledComponents from 'styled-components';
-import * as ui from 'ui';
+import * as ui from '@pvd/ui';
 
 const global = window as any;
 

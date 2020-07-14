@@ -1,15 +1,16 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Container } from 'src/components/Container';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 import { createUrl } from 'src/common/url';
-import { Button, MOBILE } from 'ui';
 import { BannerSvg } from './BannerSvg';
 import Typed from 'typed.js';
 import { Logo } from 'src/components/Logo';
 import { useIsMobile } from 'src/hooks/useIsMobile';
 import { Link } from 'src/components/Link';
 import { SvgMobileWrapper } from './SvgMobileWrapper';
+import { Button } from 'src/components/Button';
+import { MOBILE } from 'src/Theme';
 
 interface TopBannerProps {
   className?: string;
