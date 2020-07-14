@@ -1,7 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'src/common/Theme';
-import { MOBILE } from 'ui';
+import { Theme, MOBILE } from 'src/Theme';
 
 interface StepProps {
   className?: string;

@@ -2,9 +2,9 @@ import * as R from 'remeda';
 import http from 'http';
 import Url from 'url';
 import crypto from 'crypto';
-import { Schema, Convert, getValidateResult } from 'schema';
+import { Schema, Convert, getValidateResult } from '@pvd/schema';
 import { TestError } from './TestError';
-import { formatErrors } from 'schema/src/utils';
+import { formatErrors } from '@pvd/schema/src/utils';
 import { makeUrl, getRequest, tryParse } from './helper';
 import { Test, StepNotifier, PageFactory } from './types';
 import { TesterPage } from './TesterPage';
@@ -119,9 +119,9 @@ export class Tester {
           method: options.method,
           headers,
         },
-        res => {
+        (res) => {
           let body = '';
-          res.on('data', chunk => {
+          res.on('data', (chunk) => {
             body += chunk;
             if (body.length > maxBodyLength) {
               clearTimeout(timeoutId);
@@ -138,7 +138,7 @@ export class Tester {
       if (serializedBody) {
         req.write(serializedBody);
       }
-      req.on('error', e => {
+      req.on('error', (e) => {
         reject(new TestError('Cannot connect to server: ' + e.message));
       });
       req.end();
@@ -149,7 +149,7 @@ export class Tester {
           req.abort();
         } catch (ignore) {}
       }, defaultApiTimeout);
-    }).then(async ret => {
+    }).then(async (ret) => {
       await this.stepNotifier.notify(`Response from request ${id}`, {
         status: ret[1].statusCode,
         body: ret[0],

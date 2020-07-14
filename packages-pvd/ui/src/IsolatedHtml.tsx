@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from './Button';
+import { BaseButton } from './BaseButton';
 import styled from 'styled-components';
 import { Modal } from './Modal';
 import { Highlight } from './Highlight';
@@ -47,13 +47,13 @@ export function IsolatedHtml(props: IsolatedHtmlProps) {
     const style = document.createElement('style');
     style.innerHTML = css;
     head.appendChild(style);
-    (scripts || []).forEach(src => {
+    (scripts || []).forEach((src) => {
       const script = document.createElement('script');
       script.type = 'text/javascript';
       script.src = src;
       document.body.appendChild(script);
     });
-    document.body.addEventListener('click', e => {
+    document.body.addEventListener('click', (e) => {
       e.preventDefault();
     });
   }, [html, css, scripts ? scripts.join() : null]);
@@ -87,12 +87,12 @@ export function IsolatedHtml(props: IsolatedHtmlProps) {
         />
       </IframeWrapper>
       <Buttons>
-        <Button type="secondary" onClick={() => setIsHTMLVisible(true)}>
+        <BaseButton type="secondary" onClick={() => setIsHTMLVisible(true)}>
           Show HTML
-        </Button>
-        <Button type="secondary" onClick={() => setIsCSSVisible(true)}>
+        </BaseButton>
+        <BaseButton type="secondary" onClick={() => setIsCSSVisible(true)}>
           Show CSS
-        </Button>
+        </BaseButton>
       </Buttons>
     </>
   );

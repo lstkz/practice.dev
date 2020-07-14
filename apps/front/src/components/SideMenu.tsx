@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { VoidLink, VoidLinkProps } from './VoidLink';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 import { Link } from './Link';
 
 export interface SideMenuItem {

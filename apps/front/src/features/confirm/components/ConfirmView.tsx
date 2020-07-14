@@ -1,6 +1,6 @@
 import React from 'react';
 import { useConfirmModule } from '../module';
-import { Spinner } from 'ui';
+import { Spinner } from '@pvd/ui';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`

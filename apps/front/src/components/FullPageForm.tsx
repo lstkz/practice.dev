@@ -1,10 +1,11 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { Theme } from '../common/Theme';
+import { Theme } from '../Theme';
 import { Logo } from './Logo';
 import { Modal } from './Modal';
 import { Title } from './Title';
-import { MOBILE } from 'ui';
+
+import { MOBILE } from 'src/Theme';
 
 interface AuthFormProps {
   className?: string;

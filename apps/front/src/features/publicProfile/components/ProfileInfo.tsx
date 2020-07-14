@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { getPublicProfileState } from '../interface';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 import { LinkIcon } from 'src/icons/LinkIcon';
 import { countryList } from 'shared';
 import { getAvatarUrl } from 'src/common/helper';

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
 import { Row, Col } from './Grid';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import { GithubIcon } from 'src/icons/GithubIcon';
 import { GoogleIcon } from 'src/icons/GoogleIcon';
 import { GITHUB_CLIENT_ID, GOOGLE_CLIENT_ID } from 'src/config';

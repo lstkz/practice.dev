@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 import { VoidLink } from './VoidLink';
 
 type TabsType = 'default' | 'minimal';

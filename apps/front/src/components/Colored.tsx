@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 
 export const Colored = styled.span<{
   color: 'red' | 'green' | 'green2' | 'pink' | 'none';

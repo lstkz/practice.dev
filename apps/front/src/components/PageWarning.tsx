@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 import { WarningIcon } from 'src/icons/WarningIcon';
 
 interface PageWarningProps {

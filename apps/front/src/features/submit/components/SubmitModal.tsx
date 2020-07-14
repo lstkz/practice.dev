@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal } from 'src/components/Modal';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import { useActions } from 'typeless';
 import styled from 'styled-components';
 import { VoidLink } from 'src/components/VoidLink';

@@ -5,7 +5,6 @@ import * as DateFns from 'date-fns';
 import { Avatar } from 'src/components/Avatar';
 import { Link } from 'src/components/Link';
 import { createUrl } from 'src/common/url';
-import { Theme, MOBILE } from 'ui';
 import { VoidLink } from 'src/components/VoidLink';
 import { AddComment } from './AddComment';
 import { MenuDropdown } from 'src/components/MenuDropdown';
@@ -17,6 +16,7 @@ import {
 import { DotsIcon } from 'src/icons/DotsIcon';
 import { useActions } from 'typeless';
 import { DiscussionActions } from './DiscussionTab';
+import { Theme, MOBILE } from 'src/Theme';
 
 interface CommentItemProps {
   className?: string;

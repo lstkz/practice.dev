@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { ChallengeDomain } from 'shared';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 import { VoidLink } from './VoidLink';
 import { Link } from './Link';
 

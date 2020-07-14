@@ -6,7 +6,7 @@ import {
 } from './PictureSection';
 import { useActions } from 'typeless';
 import styled, { createGlobalStyle } from 'styled-components';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import ReactCrop from 'react-image-crop';
 import { Alert } from 'src/components/Alert';
 import { Title } from 'src/components/Title';

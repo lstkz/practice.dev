@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { Theme } from '../common/Theme';
+import { Theme } from '../Theme';
 import { ErrorTooltip } from './ErrorTooltip';
 import { FormLabel } from './FormLabel';
 import { FormDescription } from './FormDescription';

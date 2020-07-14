@@ -7,7 +7,6 @@ import { Breadcrumb } from 'src/components/Breadcrumb';
 import { ContestsIcon } from 'src/icons/ContestsIcon';
 import { createUrl } from 'src/common/url';
 import styled from 'styled-components';
-import { Theme, Button } from 'ui';
 import { TrophyIcon } from 'src/icons/TrophyIcon';
 import { FormInput } from 'src/components/FormInput';
 import { useActions } from 'typeless';
@@ -15,6 +14,8 @@ import { getContestsState } from '../interface';
 import { SuccessFilledIcon } from 'src/icons/SuccessFilledIcon';
 import { Alert } from 'src/components/Alert';
 import { Box } from 'src/components/Box';
+import { Theme } from 'src/Theme';
+import { Button } from 'src/components/Button';
 
 const TrophyWrapper = styled.div`
   text-align: center;

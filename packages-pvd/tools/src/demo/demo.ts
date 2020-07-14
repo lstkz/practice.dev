@@ -27,7 +27,7 @@ function createEntry(basedir: string, componentPath: string) {
     `
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ChallengeDemo } from 'ui';
+import { ChallengeDemo } from '@pvd/ui';
 import { Details } from '${componentPath}';
 
 const MOUNT_NODE = document.getElementById('root')!;
@@ -187,7 +187,7 @@ export async function demo(options: BuildSourcesOptions) {
     quiet: true,
   });
   const port = Number(process.env.PORT || 8011);
-  server.listen(port, '0.0.0.0', err => {
+  server.listen(port, '0.0.0.0', (err) => {
     if (err) {
       throw err;
     }

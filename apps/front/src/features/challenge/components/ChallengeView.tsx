@@ -10,7 +10,7 @@ import {
   ChallengeTab,
 } from '../interface';
 import styled from 'styled-components';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 import { Container } from 'src/components/Container';
 import { Tab, Tabs } from 'src/components/Tabs';
 import { useActions } from 'typeless';
@@ -21,7 +21,7 @@ import { useSolutionsModule, SolutionsTab } from './SolutionsTab';
 import { ChallengeLoader } from 'src/components/CommonChallenge/ChallengeLoader';
 import { ChallengeHeader } from 'src/components/CommonChallenge/ChallengeHeader';
 import { ChallengeTags } from 'src/components/ChallengeTags';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import { SubmitActions } from 'src/features/submit/interface';
 import { SolutionActions } from 'src/features/solution/interface';
 import {

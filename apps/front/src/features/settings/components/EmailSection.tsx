@@ -10,7 +10,7 @@ import { SettingsSection } from './SettingsSection';
 import { FormInput } from 'src/components/FormInput';
 import { Alert } from 'src/components/Alert';
 import { SuccessFilledIcon } from 'src/icons/SuccessFilledIcon';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import { useUser } from 'src/hooks/useUser';
 import { getGlobalState } from 'src/features/global/interface';
 

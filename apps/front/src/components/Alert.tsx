@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 import React from 'react';
 
 interface AlertProps {

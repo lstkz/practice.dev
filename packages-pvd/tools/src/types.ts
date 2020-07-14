@@ -1,4 +1,4 @@
-import { TestInfo } from 'shared';
+import { TestInfo } from '@pvd/types';
 
 export type Domain = 'frontend' | 'backend' | 'fullstack' | 'styling';
 export type Difficulty = 'easy' | 'medium' | 'hard';

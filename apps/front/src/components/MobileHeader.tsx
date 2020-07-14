@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 import { VoidLink } from './VoidLink';
 import { MenuIcon } from 'src/icons/MenuIcon';
 import { LogoLight } from 'src/icons/LogoLight';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ReactTooltip from 'react-tooltip';
 import styled from 'styled-components';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 
 interface IconCounterProps {
   className?: string;

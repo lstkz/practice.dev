@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Solution } from 'shared';
 import { Tag } from 'src/components/Tag';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 import { useActions } from 'typeless';
 import { SolutionLike } from 'src/components/SolutionLike';
 import { Link } from 'src/components/Link';

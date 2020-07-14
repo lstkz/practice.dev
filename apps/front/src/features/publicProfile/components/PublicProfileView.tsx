@@ -6,7 +6,6 @@ import {
   PublicProfileActions,
 } from '../interface';
 import styled from 'styled-components';
-import { Theme, MOBILE } from 'ui';
 import { Container } from 'src/components/Container';
 import { Dashboard } from 'src/components/Dashboard';
 import { Tabs, Tab } from 'src/components/Tabs';
@@ -17,6 +16,7 @@ import { SolutionsTab, useSolutionsModule } from './SolutionsTab';
 import { SolutionModal } from 'src/features/solution/components/SolutionModal';
 import { LikesTab, useLikesModule } from './LikesTab';
 import { PageLoader } from 'src/components/PageLoader';
+import { Theme, MOBILE } from 'src/Theme';
 
 const Wrapper = styled.div`
   margin-top: 30px;

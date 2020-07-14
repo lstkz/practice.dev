@@ -14,11 +14,11 @@ import { SelectOption } from 'src/types';
 import { FormInput } from 'src/components/FormInput';
 import { FormSelect } from 'src/components/FormSelect';
 import { countryList, urlRegex } from 'shared';
-import { Button } from 'ui';
 import { api } from 'src/services/api';
 import { Alert } from 'src/components/Alert';
 import { SuccessFilledIcon } from 'src/icons/SuccessFilledIcon';
 import { getSettingsState } from '../interface';
+import { Button } from 'src/components/Button';
 
 export const [
   handle,

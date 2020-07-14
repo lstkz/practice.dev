@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { VoidLink } from './VoidLink';
 import { CloseIcon } from 'src/icons/CloseIcon';
-import { Theme, MOBILE } from 'ui';
+import { MOBILE, Theme } from 'src/Theme';
 
 interface AppBannerProps {
   className?: string;

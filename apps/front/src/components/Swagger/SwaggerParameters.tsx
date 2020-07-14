@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { SwaggerParameter } from 'src/types';
 import { Tabs, Tab } from '../Tabs';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 
 interface SwaggerParametersProps {
   className?: string;

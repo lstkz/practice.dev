@@ -3,7 +3,7 @@ process.env.DEFAULT_WAIT_TIME = '100';
 import http from 'http';
 import { TestConfiguration, Notifier } from '../types';
 import { runTests } from '../runTests';
-import { SocketMessage } from 'shared';
+import { SocketMessage } from '@pvd/types';
 import { initFrontendServer, TEST_PORT } from './helper';
 
 class TestNotifier implements Notifier {
@@ -26,7 +26,7 @@ describe('frontend single page', () => {
     server = await initFrontendServer(TEST_PORT, () => html);
   });
 
-  afterAll(async done => {
+  afterAll(async (done) => {
     server.close(done);
   });
 

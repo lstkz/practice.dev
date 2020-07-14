@@ -1,6 +1,5 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme, MOBILE } from 'ui';
 import { getProjectState } from '../interface';
 import { DomainIcon } from 'src/components/DomainIcon';
 import { SubmissionStats } from 'src/components/SubmissionStats';
@@ -8,6 +7,7 @@ import { useProjectStats } from 'src/hooks/useProjectStats';
 import { SolvedTag } from 'src/components/SolvedTag';
 import { useIsMobile } from 'src/hooks/useIsMobile';
 import { IconCounter } from 'src/components/IconCounter';
+import { Theme, MOBILE } from 'src/Theme';
 
 interface ProjectHeaderProps {
   className?: string;

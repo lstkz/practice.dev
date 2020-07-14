@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { setGlobalExport } from './global-exports';
 import { Hmr, startHmr, TypelessContext } from 'typeless';
 import { registry } from './registry';
-import { GlobalStyle } from 'ui';
+import { GlobalStyle } from '@pvd/ui';
 import { initErrorReporter } from './errorReporter';
 import { addTypelessExt } from './common/typeless-ext';
 

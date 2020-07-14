@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Container } from 'src/components/Container';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 import { HowItWorksSvg } from './HowItWorksSvg';
 import { LineSvg } from './LineSvg';
 import { Step } from './Step';
@@ -14,7 +14,8 @@ import { SuccessIcon } from 'src/icons/SuccessIcon';
 import { ErrorIcon } from 'src/icons/ErrorIcon';
 import { Colored } from 'src/components/Colored';
 import { useIsMobile } from 'src/hooks/useIsMobile';
-import { MOBILE } from 'ui';
+
+import { MOBILE } from 'src/Theme';
 import { SvgMobileWrapper } from './SvgMobileWrapper';
 
 interface HowItWorksProps {

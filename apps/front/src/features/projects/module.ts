@@ -13,14 +13,14 @@ import {
   parseFilterMap,
   parseFilterValue,
 } from 'src/common/helper';
-import { ProjectDomain } from 'shared';
+import { ChallengeDomain } from 'shared';
 import { RouterActions, getRouterState, RouterLocation } from 'typeless-router';
 import { parseQueryString, isRoute, createProjectsUrl } from 'src/common/url';
 import { SelectOption } from 'src/types';
 import { GlobalActions } from '../global/interface';
 
 export const statuses: SolveStatus[] = ['solved', 'partial', 'unsolved'];
-export const domains: ProjectDomain[] = ['frontend', 'backend', 'fullstack'];
+export const domains: ChallengeDomain[] = ['frontend', 'backend', 'fullstack'];
 export const sortOptions: SelectOption<ProjectsSortOrder>[] = [
   { label: 'Oldest', value: 'oldest' },
   { label: 'Newest', value: 'newest' },

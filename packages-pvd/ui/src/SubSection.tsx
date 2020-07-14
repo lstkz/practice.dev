@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Theme } from './Theme';
+import { BaseTheme } from './BaseTheme';
 
 interface SubSectionProps {
   title: string;
@@ -13,7 +13,7 @@ const Title = styled.h3`
   padding: 3px 0;
   font-weight: 600;
   font-size: 16px;
-  color: ${Theme.textDark};
+  color: ${BaseTheme.textDark};
   position: sticky;
   top: 0;
   background: white;

@@ -1,5 +1,5 @@
 import { Project } from 'shared';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import { SolvedTag } from 'src/components/SolvedTag';
 import React from 'react';
 import { Title } from 'src/components/Title';

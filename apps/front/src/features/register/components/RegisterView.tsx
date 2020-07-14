@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import { Link } from '../../../components/Link';
 import { RegisterFormProvider, RegisterFormActions } from '../register-form';
 import { FormInput } from '../../../components/FormInput';

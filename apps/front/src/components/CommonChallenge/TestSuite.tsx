@@ -1,9 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { Theme, Spinner } from 'ui';
+import { Spinner } from '@pvd/ui';
 import { Colored } from 'src/components/Colored';
 import { getSubmitState } from 'src/features/submit/interface';
 import { TestInfo } from 'shared';
+import { Theme } from 'src/Theme';
 
 interface TestSuiteProps {
   className?: string;

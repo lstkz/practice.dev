@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import { useActions } from 'typeless';
 import { RouterActions } from 'typeless-router';
-import { Theme } from './Theme';
+import { Theme } from '../Theme';
 import { Spinner } from './Spinner';
 
 interface ButtonProps {

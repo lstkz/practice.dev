@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 
 interface SidebarTitleProps {
   marginBottom?: boolean;

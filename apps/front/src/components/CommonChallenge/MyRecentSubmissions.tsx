@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { SidebarTitle } from './SidebarTitle';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 import { MySubmission } from './MySubmission';
 import { useUser } from 'src/hooks/useUser';
 import { Submission } from 'shared';

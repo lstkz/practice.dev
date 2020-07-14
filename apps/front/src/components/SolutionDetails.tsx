@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 import { Link } from 'src/components/Link';
 import { VoidLink } from './VoidLink';
 import { Solution } from 'shared';

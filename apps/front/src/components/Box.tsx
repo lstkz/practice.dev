@@ -1,6 +1,5 @@
 import styled from 'styled-components';
-import { Theme, MOBILE } from 'ui';
-
+import { Theme, MOBILE } from 'src/Theme';
 interface BoxProps {
   full?: boolean;
 }

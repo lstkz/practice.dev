@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { Theme, MOBILE } from 'ui';
+import { Theme, MOBILE } from 'src/Theme';
 
 interface TwoColLayoutProps {
   className?: string;

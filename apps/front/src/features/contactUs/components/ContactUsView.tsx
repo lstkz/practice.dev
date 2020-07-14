@@ -6,7 +6,7 @@ import { useActions } from 'typeless';
 import { createUrl } from 'src/common/url';
 import { Box } from 'src/components/Box';
 import { SuccessFilledIcon } from 'src/icons/SuccessFilledIcon';
-import { Button } from 'ui';
+import { Button } from 'src/components/Button';
 import { ContactUsFormActions, ContactUsFormProvider } from '../contactUs-form';
 import { Container } from 'src/components/Container';
 import { Breadcrumb } from 'src/components/Breadcrumb';

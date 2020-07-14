@@ -3,9 +3,9 @@ import styled, { createGlobalStyle } from 'styled-components';
 import { CSSTransition } from 'react-transition-group';
 import { VoidLink } from './VoidLink';
 import { CloseIcon } from 'src/icons/CloseIcon';
-import { Theme, MOBILE } from 'ui';
 import { FocusContainer } from './FocusContainer';
 import { modalGlobalContext } from './ModalGlobalContext';
+import { MOBILE, Theme } from 'src/Theme';
 
 interface ModalProps {
   transparent?: boolean;

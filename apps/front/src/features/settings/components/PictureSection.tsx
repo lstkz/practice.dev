@@ -2,7 +2,6 @@ import { SettingsSection } from './SettingsSection';
 import * as Rx from 'src/rx';
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { Theme, Button, MOBILE } from 'ui';
 import { getSettingsState } from '../interface';
 import { createModule, useActions } from 'typeless';
 import { PictureSectionSymbol } from '../symbol';
@@ -12,6 +11,8 @@ import { getAvatarUrl } from 'src/common/helper';
 import { GlobalActions } from 'src/features/global/interface';
 import { ConfirmModalActions } from 'src/features/confirmModal/interface';
 import { DeleteType } from 'src/types';
+import { Theme, MOBILE } from 'src/Theme';
+import { Button } from 'src/components/Button';
 
 export const [
   handle,

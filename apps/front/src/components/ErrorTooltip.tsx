@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as PopperJS from 'popper.js';
 import styled, { css, keyframes } from 'styled-components';
 import { Manager, Reference, Popper } from 'react-popper';
-import { Theme } from 'ui';
+import { Theme } from 'src/Theme';
 import { Portal } from './Portal';
 import { useIsMobile } from 'src/hooks/useIsMobile';
 

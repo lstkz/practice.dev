@@ -1,5 +1,5 @@
 import React from 'react';
-import { Theme } from 'src/common/Theme';
+import { Theme } from 'src/Theme';
 
 interface WarningIconProps {
   color?: string;

@@ -47,7 +47,7 @@
     "typeless-form": "^1.6.0",
     "typeless-router": "^1.6.0",
     "typescript-plugin-styled-components": "^1.4.4",
-    "ui": "*",
+    "@pvd/ui": "*",
     "url-loader": "^2.1.0",
     "webpack": "^4.41.2",
     "webpack-bundle-analyzer": "^3.5.0",
