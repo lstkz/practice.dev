@@ -11,6 +11,7 @@ import { SubmitActions, getSubmitState } from '../interface';
 import { useSubmitModule } from '../module';
 import { FormModalContent } from 'src/components/FormModalContent';
 import { TargetChallengeValues } from 'src/types';
+import { Link } from 'src/components/Link';
 
 const Footer = styled.div`
   text-align: center;
@@ -64,7 +65,8 @@ export function SubmitModal(props: SubmitModalProps) {
           </form>
 
           <Footer>
-            Not sure how to submit? Check tutorial <VoidLink>here</VoidLink>
+            Not sure how to submit? Check tutorial{' '}
+            <Link href="/faq/solving-counter-on-codesandbox">here</Link>
           </Footer>
         </SubmitFormProvider>
       </FormModalContent>
