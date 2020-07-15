@@ -23,7 +23,7 @@ const defaultApiTimeout = 3500;
 
 const defaultTimeout = process.env.DEFAULT_WAIT_TIME
   ? Number(process.env.DEFAULT_WAIT_TIME)
-  : 2500;
+  : 3500;
 
 export const defaultWaitOptions = { visible: true, timeout: defaultTimeout };
 
@@ -119,9 +119,9 @@ export class Tester {
           method: options.method,
           headers,
         },
-        (res) => {
+        res => {
           let body = '';
-          res.on('data', (chunk) => {
+          res.on('data', chunk => {
             body += chunk;
             if (body.length > maxBodyLength) {
               clearTimeout(timeoutId);
@@ -138,7 +138,7 @@ export class Tester {
       if (serializedBody) {
         req.write(serializedBody);
       }
-      req.on('error', (e) => {
+      req.on('error', e => {
         reject(new TestError('Cannot connect to server: ' + e.message));
       });
       req.end();
@@ -149,7 +149,7 @@ export class Tester {
           req.abort();
         } catch (ignore) {}
       }, defaultApiTimeout);
-    }).then(async (ret) => {
+    }).then(async ret => {
       await this.stepNotifier.notify(`Response from request ${id}`, {
         status: ret[1].statusCode,
         body: ret[0],
