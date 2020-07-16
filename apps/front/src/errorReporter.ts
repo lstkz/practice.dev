@@ -116,6 +116,9 @@ export function initErrorReporter() {
   };
 
   window.onerror = function (message, source, lineno, colno, error) {
+    if (message === 'ResizeObserver loop limit exceeded') {
+      return;
+    }
     api
       .errorReporting_reportFrontendError({
         unhandledError: serialize({
