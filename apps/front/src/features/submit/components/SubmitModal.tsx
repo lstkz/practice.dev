@@ -3,14 +3,12 @@ import { Modal } from 'src/components/Modal';
 import { Button } from 'src/components/Button';
 import { useActions } from 'typeless';
 import styled from 'styled-components';
-import { VoidLink } from 'src/components/VoidLink';
 import { FormInput } from 'src/components/FormInput';
 import { SubmitFormActions, SubmitFormProvider } from '../submit-form';
 import { Alert } from 'src/components/Alert';
 import { SubmitActions, getSubmitState } from '../interface';
 import { useSubmitModule } from '../module';
 import { FormModalContent } from 'src/components/FormModalContent';
-import { TargetChallengeValues } from 'src/types';
 import { Link } from 'src/components/Link';
 
 const Footer = styled.div`
@@ -18,16 +16,9 @@ const Footer = styled.div`
   margin-top: 20px;
 `;
 
-interface SubmitModalProps {
-  target: TargetChallengeValues;
-}
-
-export function SubmitModal(props: SubmitModalProps) {
+export function SubmitModal() {
   useSubmitModule();
-  const { initTarget } = useActions(SubmitActions);
-  React.useEffect(() => {
-    initTarget(props.target);
-  }, [props.target]);
+
   const { close } = useActions(SubmitActions);
   const { isOpened, error, isSubmitting } = getSubmitState.useState();
   const { submit } = useActions(SubmitFormActions);

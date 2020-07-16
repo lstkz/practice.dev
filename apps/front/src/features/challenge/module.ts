@@ -86,6 +86,9 @@ handle
               bundle
             ),
             SubmitActions.reset(),
+            SubmitActions.initTarget({
+              challengeId: challenge.id,
+            }),
           ])
         )
       ),

@@ -44,6 +44,10 @@ handle.epic().onRoute({
               bundle
             ),
             SubmitActions.reset(),
+            SubmitActions.initTarget({
+              projectId: challenge.project.id,
+              challengeId: challenge.id,
+            }),
           ])
         )
       ),
