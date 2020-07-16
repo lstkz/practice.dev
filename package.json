@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "sync:in": "rsync -r --exclude=dist --exclude=node_modules ../practice-dev-public/packages/ ./packages-pvd ",
-    "sync:out": "rsync -r --exclude=dist --exclude=node_modules ./packages-pvd ../practice-dev-public/packages/"
+    "sync:out": "rsync -r --exclude=dist --exclude=node_modules ./packages-pvd/* ../practice-dev-public/packages/"
   },
   "workspaces": [
     "packages/*",
