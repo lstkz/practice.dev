@@ -49,6 +49,7 @@ ${values.message}
 
 export const sendContactRpc = createRpcBinding({
   injectUser: true,
+  public: true,
   signature: 'contact.sendContact',
   handler: sendContact,
 });
