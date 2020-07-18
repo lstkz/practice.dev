@@ -32,7 +32,7 @@ function authWith(
           action$,
         })
       ),
-      Rx.catchLog(e => {
+      Rx.catchError(e => {
         return Rx.of(LoginActions.setError(getErrorMessage(e)));
       })
     ),
