@@ -18,6 +18,7 @@ import { GlobalActions } from '../global/interface';
 import { confirmDeleteSolution } from 'src/common/solution';
 import { RouterActions, getRouterState } from 'typeless-router';
 import { createUrl, isRoute } from 'src/common/url';
+import { MAX_SLUG_LENGTH } from 'shared';
 
 handle
   .epic()
@@ -119,7 +120,8 @@ handle
             return '-';
           }
         })
-        .join('');
+        .join('')
+        .substr(0, MAX_SLUG_LENGTH);
       return SolutionFormActions.change('slug', slug);
     }
     return Rx.empty();

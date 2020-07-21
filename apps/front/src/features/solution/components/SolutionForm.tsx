@@ -11,6 +11,7 @@ import { FormInput } from 'src/components/FormInput';
 import { AsyncCreatableFormSelect } from 'src/components/FormSelect';
 import { Button } from 'src/components/Button';
 import styled from 'styled-components';
+import { MAX_SLUG_LENGTH } from 'shared';
 
 const ShareInput = styled.input`
   &&&& {
@@ -68,6 +69,7 @@ export function SolutionForm(props: SolutionFormProps) {
           label="Provide Github or Codesandbox URL"
           maxLength={300}
           placeholder="https://github.com/john/create-app"
+          description="Only codesandbox.io and github.com domains are allowed."
         />
         <FormInput
           id="title"
@@ -82,7 +84,7 @@ export function SolutionForm(props: SolutionFormProps) {
           testId="slug"
           name="slug"
           label="Solution slug"
-          maxLength={30}
+          maxLength={MAX_SLUG_LENGTH}
           placeholder="pure-vanilla-javascript"
           description={
             <ShareWrapper>

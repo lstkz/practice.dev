@@ -9,3 +9,5 @@ export const getUsernameSchema = () =>
     .regex(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i)
     .min(3)
     .max(38);
+
+export const MAX_SLUG_LENGTH = 40;
