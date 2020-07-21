@@ -48,7 +48,7 @@ function _assertExists(basedir: string, path: string) {
 
 export function getValidRoots(basedir: string) {
   const dir = fs.readdirSync(basedir);
-  return dir.filter((name) => {
+  return dir.filter(name => {
     const stats = fs.statSync(Path.join(basedir, name));
     return stats.isDirectory() && /^\d\d\d\-/.test(name);
   });
@@ -56,7 +56,7 @@ export function getValidRoots(basedir: string) {
 
 export function getEntryForChallenges(basedir: string, type: SourceType) {
   const entry: Record<string, string[]> = {};
-  getValidRoots(basedir).forEach((name) => {
+  getValidRoots(basedir).forEach(name => {
     const target = _getSourceTarget(type);
     const index = `./${name}/${target}`;
     _assertExists(basedir, index);
@@ -68,9 +68,9 @@ export function getEntryForChallenges(basedir: string, type: SourceType) {
 
 export function getEntryForProjects(basedir: string, type: SourceType) {
   const entry: Record<string, string[]> = {};
-  getValidRoots(basedir).forEach((name) => {
+  getValidRoots(basedir).forEach(name => {
     const dir = fs.readdirSync(Path.join(basedir, name));
-    dir.forEach((subName) => {
+    dir.forEach(subName => {
       const exec = /challenge-(\d+)/.exec(subName);
       if (exec) {
         const challengeId = exec[1];
@@ -100,7 +100,7 @@ export function getEntry(
 
 export function execWebpack(options: webpack.Configuration) {
   return new Promise((resolve, reject) => {
-    webpack(options).run((err) => {
+    webpack(options).run(err => {
       if (err) {
         reject(err);
         return;
@@ -207,7 +207,7 @@ async function getTests(testFile: string) {
     tester,
     url: 'mock',
   });
-  const tests: TestInfo[] = tester.tests.map((test) => ({
+  const tests: TestInfo[] = tester.tests.map(test => ({
     id: test.id,
     name: test.name,
     result: 'pending' as 'pending',
@@ -219,7 +219,7 @@ async function getTests(testFile: string) {
 export async function getChallengePackages(basedir: string) {
   const challengeNames = getValidRoots(basedir);
   const ret = await Promise.all(
-    challengeNames.map(async (challengeName) => {
+    challengeNames.map(async challengeName => {
       const info = require(Path.join(basedir, challengeName, 'info.ts'))
         .info as ChallengeInfo;
       const [detailsFile, testFile] = await Promise.all([
@@ -242,20 +242,20 @@ export async function getChallengePackages(basedir: string) {
 
 export async function getProjectPackages(basedir: string) {
   const dir = fs.readdirSync(basedir);
-  const projectNames = dir.filter((name) => {
+  const projectNames = dir.filter(name => {
     const stats = fs.statSync(Path.join(basedir, name));
     return stats.isDirectory() && /^\d\d\d\-/.test(name);
   });
 
   const ret = await Promise.all(
-    projectNames.map(async (projectName) => {
+    projectNames.map(async projectName => {
       const info = require(Path.join(basedir, projectName, 'info.ts'))
         .info as ProjectInfo;
       const pkg: ProjectPackage = {
         name: projectName,
         info,
         challenges: await Promise.all(
-          info.challenges.map(async (challenge) => {
+          info.challenges.map(async challenge => {
             const [detailsFile, testFile] = await Promise.all([
               getProjectChallengeFileUpload(
                 basedir,
@@ -306,7 +306,7 @@ export async function uploadS3(options: UploadS3Options) {
     .promise()
     .then(
       () => true,
-      (err) => {
+      err => {
         if (err.code === 'NotFound') {
           return false;
         }
@@ -381,4 +381,19 @@ export async function uploadAssets(
   return {
     swagger: uploadNameBase,
   };
+}
+
+export function getDirnameById(basedir: string, id: number) {
+  return fs.readdirSync(basedir).find(name => {
+    const stats = fs.statSync(Path.join(basedir, name));
+    if (!stats.isDirectory()) {
+      return false;
+    }
+    const exec = /^(\d\d\d)\-/.exec(name);
+    if (!exec) {
+      return false;
+    }
+    const dirId = Number(exec[1]);
+    return dirId === Number(id);
+  });
 }

@@ -10,7 +10,8 @@
   "sideEffects": false,
   "dependencies": {
     "prismjs": "^1.16.0",
-    "react-transition-group": "^4.4.1"
+    "react-transition-group": "^4.4.1",
+    "styled-components": "^5.1.0"
   },
   "devDependencies": {
     "@types/clipboard": "^2.0.1",
@@ -20,9 +21,6 @@
     "@types/react-transition-group": "^4.4.0"
   },
   "peerDependencies": {
-    "typeless": "^1.6.0",
-    "typeless-form": "^1.6.0",
-    "typeless-router": "^1.6.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0"
   }
