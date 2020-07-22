@@ -109,6 +109,7 @@ export function initErrorReporter() {
     orgConsoleError(...args);
     api
       .errorReporting_reportFrontendError({
+        userAgent: navigator.userAgent,
         errorLogArgs: args.map(serialize),
         store: getStore(),
       })
@@ -121,6 +122,7 @@ export function initErrorReporter() {
     }
     api
       .errorReporting_reportFrontendError({
+        userAgent: navigator.userAgent,
         unhandledError: serialize({
           message,
           source,
