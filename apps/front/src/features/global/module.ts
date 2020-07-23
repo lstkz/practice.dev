@@ -10,6 +10,7 @@ import {
 import { api } from 'src/services/api';
 import { createUrl } from 'src/common/url';
 import { ActionLike } from 'typeless';
+import { ChainedReducer } from 'typeless/dist/ChainedReducer';
 
 // --- Epic ---
 handle
@@ -60,8 +61,18 @@ const initialState: GlobalState = {
   appSuccess: null,
 };
 
-handle
-  .reducer(initialState)
+const reducer = handle.reducer(initialState);
+
+if (typeof reducer.on !== 'function') {
+  console.error('reducer.on in not a function', {
+    type: typeof reducer.on,
+    on: reducer.on,
+    proto: ChainedReducer.prototype,
+    names: Object.getOwnPropertyNames(ChainedReducer.prototype),
+  });
+}
+
+reducer
   .on(GlobalActions.loggedIn, (state, { user }) => {
     state.isLoaded = true;
     state.user = user;
