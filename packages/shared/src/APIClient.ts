@@ -317,6 +317,7 @@ export class APIClient {
       method: 'POST',
       body: JSON.stringify(params),
       headers,
+      crossDomain: true,
     };
     if (this.createXHR) {
       options.createXHR = this.createXHR;
