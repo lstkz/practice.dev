@@ -49,7 +49,6 @@ const FieldTable = styled.table`
 export function ObjectType(props: ObjectTypeProps) {
   const { name, schema, schemas, depth } = props;
   const [isExpanded, setIsExpanded] = React.useState(depth < 2);
-
   if (isExpanded) {
     return (
       <>
@@ -59,7 +58,7 @@ export function ObjectType(props: ObjectTypeProps) {
         <Content>
           <FieldTable>
             <tbody>
-              {Object.keys(schema.properties).map(key => (
+              {Object.keys(schema.properties || {}).map(key => (
                 <tr key={key}>
                   <td>{key}:</td>
                   <td>

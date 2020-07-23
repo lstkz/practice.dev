@@ -48,10 +48,12 @@ const _SwaggerResponses = (props: SwaggerResponsesProps) => {
           return (
             <Tab key={code} title={code.toString()}>
               <Desc>{res.description}</Desc>
-              <SchemaViewer
-                schemas={spec.components.schemas}
-                type={getJsonSchemaResponse(res.content)}
-              />
+              {res.content && (
+                <SchemaViewer
+                  schemas={spec.components.schemas}
+                  type={getJsonSchemaResponse(res.content)}
+                />
+              )}
             </Tab>
           );
         })}

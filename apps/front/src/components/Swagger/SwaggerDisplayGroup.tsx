@@ -28,4 +28,5 @@ const _SwaggerDisplayGroup = (props: SwaggerDisplayGroupProps) => {
 
 export const SwaggerDisplayGroup = styled(_SwaggerDisplayGroup)`
   display: block;
+  margin-bottom: 20px;
 `;
