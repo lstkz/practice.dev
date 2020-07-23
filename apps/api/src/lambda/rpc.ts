@@ -8,7 +8,7 @@ import { ValidationError } from 'schema';
 const baseHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers':
-    'Origin, X-Requested-With, Content-Type, Accept',
+    'Origin, X-Requested-With, Content-Type, Accept, x-token',
   'Content-Type': 'application/json',
 };
 
