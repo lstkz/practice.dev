@@ -48,7 +48,7 @@ function popupCenter(url: string, title: string, w: number, h: number) {
   )!;
 
   // Puts focus on the newWindow
-  if (newWindow.focus) {
+  if (newWindow?.focus) {
     newWindow.focus();
   }
 }
