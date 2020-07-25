@@ -144,6 +144,13 @@ export const RouteResolver = () => {
         globalLoader.complete();
       }
     };
+    const scrollTop = () => {
+      try {
+        document.querySelector('html')!.scrollTo(0, 0);
+      } catch (e) {
+        console.error(e);
+      }
+    };
     routeConfig
       .component()
       .then(Component => {
@@ -176,12 +183,14 @@ export const RouteResolver = () => {
                 }
                 showNextComponent();
                 tryCompleteLoader();
+                scrollTop();
               })
             )
             .toPromise();
         } else {
           tryCompleteLoader();
           setComponent(<Component />);
+          scrollTop();
           return null;
         }
       })
