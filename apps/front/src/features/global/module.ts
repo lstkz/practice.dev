@@ -21,10 +21,12 @@ handle
         Rx.retryWhen(errors =>
           errors.pipe(
             Rx.mergeMap((error, i) => {
-              if ((!error.status || error.status >= 500) && i > 5) {
-                return Rx.throwObs(error);
+              if (!error.status || error.status >= 500) {
+                if (i < 5) {
+                  return Rx.timer(500 + i * 100);
+                }
               }
-              return Rx.timer(500 + i * 100);
+              return Rx.throwObs(error);
             })
           )
         ),
