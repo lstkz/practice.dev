@@ -158,6 +158,10 @@ export const apiMapping: ApiMapping = {
     import(
       /* webpackChunkName: "user.deleteAvatar"*/ '../contracts/user/deleteAvatar'
     ).then(x => x['deleteAvatarRpc']),
+  'user.deleteUser': () =>
+    import(
+      /* webpackChunkName: "user.deleteUser"*/ '../contracts/user/deleteUser'
+    ).then(x => x['getMeRpc']),
   'user.getAvatarUploadUrl': () =>
     import(
       /* webpackChunkName: "user.getAvatarUploadUrl"*/ '../contracts/user/getAvatarUploadUrl'

@@ -60,6 +60,12 @@ export class DynamodbWrapper {
       .promise()
       .catch(wrapError('Failed to batchGetItem', params));
   }
+  batchWriteItem(params: DynamoDB.BatchWriteItemInput) {
+    return this.dynamodb
+      .batchWriteItem(params)
+      .promise()
+      .catch(wrapError('Failed to batchWriteItem', params));
+  }
   transactWriteItems(params: DynamoDB.TransactWriteItemsInput) {
     return this.dynamodb
       .transactWriteItems(params)
