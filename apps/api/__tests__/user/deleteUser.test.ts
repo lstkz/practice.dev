@@ -48,9 +48,9 @@ function _createChallenge() {
   });
 }
 
-function _createUseById(id: string, githubId: number) {
+function _createUserById(id: number, githubId: number) {
   return _createUser({
-    userId: id,
+    userId: `u${id}`,
     email: `user${id}@example.com`,
     username: 'user' + id,
     password: 'password1',
@@ -123,7 +123,7 @@ async function _indexAll() {
 
 it('should remove user', async () => {
   const user1 = 'u1';
-  await Promise.all([_createChallenge(), _createUseById(user1, 10)]);
+  await Promise.all([_createChallenge(), _createUserById(1, 10)]);
   await Promise.all([
     _createSubmission(user1, 1),
     _createSubmission(user1, 2),
@@ -132,10 +132,10 @@ it('should remove user', async () => {
   ]);
   await Promise.all([
     _createVote(user1, '1'),
-    createFeatureSubscription('contest', `user${user1}@example.com`),
+    createFeatureSubscription('contest', `user1@example.com`),
   ]);
   await _indexAll();
-  await deleteUser(user1);
+  await deleteUser('user1');
   expect(await _getAllData()).toHaveLength(0);
 });
 
@@ -145,9 +145,9 @@ it('should not remove other users data', async () => {
   const user3 = 'u3';
   await Promise.all([
     _createChallenge(),
-    _createUseById(user1, 10),
-    _createUseById(user2, 11),
-    _createUseById(user3, 12),
+    _createUserById(1, 10),
+    _createUserById(2, 11),
+    _createUserById(3, 12),
   ]);
   await Promise.all([
     _createSubmission(user2, 1),
@@ -159,7 +159,7 @@ it('should not remove other users data', async () => {
     createFeatureSubscription('contest', 'user5@example.com'),
   ]);
   await _indexAll();
-  await deleteUser(user1);
+  await deleteUser('user1');
   const data = await _getAllData();
   const getByType = (type: string) => data.filter(x => x.entityType.S === type);
   expect(getByType(UserEntity.entityType)).toHaveLength(2);

@@ -22,13 +22,21 @@ import { removeSubmissionCUD } from '../../cud/submission';
 import { ChangeEmailRequestEntity } from '../../entities/ChangeEmailRequestEntity';
 import { DiscussionCommentEntity } from '../../entities/DiscussionCommentEntity';
 import { removeSolutionVoteCUD } from '../../cud/solutionVote';
+import { AppError } from '../../common/errors';
 
 export const deleteUser = createContract('user.deleteUser')
-  .params('userId')
+  .params('usernameOrEmail')
   .schema({
-    userId: S.string(),
+    usernameOrEmail: S.string(),
   })
-  .fn(async userId => {
+  .fn(async usernameOrEmail => {
+    const user = await UserEntity.getUserByEmailOrUsernameOrNull(
+      usernameOrEmail
+    );
+    if (!user) {
+      throw new AppError('User not found');
+    }
+    const userId = user.userId;
     const userIdQuery = {
       query: {
         bool: {
@@ -46,7 +54,6 @@ export const deleteUser = createContract('user.deleteUser')
       ],
       limit: 1000,
     };
-    const user = await UserEntity.getByKey({ userId });
     const t = createTransaction();
     t.delete(user);
     await Promise.all([
