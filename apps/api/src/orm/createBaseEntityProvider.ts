@@ -8,7 +8,11 @@ import {
   DynamoKey,
   QueryAllOptions,
 } from './types';
-import { Converter, BatchGetRequestMap } from 'aws-sdk/clients/dynamodb';
+import {
+  Converter,
+  BatchGetRequestMap,
+  BatchWriteItemRequestMap,
+} from 'aws-sdk/clients/dynamodb';
 import { DatabaseError } from './DatabaseError';
 import {
   getPropNames,
@@ -277,6 +281,33 @@ class Builder {
           },
         });
         return allItems;
+      },
+      async batchDelete(entities, retry = 20) {
+        if (!entities.length) {
+          return;
+        }
+        const fetch = async (requestItems: BatchWriteItemRequestMap) => {
+          if (!retry) {
+            console.error('requestItems', requestItems);
+            throw new Error('Cannot process batchDelete. Retry = 0.');
+          }
+          retry--;
+          const result = await dynamodb.batchWriteItem({
+            RequestItems: requestItems,
+          });
+
+          if (
+            result.UnprocessedItems &&
+            Object.keys(result.UnprocessedItems).length
+          ) {
+            await fetch(result.UnprocessedItems);
+          }
+        };
+        await fetch({
+          [tableName]: entities.map(item => ({
+            DeleteRequest: { Key: Converter.marshall(item.getKey()) },
+          })),
+        });
       },
     };
     Object.assign(BaseEntity, statics);

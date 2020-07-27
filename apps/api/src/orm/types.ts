@@ -60,6 +60,11 @@ export interface BaseEntityStatic<TProps, TKey> {
     keys: TKey[],
     retry?: number
   ): Promise<Array<InstanceType<T>>>;
+  batchDelete<T extends BaseEntityClass<TProps, TKey>>(
+    this: T,
+    entities: Array<InstanceType<T>>,
+    retry?: number
+  ): Promise<void>;
 }
 
 export interface BaseEntityClass<TProps, TKey>
