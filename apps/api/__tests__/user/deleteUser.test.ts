@@ -140,7 +140,6 @@ it('should remove user', async () => {
 });
 
 it('should not remove other users data', async () => {
-  const user1 = 'u1';
   const user2 = 'u2';
   const user3 = 'u3';
   await Promise.all([

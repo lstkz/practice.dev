@@ -104,7 +104,11 @@ class ReqMock {
   }
 }
 
-function _getRequestKey(domain: string, method: string, path: string | null) {
+function _getRequestKey(
+  domain: string,
+  method: string,
+  path: string | null | undefined
+) {
   return [domain, method, path ?? '/'].join('|');
 }
 
