@@ -16,13 +16,13 @@ export const [handle, ContestsActions, getContestsState] = createModule(
 
 // --- Routing ---
 
-export const routeConfig: RouteConfig = {
-  type: 'route',
-  auth: 'any',
-  path: '/contests',
-  component: () =>
-    import('./components/ContestsView').then(x => x.ContestsView),
-};
+// export const routeConfig: RouteConfig = {
+//   type: 'route',
+//   auth: 'any',
+//   path: '/contests',
+//   component: () =>
+//     import('./components/ContestsView').then(x => x.ContestsView),
+// };
 
 // --- Types ---
 export interface ContestsState {

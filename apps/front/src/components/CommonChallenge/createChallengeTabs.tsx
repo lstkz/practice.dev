@@ -35,10 +35,14 @@ export function createTestSuiteTab(
 ) {
   return (
     <Tab title="Test Suite" name="testSuite">
-      <TabContent
+      <div style={{ padding: 40 }}>
+        <TestSuite testCase={testCase} />
+      </div>
+      {/* <TabContent
         left={<TestSuite testCase={testCase} />}
-        right={<MyRecentSubmissions recentSubmissions={recentSubmissions} />}
-      />
+        right={<div />}
+        // right={<MyRecentSubmissions recentSubmissions={recentSubmissions} />}
+      /> */}
     </Tab>
   );
 }

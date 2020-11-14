@@ -146,10 +146,10 @@ export function ProjectChallengeView() {
                 )}
                 {createSwaggerTab(challenge.assets)}
                 {createTestSuiteTab(testCase, recentSubmissions)}
-                {createDiscussionTab({
+                {/* {createDiscussionTab({
                   challengeId: challenge.id,
                   projectId: challenge.project.id,
-                })}
+                })} */}
               </Tabs>
             </>
           )}

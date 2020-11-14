@@ -117,9 +117,9 @@ const _Header = (props: HeaderProps) => {
             <NavItem active={isMenuHighlighted(pathname, 'projects')}>
               <Link href={createUrl({ name: 'projects' })}>Projects</Link>
             </NavItem>
-            <NavItem active={isMenuHighlighted(pathname, 'contents')}>
+            {/* <NavItem active={isMenuHighlighted(pathname, 'contents')}>
               <Link href={createUrl({ name: 'contests' })}>Contests</Link>
-            </NavItem>
+            </NavItem> */}
           </Nav>
           {user ? (
             <UserInfoWrapper>

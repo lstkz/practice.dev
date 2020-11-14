@@ -12,6 +12,7 @@ import {
 } from '../globalSolutions/interface';
 import { SolutionActions, getSolutionState } from '../solution/interface';
 import { SolutionsTabActions } from './components/SolutionsTab';
+import { Solution, LoadMoreResult, Submission } from 'shared';
 
 function checkSolutionModal() {
   const { location } = getRouterState();
@@ -56,24 +57,25 @@ handle
     return Rx.forkJoin([
       api.challenge_getChallengeById(id),
       Rx.defer(() => {
-        const { user } = getGlobalState();
-        if (!user) {
-          return Rx.of([]);
-        }
-        return api
-          .submission_searchSubmissions({
-            challengeId: id,
-            username: user.username,
-            limit: 10,
-          })
-          .pipe(Rx.map(ret => ret.items));
+        // const { user } = getGlobalState();
+        return Rx.of([] as Submission[]);
+        // if (!user) {
+        // }
+        // return api
+        //   .submission_searchSubmissions({
+        //     challengeId: id,
+        //     username: user.username,
+        //     limit: 10,
+        //   })
+        //   .pipe(Rx.map(ret => ret.items));
       }),
-      api.solution_searchSolutions({
-        challengeId: id,
-        sortBy: 'likes',
-        sortDesc: true,
-        limit: 5,
-      }),
+      // api.solution_searchSolutions({
+      //   challengeId: id,
+      //   sortBy: 'likes',
+      //   sortDesc: true,
+      //   limit: 5,
+      // }),
+      Rx.of({ cursor: null, items: [] } as LoadMoreResult<Solution>),
     ]).pipe(
       Rx.mergeMap(([challenge, recentSubmissions, solutions]) =>
         loadBundle(challenge.detailsBundleS3Key).pipe(

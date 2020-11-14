@@ -151,11 +151,11 @@ const _MobileSidebar = (props: MobileSidebarProps) => {
             <ProjectsSmallIcon /> Projects
           </Link>
         </ListItem>
-        <ListItem active={isMenuHighlighted(pathname, 'contents')}>
+        {/* <ListItem active={isMenuHighlighted(pathname, 'contents')}>
           <Link onClick={onClose} href={createUrl({ name: 'contests' })}>
             <ContestsIcon /> Contests
           </Link>
-        </ListItem>
+        </ListItem> */}
         {user && (
           <>
             <ListItem

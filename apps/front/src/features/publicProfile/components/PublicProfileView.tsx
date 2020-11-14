@@ -97,7 +97,7 @@ export function PublicProfileView() {
             <Tab testId="overview-tab" title="Overview" name="overview">
               <OverviewContent />
             </Tab>
-            <Tab
+            {/* <Tab
               testId="solutions-tab"
               title={`Solutions (${profile.solutionsCount})`}
               name="solutions"
@@ -110,7 +110,7 @@ export function PublicProfileView() {
               name="likes"
             >
               <LikesTab />
-            </Tab>
+            </Tab> */}
             {/* <Tab
               testId="followers-tab"
               title={`Followers (${profile.followersCount})`}

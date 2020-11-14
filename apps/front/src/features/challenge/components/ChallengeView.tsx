@@ -100,7 +100,7 @@ export function ChallengeView() {
                     >
                       SUBMIT
                     </Button>
-                    {challenge.isSolved && (
+                    {/* {challenge.isSolved && (
                       <Button
                         testId="create-solution-btn"
                         block
@@ -109,7 +109,7 @@ export function ChallengeView() {
                       >
                         CREATE SOLUTION
                       </Button>
-                    )}
+                    )} */}
                   </>
                 }
               />
@@ -133,24 +133,24 @@ export function ChallengeView() {
                           {challenge.stats.solved}
                         </VoidLink>
                       </ChallengeStatsRow>
-                      <ChallengeStatsRow>
+                      {/* <ChallengeStatsRow>
                         Solutions{' '}
                         <VoidLink data-test="solutions">
                           {challenge.stats.solutions}
                         </VoidLink>
-                      </ChallengeStatsRow>
+                      </ChallengeStatsRow> */}
                     </ChallengeStats>
-                    <FavoriteSolutions />
+                    {/* <FavoriteSolutions /> */}
                   </SidebarStack>
                 )}
                 {createSwaggerTab(challenge.assets)}
                 {createTestSuiteTab(testCase, recentSubmissions)}
-                <Tab testId="solutions-tab" title="Solutions" name="solutions">
+                {/* <Tab testId="solutions-tab" title="Solutions" name="solutions">
                   <SolutionsTab />
                 </Tab>
                 {createDiscussionTab({
                   challengeId: challenge.id,
-                })}
+                })} */}
               </Tabs>
             </>
           )}
