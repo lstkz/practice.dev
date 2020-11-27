@@ -54,7 +54,6 @@ export function ProjectChallengeView() {
     component: Component,
     tab,
     testCase,
-    recentSubmissions,
   } = getProjectChallengeState.useState();
   const { changeTab } = useActions(ProjectChallengeActions);
   const { show: showSubmit } = useActions(SubmitActions);
@@ -145,7 +144,7 @@ export function ProjectChallengeView() {
                   </SidebarStack>
                 )}
                 {createSwaggerTab(challenge.assets)}
-                {createTestSuiteTab(testCase, recentSubmissions)}
+                {createTestSuiteTab(testCase)}
                 {/* {createDiscussionTab({
                   challengeId: challenge.id,
                   projectId: challenge.project.id,

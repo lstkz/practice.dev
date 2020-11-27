@@ -31,7 +31,7 @@ export function createSwaggerTab(
 
 export function createTestSuiteTab(
   testCase: TestInfo[],
-  recentSubmissions: Submission[]
+  recentSubmissions?: Submission[]
 ) {
   return (
     <Tab title="Test Suite" name="testSuite">
